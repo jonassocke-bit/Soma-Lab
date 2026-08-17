@@ -5,8 +5,10 @@ import {unzipSync} from "https://esm.sh/fflate@0.8.2";
 
 const HF="https://huggingface.co/nvidia/SOMA-X/resolve/main/";
 const SHAPE=HF+"SOMA_neutral.npz?download=true";
-const PROC=HF+"SOMA_procedural_transforms.json?download=true";
-const RIG=HF+"SOMA_template_rig.usda?download=true";
+const NVRAW="https://raw.githubusercontent.com/NVlabs/SOMA-X/86632764684281dc98f31ab9c4aac36a4cdbc428/assets/";
+const NVMEDIA="https://media.githubusercontent.com/media/NVlabs/SOMA-X/86632764684281dc98f31ab9c4aac36a4cdbc428/assets/";
+const PROC=NVRAW+"SOMA_procedural_transforms.json";
+const RIG=NVMEDIA+"SOMA_template_rig.usda";
 const ANIM=HF+"example_animation.npy?download=true";
 
 const $=s=>document.querySelector(s);
@@ -160,20 +162,25 @@ async function testRig(){
   setState("#rigState","PRÜFT","warn");
   const jr=await fetch(PROC,{mode:"cors",cache:"force-cache"});if(!jr.ok)throw new Error("Procedural JSON HTTP "+jr.status);
   const j=await jr.json();
-  const names=j.public_joint_names||j.publicJointNames||j.joint_names||[];
+  const names=j.public_rig_derivation?.main_joint_names||j.public_joint_names||j.publicJointNames||j.joint_names||[];
+  const templateCount=Number(j.template_asset?.joint_count)||0;
+  const templateFile=j.template_asset?.file||"unbekannt";
   const [rig,anim]=await Promise.allSettled([headSize(RIG),headSize(ANIM)]);
   $("#joints").innerHTML=names.map((n,i)=>`<span>${i}. ${String(n)}</span>`).join("");
-  const rigTxt=rig.status==="fulfilled"?`${(rig.value.len/1048576).toFixed(1)} MB`:`nicht HEAD-lesbar: ${rig.reason}`;
-  const animTxt=anim.status==="fulfilled"?`${(anim.value.len/1048576).toFixed(1)} MB`:`nicht HEAD-lesbar: ${anim.reason}`;
-  setState("#rigState",names.length>=78?"VERTRAG OK":"TEILWEISE",names.length>=78?"ok":"warn");
-  info("#rigInfo",`✓ Procedural-Sidecar direkt browserlesbar
-Öffentliche Gelenknamen: ${names.length}
-Template-Rig: ${rigTxt}
+  const rigTxt=rig.status==="fulfilled"?(rig.value.len?`${(rig.value.len/1048576).toFixed(1)} MB`:"erreichbar · Größe unbekannt"):`HEAD nicht bestätigt: ${rig.reason}`;
+  const animTxt=anim.status==="fulfilled"?(anim.value.len?`${(anim.value.len/1048576).toFixed(1)} MB`:"erreichbar · Größe unbekannt"):`HEAD nicht bestätigt: ${anim.reason}`;
+  const contractOK=names.length===78&&templateCount===122;
+  setState("#rigState",contractOK?"VERTRAG OK":"TEILWEISE",contractOK?"ok":"warn");
+  info("#rigInfo",`✓ Offizieller NVlabs-Procedural-Sidecar direkt browserlesbar
+Public-Rig-Namen: ${names.length} (inkl. Root)
+Template-Rig laut Sidecar: ${templateCount} Joints · ${templateFile}
+Template-Rig LFS/HEAD: ${rigTxt}
 Beispielanimation: ${animTxt}
+Quelle gepinnt: NVlabs/SOMA-X 8663276
 
-WICHTIG: Das große USD wird absichtlich NICHT geladen. Für echtes Posing brauchen wir daraus nur Bindpose + Hierarchie + Skinweights als kompaktes Browser-Pack.`);
-  rigPass=names.length>=78;setState("#poseState","BRAUCHT RIG-PACK","warn");updateDecision()
- }catch(e){console.error(e);setState("#rigState","FEHLER","bad");info("#rigInfo",String(e.stack||e))}
+WICHTIG: Damit ist nur der Rig-Vertrag bestätigt. Das große USD wird absichtlich NICHT vollständig geladen. Bindpose + Hierarchie + Skinweights müssen wir als nächsten Schritt real extrahieren und danach im Browser testen.`);
+  rigPass=contractOK;setState("#poseState","BRAUCHT RIG-PACK","warn");updateDecision()
+ }catch(e){console.error(e);setState("#rigState","FEHLER","bad");info("#rigInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}${e?.stack?"\n"+e.stack:""}`)}
 }
 $("#testRig").onclick=testRig;
 

@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.1.1
+# SOMA Browser PoC v0.1.2
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -20,3 +20,13 @@ No MakeHuman code is used.
 - Bounds-Check für abgeschnittene NPY-Payloads.
 - Unterstützt `fortran_order=True` durch Konvertierung in C-Reihenfolge; das war der konkrete Abbruchpunkt in v0.1.
 - Fehler nennen jetzt das betroffene `.npy`-Array.
+
+
+## v0.1.2
+
+- Punkt 4 repariert: Der Procedural-Sidecar liegt im offiziellen NVlabs-GitHub-Repository unter `assets/` und nicht am bisher verwendeten Hugging-Face-Root-Pfad.
+- Offizielle Quelle für den Rig-Vertrag auf Commit `86632764684281dc98f31ab9c4aac36a4cdbc428` gepinnt.
+- Korrektes JSON-Feld verwendet: `public_rig_derivation.main_joint_names`.
+- Prüft jetzt explizit 78 Public-Rig-Namen (inkl. Root) und 122 Template-Joints aus dem Sidecar.
+- Das große `SOMA_template_rig.usda` wird weiterhin nicht vollständig heruntergeladen.
+- Safari-Fehleranzeige für den Rig-Test verbessert, damit künftig auch die eigentliche Fehlermeldung sichtbar bleibt.
