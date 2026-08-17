@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.1.5
+# SOMA Browser PoC v0.1.6
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -104,3 +104,52 @@ Wichtig:
 Dies ist weiterhin der echte eingebettete 78-Joint-Rig des SOMA-v0.1-Assets.
 Der aktualisierte v0.2-Template-Rig mit 122 Joints/Procedural-Twist-Joints und das
 shape-adaptive Skeleton-Rebinding bleiben separate Folgetests.
+
+
+## v0.1.6 – Fix der SOMA-Posekoordinaten
+
+Der v0.1.5-Test hat LBS, Hierarchie und Skinweights erfolgreich bewiesen, aber gleichzeitig
+einen Fehler in unserer selbstgebauten Pose-Runtime sichtbar gemacht: Die richtigen Joints
+wurden bewegt, aber die Rotationen wurden direkt als
+
+`bind_pose_local × Euler-Delta`
+
+angewendet. Das entspricht nicht SOMAs Posekonvention.
+
+Der offizielle SOMA-Runtime-Pfad benutzt `t_pose_world` als Joint-Orient und transformiert
+jede relative Pose-Rotation nach:
+
+`R_final[j] = orient[parent(j)]^T × R_relative[j] × orient[j]`
+
+Erst danach werden die Bind-Translations ergänzt, FK ausgeführt und LBS angewendet.
+
+v0.1.6 portiert genau diese Joint-Orient-Logik in den Browser.
+
+Zusätzliche Prüfungen:
+- Bindpose-FK bleibt separat validiert.
+- Bind-LBS wird separat gegen den unverformten Restkörper validiert.
+- Bei einer All-Zero-Relative-Pose wird geprüft, ob die resultierenden World-Rotationen
+  `t_pose_world` reproduzieren.
+- „T-Pose“ / „SOMA Nullpose“ nutzt jetzt wirklich die SOMA-All-Zero-Pose statt einer
+  von uns geratenen Armrotation.
+
+### Offizielle NVIDIA-Testanimation
+
+Zusätzlich kann `example_animation.npy` direkt aus dem offiziellen SOMA-X-Asset geladen werden.
+Sie wird über denselben IndexedDB-Cache wie die 27,5-MB-Shape-Datei dauerhaft gespeichert
+(ca. 5,6 MB einmalig).
+
+Die Motion-Konvertierung folgt dem offiziellen Demo:
+1. lokale Motion-Rotationen → FK in World Space,
+2. `world @ transpose(t_pose_world)`,
+3. zurück nach Local Space,
+4. Root wird als Identity gepaddet,
+5. anschließend die normale SOMA Joint-Orient + FK + LBS Pipeline.
+
+Die offizielle Animation ist damit der aussagekräftigste Gegencheck dafür, ob unsere
+Browser-Portierung dieselbe Posekonvention wie NVIDIA verwendet.
+
+Noch offen:
+- shape-adaptives Skeleton-Rebinding,
+- aktueller v0.2-122-Joint/Procedural-Twist-Rig-Pack,
+- Pose-Correctives.

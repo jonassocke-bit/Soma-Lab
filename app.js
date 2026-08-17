@@ -31,11 +31,35 @@ const PUBLIC_JOINT_NAMES=[
  "LeftLeg","LeftShin","LeftFoot","LeftToeBase","LeftToeEnd",
  "RightLeg","RightShin","RightFoot","RightToeBase","RightToeEnd"
 ];
+
+const RAW94_JOINT_NAMES=["Root",
+ "Hips","Spine1","Spine2","Chest","Neck1","Neck2","Head","HeadEnd","Jaw","LeftEye","RightEye",
+ "LeftShoulder","LeftArm","LeftForeArm","LeftHand",
+ "LeftHandThumb1","LeftHandThumb2","LeftHandThumb3","LeftHandThumbEnd",
+ "LeftHandIndex1","LeftHandIndex2","LeftHandIndex3","LeftHandIndex4","LeftHandIndexEnd",
+ "LeftHandMiddle1","LeftHandMiddle2","LeftHandMiddle3","LeftHandMiddle4","LeftHandMiddleEnd",
+ "LeftHandRing1","LeftHandRing2","LeftHandRing3","LeftHandRing4","LeftHandRingEnd",
+ "LeftHandPinky1","LeftHandPinky2","LeftHandPinky3","LeftHandPinky4","LeftHandPinkyEnd",
+ "LeftForeArmTwist1","LeftForeArmTwist2","LeftArmTwist1","LeftArmTwist2",
+ "RightShoulder","RightArm","RightForeArm","RightHand",
+ "RightHandThumb1","RightHandThumb2","RightHandThumb3","RightHandThumbEnd",
+ "RightHandIndex1","RightHandIndex2","RightHandIndex3","RightHandIndex4","RightHandIndexEnd",
+ "RightHandMiddle1","RightHandMiddle2","RightHandMiddle3","RightHandMiddle4","RightHandMiddleEnd",
+ "RightHandRing1","RightHandRing2","RightHandRing3","RightHandRing4","RightHandRingEnd",
+ "RightHandPinky1","RightHandPinky2","RightHandPinky3","RightHandPinky4","RightHandPinkyEnd",
+ "RightForeArmTwist1","RightForeArmTwist2","RightArmTwist1","RightArmTwist2",
+ "LeftLeg","LeftShin","LeftFoot","LeftToeBase","LeftToeEnd",
+ "LeftShinTwist1","LeftShinTwist2","LeftLegTwist1","LeftLegTwist2",
+ "RightLeg","RightShin","RightFoot","RightToeBase","RightToeEnd",
+ "RightShinTwist1","RightShinTwist2","RightLegTwist1","RightLegTwist2"
+];
+
 // Cache keys describe the data revision, not the app version.
 // Later Soma-Lab versions therefore reuse the same downloaded bytes.
 const ASSET_KEY={
  shape:"SOMA-X/v0026/SOMA_neutral.npz",
- proc:"SOMA-X/8663276/SOMA_procedural_transforms.json"
+ proc:"SOMA-X/8663276/SOMA_procedural_transforms.json",
+ anim:"SOMA-X/f424385d/example_animation.npy"
 };
 let assetDBPromise=null;
 
@@ -143,8 +167,9 @@ let shapePass=false, rigPass=false, posePass=false;
 // Browser-LBS state. The currently cached Hugging-Face SOMA_neutral.npz is the
 // original public SOMA v0.1 asset, whose official runtime stored the 78-joint
 // rig, bind transforms and sparse skinning weights in this same NPZ.
-let poseReady=false, poseParents=null, poseLocalBase=null, poseBindWorld=null, poseInvBind=null;
-let poseBoneIndices=null, poseBoneWeights=null, poseEulerDeg=null, poseJointCount=0, poseTopK=8;
+let poseReady=false, poseParents=null, poseLocalBase=null, poseBindWorld=null, poseInvBind=null, poseTWorld=null;
+let poseOrient3=null,poseOrientParentT3=null,poseBoneIndices=null,poseBoneWeights=null,poseEulerDeg=null,poseJointCount=0,poseTopK=8;
+let officialAnimRel=null,officialAnimFrames=0,officialAnimFps=30,officialAnimLoaded=false;
 
 let poseAnimRunning=false,poseAnimMode="walk",poseAnimStart=0,poseAnimLastStep=0,poseAnimSpeed=1;
 let poseAnimTargetFps=30,poseAnimFrames=0,poseAnimLbsSum=0,poseAnimLbsMax=0,poseAnimLastUi=0;
@@ -344,7 +369,7 @@ $("#random").onclick=()=>{coeff.fill(0);for(let i=0;i<12;i++)coeff[i]=(Math.rand
 
 
 const EMBEDDED_RIG_KEYS=[
- "joint_parent_ids","bind_pose_world","bind_pose_local","bind_shape",
+ "joint_parent_ids","bind_pose_world","bind_pose_local","t_pose_world","bind_shape",
  "skinning_weights_data","skinning_weights_indices","skinning_weights_indptr","skinning_weights_shape"
 ];
 
@@ -358,7 +383,7 @@ function probeEmbeddedRig(){
  }
  setState("#poseState","RIG IM CACHE","ok");
  $("#initPose").disabled=false;
- info("#poseInfo",`✓ Im bereits gecachten 27,5-MB-SOMA-NPZ wurden echte Rig-Daten gefunden:\nBindpose · Parent-Hierarchie · Bind-Shape · sparse Skinweights.\n\nDas ist der offizielle eingebettete 78-Joint-Rig-Pfad der ersten SOMA-Version. Mit „LBS initialisieren & testen“ testen wir ihn jetzt wirklich im iPhone-Browser – ohne weiteren großen Download.`);
+ info("#poseInfo",`✓ Im bereits gecachten 27,5-MB-SOMA-NPZ wurden echte Rig-Daten gefunden:\nBindpose · T-Pose/Joint-Orient · Parent-Hierarchie · Bind-Shape · sparse Skinweights.\n\nDas ist der offizielle eingebettete 78-Joint-Rig-Pfad der ersten SOMA-Version. Mit „LBS initialisieren & testen“ testen wir ihn jetzt wirklich im iPhone-Browser – ohne weiteren großen Download.`);
  return true
 }
 
@@ -405,6 +430,62 @@ function transformPoint(m,mo,x,y,z){
  ]
 }
 function jointIndex(name){return PUBLIC_JOINT_NAMES.indexOf(name)}
+
+function mat3Mul(a,ao,b,bo,out,oo){
+ for(let r=0;r<3;r++)for(let c=0;c<3;c++){
+  out[oo+r*3+c]=a[ao+r*3]*b[bo+c]+a[ao+r*3+1]*b[bo+3+c]+a[ao+r*3+2]*b[bo+6+c]
+ }
+}
+function mat3Transpose(a,ao,out,oo){
+ out[oo]=a[ao];out[oo+1]=a[ao+3];out[oo+2]=a[ao+6];
+ out[oo+3]=a[ao+1];out[oo+4]=a[ao+4];out[oo+5]=a[ao+7];
+ out[oo+6]=a[ao+2];out[oo+7]=a[ao+5];out[oo+8]=a[ao+8]
+}
+function mat3Identity(out,oo){
+ out[oo]=1;out[oo+1]=0;out[oo+2]=0;
+ out[oo+3]=0;out[oo+4]=1;out[oo+5]=0;
+ out[oo+6]=0;out[oo+7]=0;out[oo+8]=1
+}
+function makeEuler3(rx,ry,rz,out,oo){
+ const cx=Math.cos(rx),sx=Math.sin(rx),cy=Math.cos(ry),sy=Math.sin(ry),cz=Math.cos(rz),sz=Math.sin(rz);
+ out[oo]=cz*cy;
+ out[oo+1]=cz*sy*sx-sz*cx;
+ out[oo+2]=cz*sy*cx+sz*sx;
+ out[oo+3]=sz*cy;
+ out[oo+4]=sz*sy*sx+cz*cx;
+ out[oo+5]=sz*sy*cx-cz*sx;
+ out[oo+6]=-sy;
+ out[oo+7]=cy*sx;
+ out[oo+8]=cy*cx
+}
+function rot3FromMat4(m,mo,out,oo){
+ out[oo]=m[mo];out[oo+1]=m[mo+1];out[oo+2]=m[mo+2];
+ out[oo+3]=m[mo+4];out[oo+4]=m[mo+5];out[oo+5]=m[mo+6];
+ out[oo+6]=m[mo+8];out[oo+7]=m[mo+9];out[oo+8]=m[mo+10]
+}
+function writeLocalMat4(rotation3,ro,baseLocal,bo,out,oo){
+ out[oo]=rotation3[ro];out[oo+1]=rotation3[ro+1];out[oo+2]=rotation3[ro+2];out[oo+3]=baseLocal[bo+3];
+ out[oo+4]=rotation3[ro+3];out[oo+5]=rotation3[ro+4];out[oo+6]=rotation3[ro+5];out[oo+7]=baseLocal[bo+7];
+ out[oo+8]=rotation3[ro+6];out[oo+9]=rotation3[ro+7];out[oo+10]=rotation3[ro+8];out[oo+11]=baseLocal[bo+11];
+ out[oo+12]=0;out[oo+13]=0;out[oo+14]=0;out[oo+15]=1
+}
+function buildJointOrientData(){
+ poseOrient3=new Float32Array(poseJointCount*9);
+ poseOrientParentT3=new Float32Array(poseJointCount*9);
+ for(let j=0;j<poseJointCount;j++)rot3FromMat4(poseTWorld,j*16,poseOrient3,j*9);
+ for(let j=0;j<poseJointCount;j++){
+  const p=poseParents[j];
+  mat3Transpose(poseOrient3,p*9,poseOrientParentT3,j*9)
+ }
+}
+function relativeToFinalLocal(relative3,outLocal4){
+ const tmp=new Float32Array(9),finalR=new Float32Array(9);
+ for(let j=0;j<poseJointCount;j++){
+  mat3Mul(poseOrientParentT3,j*9,relative3,j*9,tmp,0);
+  mat3Mul(tmp,0,poseOrient3,j*9,finalR,0);
+  writeLocalMat4(finalR,0,poseLocalBase,j*16,outLocal4,j*16)
+ }
+}
 
 function copyRigMatricesToMeters(arr){
  const J=arr.shape?.[0]||Math.floor(arr.data.length/16),out=new Float32Array(J*16);
@@ -522,14 +603,13 @@ function posePreset(kind){
  poseEulerDeg.fill(0);
 
  if(kind==="tpose"){
-  setJointEuler("LeftArm",0,0,-48);
-  setJointEuler("RightArm",0,0,48);
+  // In SOMA's public pose convention, all-zero relative rotations are the canonical T-pose.
  }else if(kind==="overhead"){
-  setJointEuler("LeftArm",-8,0,-112);
-  setJointEuler("RightArm",-8,0,112);
-  setJointEuler("LeftForeArm",0,10,-12);
-  setJointEuler("RightForeArm",0,-10,12);
-  setJointEuler("Chest",-6,0,0);
+  setJointEuler("LeftArm",0,0,94);
+  setJointEuler("RightArm",0,0,-94);
+  setJointEuler("LeftForeArm",0,0,8);
+  setJointEuler("RightForeArm",0,0,-8);
+  setJointEuler("Chest",-5,0,0);
  }else if(kind==="squat"){
   setJointEuler("Hips",10,0,0);
   setJointEuler("Spine1",-9,0,0);
@@ -540,29 +620,29 @@ function posePreset(kind){
   setJointEuler("RightShin",-67,0,0);
   setJointEuler("LeftFoot",28,0,0);
   setJointEuler("RightFoot",28,0,0);
-  setJointEuler("LeftArm",24,0,-26);
-  setJointEuler("RightArm",24,0,26);
-  setJointEuler("LeftForeArm",8,0,-16);
-  setJointEuler("RightForeArm",8,0,16);
+  setJointEuler("LeftArm",24,0,24);
+  setJointEuler("RightArm",24,0,-24);
+  setJointEuler("LeftForeArm",8,0,18);
+  setJointEuler("RightForeArm",8,0,-18);
  }else if(kind==="run"){
   setJointEuler("LeftLeg",38,0,8);
   setJointEuler("LeftShin",-52,0,0);
   setJointEuler("LeftFoot",20,0,0);
   setJointEuler("RightLeg",-29,0,-5);
   setJointEuler("RightShin",-14,0,0);
-  setJointEuler("LeftArm",-28,0,-18);
-  setJointEuler("LeftForeArm",12,0,-42);
-  setJointEuler("RightArm",31,0,18);
-  setJointEuler("RightForeArm",12,0,42);
+  setJointEuler("LeftArm",-28,0,18);
+  setJointEuler("LeftForeArm",12,0,42);
+  setJointEuler("RightArm",31,0,-18);
+  setJointEuler("RightForeArm",12,0,-42);
   setJointEuler("Spine1",0,9,0);
   setJointEuler("Spine2",0,8,0);
   setJointEuler("Chest",0,6,0);
   setJointEuler("Head",0,-8,0);
  }else if(kind==="action"){
-  setJointEuler("LeftArm",-12,0,-105);
-  setJointEuler("LeftForeArm",0,12,-18);
-  setJointEuler("RightArm",28,0,24);
-  setJointEuler("RightForeArm",0,-18,48);
+  setJointEuler("LeftArm",-12,0,102);
+  setJointEuler("LeftForeArm",0,12,18);
+  setJointEuler("RightArm",28,0,-24);
+  setJointEuler("RightForeArm",0,-18,-48);
   setJointEuler("LeftLeg",18,0,8);
   setJointEuler("LeftShin",-38,0,0);
   setJointEuler("RightLeg",-12,0,-8);
@@ -573,10 +653,10 @@ function posePreset(kind){
   setJointEuler("Head",0,-10,0);
   setFingerCurl("Right",35);
  }else if(kind==="grip"){
-  setJointEuler("LeftArm",18,0,-32);
-  setJointEuler("RightArm",18,0,32);
-  setJointEuler("LeftForeArm",0,0,-48);
-  setJointEuler("RightForeArm",0,0,48);
+  setJointEuler("LeftArm",18,0,32);
+  setJointEuler("RightArm",18,0,-32);
+  setJointEuler("LeftForeArm",0,0,48);
+  setJointEuler("RightForeArm",0,0,-48);
   setJointEuler("LeftHand",0,8,0);
   setJointEuler("RightHand",0,-8,0);
   setFingerCurl("Left",58);
@@ -598,10 +678,10 @@ function setWalkAnimationPose(seconds){
  setJointEuler("LeftFoot",8+12*Math.max(0,-s),0,0);
  setJointEuler("RightFoot",8+12*Math.max(0,s),0,0);
 
- setJointEuler("LeftArm",-25*s,0,-12);
- setJointEuler("RightArm",25*s,0,12);
- setJointEuler("LeftForeArm",8+10*Math.max(0,s),0,-20);
- setJointEuler("RightForeArm",8+10*Math.max(0,-s),0,20);
+ setJointEuler("LeftArm",-25*s,0,12);
+ setJointEuler("RightArm",25*s,0,-12);
+ setJointEuler("LeftForeArm",8+10*Math.max(0,s),0,20);
+ setJointEuler("RightForeArm",8+10*Math.max(0,-s),0,-20);
 
  setJointEuler("Spine1",0,3.5*s2,0);
  setJointEuler("Spine2",0,4.5*s2,0);
@@ -616,10 +696,10 @@ function setRigStressAnimationPose(seconds){
  const b=Math.sin(p*.73+1.2);
  const c=Math.sin(p*1.31-.4);
 
- setJointEuler("LeftArm",-8+14*c,0,-18-88*a);
- setJointEuler("RightArm",-8-14*c,0,18+88*a);
- setJointEuler("LeftForeArm",0,12*b,-12-45*(1-a));
- setJointEuler("RightForeArm",0,-12*b,12+45*(1-a));
+ setJointEuler("LeftArm",-8+14*c,0,18+88*a);
+ setJointEuler("RightArm",-8-14*c,0,-18-88*a);
+ setJointEuler("LeftForeArm",0,12*b,12+45*(1-a));
+ setJointEuler("RightForeArm",0,-12*b,-12-45*(1-a));
 
  setJointEuler("LeftLeg",26*b,0,8*c);
  setJointEuler("RightLeg",-26*b,0,-8*c);
@@ -639,21 +719,105 @@ function setRigStressAnimationPose(seconds){
  setFingerCurl("Right",curl)
 }
 
+
+function publicMotionMapping(rawJoints){
+ if(rawJoints===78)return Int32Array.from({length:78},(_,i)=>i);
+ if(rawJoints===94){
+  const map=new Int32Array(78);
+  for(let i=0;i<78;i++){
+   const idx=RAW94_JOINT_NAMES.indexOf(PUBLIC_JOINT_NAMES[i]);
+   if(idx<0)throw new Error(`Motion-Mapping fehlt für ${PUBLIC_JOINT_NAMES[i]}`);
+   map[i]=idx
+  }
+  return map
+ }
+ throw new Error(`NVIDIA-Motion hat ${rawJoints} Joints; erwartet 78 oder 94.`)
+}
+function convertOfficialMotionToRelative(npy){
+ const sh=npy.shape;
+ if(sh.length!==4||sh[2]!==4||sh[3]!==4)throw new Error(`Unerwartete Motion-Shape ${JSON.stringify(sh)}; erwartet [Frames,Joints,4,4].`);
+ const T=sh[0],rawJ=sh[1],map=publicMotionMapping(rawJ);
+ const out=new Float32Array(T*poseJointCount*9);
+ const rawLocal=new Float32Array(poseJointCount*9);
+ const rawWorld=new Float32Array(poseJointCount*9);
+ const correctedWorld=new Float32Array(poseJointCount*9);
+ const correction=new Float32Array(9),tmp=new Float32Array(9),parentT=new Float32Array(9);
+
+ for(let f=0;f<T;f++){
+  const frameBase=f*rawJ*16;
+  for(let j=0;j<poseJointCount;j++){
+   const ro=frameBase+map[j]*16,oo=j*9;
+   rawLocal[oo]=Number(npy.data[ro]);rawLocal[oo+1]=Number(npy.data[ro+1]);rawLocal[oo+2]=Number(npy.data[ro+2]);
+   rawLocal[oo+3]=Number(npy.data[ro+4]);rawLocal[oo+4]=Number(npy.data[ro+5]);rawLocal[oo+5]=Number(npy.data[ro+6]);
+   rawLocal[oo+6]=Number(npy.data[ro+8]);rawLocal[oo+7]=Number(npy.data[ro+9]);rawLocal[oo+8]=Number(npy.data[ro+10])
+  }
+
+  rawWorld.set(rawLocal.subarray(0,9),0);
+  for(let j=1;j<poseJointCount;j++)mat3Mul(rawWorld,poseParents[j]*9,rawLocal,j*9,rawWorld,j*9);
+
+  // Exact correction used by NVIDIA's demo:
+  // world_rot = FK(motion_local); world_rot = world_rot @ transpose(t_pose_world_rot)
+  for(let j=0;j<poseJointCount;j++){
+   mat3Transpose(poseOrient3,j*9,correction,0);
+   mat3Mul(rawWorld,j*9,correction,0,correctedWorld,j*9)
+  }
+
+  // Convert world rotations back to local rotations.
+  const dst=f*poseJointCount*9;
+  mat3Identity(out,dst); // Root is padded as identity by SOMALayer.
+  for(let j=1;j<poseJointCount;j++){
+   mat3Transpose(correctedWorld,poseParents[j]*9,parentT,0);
+   mat3Mul(parentT,0,correctedWorld,j*9,out,dst+j*9)
+  }
+ }
+ return {data:out,frames:T,rawJ}
+}
+async function loadOfficialAnimation(){
+ try{
+  if(!poseReady)throw new Error("Zuerst LBS initialisieren.");
+  setState("#officialAnimState","LÄDT","warn");
+  await requestPersistentStorage();
+  const a=await fetchAssetBytes(ASSET_KEY.anim,ANIM,{
+   fallbackSize:5601024,
+   onProgress:(got,total,cacheHit)=>{
+    info("#animPerf",cacheHit
+     ?`✓ NVIDIA-Beispielanimation aus persistentem Cache · ${(got/1048576).toFixed(1)} MB`
+     :`NVIDIA-Beispielanimation ${(got/1048576).toFixed(1)} / ${total?(total/1048576).toFixed(1):"?"} MB · wird persistent gespeichert`)
+   }
+  });
+  const npy=parseNPY(a.u8);
+  const conv=convertOfficialMotionToRelative(npy);
+  officialAnimRel=conv.data;officialAnimFrames=conv.frames;officialAnimLoaded=true;
+  setState("#officialAnimState","BEREIT","ok");
+  info("#animPerf",`✓ Offizielle NVIDIA example_animation.npy geladen
+Frames: ${officialAnimFrames} · Roh-Joints: ${conv.rawJ} → Public-Joints: ${poseJointCount}
+Quelle: ${a.cacheHit?"persistenter iPhone-Cache":"geladen + persistent gespeichert"}
+Die Rotationskonvertierung entspricht jetzt dem offiziellen SOMA-Demo-Pfad.`);
+  return true
+ }catch(e){
+  console.error(e);setState("#officialAnimState","FEHLER","bad");info("#animPerf",`${e?.name||"Fehler"}: ${e?.message||String(e)}`);return false
+ }
+}
+
 function startPoseAnimation(mode){
  if(!poseReady||!poseEulerDeg)return;
+ if(mode==="official"&&!officialAnimLoaded)return;
  poseAnimMode=mode;
  poseAnimRunning=true;
  poseAnimStart=performance.now();
  poseAnimLastStep=0;
  poseAnimFrames=0;poseAnimLbsSum=0;poseAnimLbsMax=0;poseAnimLastUi=0;
- setState("#animState",mode==="walk"?"GANG LÄUFT":"STRESS LÄUFT","ok");
- setState("#poseState","LBS ANIMIERT","ok");
+ const label=mode==="official"?"NVIDIA LÄUFT":mode==="walk"?"GANG LÄUFT":"STRESS LÄUFT";
+ setState("#animState",label,"ok");
+ setState("#poseState","POSE-KONVENTION ANIMIERT","ok");
+ $("#animOfficial").classList.toggle("activeAnim",mode==="official");
  $("#animWalk").classList.toggle("activeAnim",mode==="walk");
  $("#animStress").classList.toggle("activeAnim",mode==="stress");
  info("#animPerf","Animation startet … 30 LBS-Updates/s Zielrate.")
 }
 function stopPoseAnimation(resetPose=false){
  poseAnimRunning=false;
+ $("#animOfficial")?.classList.remove("activeAnim");
  $("#animWalk")?.classList.remove("activeAnim");
  $("#animStress")?.classList.remove("activeAnim");
  if($("#animState"))setState("#animState","STOP","warn");
@@ -668,10 +832,16 @@ function updatePoseAnimation(now){
  poseAnimLastStep=now;
 
  const seconds=(now-poseAnimStart)/1000*poseAnimSpeed;
- if(poseAnimMode==="stress")setRigStressAnimationPose(seconds);
- else setWalkAnimationPose(seconds);
-
- const r=applyPoseToRest(currentRestLow,false,false);
+ let r;
+ if(poseAnimMode==="official"){
+  const f=Math.floor(seconds*officialAnimFps)%officialAnimFrames;
+  const off=f*poseJointCount*9;
+  r=applyRelativePoseMatrices(currentRestLow,officialAnimRel.subarray(off,off+poseJointCount*9),false,false,"NVIDIA-Motion")
+ }else{
+  if(poseAnimMode==="stress")setRigStressAnimationPose(seconds);
+  else setWalkAnimationPose(seconds);
+  r=applyPoseToRest(currentRestLow,false,false)
+ }
  if(!r)return;
  posePass=true;
  poseAnimFrames++;
@@ -681,7 +851,8 @@ function updatePoseAnimation(now){
  if(now-poseAnimLastUi>500){
   poseAnimLastUi=now;
   const avg=poseAnimFrames?poseAnimLbsSum/poseAnimFrames:0;
-  info("#animPerf",`${poseAnimMode==="walk"?"Gang-Loop":"Rig-Stress"} · ${poseAnimSpeed.toFixed(2)}×
+  const animLabel=poseAnimMode==="official"?"NVIDIA example_animation":poseAnimMode==="walk"?"Gang-Loop":"Rig-Stress";
+  info("#animPerf",`${animLabel} · ${poseAnimSpeed.toFixed(2)}×
 LBS Ø ${avg.toFixed(1)} ms · Max ${poseAnimLbsMax.toFixed(1)} ms · ${currentRestLow.length/3} Vertices · ${poseJointCount} Joints
 Ziel: ${poseAnimTargetFps} Pose-Updates/s · WebGL-Render-FPS oben rechts.`);
   syncPoseSlidersFromJoint();
@@ -689,23 +860,11 @@ Ziel: ${poseAnimTargetFps} Pose-Updates/s · WebGL-Render-FPS oben rechts.`);
  }
 }
 
-function applyPoseToRest(rest,markMoved=true,report=true){
+function skinLocalMatrices(rest,local,markMoved=true,report=true,label="Browser-LBS"){
  if(!poseReady||!geometry)return;
  const t0=performance.now(),J=poseJointCount;
- const local=new Float32Array(J*16),world=new Float32Array(J*16),bone=new Float32Array(J*16),delta=new Float32Array(16);
- const tmp=new Float32Array(16);
+ const world=new Float32Array(J*16),bone=new Float32Array(J*16);
 
- for(let j=0;j<J;j++){
-  const o=j*16;
-  makeEulerDelta(
-   (poseEulerDeg[j*3]||0)*Math.PI/180,
-   (poseEulerDeg[j*3+1]||0)*Math.PI/180,
-   (poseEulerDeg[j*3+2]||0)*Math.PI/180,
-   delta,0
-  );
-  // Bind local * user delta: rotates about the joint's own local origin.
-  mat4Mul(poseLocalBase,o,delta,0,local,o)
- }
  world.set(local.subarray(0,16),0);
  for(let j=1;j<J;j++){
   const p=poseParents[j];
@@ -735,22 +894,58 @@ function applyPoseToRest(rest,markMoved=true,report=true){
 
  const elapsed=performance.now()-t0;
  if(markMoved){
-  posePass=true;setState("#poseState","LBS AKTIV","ok");updateDecision()
+  posePass=true;setState("#poseState","POSE-KONVENTION AKTIV","ok");updateDecision()
  }
- if(report)info("#posePerf",`Browser-LBS: ${elapsed.toFixed(1)} ms · ${n} Vertices · ${J} Joints · max. Gewichtssummenfehler ${maxWeightErr.toExponential(1)}\nShape-Regler bleiben aktiv; aktuell wird dabei noch das Template-Skelett benutzt (noch kein shape-adaptives Rebind).`);
- return {ms:elapsed,maxWeightErr}
+ if(report)info("#posePerf",`${label}: ${elapsed.toFixed(1)} ms · ${n} Vertices · ${J} Joints · max. Gewichtssummenfehler ${maxWeightErr.toExponential(1)}
+Rotationen laufen jetzt durch SOMAs T-Pose/Joint-Orient-Konvention; nicht mehr direkt durch die Bind-Achsen.
+Shape-Regler bleiben aktiv; shape-adaptives Rebinding ist weiterhin noch offen.`);
+ return {ms:elapsed,maxWeightErr,world}
 }
-
-function neutralLbsError(){
- const saved=poseEulerDeg.slice();poseEulerDeg.fill(0);
+function applyRelativePoseMatrices(rest,relative3,markMoved=true,report=true,label="SOMA-relative LBS"){
+ const local=new Float32Array(poseJointCount*16);
+ relativeToFinalLocal(relative3,local);
+ return skinLocalMatrices(rest,local,markMoved,report,label)
+}
+function buildRelativeEulerMatrices(){
+ const rel=new Float32Array(poseJointCount*9);
+ for(let j=0;j<poseJointCount;j++){
+  makeEuler3(
+   (poseEulerDeg[j*3]||0)*Math.PI/180,
+   (poseEulerDeg[j*3+1]||0)*Math.PI/180,
+   (poseEulerDeg[j*3+2]||0)*Math.PI/180,
+   rel,j*9
+  )
+ }
+ // SOMALayer pads a virtual Root identity.
+ mat3Identity(rel,0);
+ return rel
+}
+function applyPoseToRest(rest,markMoved=true,report=true){
+ return applyRelativePoseMatrices(rest,buildRelativeEulerMatrices(),markMoved,report,"SOMA-relative LBS")
+}
+function bindLbsError(){
  const rest=currentRestLow,pos=geometry.attributes.position.array;
- applyPoseToRest(rest,false);
+ skinLocalMatrices(rest,poseLocalBase,false,false,"Bind-LBS");
  let max=0,rms=0;
  for(let i=0;i<rest.length;i++){const d=pos[i]-rest[i];max=Math.max(max,Math.abs(d));rms+=d*d}
- poseEulerDeg.set(saved);
  return {max,rms:Math.sqrt(rms/rest.length)}
 }
-
+function jointOrientZeroPoseError(){
+ const rel=new Float32Array(poseJointCount*9);
+ for(let j=0;j<poseJointCount;j++)mat3Identity(rel,j*9);
+ const local=new Float32Array(poseJointCount*16);
+ relativeToFinalLocal(rel,local);
+ const world=new Float32Array(poseJointCount*16);
+ world.set(local.subarray(0,16),0);
+ for(let j=1;j<poseJointCount;j++)mat4Mul(world,poseParents[j]*16,local,j*16,world,j*16);
+ let max=0;
+ for(let j=0;j<poseJointCount;j++){
+  const o=j*16,t=j*16;
+  const idx=[0,1,2,4,5,6,8,9,10];
+  for(const q of idx)max=Math.max(max,Math.abs(world[o+q]-poseTWorld[t+q]))
+ }
+ return max
+}
 function initEmbeddedPoseRig(){
  try{
   if(!arrays||!geometry)throw new Error("Zuerst Punkt 1: Shape-Modell laden.");
@@ -764,7 +959,9 @@ function initEmbeddedPoseRig(){
 
   poseLocalBase=copyRigMatricesToMeters(arrays.bind_pose_local);
   poseBindWorld=copyRigMatricesToMeters(arrays.bind_pose_world);
-  if(poseLocalBase.length!==poseJointCount*16||poseBindWorld.length!==poseJointCount*16)throw new Error("Bindpose-Matrixform passt nicht zum Joint-Count");
+  poseTWorld=copyRigMatricesToMeters(arrays.t_pose_world);
+  if(poseLocalBase.length!==poseJointCount*16||poseBindWorld.length!==poseJointCount*16||poseTWorld.length!==poseJointCount*16)throw new Error("Rig-Matrixform passt nicht zum Joint-Count");
+  buildJointOrientData();
 
   poseInvBind=new Float32Array(poseJointCount*16);
   for(let j=0;j<poseJointCount;j++)rigidInverse(poseBindWorld,j*16,poseInvBind,j*16);
@@ -784,23 +981,30 @@ function initEmbeddedPoseRig(){
   poseReady=true;
   buildPoseControls();
 
-  const neutral=neutralLbsError();
-  // Restore zero pose explicitly after validation.
-  poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false);
+  const bindErr=bindLbsError();
+  const orientErr=jointOrientZeroPoseError();
 
-  setState("#poseState","LBS BEREIT","ok");
-  info("#poseInfo",`✓ ECHTE BROWSER-RIG-DATEN INITIALISIERT
+  // Visual reset now uses SOMA's real all-zero relative pose (= canonical T-pose convention).
+  poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,false);
+
+  setState("#poseState","KONVENTION BEREIT","ok");
+  info("#poseInfo",`✓ RIG + SOMA-POSE-KONVENTION INITIALISIERT
 Quelle: bereits gecachtes offizielles SOMA v0.1 Shape/Rig-NPZ
 Public Joints: ${poseJointCount} inkl. Root · 77 steuerbare Pose-Joints
 Skinweights: ${w.fullV} × ${w.J} → Low-LOD ${w.n} Vertices · Top-${poseTopK}
 Einflüsse/Vertex: ${w.minInflu}–${w.maxInflu}
 Bindpose-FK Maxfehler: ${fkErr.toExponential(2)}
-Neutral-LBS Maxfehler: ${(neutral.max*1000).toFixed(3)} mm · RMS ${(neutral.rms*1000).toFixed(3)} mm
+Bind-LBS Maxfehler: ${(bindErr.max*1000).toFixed(3)} mm · RMS ${(bindErr.rms*1000).toFixed(3)} mm
+Joint-Orient/T-Pose Rotationsfehler: ${orientErr.toExponential(2)}
 
-Jetzt einen Preset-Button oder X/Y/Z-Regler bewegen. Wenn der Körper sichtbar am gewählten Gelenk deformiert, ist echtes LBS auf deinem iPhone praktisch bewiesen.
+FIX v0.1.6: Die Pose-Rotationen werden nicht mehr als "Bind-Achse × Euler" angewendet.
+Sie laufen jetzt wie im SOMA-Runtime-Pfad über T-Pose/Joint-Orient:
+parentOrientᵀ × relativeRotation × jointOrient.
 
-WICHTIG: Dies ist der echte eingebettete 78-Joint-Rig der ersten SOMA-Version. Der aktuelle v0.2-Template-Rig hat zusätzlich 122 Joints inkl. Twist-Joints; dessen kompakte Extraktion bleibt danach noch separat zu prüfen.`);
-  info("#posePerf","Noch Neutralpose. Nutze eine aussagekräftige Pose, die freien Gelenkregler oder starte unten eine Testanimation.")
+Der Button „T-Pose“ ist jetzt deshalb wirklich die SOMA-All-Zero-Pose. Für den stärksten Gegencheck kannst du zusätzlich NVIDIAs echte example_animation.npy laden und abspielen.
+
+WICHTIG: Shape-adaptives Rebinding und der aktuelle v0.2-122-Joint/Twist-Rig sind weiterhin separate Folgetests.`);
+  info("#posePerf","SOMA-Nullpose aktiv. Teste zuerst T-Pose/Arme hoch – danach am besten die offizielle NVIDIA-Animation.")
  }catch(e){
   console.error(e);poseReady=false;posePass=false;setState("#poseState","FEHLER","bad");info("#poseInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}${e?.stack?"\n"+e.stack:""}`)
  }
@@ -844,6 +1048,7 @@ $("#poseSquat").onclick=()=>posePreset("squat");
 $("#poseRun").onclick=()=>posePreset("run");
 $("#poseAction").onclick=()=>posePreset("action");
 $("#poseGrip").onclick=()=>posePreset("grip");
+$("#animOfficial").onclick=async()=>{if(!officialAnimLoaded){const ok=await loadOfficialAnimation();if(!ok)return}startPoseAnimation("official")};
 $("#animWalk").onclick=()=>startPoseAnimation("walk");
 $("#animStress").onclick=()=>startPoseAnimation("stress");
 $("#animStop").onclick=()=>stopPoseAnimation(false);
@@ -854,8 +1059,8 @@ $("#animSpeed").oninput=e=>{
 
 function updateDecision(){
  if(shapePass&&rigPass&&posePass){
-  setState("#decision","LBS AUF IPHONE AKTIV","ok");
-  info("#decisionInfo","Shape, PCA und echter browserseitiger LBS-Lauf sind aktiv. Dieser Test benutzt den offiziellen eingebetteten 78-Joint-Rig des SOMA-v0.1-Assets. Noch NICHT als endgültige BODY-LAB-Basis bewiesen sind: der aktualisierte v0.2-122-Joint/Procedural-Twist-Rig-Pack, shape-adaptive Gelenkpositionen/Rebinding und danach Shape+Pose unter diesen finalen Rig-Daten. BODY LAB bleibt unverändert.")
+  setState("#decision","LBS + POSE-KONVENTION AKTIV","ok");
+  info("#decisionInfo","Shape, PCA, echter browserseitiger LBS-Lauf und SOMAs T-Pose/Joint-Orient-Rotationskonvention sind aktiv. Dieser Test benutzt den offiziellen eingebetteten 78-Joint-Rig des SOMA-v0.1-Assets. Noch NICHT als endgültige BODY-LAB-Basis bewiesen sind: der aktualisierte v0.2-122-Joint/Procedural-Twist-Rig-Pack, shape-adaptive Gelenkpositionen/Rebinding und danach Shape+Pose unter diesen finalen Rig-Daten. BODY LAB bleibt unverändert.")
  }else if(shapePass&&rigPass){
   setState("#decision","NÄCHSTER TEST: ECHTES LBS","warn");
   info("#decisionInfo","Shape und aktueller v0.2-Rig-Vertrag sind bewiesen. Punkt 5 kann jetzt den bereits im gecachten v0.1-SOMA-Asset eingebetteten echten 78-Joint-Rig mit Bindpose + Skinweights direkt im Browser testen – ohne 329-MB-Download.")
