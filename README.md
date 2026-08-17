@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.1.3
+# SOMA Browser PoC v0.1.4
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -43,3 +43,33 @@ No MakeHuman code is used.
 - Wenn der Browser `navigator.storage.persist()` unterstützt, fordert Soma-Lab persistenten Site-Speicher an.
 
 Grenze: Ein App-Versionswechsel löscht den Cache nicht. iOS/Safari kann Website-Daten aber weiterhin entfernen, wenn Website-Daten manuell gelöscht werden, privates Browsen verwendet wird oder das System Site-Daten unter Speicherknappheit bereinigt.
+
+
+## v0.1.4 – echtes Browser-LBS aus dem eingebetteten Public-Rig
+
+Beim Prüfen des offiziellen SOMA-v0.1-Runtimes zeigte sich, dass die erste öffentliche
+`SOMA_neutral.npz` nicht nur Shape-PCA enthielt, sondern auch:
+
+- `joint_parent_ids`
+- `bind_pose_world`
+- `bind_pose_local`
+- `bind_shape`
+- sparse CSC-Skinweights (`data`, `indices`, `indptr`, `shape`)
+
+Das Hugging-Face-Asset, das Soma-Lab bereits für den 27,5-MB-Shape-Test verwendet und
+versionsübergreifend cached, stammt aus dieser ersten öffentlichen Asset-Generation.
+v0.1.4 prüft die Felder zur Laufzeit und verwendet sie nur, wenn sie wirklich vorhanden sind.
+
+Der Browser-Test:
+
+1. validiert 78 Public-Joints inkl. Root,
+2. rekonstruiert Low-LOD-Skinweights und behält bis zu 8 Einflüsse pro Vertex,
+3. validiert die Bind-Hierarchie, indem `bind_pose_local` per FK gegen `bind_pose_world`
+   rekonstruiert wird,
+4. validiert eine neutrale LBS-Runde gegen den unverformten Rest-Shape,
+5. führt danach echte Joint-Rotation + FK + Linear Blend Skinning vollständig in JavaScript aus,
+6. bietet Arm-, Bein-, Wirbelsäulen- und Finger-Presets sowie freie X/Y/Z-Rotation.
+
+Wichtig: Das beweist den echten 78-Joint-Browser-LBS-Pfad des offiziellen SOMA-v0.1-Assets.
+Der aktuelle v0.2-Template-Rig besitzt 122 Joints inklusive prozeduraler Twist-Joints. Dessen
+kompakte 122→78-Ableitung sowie shape-adaptives Skeleton-Rebinding bleiben eigene Folgetests.
