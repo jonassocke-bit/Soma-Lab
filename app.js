@@ -29,17 +29,35 @@ let frames=0,last=performance.now();
 renderer.setAnimationLoop(()=>{orbit.update();renderer.render(scene,cam);frames++;const n=performance.now();if(n-last>1000){$("#fps").textContent=Math.round(frames*1000/(n-last))+" fps";frames=0;last=n}});
 addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 
+function fromFortranOrder(src,shape){
+ if(shape.length<=1)return src;
+ const out=new src.constructor(src.length),coord=new Array(shape.length).fill(0),strideF=new Array(shape.length).fill(1);
+ for(let d=1;d<shape.length;d++)strideF[d]=strideF[d-1]*shape[d-1];
+ let fIndex=0;
+ for(let cIndex=0;cIndex<src.length;cIndex++){
+  out[cIndex]=src[fIndex];
+  for(let d=shape.length-1;d>=0;d--){
+   coord[d]++;fIndex+=strideF[d];
+   if(coord[d]<shape[d])break;
+   fIndex-=coord[d]*strideF[d];coord[d]=0;
+  }
+ }
+ return out
+}
 function parseNPY(u8){
  const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength);
  if(String.fromCharCode(...u8.slice(0,6))!=="\x93NUMPY")throw new Error("Kein NPY");
- const major=u8[6],off=major===1?10:12,hlen=major===1?dv.getUint16(8,true):dv.getUint32(8,true);
- const hdr=new TextDecoder("latin1").decode(u8.slice(off,off+hlen));
- const descr=(hdr.match(/'descr'\s*:\s*'([^']+)'/)||[])[1];
+ const major=u8[6];
+ if(major!==1&&major!==2&&major!==3)throw new Error("NPY-Version "+major+" noch nicht unterstützt");
+ const off=major===1?10:12,hlen=major===1?dv.getUint16(8,true):dv.getUint32(8,true);
+ if(off+hlen>u8.byteLength)throw new Error("NPY-Header abgeschnitten");
+ const hdr=new TextDecoder(major===3?"utf-8":"latin1").decode(u8.slice(off,off+hlen));
+ const descr=(hdr.match(/['"]descr['"]\s*:\s*['"]([^'"]+)['"]/)||[])[1];
  const fortran=/['"]fortran_order['"]\s*:\s*True/.test(hdr);
- const sm=(hdr.match(/'shape'\s*:\s*\(([^)]*)\)/)||[])[1]||"";
+ const sm=(hdr.match(/['"]shape['"]\s*:\s*\(([^)]*)\)/)||[])[1]||"";
  const shape=sm.split(",").map(x=>parseInt(x.trim())).filter(Number.isFinite);
- if(fortran)throw new Error("Fortran-NPY wird noch nicht unterstützt");
- const dataOff=off+hlen, count=shape.reduce((a,b)=>a*b,1)||1;
+ if(!descr)throw new Error("NPY dtype fehlt");
+ const dataOff=off+hlen,count=shape.reduce((a,b)=>a*b,1)||1;
  let Ctor;
  if(/f4$/.test(descr))Ctor=Float32Array;
  else if(/f8$/.test(descr))Ctor=Float64Array;
@@ -49,12 +67,16 @@ function parseNPY(u8){
  else if(/u2$/.test(descr))Ctor=Uint16Array;
  else if(/u1$/.test(descr))Ctor=Uint8Array;
  else if(/[US]\d+$/.test(descr)){
-   const bytes=u8.slice(dataOff);
-   return {shape,descr,data:new TextDecoder("utf-8").decode(bytes).replace(/\0/g,"")}
+   const copy=new Uint8Array(u8.byteLength-dataOff);copy.set(u8.subarray(dataOff));
+   return {shape,descr,fortran,data:new TextDecoder("utf-8").decode(copy).replace(/\0/g,"")}
  } else throw new Error("NPY dtype "+descr+" noch nicht unterstützt");
  const bytes=Ctor.BYTES_PER_ELEMENT*count;
- const copy=u8.slice(dataOff,dataOff+bytes);
- return {shape,descr,data:new Ctor(copy.buffer,copy.byteOffset,count)}
+ if(dataOff+bytes>u8.byteLength)throw new Error(`NPY-Payload abgeschnitten: brauche ${bytes} Bytes ab Offset ${dataOff}, habe ${u8.byteLength-dataOff}`);
+ // Safari/iOS-sicher: Payload in einen eigenen, bei ByteOffset 0 beginnenden Buffer kopieren.
+ const copy=new Uint8Array(bytes);copy.set(u8.subarray(dataOff,dataOff+bytes));
+ const alignedBuffer=copy.buffer.slice(copy.byteOffset,copy.byteOffset+copy.byteLength);
+ const raw=new Ctor(alignedBuffer,0,count);
+ return {shape,descr,fortran,data:fortran?fromFortranOrder(raw,shape):raw}
 }
 function findArray(...names){for(const n of names){if(arrays[n])return arrays[n]}return null}
 async function fetchProgress(url){
@@ -71,20 +93,24 @@ async function loadShape(){
   info("#shapeInfo","NPZ wird im Browser entpackt …");
   const zip=unzipSync(buf), parsed={};
   for(const [name,u8] of Object.entries(zip)){
-   if(name.endsWith(".npy"))parsed[name.replace(/\.npy$/,"")]=parseNPY(u8)
+   if(!name.endsWith(".npy"))continue;
+   try{parsed[name.replace(/\.npy$/,"")]=parseNPY(u8)}
+   catch(e){throw new Error(`${name}: ${e.message}`)}
   }
   arrays=parsed;
   const m=findArray("mean"),d=findArray("shapedirs"),e=findArray("eigenvalues"),tr=findArray("triangles_low","triangles"),lm=findArray("lod_mid_to_low");
   if(!m||!d||!e||!tr)throw new Error("Pflichtarrays fehlen. Gefunden: "+Object.keys(parsed).join(", "));
   mean=m;dirs=d;eig=e;triangles=tr;lowMap=lm;
   setState("#shapeState","BESTANDEN","ok");
+  const fortranArrays=Object.entries(parsed).filter(([,a])=>a.fortran).map(([name])=>name);
   info("#shapeInfo",`✓ NPZ direkt auf iPhone lesbar
 mean ${JSON.stringify(mean.shape)}
 shapedirs ${JSON.stringify(dirs.shape)}
 eigenvalues ${JSON.stringify(eig.shape)}
 triangles ${JSON.stringify(triangles.shape)}
 lod map ${lowMap?JSON.stringify(lowMap.shape):"nicht vorhanden"}
-Arrays insgesamt: ${Object.keys(parsed).length}`);
+Arrays insgesamt: ${Object.keys(parsed).length}
+Fortran-Arrays konvertiert: ${fortranArrays.length?fortranArrays.join(", "):"keine"}`);
   buildLowData();buildMesh();buildSliders();shapePass=true;updateDecision()
  }catch(e){console.error(e);setState("#shapeState","FEHLER","bad");info("#shapeInfo",String(e.stack||e))}
 }
