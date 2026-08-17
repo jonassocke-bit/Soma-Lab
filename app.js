@@ -11,6 +11,110 @@ const PROC=NVRAW+"SOMA_procedural_transforms.json";
 const RIG=NVMEDIA+"SOMA_template_rig.usda";
 const ANIM=HF+"example_animation.npy?download=true";
 
+const ASSET_DB="SomaLabAssetCache";
+const ASSET_DB_VERSION=1;
+const ASSET_STORE="assets";
+// Cache keys describe the data revision, not the app version.
+// Later Soma-Lab versions therefore reuse the same downloaded bytes.
+const ASSET_KEY={
+ shape:"SOMA-X/v0026/SOMA_neutral.npz",
+ proc:"SOMA-X/8663276/SOMA_procedural_transforms.json"
+};
+let assetDBPromise=null;
+
+function openAssetDB(){
+ if(assetDBPromise)return assetDBPromise;
+ assetDBPromise=new Promise((resolve,reject)=>{
+  const req=indexedDB.open(ASSET_DB,ASSET_DB_VERSION);
+  req.onupgradeneeded=()=>{
+   const db=req.result;
+   if(!db.objectStoreNames.contains(ASSET_STORE))db.createObjectStore(ASSET_STORE,{keyPath:"key"})
+  };
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>reject(req.error||new Error("IndexedDB konnte nicht geöffnet werden"));
+ });
+ return assetDBPromise
+}
+async function assetCacheGet(key){
+ const db=await openAssetDB();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(ASSET_STORE,"readonly");
+  const req=tx.objectStore(ASSET_STORE).get(key);
+  req.onsuccess=()=>resolve(req.result||null);
+  req.onerror=()=>reject(req.error||new Error("Asset-Cache lesen fehlgeschlagen"));
+ })
+}
+async function assetCachePut(key,url,u8,type="application/octet-stream"){
+ const db=await openAssetDB();
+ const buffer=u8.buffer.slice(u8.byteOffset,u8.byteOffset+u8.byteLength);
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(ASSET_STORE,"readwrite");
+  tx.objectStore(ASSET_STORE).put({key,url,type,size:u8.byteLength,savedAt:Date.now(),buffer});
+  tx.oncomplete=()=>resolve();
+  tx.onerror=()=>reject(tx.error||new Error("Asset-Cache speichern fehlgeschlagen"));
+  tx.onabort=()=>reject(tx.error||new Error("Asset-Cache speichern abgebrochen"));
+ })
+}
+async function assetCacheDelete(key){
+ const db=await openAssetDB();
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction(ASSET_STORE,"readwrite");
+  tx.objectStore(ASSET_STORE).delete(key);
+  tx.oncomplete=()=>resolve();
+  tx.onerror=()=>reject(tx.error||new Error("Asset-Cache löschen fehlgeschlagen"));
+ })
+}
+async function requestPersistentStorage(){
+ try{
+  if(navigator.storage?.persist)return await navigator.storage.persist();
+ }catch(e){console.warn("Persistent storage request:",e)}
+ return null
+}
+async function fetchAssetBytes(key,url,{fallbackSize=0,onProgress=null,forceNetwork=false}={}){
+ if(!forceNetwork){
+  try{
+   const cached=await assetCacheGet(key);
+   if(cached?.buffer){
+    const u8=new Uint8Array(cached.buffer);
+    if(onProgress)onProgress(u8.byteLength,u8.byteLength,true);
+    return {u8,cacheHit:true,size:u8.byteLength}
+   }
+  }catch(e){console.warn("Asset-Cache read failed, network fallback:",e)}
+ }
+
+ const r=await fetch(url,{mode:"cors",cache:"force-cache"});
+ if(!r.ok)throw new Error("HTTP "+r.status);
+ const total=+r.headers.get("content-length")||fallbackSize;
+ const reader=r.body?.getReader();
+ let out;
+
+ if(reader){
+  const chunks=[];let got=0;
+  for(;;){
+   const {done,value}=await reader.read();
+   if(done)break;
+   chunks.push(value);got+=value.length;
+   if(onProgress)onProgress(got,total,false)
+  }
+  out=new Uint8Array(got);
+  let o=0;for(const c of chunks){out.set(c,o);o+=c.length}
+ }else{
+  out=new Uint8Array(await r.arrayBuffer());
+  if(onProgress)onProgress(out.byteLength,out.byteLength,false)
+ }
+
+ try{
+  await assetCachePut(key,url,out,r.headers.get("content-type")||"application/octet-stream")
+ }catch(e){
+  console.warn("Asset konnte nicht persistent gespeichert werden:",e)
+ }
+ return {u8:out,cacheHit:false,size:out.byteLength}
+}
+async function fetchAssetJSON(key,url){
+ const a=await fetchAssetBytes(key,url);
+ return {json:JSON.parse(new TextDecoder("utf-8").decode(a.u8)),cacheHit:a.cacheHit}
+}
+
 const $=s=>document.querySelector(s);
 const setState=(sel,txt,cls="")=>{const e=$(sel);e.textContent=txt;e.className=cls};
 const info=(sel,txt)=>$(sel).textContent=txt;
@@ -81,24 +185,45 @@ function parseNPY(u8){
  return {shape,descr,fortran,data:fortran?fromFortranOrder(raw,shape):raw}
 }
 function findArray(...names){for(const n of names){if(arrays[n])return arrays[n]}return null}
-async function fetchProgress(url){
- const r=await fetch(url,{mode:"cors",cache:"force-cache"});if(!r.ok)throw new Error("HTTP "+r.status);
- const total=+r.headers.get("content-length")||27488638;
- const reader=r.body.getReader(),chunks=[];let got=0;
- for(;;){const {done,value}=await reader.read();if(done)break;chunks.push(value);got+=value.length;$("#bar").style.width=Math.min(100,got/total*100)+"%";info("#shapeInfo",`Download ${(got/1048576).toFixed(1)} / ${(total/1048576).toFixed(1)} MB`)}
- const out=new Uint8Array(got);let o=0;for(const c of chunks){out.set(c,o);o+=c.length}return out
+async function fetchShapeAsset(forceNetwork=false){
+ return fetchAssetBytes(ASSET_KEY.shape,SHAPE,{
+  fallbackSize:27488638,
+  forceNetwork,
+  onProgress:(got,total,cacheHit)=>{
+   $("#bar").style.width=(cacheHit?100:Math.min(100,total?got/total*100:0))+"%";
+   info("#shapeInfo",cacheHit
+    ?`✓ Aus persistentem iPhone-Cache · ${(got/1048576).toFixed(1)} MB · kein erneuter Download`
+    :`Download ${(got/1048576).toFixed(1)} / ${total?(total/1048576).toFixed(1):"?"} MB · wird anschließend persistent gespeichert`)
+  }
+ })
+}
+async function decodeShapeNPZ(buf){
+ const zip=unzipSync(buf),parsed={};
+ for(const [name,u8] of Object.entries(zip)){
+  if(!name.endsWith(".npy"))continue;
+  try{parsed[name.replace(/\.npy$/,"")]=parseNPY(u8)}
+  catch(e){throw new Error(`${name}: ${e.message}`)}
+ }
+ return parsed
 }
 async function loadShape(){
  try{
   setState("#shapeState","LÄDT","warn");
-  const buf=await fetchProgress(SHAPE);
-  info("#shapeInfo","NPZ wird im Browser entpackt …");
-  const zip=unzipSync(buf), parsed={};
-  for(const [name,u8] of Object.entries(zip)){
-   if(!name.endsWith(".npy"))continue;
-   try{parsed[name.replace(/\.npy$/,"")]=parseNPY(u8)}
-   catch(e){throw new Error(`${name}: ${e.message}`)}
+  await requestPersistentStorage();
+
+  let asset=await fetchShapeAsset(false),parsed;
+  try{
+   parsed=await decodeShapeNPZ(asset.u8)
+  }catch(firstError){
+   if(!asset.cacheHit)throw firstError;
+   console.warn("Cached Shape ungültig, lösche nur dieses Asset und lade einmal neu:",firstError);
+   info("#shapeInfo","Lokaler Shape-Cache war ungültig · wird einmalig neu geladen …");
+   await assetCacheDelete(ASSET_KEY.shape);
+   asset=await fetchShapeAsset(true);
+   parsed=await decodeShapeNPZ(asset.u8)
   }
+
+  info("#shapeInfo","NPZ wird im Browser ausgewertet …");
   arrays=parsed;
   const m=findArray("mean"),d=findArray("shapedirs"),e=findArray("eigenvalues"),tr=findArray("triangles_low","triangles"),lm=findArray("lod_mid_to_low");
   if(!m||!d||!e||!tr)throw new Error("Pflichtarrays fehlen. Gefunden: "+Object.keys(parsed).join(", "));
@@ -106,6 +231,8 @@ async function loadShape(){
   setState("#shapeState","BESTANDEN","ok");
   const fortranArrays=Object.entries(parsed).filter(([,a])=>a.fortran).map(([name])=>name);
   info("#shapeInfo",`✓ NPZ direkt auf iPhone lesbar
+Asset-Quelle: ${asset.cacheHit?"persistenter iPhone-Cache · kein Download":"geladen und persistent gespeichert"}
+Cache-Schlüssel: ${ASSET_KEY.shape}
 mean ${JSON.stringify(mean.shape)}
 shapedirs ${JSON.stringify(dirs.shape)}
 eigenvalues ${JSON.stringify(eig.shape)}
@@ -114,7 +241,9 @@ lod map ${lowMap?JSON.stringify(lowMap.shape):"nicht vorhanden"}
 Arrays insgesamt: ${Object.keys(parsed).length}
 Fortran-Arrays konvertiert: ${fortranArrays.length?fortranArrays.join(", "):"keine"}`);
   buildLowData();buildMesh();buildSliders();shapePass=true;updateDecision()
- }catch(e){console.error(e);setState("#shapeState","FEHLER","bad");info("#shapeInfo",String(e.stack||e))}
+ }catch(e){
+  console.error(e);setState("#shapeState","FEHLER","bad");info("#shapeInfo",String(e.stack||e))
+ }
 }
 function buildLowData(){
  const V=mean.shape[0],K=eig.shape[0], useLow=!!lowMap;
@@ -160,8 +289,9 @@ async function headSize(url){
 async function testRig(){
  try{
   setState("#rigState","PRÜFT","warn");
-  const jr=await fetch(PROC,{mode:"cors",cache:"force-cache"});if(!jr.ok)throw new Error("Procedural JSON HTTP "+jr.status);
-  const j=await jr.json();
+  await requestPersistentStorage();
+  const procAsset=await fetchAssetJSON(ASSET_KEY.proc,PROC);
+  const j=procAsset.json;
   const names=j.public_rig_derivation?.main_joint_names||j.public_joint_names||j.publicJointNames||j.joint_names||[];
   const templateCount=Number(j.template_asset?.joint_count)||0;
   const templateFile=j.template_asset?.file||"unbekannt";
@@ -176,7 +306,7 @@ Public-Rig-Namen: ${names.length} (inkl. Root)
 Template-Rig laut Sidecar: ${templateCount} Joints · ${templateFile}
 Template-Rig LFS/HEAD: ${rigTxt}
 Beispielanimation: ${animTxt}
-Quelle gepinnt: NVlabs/SOMA-X 8663276
+Quelle gepinnt: NVlabs/SOMA-X 8663276\nProcedural-Sidecar: ${procAsset.cacheHit?"persistenter Cache":"geladen + persistent gespeichert"}
 
 WICHTIG: Damit ist nur der Rig-Vertrag bestätigt. Das große USD wird absichtlich NICHT vollständig geladen. Bindpose + Hierarchie + Skinweights müssen wir als nächsten Schritt real extrahieren und danach im Browser testen.`);
   rigPass=contractOK;setState("#poseState","BRAUCHT RIG-PACK","warn");updateDecision()

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>SOMA Browser PoC v0.1.2</title>
+<title>SOMA Browser PoC v0.1.3</title>
 <link rel="stylesheet" href="style.css">
 <script type="importmap">
 {"imports":{
@@ -16,7 +16,7 @@
 <body>
 <div id="viewport"></div>
 <header>
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.1.2</small><b>Shape · Rig · Pose Machbarkeit</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.1.3</small><b>Shape · Rig · Pose Machbarkeit</b></div>
  <span id="fps">– fps</span>
 </header>
 <main>
@@ -24,7 +24,7 @@
   <div class="step"><i>1</i><div><b>SOMA Shape-Asset</b><small>27,5 MB direkt von NVIDIA/Hugging Face · kein Account</small></div><em id="shapeState">BEREIT</em></div>
   <button id="loadShape" class="primary">Shape-Modell laden & prüfen</button>
   <div class="progress"><div id="bar"></div></div>
-  <div id="shapeInfo" class="info">Noch nicht geladen. Beim ersten Test wird das Asset direkt auf deinem iPhone geladen.</div>
+  <div id="shapeInfo" class="info">Persistenter Asset-Cache aktiv: Nach dem ersten erfolgreichen Laden bleibt das SOMA-Asset versionsübergreifend in IndexedDB gespeichert.</div>
  </section>
 
  <section>
