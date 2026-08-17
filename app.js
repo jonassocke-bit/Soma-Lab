@@ -146,6 +146,9 @@ let shapePass=false, rigPass=false, posePass=false;
 let poseReady=false, poseParents=null, poseLocalBase=null, poseBindWorld=null, poseInvBind=null;
 let poseBoneIndices=null, poseBoneWeights=null, poseEulerDeg=null, poseJointCount=0, poseTopK=8;
 
+let poseAnimRunning=false,poseAnimMode="walk",poseAnimStart=0,poseAnimLastStep=0,poseAnimSpeed=1;
+let poseAnimTargetFps=30,poseAnimFrames=0,poseAnimLbsSum=0,poseAnimLbsMax=0,poseAnimLastUi=0;
+
 const scene=new THREE.Scene();
 const cam=new THREE.PerspectiveCamera(32,innerWidth/innerHeight,.01,100);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:"high-performance"});
@@ -155,7 +158,16 @@ const dl=new THREE.DirectionalLight(0xffffff,2.5);dl.position.set(3,5,4);scene.a
 const orbit=new OrbitControls(cam,renderer.domElement);orbit.enableDamping=true;orbit.dampingFactor=.08;
 cam.position.set(0,1,4);orbit.target.set(0,1,0);
 let frames=0,last=performance.now();
-renderer.setAnimationLoop(()=>{orbit.update();renderer.render(scene,cam);frames++;const n=performance.now();if(n-last>1000){$("#fps").textContent=Math.round(frames*1000/(n-last))+" fps";frames=0;last=n}});
+renderer.setAnimationLoop(()=>{
+ const n=performance.now();
+ if(poseAnimRunning)updatePoseAnimation(n);
+ orbit.update();renderer.render(scene,cam);
+ frames++;
+ if(n-last>1000){
+  $("#fps").textContent=Math.round(frames*1000/(n-last))+" fps";
+  frames=0;last=n
+ }
+});
 addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 
 function fromFortranOrder(src,shape){
@@ -465,6 +477,7 @@ function buildPoseControls(){
  for(const axis of ["X","Y","Z"]){
   const r=$("#pose"+axis),o=$("#pose"+axis+"Out");
   r.oninput=()=>{
+   stopPoseAnimation(false);
    const j=Number(sel.value),a=axis==="X"?0:axis==="Y"?1:2;
    poseEulerDeg[j*3+a]=Number(r.value);o.value=`${Number(r.value).toFixed(0)}°`;
    applyPoseToRest(currentRestLow,true)
@@ -483,28 +496,200 @@ function syncPoseSlidersFromJoint(){
 }
 function clearPose(){
  if(!poseEulerDeg)return;
+ stopPoseAnimation(false);
  poseEulerDeg.fill(0);syncPoseSlidersFromJoint();applyPoseToRest(currentRestLow,true)
 }
 function setJointEuler(name,x=0,y=0,z=0){
  const j=jointIndex(name);if(j<0||j>=poseJointCount)return;
  poseEulerDeg[j*3]=x;poseEulerDeg[j*3+1]=y;poseEulerDeg[j*3+2]=z
 }
-function posePreset(kind){
- poseEulerDeg.fill(0);
- if(kind==="arm"){
-  setJointEuler("LeftArm",25,0,-45);setJointEuler("LeftForeArm",0,25,-35)
- }else if(kind==="leg"){
-  setJointEuler("LeftLeg",25,0,18);setJointEuler("LeftShin",-38,0,0)
- }else if(kind==="spine"){
-  setJointEuler("Spine1",0,18,0);setJointEuler("Spine2",0,18,0);setJointEuler("Chest",0,12,0)
- }else if(kind==="finger"){
-  setJointEuler("LeftHandIndex1",0,0,35);setJointEuler("LeftHandIndex2",0,0,45);
-  setJointEuler("LeftHandIndex3",0,0,35);setJointEuler("LeftHandIndex4",0,0,20)
+function setFingerCurl(side,amount){
+ const prefix=side+"Hand";
+ const fingers=["Index","Middle","Ring","Pinky"];
+ for(const f of fingers){
+  setJointEuler(prefix+f+"1",0,0,amount*.65);
+  setJointEuler(prefix+f+"2",0,0,amount*.9);
+  setJointEuler(prefix+f+"3",0,0,amount);
+  setJointEuler(prefix+f+"4",0,0,amount*.65)
  }
+ setJointEuler(prefix+"Thumb1",0,amount*.28,amount*.32);
+ setJointEuler(prefix+"Thumb2",0,amount*.18,amount*.48);
+ setJointEuler(prefix+"Thumb3",0,0,amount*.42)
+}
+function posePreset(kind){
+ if(!poseEulerDeg)return;
+ stopPoseAnimation(false);
+ poseEulerDeg.fill(0);
+
+ if(kind==="tpose"){
+  setJointEuler("LeftArm",0,0,-48);
+  setJointEuler("RightArm",0,0,48);
+ }else if(kind==="overhead"){
+  setJointEuler("LeftArm",-8,0,-112);
+  setJointEuler("RightArm",-8,0,112);
+  setJointEuler("LeftForeArm",0,10,-12);
+  setJointEuler("RightForeArm",0,-10,12);
+  setJointEuler("Chest",-6,0,0);
+ }else if(kind==="squat"){
+  setJointEuler("Hips",10,0,0);
+  setJointEuler("Spine1",-9,0,0);
+  setJointEuler("Spine2",-7,0,0);
+  setJointEuler("LeftLeg",38,0,5);
+  setJointEuler("RightLeg",38,0,-5);
+  setJointEuler("LeftShin",-67,0,0);
+  setJointEuler("RightShin",-67,0,0);
+  setJointEuler("LeftFoot",28,0,0);
+  setJointEuler("RightFoot",28,0,0);
+  setJointEuler("LeftArm",24,0,-26);
+  setJointEuler("RightArm",24,0,26);
+  setJointEuler("LeftForeArm",8,0,-16);
+  setJointEuler("RightForeArm",8,0,16);
+ }else if(kind==="run"){
+  setJointEuler("LeftLeg",38,0,8);
+  setJointEuler("LeftShin",-52,0,0);
+  setJointEuler("LeftFoot",20,0,0);
+  setJointEuler("RightLeg",-29,0,-5);
+  setJointEuler("RightShin",-14,0,0);
+  setJointEuler("LeftArm",-28,0,-18);
+  setJointEuler("LeftForeArm",12,0,-42);
+  setJointEuler("RightArm",31,0,18);
+  setJointEuler("RightForeArm",12,0,42);
+  setJointEuler("Spine1",0,9,0);
+  setJointEuler("Spine2",0,8,0);
+  setJointEuler("Chest",0,6,0);
+  setJointEuler("Head",0,-8,0);
+ }else if(kind==="action"){
+  setJointEuler("LeftArm",-12,0,-105);
+  setJointEuler("LeftForeArm",0,12,-18);
+  setJointEuler("RightArm",28,0,24);
+  setJointEuler("RightForeArm",0,-18,48);
+  setJointEuler("LeftLeg",18,0,8);
+  setJointEuler("LeftShin",-38,0,0);
+  setJointEuler("RightLeg",-12,0,-8);
+  setJointEuler("Spine1",-4,12,0);
+  setJointEuler("Spine2",-3,15,0);
+  setJointEuler("Chest",0,12,0);
+  setJointEuler("Neck1",0,-8,0);
+  setJointEuler("Head",0,-10,0);
+  setFingerCurl("Right",35);
+ }else if(kind==="grip"){
+  setJointEuler("LeftArm",18,0,-32);
+  setJointEuler("RightArm",18,0,32);
+  setJointEuler("LeftForeArm",0,0,-48);
+  setJointEuler("RightForeArm",0,0,48);
+  setJointEuler("LeftHand",0,8,0);
+  setJointEuler("RightHand",0,-8,0);
+  setFingerCurl("Left",58);
+  setFingerCurl("Right",58)
+ }
+
  syncPoseSlidersFromJoint();applyPoseToRest(currentRestLow,true)
 }
 
-function applyPoseToRest(rest,markMoved=true){
+function setWalkAnimationPose(seconds){
+ poseEulerDeg.fill(0);
+ const p=seconds*Math.PI*2*.82;
+ const s=Math.sin(p),c=Math.cos(p),s2=Math.sin(p*2);
+
+ setJointEuler("LeftLeg",31*s,0,4*c);
+ setJointEuler("RightLeg",-31*s,0,-4*c);
+ setJointEuler("LeftShin",-8-34*Math.max(0,-s),0,0);
+ setJointEuler("RightShin",-8-34*Math.max(0,s),0,0);
+ setJointEuler("LeftFoot",8+12*Math.max(0,-s),0,0);
+ setJointEuler("RightFoot",8+12*Math.max(0,s),0,0);
+
+ setJointEuler("LeftArm",-25*s,0,-12);
+ setJointEuler("RightArm",25*s,0,12);
+ setJointEuler("LeftForeArm",8+10*Math.max(0,s),0,-20);
+ setJointEuler("RightForeArm",8+10*Math.max(0,-s),0,20);
+
+ setJointEuler("Spine1",0,3.5*s2,0);
+ setJointEuler("Spine2",0,4.5*s2,0);
+ setJointEuler("Chest",0,3*s2,0);
+ setJointEuler("Head",0,-3.5*s2,0)
+}
+
+function setRigStressAnimationPose(seconds){
+ poseEulerDeg.fill(0);
+ const p=seconds*Math.PI*2*.34;
+ const a=(Math.sin(p)+1)*.5;
+ const b=Math.sin(p*.73+1.2);
+ const c=Math.sin(p*1.31-.4);
+
+ setJointEuler("LeftArm",-8+14*c,0,-18-88*a);
+ setJointEuler("RightArm",-8-14*c,0,18+88*a);
+ setJointEuler("LeftForeArm",0,12*b,-12-45*(1-a));
+ setJointEuler("RightForeArm",0,-12*b,12+45*(1-a));
+
+ setJointEuler("LeftLeg",26*b,0,8*c);
+ setJointEuler("RightLeg",-26*b,0,-8*c);
+ setJointEuler("LeftShin",-12-42*Math.max(0,-b),0,0);
+ setJointEuler("RightShin",-12-42*Math.max(0,b),0,0);
+ setJointEuler("LeftFoot",10+12*Math.max(0,-b),0,0);
+ setJointEuler("RightFoot",10+12*Math.max(0,b),0,0);
+
+ setJointEuler("Spine1",-6*Math.sin(p*.5),10*c,0);
+ setJointEuler("Spine2",-5*Math.sin(p*.5+.4),14*c,0);
+ setJointEuler("Chest",0,10*c,5*b);
+ setJointEuler("Neck1",0,-7*c,0);
+ setJointEuler("Head",4*b,-10*c,0);
+
+ const curl=12+48*a;
+ setFingerCurl("Left",curl);
+ setFingerCurl("Right",curl)
+}
+
+function startPoseAnimation(mode){
+ if(!poseReady||!poseEulerDeg)return;
+ poseAnimMode=mode;
+ poseAnimRunning=true;
+ poseAnimStart=performance.now();
+ poseAnimLastStep=0;
+ poseAnimFrames=0;poseAnimLbsSum=0;poseAnimLbsMax=0;poseAnimLastUi=0;
+ setState("#animState",mode==="walk"?"GANG LÄUFT":"STRESS LÄUFT","ok");
+ setState("#poseState","LBS ANIMIERT","ok");
+ $("#animWalk").classList.toggle("activeAnim",mode==="walk");
+ $("#animStress").classList.toggle("activeAnim",mode==="stress");
+ info("#animPerf","Animation startet … 30 LBS-Updates/s Zielrate.")
+}
+function stopPoseAnimation(resetPose=false){
+ poseAnimRunning=false;
+ $("#animWalk")?.classList.remove("activeAnim");
+ $("#animStress")?.classList.remove("activeAnim");
+ if($("#animState"))setState("#animState","STOP","warn");
+ if(resetPose&&poseEulerDeg){
+  poseEulerDeg.fill(0);syncPoseSlidersFromJoint();applyPoseToRest(currentRestLow,true)
+ }
+}
+function updatePoseAnimation(now){
+ if(!poseAnimRunning||!poseReady||!poseEulerDeg)return;
+ const frameMs=1000/poseAnimTargetFps;
+ if(poseAnimLastStep&&now-poseAnimLastStep<frameMs)return;
+ poseAnimLastStep=now;
+
+ const seconds=(now-poseAnimStart)/1000*poseAnimSpeed;
+ if(poseAnimMode==="stress")setRigStressAnimationPose(seconds);
+ else setWalkAnimationPose(seconds);
+
+ const r=applyPoseToRest(currentRestLow,false,false);
+ if(!r)return;
+ posePass=true;
+ poseAnimFrames++;
+ poseAnimLbsSum+=r.ms;
+ poseAnimLbsMax=Math.max(poseAnimLbsMax,r.ms);
+
+ if(now-poseAnimLastUi>500){
+  poseAnimLastUi=now;
+  const avg=poseAnimFrames?poseAnimLbsSum/poseAnimFrames:0;
+  info("#animPerf",`${poseAnimMode==="walk"?"Gang-Loop":"Rig-Stress"} · ${poseAnimSpeed.toFixed(2)}×
+LBS Ø ${avg.toFixed(1)} ms · Max ${poseAnimLbsMax.toFixed(1)} ms · ${currentRestLow.length/3} Vertices · ${poseJointCount} Joints
+Ziel: ${poseAnimTargetFps} Pose-Updates/s · WebGL-Render-FPS oben rechts.`);
+  syncPoseSlidersFromJoint();
+  updateDecision()
+ }
+}
+
+function applyPoseToRest(rest,markMoved=true,report=true){
  if(!poseReady||!geometry)return;
  const t0=performance.now(),J=poseJointCount;
  const local=new Float32Array(J*16),world=new Float32Array(J*16),bone=new Float32Array(J*16),delta=new Float32Array(16);
@@ -548,10 +733,12 @@ function applyPoseToRest(rest,markMoved=true){
  }
  geometry.attributes.position.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingSphere();
 
+ const elapsed=performance.now()-t0;
  if(markMoved){
   posePass=true;setState("#poseState","LBS AKTIV","ok");updateDecision()
  }
- info("#posePerf",`Browser-LBS: ${(performance.now()-t0).toFixed(1)} ms · ${n} Vertices · ${J} Joints · max. Gewichtssummenfehler ${maxWeightErr.toExponential(1)}\nShape-Regler bleiben aktiv; aktuell wird dabei noch das Template-Skelett benutzt (noch kein shape-adaptives Rebind).`)
+ if(report)info("#posePerf",`Browser-LBS: ${elapsed.toFixed(1)} ms · ${n} Vertices · ${J} Joints · max. Gewichtssummenfehler ${maxWeightErr.toExponential(1)}\nShape-Regler bleiben aktiv; aktuell wird dabei noch das Template-Skelett benutzt (noch kein shape-adaptives Rebind).`);
+ return {ms:elapsed,maxWeightErr}
 }
 
 function neutralLbsError(){
@@ -613,7 +800,7 @@ Neutral-LBS Maxfehler: ${(neutral.max*1000).toFixed(3)} mm · RMS ${(neutral.rms
 Jetzt einen Preset-Button oder X/Y/Z-Regler bewegen. Wenn der Körper sichtbar am gewählten Gelenk deformiert, ist echtes LBS auf deinem iPhone praktisch bewiesen.
 
 WICHTIG: Dies ist der echte eingebettete 78-Joint-Rig der ersten SOMA-Version. Der aktuelle v0.2-Template-Rig hat zusätzlich 122 Joints inkl. Twist-Joints; dessen kompakte Extraktion bleibt danach noch separat zu prüfen.`);
-  info("#posePerf","Noch Neutralpose. Bewege jetzt einen Regler oder nutze einen Preset-Test.")
+  info("#posePerf","Noch Neutralpose. Nutze eine aussagekräftige Pose, die freien Gelenkregler oder starte unten eine Testanimation.")
  }catch(e){
   console.error(e);poseReady=false;posePass=false;setState("#poseState","FEHLER","bad");info("#poseInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}${e?.stack?"\n"+e.stack:""}`)
  }
@@ -651,10 +838,19 @@ WICHTIG: Damit ist nur der Rig-Vertrag bestätigt. Das große USD wird absichtli
 $("#testRig").onclick=testRig;
 $("#initPose").onclick=initEmbeddedPoseRig;
 $("#poseReset").onclick=clearPose;
-$("#poseArm").onclick=()=>posePreset("arm");
-$("#poseLeg").onclick=()=>posePreset("leg");
-$("#poseSpine").onclick=()=>posePreset("spine");
-$("#poseFinger").onclick=()=>posePreset("finger");
+$("#poseT").onclick=()=>posePreset("tpose");
+$("#poseOverhead").onclick=()=>posePreset("overhead");
+$("#poseSquat").onclick=()=>posePreset("squat");
+$("#poseRun").onclick=()=>posePreset("run");
+$("#poseAction").onclick=()=>posePreset("action");
+$("#poseGrip").onclick=()=>posePreset("grip");
+$("#animWalk").onclick=()=>startPoseAnimation("walk");
+$("#animStress").onclick=()=>startPoseAnimation("stress");
+$("#animStop").onclick=()=>stopPoseAnimation(false);
+$("#animSpeed").oninput=e=>{
+ poseAnimSpeed=Number(e.target.value);
+ $("#animSpeedOut").value=poseAnimSpeed.toFixed(2)+"×"
+};
 
 function updateDecision(){
  if(shapePass&&rigPass&&posePass){

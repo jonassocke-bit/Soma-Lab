@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>SOMA Browser PoC v0.1.4</title>
+<title>SOMA Browser PoC v0.1.5</title>
 <link rel="stylesheet" href="style.css">
 <script type="importmap">
 {"imports":{
@@ -16,7 +16,7 @@
 <body>
 <div id="viewport"></div>
 <header>
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.1.4</small><b>Shape · Rig · Pose Machbarkeit</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.1.5</small><b>Shape · Rig · Pose Machbarkeit</b></div>
  <span id="fps">– fps</span>
 </header>
 <main>
@@ -48,7 +48,7 @@
  </section>
 
  <section>
-  <div class="step"><i>5</i><div><b>Pose-Runtime – echtes Browser-LBS</b><small>Bindpose + Hierarchie + Skinweights aus dem bereits gecachten SOMA-Asset</small></div><em id="poseState">WARTE AUF SHAPE</em></div>
+  <div class="step"><i>5</i><div><b>Pose-Runtime – echtes Browser-LBS</b><small>echtes LBS · markante Ganzkörperposen · kontinuierlicher Animations-Stresstest</small></div><em id="poseState">WARTE AUF SHAPE</em></div>
   <button id="initPose" class="primary" disabled>LBS initialisieren & testen</button>
   <div id="poseInfo" class="info">Nach Punkt 1 wird geprüft, ob das bereits gecachte offizielle SOMA-Asset die eingebetteten Rig-Daten der ersten SOMA-Version enthält.</div>
   <div id="poseControls" class="hidden">
@@ -58,11 +58,32 @@
    <div class="slider"><label>Rotation X</label><input id="poseX" type="range" min="-90" max="90" step="1" value="0"><output id="poseXOut">0°</output></div>
    <div class="slider"><label>Rotation Y</label><input id="poseY" type="range" min="-90" max="90" step="1" value="0"><output id="poseYOut">0°</output></div>
    <div class="slider"><label>Rotation Z</label><input id="poseZ" type="range" min="-90" max="90" step="1" value="0"><output id="poseZOut">0°</output></div>
+   <div class="presetTitle">Aussagekräftige Testposen</div>
    <div class="row poseButtons">
-    <button id="poseArm">Arm-Test</button><button id="poseLeg">Bein-Test</button>
-    <button id="poseSpine">Wirbelsäule</button><button id="poseFinger">Finger-Test</button>
+    <button id="poseT">T-Pose</button>
+    <button id="poseOverhead">Arme hoch</button>
+    <button id="poseSquat">Kniebeuge</button>
+    <button id="poseRun">Laufpose</button>
+    <button id="poseAction">Action-Pose</button>
+    <button id="poseGrip">Greifen / Finger</button>
     <button id="poseReset">Pose Reset</button>
    </div>
+
+   <div class="animBox">
+    <div class="animHead"><b>Testanimation</b><em id="animState" class="warn">STOP</em></div>
+    <div class="row poseButtons">
+     <button id="animWalk">Gang-Loop</button>
+     <button id="animStress">Rig-Stress</button>
+     <button id="animStop">Stop</button>
+    </div>
+    <div class="slider animSpeedRow">
+     <label>Tempo</label>
+     <input id="animSpeed" type="range" min=".25" max="2" step=".05" value="1">
+     <output id="animSpeedOut">1.00×</output>
+    </div>
+    <div id="animPerf" class="info">Gang-Loop = kontinuierlicher Ganzkörpertest. Rig-Stress = große Gelenkbewegungen inkl. Wirbelsäule und Finger.</div>
+   </div>
+
    <div id="posePerf" class="info">Noch nicht initialisiert.</div>
   </div>
  </section>

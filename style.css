@@ -17,3 +17,11 @@ select{width:100%;border:0;border-radius:10px;background:#202126;color:#f2f2f3;p
 .poseButtons{margin-top:8px}
 .poseButtons button{font-size:10px}
 button:disabled{opacity:.4}
+
+.presetTitle{font-size:9px;font-weight:800;color:#c9c9cc;margin:10px 0 5px}
+.animBox{margin-top:11px;padding:9px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.02)}
+.animHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.animHead b{font-size:10px}
+.animHead em{font-size:8px;font-style:normal;letter-spacing:.08em}
+.activeAnim{background:#f2f2f3!important;color:#111!important}
+.animSpeedRow{margin-top:7px}

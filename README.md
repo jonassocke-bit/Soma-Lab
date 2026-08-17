@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.1.4
+# SOMA Browser PoC v0.1.5
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -73,3 +73,34 @@ Der Browser-Test:
 Wichtig: Das beweist den echten 78-Joint-Browser-LBS-Pfad des offiziellen SOMA-v0.1-Assets.
 Der aktuelle v0.2-Template-Rig besitzt 122 Joints inklusive prozeduraler Twist-Joints. Dessen
 kompakte 122→78-Ableitung sowie shape-adaptives Skeleton-Rebinding bleiben eigene Folgetests.
+
+
+## v0.1.5 – Motion-/Pose-Stresstest
+
+Diese Version baut auf dem bereits auf dem iPhone bewiesenen 78-Joint-Browser-LBS auf.
+Es werden keine neuen großen Assets geladen; der versionsübergreifende Cache bleibt unverändert.
+
+Neu:
+
+- deutlich aussagekräftigere Ganzkörper-Presets:
+  - T-Pose
+  - Arme hoch
+  - Kniebeuge
+  - Laufpose
+  - asymmetrische Action-Pose
+  - Greifen/Finger-Curl
+- kontinuierlicher **Gang-Loop** als dynamischer Ganzkörpertest
+- kontinuierlicher **Rig-Stress** mit großen Schulter-/Armbewegungen, alternierenden Beinen,
+  Wirbelsäule, Hals/Kopf und Finger-Curl
+- Animationstempo 0,25× bis 2,00×
+- Animation läuft mit Zielrate 30 LBS-Updates/s und zeigt:
+  - durchschnittliche LBS-Zeit
+  - maximale LBS-Zeit
+  - Vertex-/Joint-Anzahl
+  - die WebGL-Render-FPS bleiben oben rechts sichtbar
+- manuelle Gelenkregler oder statische Presets übernehmen automatisch die Kontrolle von einer laufenden Animation.
+
+Wichtig:
+Dies ist weiterhin der echte eingebettete 78-Joint-Rig des SOMA-v0.1-Assets.
+Der aktualisierte v0.2-Template-Rig mit 122 Joints/Procedural-Twist-Joints und das
+shape-adaptive Skeleton-Rebinding bleiben separate Folgetests.
