@@ -1,0 +1,348 @@
+{
+  "source_file": "X Bot.fbx",
+  "fbx_version": 7700,
+  "bone_count": 65,
+  "root": "mixamorig:Hips",
+  "unit_scale_factor": 1.0,
+  "observations": {
+    "neck_bones": [
+      "mixamorig:Neck"
+    ],
+    "head_chain": [
+      "mixamorig:Neck",
+      "mixamorig:Head",
+      "mixamorig:HeadTop_End"
+    ],
+    "finger_pattern": "Thumb/Index/Middle/Ring/Pinky each use 1..4",
+    "rotation_curve_targets": 65,
+    "root_translation_target": "mixamorig:Hips",
+    "important": "Standard X Bot uses non-trivial bind orientations/pre-rotations; names/hierarchy alone are not enough."
+  },
+  "bones": [
+    {
+      "name": "mixamorig:Hips",
+      "parent": null,
+      "soma_source": "Hips"
+    },
+    {
+      "name": "mixamorig:Spine",
+      "parent": "mixamorig:Hips",
+      "soma_source": "Spine1"
+    },
+    {
+      "name": "mixamorig:Spine1",
+      "parent": "mixamorig:Spine",
+      "soma_source": "Spine2"
+    },
+    {
+      "name": "mixamorig:Spine2",
+      "parent": "mixamorig:Spine1",
+      "soma_source": "Chest"
+    },
+    {
+      "name": "mixamorig:Neck",
+      "parent": "mixamorig:Spine2",
+      "soma_source": "Neck1"
+    },
+    {
+      "name": "mixamorig:Head",
+      "parent": "mixamorig:Neck",
+      "soma_source": "Head"
+    },
+    {
+      "name": "mixamorig:HeadTop_End",
+      "parent": "mixamorig:Head",
+      "soma_source": "HeadEnd"
+    },
+    {
+      "name": "mixamorig:RightShoulder",
+      "parent": "mixamorig:Spine2",
+      "soma_source": "RightShoulder"
+    },
+    {
+      "name": "mixamorig:RightArm",
+      "parent": "mixamorig:RightShoulder",
+      "soma_source": "RightArm"
+    },
+    {
+      "name": "mixamorig:RightForeArm",
+      "parent": "mixamorig:RightArm",
+      "soma_source": "RightForeArm"
+    },
+    {
+      "name": "mixamorig:RightHand",
+      "parent": "mixamorig:RightForeArm",
+      "soma_source": "RightHand"
+    },
+    {
+      "name": "mixamorig:RightHandThumb1",
+      "parent": "mixamorig:RightHand",
+      "soma_source": "RightHandThumb1"
+    },
+    {
+      "name": "mixamorig:RightHandThumb2",
+      "parent": "mixamorig:RightHandThumb1",
+      "soma_source": "RightHandThumb2"
+    },
+    {
+      "name": "mixamorig:RightHandThumb3",
+      "parent": "mixamorig:RightHandThumb2",
+      "soma_source": "RightHandThumb3"
+    },
+    {
+      "name": "mixamorig:RightHandThumb4",
+      "parent": "mixamorig:RightHandThumb3",
+      "soma_source": "RightHandThumbEnd"
+    },
+    {
+      "name": "mixamorig:RightHandIndex1",
+      "parent": "mixamorig:RightHand",
+      "soma_source": "RightHandIndex1"
+    },
+    {
+      "name": "mixamorig:RightHandIndex2",
+      "parent": "mixamorig:RightHandIndex1",
+      "soma_source": "RightHandIndex2"
+    },
+    {
+      "name": "mixamorig:RightHandIndex3",
+      "parent": "mixamorig:RightHandIndex2",
+      "soma_source": "RightHandIndex3"
+    },
+    {
+      "name": "mixamorig:RightHandIndex4",
+      "parent": "mixamorig:RightHandIndex3",
+      "soma_source": "RightHandIndex4"
+    },
+    {
+      "name": "mixamorig:RightHandMiddle1",
+      "parent": "mixamorig:RightHand",
+      "soma_source": "RightHandMiddle1"
+    },
+    {
+      "name": "mixamorig:RightHandMiddle2",
+      "parent": "mixamorig:RightHandMiddle1",
+      "soma_source": "RightHandMiddle2"
+    },
+    {
+      "name": "mixamorig:RightHandMiddle3",
+      "parent": "mixamorig:RightHandMiddle2",
+      "soma_source": "RightHandMiddle3"
+    },
+    {
+      "name": "mixamorig:RightHandMiddle4",
+      "parent": "mixamorig:RightHandMiddle3",
+      "soma_source": "RightHandMiddle4"
+    },
+    {
+      "name": "mixamorig:RightHandRing1",
+      "parent": "mixamorig:RightHand",
+      "soma_source": "RightHandRing1"
+    },
+    {
+      "name": "mixamorig:RightHandRing2",
+      "parent": "mixamorig:RightHandRing1",
+      "soma_source": "RightHandRing2"
+    },
+    {
+      "name": "mixamorig:RightHandRing3",
+      "parent": "mixamorig:RightHandRing2",
+      "soma_source": "RightHandRing3"
+    },
+    {
+      "name": "mixamorig:RightHandRing4",
+      "parent": "mixamorig:RightHandRing3",
+      "soma_source": "RightHandRing4"
+    },
+    {
+      "name": "mixamorig:RightHandPinky1",
+      "parent": "mixamorig:RightHand",
+      "soma_source": "RightHandPinky1"
+    },
+    {
+      "name": "mixamorig:RightHandPinky2",
+      "parent": "mixamorig:RightHandPinky1",
+      "soma_source": "RightHandPinky2"
+    },
+    {
+      "name": "mixamorig:RightHandPinky3",
+      "parent": "mixamorig:RightHandPinky2",
+      "soma_source": "RightHandPinky3"
+    },
+    {
+      "name": "mixamorig:RightHandPinky4",
+      "parent": "mixamorig:RightHandPinky3",
+      "soma_source": "RightHandPinky4"
+    },
+    {
+      "name": "mixamorig:LeftShoulder",
+      "parent": "mixamorig:Spine2",
+      "soma_source": "LeftShoulder"
+    },
+    {
+      "name": "mixamorig:LeftArm",
+      "parent": "mixamorig:LeftShoulder",
+      "soma_source": "LeftArm"
+    },
+    {
+      "name": "mixamorig:LeftForeArm",
+      "parent": "mixamorig:LeftArm",
+      "soma_source": "LeftForeArm"
+    },
+    {
+      "name": "mixamorig:LeftHand",
+      "parent": "mixamorig:LeftForeArm",
+      "soma_source": "LeftHand"
+    },
+    {
+      "name": "mixamorig:LeftHandThumb1",
+      "parent": "mixamorig:LeftHand",
+      "soma_source": "LeftHandThumb1"
+    },
+    {
+      "name": "mixamorig:LeftHandThumb2",
+      "parent": "mixamorig:LeftHandThumb1",
+      "soma_source": "LeftHandThumb2"
+    },
+    {
+      "name": "mixamorig:LeftHandThumb3",
+      "parent": "mixamorig:LeftHandThumb2",
+      "soma_source": "LeftHandThumb3"
+    },
+    {
+      "name": "mixamorig:LeftHandThumb4",
+      "parent": "mixamorig:LeftHandThumb3",
+      "soma_source": "LeftHandThumbEnd"
+    },
+    {
+      "name": "mixamorig:LeftHandIndex1",
+      "parent": "mixamorig:LeftHand",
+      "soma_source": "LeftHandIndex1"
+    },
+    {
+      "name": "mixamorig:LeftHandIndex2",
+      "parent": "mixamorig:LeftHandIndex1",
+      "soma_source": "LeftHandIndex2"
+    },
+    {
+      "name": "mixamorig:LeftHandIndex3",
+      "parent": "mixamorig:LeftHandIndex2",
+      "soma_source": "LeftHandIndex3"
+    },
+    {
+      "name": "mixamorig:LeftHandIndex4",
+      "parent": "mixamorig:LeftHandIndex3",
+      "soma_source": "LeftHandIndex4"
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle1",
+      "parent": "mixamorig:LeftHand",
+      "soma_source": "LeftHandMiddle1"
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle2",
+      "parent": "mixamorig:LeftHandMiddle1",
+      "soma_source": "LeftHandMiddle2"
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle3",
+      "parent": "mixamorig:LeftHandMiddle2",
+      "soma_source": "LeftHandMiddle3"
+    },
+    {
+      "name": "mixamorig:LeftHandMiddle4",
+      "parent": "mixamorig:LeftHandMiddle3",
+      "soma_source": "LeftHandMiddle4"
+    },
+    {
+      "name": "mixamorig:LeftHandRing1",
+      "parent": "mixamorig:LeftHand",
+      "soma_source": "LeftHandRing1"
+    },
+    {
+      "name": "mixamorig:LeftHandRing2",
+      "parent": "mixamorig:LeftHandRing1",
+      "soma_source": "LeftHandRing2"
+    },
+    {
+      "name": "mixamorig:LeftHandRing3",
+      "parent": "mixamorig:LeftHandRing2",
+      "soma_source": "LeftHandRing3"
+    },
+    {
+      "name": "mixamorig:LeftHandRing4",
+      "parent": "mixamorig:LeftHandRing3",
+      "soma_source": "LeftHandRing4"
+    },
+    {
+      "name": "mixamorig:LeftHandPinky1",
+      "parent": "mixamorig:LeftHand",
+      "soma_source": "LeftHandPinky1"
+    },
+    {
+      "name": "mixamorig:LeftHandPinky2",
+      "parent": "mixamorig:LeftHandPinky1",
+      "soma_source": "LeftHandPinky2"
+    },
+    {
+      "name": "mixamorig:LeftHandPinky3",
+      "parent": "mixamorig:LeftHandPinky2",
+      "soma_source": "LeftHandPinky3"
+    },
+    {
+      "name": "mixamorig:LeftHandPinky4",
+      "parent": "mixamorig:LeftHandPinky3",
+      "soma_source": "LeftHandPinky4"
+    },
+    {
+      "name": "mixamorig:RightUpLeg",
+      "parent": "mixamorig:Hips",
+      "soma_source": "RightLeg"
+    },
+    {
+      "name": "mixamorig:RightLeg",
+      "parent": "mixamorig:RightUpLeg",
+      "soma_source": "RightShin"
+    },
+    {
+      "name": "mixamorig:RightFoot",
+      "parent": "mixamorig:RightLeg",
+      "soma_source": "RightFoot"
+    },
+    {
+      "name": "mixamorig:RightToeBase",
+      "parent": "mixamorig:RightFoot",
+      "soma_source": "RightToeBase"
+    },
+    {
+      "name": "mixamorig:RightToe_End",
+      "parent": "mixamorig:RightToeBase",
+      "soma_source": "RightToeEnd"
+    },
+    {
+      "name": "mixamorig:LeftUpLeg",
+      "parent": "mixamorig:Hips",
+      "soma_source": "LeftLeg"
+    },
+    {
+      "name": "mixamorig:LeftLeg",
+      "parent": "mixamorig:LeftUpLeg",
+      "soma_source": "LeftShin"
+    },
+    {
+      "name": "mixamorig:LeftFoot",
+      "parent": "mixamorig:LeftLeg",
+      "soma_source": "LeftFoot"
+    },
+    {
+      "name": "mixamorig:LeftToeBase",
+      "parent": "mixamorig:LeftFoot",
+      "soma_source": "LeftToeBase"
+    },
+    {
+      "name": "mixamorig:LeftToe_End",
+      "parent": "mixamorig:LeftToeBase",
+      "soma_source": "LeftToeEnd"
+    }
+  ]
+}
