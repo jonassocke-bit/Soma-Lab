@@ -14,7 +14,7 @@ const CURRENT_RIG_PACK_URL="./soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_SOURCE_SHA="86632764684281dc98f31ab9c4aac36a4cdbc428";
 
-// v0.5.1: exact browser-side Anny blendshape engine on canonical SOMA topology.
+// v0.5.2: exact browser-side Anny blendshape engine on canonical SOMA topology.
 // Low is loaded first; Mid (18,056 verts) is an optional persistent on-demand pack.
 const ANNY_SOURCE_SHA="72104cac8242d1735ec06433b65bec5e26953ce7";
 const ANNY_LOW_PACK_URL="./anny_soma_engine_low_v060.npz";
@@ -183,6 +183,8 @@ let shapePass=false, rigPass=false, posePass=false;
 // Existing SOMA-PCA stays available as an A/B reference; Anny can replace only restVertices.
 let shapeEngine="soma-pca";
 let annyLowPack=null,annyMidPack=null,annyPackLoaded=false,annyMidLoaded=false,annyMeta=null,annyLastMs=0;
+let annyGroundOffsetY=0;
+let autoBootRunning=false,autoBootDone=false;
 let annyParams={gender:0,age:2/3,muscle:.5,weight:.5,height:.5,proportions:.5,cupsize:.5,firmness:.5,african:.5,asian:.5,caucasian:.5};
 let annyLocalValues={};
 
@@ -193,6 +195,9 @@ let poseReady=false, poseParents=null, poseLocalBase=null, poseBindWorld=null, p
 let poseLocalActive=null,poseBindWorldActive=null,poseInvBindActive=null,rigAdaptiveEnabled=false;
 let poseOrient3=null,poseOrientParentT3=null,poseBoneIndices=null,poseBoneWeights=null,poseEulerDeg=null,poseJointCount=0,poseTopK=8,lastAppliedRelative3=null;
 let officialAnimRel=null,officialAnimFrames=0,officialAnimFps=30,officialAnimLoaded=false;
+
+// Generic imported SOMA animation.
+let userAnimRel=null,userAnimFrames=0,userAnimFps=30,userAnimLoaded=false,userAnimName="",userAnimSource="";
 
 let poseAnimRunning=false,poseAnimMode="walk",poseAnimStart=0,poseAnimLastStep=0,poseAnimSpeed=1;
 let poseAnimTargetFps=30,poseAnimFrames=0,poseAnimLbsSum=0,poseAnimLbsMax=0,poseAnimLastUi=0;
@@ -206,7 +211,7 @@ let targetMidBoneIndices=null,targetMidBoneWeights=null,targetMidTopK=0;
 let poseMidBoneIndices=null,poseMidBoneWeights=null,poseMidTopK=0;
 let rigGroup=null,rigBoneLines=null,rigJointPoints=null,rigAxesX=null,rigAxesY=null,rigAxesZ=null;
 
-// v0.5.1 Shape-Space Analyzer.
+// v0.5.2 Shape-Space Analyzer.
 // The first semantic layer is deliberately measurement-driven: raw PCA stays the
 // engine underneath, while the UI exposes locally calibrated measurements in cm.
 const ANALYSIS_METRICS=[
@@ -283,9 +288,29 @@ function parseNPY(u8){
  else if(/u4$/.test(descr))Ctor=Uint32Array;
  else if(/u2$/.test(descr))Ctor=Uint16Array;
  else if(/u1$/.test(descr))Ctor=Uint8Array;
- else if(/[US]\d+$/.test(descr)){
-   const copy=new Uint8Array(u8.byteLength-dataOff);copy.set(u8.subarray(dataOff));
-   return {shape,descr,fortran,data:new TextDecoder("utf-8").decode(copy).replace(/\0/g,"")}
+ else if(/[US]\\d+$/.test(descr)){
+   const mt=descr.match(/([US])(\\d+)$/),kind=mt[1],width=Number(mt[2]),items=count,strings=[];
+   if(kind==="S"){
+    const bytesPer=width;
+    if(dataOff+items*bytesPer>u8.byteLength)throw new Error("NPY String-Payload abgeschnitten");
+    for(let i=0;i<items;i++){
+     const part=u8.subarray(dataOff+i*bytesPer,dataOff+(i+1)*bytesPer);
+     strings.push(new TextDecoder("utf-8").decode(part).replace(/\\0.*$/s,""))
+    }
+   }else{
+    const bytesPer=width*4;
+    if(dataOff+items*bytesPer>u8.byteLength)throw new Error("NPY Unicode-Payload abgeschnitten");
+    const sdv=new DataView(u8.buffer,u8.byteOffset+dataOff,items*bytesPer),little=!descr.startsWith(">");
+    for(let i=0;i<items;i++){
+     let s="";
+     for(let c=0;c<width;c++){
+      const cp=sdv.getUint32(i*bytesPer+c*4,little);
+      if(cp)s+=String.fromCodePoint(cp)
+     }
+     strings.push(s)
+    }
+   }
+   return {shape,descr,fortran,data:strings}
  } else throw new Error("NPY dtype "+descr+" noch nicht unterstützt");
  const bytes=Ctor.BYTES_PER_ELEMENT*count;
  if(dataOff+bytes>u8.byteLength)throw new Error(`NPY-Payload abgeschnitten: brauche ${bytes} Bytes ab Offset ${dataOff}, habe ${u8.byteLength-dataOff}`);
@@ -404,7 +429,7 @@ async function loadCurrentRigPack(){
    }});
    currentRigPack=await decodeShapeNPZ(asset.u8)
   }
-  // v0.5.1: the fresh v2 rig-pack stores REAL newlines, while the very first
+  // v0.5.2: the fresh v2 rig-pack stores REAL newlines, while the very first
   // generated v1 pack accidentally stored the two literal characters "\\n".
   // Use the already existing compatibility decoder for both formats.
   const targetNames=decodePackedJointNames("target_joint_names_utf8",122);
@@ -426,7 +451,7 @@ async function loadCurrentRigPack(){
   if(missing.length)throw new Error("Rig-Pack unvollständig. Fehlt: "+missing.join(", "));
   const midRequired=["target_skinning_mid_data","target_skinning_mid_indices","target_skinning_mid_indptr","target_skinning_mid_shape","public_skinning_mid_data","public_skinning_mid_indices","public_skinning_mid_indptr","public_skinning_mid_shape"];
   const midMissing=midRequired.filter(k=>!packArray(k));
-  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.5.1 bitte den neuen ‘Build Anny SOMA Engine v2’-Workflow einmal ausführen; danach erneut laden.")}
+  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.5.2 bitte den neuen ‘Build Anny SOMA Engine v2’-Workflow einmal ausführen; danach erneut laden.")}
   if(targetNames.length<100)throw new Error(`Expanded Rig unerwartet klein: ${targetNames.length} Joints`);
   if(publicNames.length!==78)throw new Error(`Public Rig: ${publicNames.length} statt 78 Joints`);
   if(publicShape[0]!==4505||publicShape[1]!==78)throw new Error(`Public Low-Skinning unerwartet: ${JSON.stringify(publicShape)}`);
@@ -448,18 +473,19 @@ Mid-Skinning 18.056×122: ${packOptional("target_skinning_mid_shape")?"JA · ber
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
 Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":`${asset.source||"Repo"} · persistent gespeichert`}
 
-Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.5.1 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.5.2 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+  rigPass=true;updateDecision();return true
  }catch(e){
   console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
   info("#currentRigInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}
 
-v0.5.1 versucht den Rig-Pack in dieser Reihenfolge:
+v0.5.2 versucht den Rig-Pack in dieser Reihenfolge:
 1) persistenter iPhone-Cache
 2) GitHub Pages mit Cache-Busting
 3) raw.githubusercontent.com als Fallback
 
-Für Mid ist einmalig der neue Engine-v2-Workflow nötig, weil er den bisherigen Low-only-Rig-Pack um echte 18.056×122 Skinweights erweitert.`)
+Für Mid ist einmalig der neue Engine-v2-Workflow nötig, weil er den bisherigen Low-only-Rig-Pack um echte 18.056×122 Skinweights erweitert.`);return false
  }
 }
 function copyPackMatricesToMeters(arr){
@@ -730,7 +756,7 @@ function activateCurrentExpandedRig(){
   stage="122-Joint Nullpose skinnen";poseEulerDeg.fill(0);applyPoseToRest(currentDisplayRest(),false,true);
   setState("#poseState","CURRENT 122-JOINT LBS","ok");setState("#currentRigState","122 LBS AKTIV","ok");$("#toggleDebugTopology").disabled=false;$("#startShapeAnalysis").disabled=shapeEngine!=="soma-pca";
   updateAdaptiveRigUI(`✓ CURRENT SHAPE-FIT + EXPANDED TARGET-RIG AKTIV\nPublic RBF-fit: ${stats?.count||0}/${poseJointCount-1} Joints · mittlere Verschiebung ${((stats?.meanShift||0)*1000).toFixed(1)} mm\nTarget-Bindpose daraus auf ${targetJointCount} Joints expandiert; Twist-Helfer folgen den SOMA-Procedural-Matrizen.`,"ok");
-  info("#poseInfo",`✓ CURRENT v0026 EXPANDED-RIG IST JETZT DIE AKTIVE LBS-RUNTIME\nBedienung: 77 öffentliche Pose-Joints\nInternes Skinning: ${targetJointCount} Joints\nLow-LOD: ${tw.n} Vertices · Einflüsse/Vertex ${tw.minInflu}–${tw.rawMax}${tw.truncated?` · ${tw.truncated} Vertices auf Top-${tw.topK} begrenzt`:""}\nProcedural Twist: ${currentProcedural.segments.length} Segmente / ${currentProcedural.twistSpec.size} Twist-Joints\nRotationsextraktion: ${currentProcedural.mode}\nHierarchie: ${hs.forwardRefs} Parent-Vorwärtsverweise werden jetzt reihenfolgeunabhängig aufgelöst.\n\nNVIDIA-Animation, Slider und Shape-Regler laufen ab jetzt alle durch den 122-Joint-Pfad.`);updateDecision();disposeRigDebugObjects();refreshRigDebug()
+  info("#poseInfo",`✓ CURRENT v0026 EXPANDED-RIG IST JETZT DIE AKTIVE LBS-RUNTIME\nBedienung: 77 öffentliche Pose-Joints\nInternes Skinning: ${targetJointCount} Joints\nLow-LOD: ${tw.n} Vertices · Einflüsse/Vertex ${tw.minInflu}–${tw.rawMax}${tw.truncated?` · ${tw.truncated} Vertices auf Top-${tw.topK} begrenzt`:""}\nProcedural Twist: ${currentProcedural.segments.length} Segmente / ${currentProcedural.twistSpec.size} Twist-Joints\nRotationsextraktion: ${currentProcedural.mode}\nHierarchie: ${hs.forwardRefs} Parent-Vorwärtsverweise werden jetzt reihenfolgeunabhängig aufgelöst.\n\nNVIDIA-Animation, Slider und Shape-Regler laufen ab jetzt alle durch den 122-Joint-Pfad.`);updateDecision();disposeRigDebugObjects();refreshRigDebug();return true
  }catch(e){
   console.error("Expanded 122 activation failed at",stage,e);
   currentRigMode="current-public";currentTargetPoseWorld=null;$("#toggleDebugTopology").disabled=true;$("#startShapeAnalysis").disabled=true;
@@ -740,6 +766,7 @@ function activateCurrentExpandedRig(){
   setState("#poseState","122 LBS FEHLER","bad");setState("#currentRigState","122 FEHLER","bad");
   const msg=`${stage}: ${e?.name||"Fehler"}: ${e?.message||String(e)}`;info("#poseInfo",msg+(e?.stack?"\n"+e.stack:""));
   const errBox=$("#currentRigError");if(errBox){errBox.textContent="122-Aktivierung gestoppt bei „"+stage+"“\n"+(e?.message||String(e))+"\n\nDie App ist automatisch auf den funktionierenden Public-78-Fallback zurückgegangen.";errBox.classList.remove("hidden")}
+  return false
  }
 }
 
@@ -794,7 +821,8 @@ async function loadAnnyPack(){
   annyMeta=validateAnnyPack(annyLowPack,"low");annyPackLoaded=true;annyLocalValues=Object.fromEntries(annyMeta.local_change_labels.map(x=>[x,0]));
   buildAnnyControls();setAnnyUiFromParams();$("#useAnny").disabled=false;setState("#annyState","LOW PACK OK","ok");
   info("#annyInfo",`✓ EXAKTE ANNY-BLENDSHAPE-ENGINE IM BROWSER\nQuelle: ${asset.cacheHit?"persistenter iPhone-Cache":asset.source}\nAnny v${annyMeta.anny_version} · Commit ${annyMeta.source_git_sha.slice(0,12)}\nLow: 4.505 Vertices · ${annyMeta.blendshape_count} Blendshapes\nPhänotyp-Blendshapes: ${annyMeta.phenotype_blendshape_count}\nLokale Modifikatoren: ${annyMeta.local_change_labels.length}\nAlle Phänotyp-Parameter + lokale Changes werden aus den offiziellen Anny-Blendshapes rekonstruiert – kein 216-Shape-Grid mehr.`);
- }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.5.1 den neuen Workflow „Build Anny SOMA Engine v2“ einmal ausführen.`)}
+  return true
+ }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.5.2 den neuen Workflow „Build Anny SOMA Engine v2“ einmal ausführen.`);return false}
 }
 async function loadAnnyMidPack(){
  if(annyMidLoaded)return true;
@@ -831,6 +859,17 @@ function reconstructAnnyLOD(lod,coeffs,out){
  for(let a=0;a<coeffs.length;a++){const c=coeffs[a];if(Math.abs(c)<1e-8)continue;const off=a*N;for(let i=0;i<N;i++)out[i]+=Number(b[off+i])*c}
  return out
 }
+function minYOfVertices(rest){let y=Infinity;for(let i=1;i<rest.length;i+=3)y=Math.min(y,rest[i]);return y}
+function translateVerticesY(rest,dy){if(Math.abs(dy)<1e-10)return;for(let i=1;i<rest.length;i+=3)rest[i]+=dy}
+function alignAnnyToSomaGround(){
+ if(!baseLow||!currentRestLow)return 0;
+ // Anny/SOMA-topology is pelvis/world-origin centered differently from the
+ // older SOMA_neutral browser asset. Keep the body-editor ground plane stable.
+ const dy=minYOfVertices(baseLow)-minYOfVertices(currentRestLow);
+ translateVerticesY(currentRestLow,dy);
+ if(displayLOD==="mid"&&currentRestMid)translateVerticesY(currentRestMid,dy);
+ annyGroundOffsetY=dy;return dy
+}
 function rebuildAnnyRestShape(){
  const t0=performance.now(),cs=computeAnnyCoefficients();
  if(displayLOD==="mid"){
@@ -838,6 +877,7 @@ function rebuildAnnyRestShape(){
   if(!currentRestLow||currentRestLow.length!==lowMap.data.length*3)currentRestLow=new Float32Array(lowMap.data.length*3);
   for(let i=0;i<lowMap.data.length;i++){const s=Number(lowMap.data[i])*3,d=i*3;currentRestLow[d]=currentRestMid[s];currentRestLow[d+1]=currentRestMid[s+1];currentRestLow[d+2]=currentRestMid[s+2]}
  }else currentRestLow=reconstructAnnyLOD("low",cs,currentRestLow);
+ alignAnnyToSomaGround();
  annyLastMs=performance.now()-t0;return currentDisplayRest()
 }
 function prettyAnnyLabel(s){return s.replace(/-decr-incr$/," ↓/↑").replace(/-down-up$/," ↓/↑").replace(/-/g," ").replace(/\b\w/g,m=>m.toUpperCase())}
@@ -871,19 +911,19 @@ function setShapeEngine(engine){
  if(engine==="soma-pca"&&displayLOD==="mid")displayLOD="low";shapeEngine=engine;updateLodButtons();
  document.querySelectorAll("#sliders input,#random,#reset").forEach(x=>x.disabled=engine==="anny");$("#useAnny").classList.toggle("selected",engine==="anny");$("#useSoma").classList.toggle("selected",engine==="soma-pca");
  if(engine==="anny"){shapeAnalysis.ready=false;shapeAnalysis.stale=true;$("#startShapeAnalysis").disabled=true;setState("#pcaState","A/B REFERENZ","warn");setState("#annyState","ANNY AKTIV","ok")}else{setState("#pcaState","AKTIV","ok");setState("#annyState",annyPackLoaded?"PACK OK":"BEREIT",annyPackLoaded?"ok":"");$("#startShapeAnalysis").disabled=!(currentRigMode==="current-expanded")}
- updateShape();updateDecision()
+ updateShape();updateDecision();return true
 }
 function applyAnnyParams(){if(shapeEngine!=="anny")setShapeEngine("anny");else updateShape();setAnnyUiFromParams();
  try{const m=measureCurrentRestShape();info("#annyLiveInfo",`Anny exakt · Gender ${annyParams.gender.toFixed(2)} · Age ${annyParams.age.toFixed(2)} · H ${annyParams.height.toFixed(2)} · W ${annyParams.weight.toFixed(2)} · Muscle ${annyParams.muscle.toFixed(2)} · Proportions ${annyParams.proportions.toFixed(2)} · Cup ${annyParams.cupsize.toFixed(2)}\nAktive lokale Changes: ${Object.values(annyLocalValues).filter(v=>Math.abs(v)>1e-6).length} · Rekonstruktion ${annyLastMs.toFixed(1)} ms · Display ${displayLOD.toUpperCase()}\nMess-Proxies: Höhe ${m.height.toFixed(1)} cm · Brust ${m.chestCirc.toFixed(1)} · Taille ${m.waistCirc.toFixed(1)} · Hüfte ${m.hipCirc.toFixed(1)} cm`)}catch(e){info("#annyLiveInfo",`Anny exakt · ${displayLOD.toUpperCase()} · ${annyLastMs.toFixed(1)} ms`)}
 }
 function updateLodButtons(){$("#lodLow").classList.toggle("selected",displayLOD==="low");$("#lodMid").classList.toggle("selected",displayLOD==="mid");$("#lodBadge").textContent=displayLOD==="mid"?"18.056 V":"4.505 V"}
 async function setDisplayLOD(lod){
- if(lod===displayLOD)return;if(lod==="mid"){
-  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.5.1 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return}
-  if(!await loadAnnyMidPack())return;
-  if(poseReady&&currentRigMode==="current-expanded"&&!packOptional("target_skinning_mid_shape")){info("#lodInfo","Mid-Shape ist vorhanden, aber der aktuelle Rig-Pack enthält noch keine 18k×122 Skinweights. Bitte den v0.5.1 Engine-v2-Workflow einmal ausführen; er erneuert Rig + Anny-Packs gemeinsam.");return}
+ if(lod===displayLOD)return true;if(lod==="mid"){
+  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.5.2 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return false}
+  if(!await loadAnnyMidPack())return false;
+  if(poseReady&&currentRigMode==="current-expanded"&&!packOptional("target_skinning_mid_shape")){info("#lodInfo","Mid-Shape ist vorhanden, aber der aktuelle Rig-Pack enthält noch keine 18k×122 Skinweights. Bitte den v0.5.2 Engine-v2-Workflow einmal ausführen; er erneuert Rig + Anny-Packs gemeinsam.");return false}
  }
- displayLOD=lod;updateLodButtons();updateShape(true)
+ displayLOD=lod;updateLodButtons();updateShape(true);return true
 }
 
 async function fetchShapeAsset(forceNetwork=false){
@@ -941,9 +981,9 @@ triangles ${JSON.stringify(triangles.shape)}
 lod map ${lowMap?JSON.stringify(lowMap.shape):"nicht vorhanden"}
 Arrays insgesamt: ${Object.keys(parsed).length}
 Fortran-Arrays konvertiert: ${fortranArrays.length?fortranArrays.join(", "):"keine"}`);
-  buildLowData();buildMesh();buildSliders();shapePass=true;probeEmbeddedRig();updateDecision()
+  buildLowData();buildMesh();buildSliders();shapePass=true;probeEmbeddedRig();updateDecision();return true
  }catch(e){
-  console.error(e);setState("#shapeState","FEHLER","bad");info("#shapeInfo",String(e.stack||e))
+  console.error(e);setState("#shapeState","FEHLER","bad");info("#shapeInfo",String(e.stack||e));return false
  }
 }
 function buildLowData(){
@@ -1252,7 +1292,7 @@ async function resetSemanticModifiers(){
 async function startFullShapeAnalysis(){
  if(shapeAnalysis.running)return;
  try{
-  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.5.1 Anny direkt über die nativen Parameter testen.");
+  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.5.2 Anny direkt über die nativen Parameter testen.");
   if(currentRigMode!=="current-expanded"||!poseReady)throw new Error("Zuerst Current Expanded 122-Joint LBS in Punkt 5 aktivieren.");
   stopPoseAnimation(false);shapeAnalysis.running=true;shapeAnalysis.ready=false;shapeAnalysis.stale=false;shapeAnalysis.internal=true;
   const token=++shapeAnalysis.cancelToken,btn=$("#startShapeAnalysis"),cancel=$("#cancelShapeAnalysis");btn.disabled=true;cancel.disabled=false;
@@ -1280,7 +1320,7 @@ async function startFullShapeAnalysis(){
   info("#analysisInfo",`✓ Lokale 7×128-Mess-Jacobian am aktuellen Körper erzeugt.
 ${qualities}
 
-Wichtig: Umfang/Tiefe sind in v0.5.1 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
+Wichtig: Umfang/Tiefe sind in v0.5.2 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
   updateDecision()
  }catch(e){
   console.error(e);
@@ -1865,6 +1905,64 @@ function convertOfficialMotionToRelative(npy){
  }
  return {data:out,frames:T,rawJ}
 }
+function rotvecToMat3(x,y,z,out,o){
+ const th=Math.hypot(x,y,z);
+ if(th<1e-10){mat3Identity(out,o);return}
+ const kx=x/th,ky=y/th,kz=z/th,c=Math.cos(th),s=Math.sin(th),v=1-c;
+ out[o]=kx*kx*v+c;out[o+1]=kx*ky*v-kz*s;out[o+2]=kx*kz*v+ky*s;
+ out[o+3]=ky*kx*v+kz*s;out[o+4]=ky*ky*v+c;out[o+5]=ky*kz*v-kx*s;
+ out[o+6]=kz*kx*v-ky*s;out[o+7]=kz*ky*v+kx*s;out[o+8]=kz*kz*v+c
+}
+function convertSomaRotvecMotion(pack){
+ const p=pack?.poses;if(!p)throw new Error("NPZ enthält kein Array 'poses'.");
+ const sh=p.shape;if(sh.length!==3||sh[2]!==3)throw new Error(`poses Shape ${JSON.stringify(sh)}; erwartet [Frames,Joints,3].`);
+ const T=sh[0],J=sh[1];if(J!==77&&J!==78)throw new Error(`SOMA poses hat ${J} Joints; erwartet 77 oder 78.`);
+ let names=null;
+ if(pack.joint_names?.data&&Array.isArray(pack.joint_names.data)&&pack.joint_names.data.length===J)names=pack.joint_names.data.map(String);
+ const map=new Int16Array(poseJointCount);map.fill(-1);
+ if(names){
+  const by=new Map(names.map((n,i)=>[n,i]));
+  for(let j=1;j<poseJointCount;j++)if(by.has(PUBLIC_JOINT_NAMES[j]))map[j]=by.get(PUBLIC_JOINT_NAMES[j])
+ }else if(J===77){for(let j=1;j<poseJointCount;j++)map[j]=j-1}
+ else{for(let j=1;j<poseJointCount;j++)map[j]=j}
+ const missing=[];for(let j=1;j<poseJointCount;j++)if(map[j]<0)missing.push(PUBLIC_JOINT_NAMES[j]);
+ if(missing.length)throw new Error(`Motion-Joint-Mapping fehlt für ${missing.slice(0,8).join(", ")}${missing.length>8?" …":""}`);
+ const out=new Float32Array(T*poseJointCount*9);
+ for(let f=0;f<T;f++){
+  const dst=f*poseJointCount*9;for(let j=0;j<poseJointCount;j++)mat3Identity(out,dst+j*9);
+  for(let j=1;j<poseJointCount;j++){
+   const src=(f*J+map[j])*3;
+   rotvecToMat3(Number(p.data[src]),Number(p.data[src+1]),Number(p.data[src+2]),out,dst+j*9)
+  }
+ }
+ return {data:out,frames:T,rawJ:J,format:"SOMA rotvec NPZ",hasRootTranslation:!!pack.root_translation}
+}
+async function loadUserAnimationFile(file){
+ try{
+  if(!poseReady)throw new Error("Runtime ist noch nicht bereit.");
+  if(!file)throw new Error("Keine Datei gewählt.");
+  setState("#userAnimState","LÄDT","warn");
+  const u8=new Uint8Array(await file.arrayBuffer()),name=file.name||"Animation",ext=name.toLowerCase().split(".").pop();
+  let conv;
+  if(ext==="npy"){
+   const npy=parseNPY(u8);conv=convertOfficialMotionToRelative(npy);conv.format="SOMA matrix NPY";conv.hasRootTranslation=false
+  }else if(ext==="npz"){
+   const pack=await decodeShapeNPZ(u8);conv=convertSomaRotvecMotion(pack)
+  }else throw new Error("Unterstützt werden .npy und .npz.");
+  userAnimRel=conv.data;userAnimFrames=conv.frames;userAnimLoaded=true;userAnimName=name;userAnimSource=conv.format;
+  userAnimFps=Number($("#animImportFps")?.value||30)||30;
+  $("#animUser").disabled=false;setState("#userAnimState","BEREIT","ok");
+  info("#userAnimInfo",`✓ ${name}
+Format: ${conv.format}
+Frames: ${conv.frames} · Joints: ${conv.rawJ} → ${poseJointCount} Public-Joints
+Playback: ${userAnimFps} fps · Root Translation: ${conv.hasRootTranslation?"vorhanden, v0.5.2 spielt bewusst in-place":"keine"}
+Die Animation läuft durch denselben 78→122 Procedural-Twist/LBS-Pfad wie die eingebaute NVIDIA-Animation.`);
+  return true
+ }catch(e){
+  console.error(e);userAnimLoaded=false;$("#animUser").disabled=true;setState("#userAnimState","FEHLER","bad");info("#userAnimInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}`);return false
+ }
+}
+
 async function loadOfficialAnimation(){
  try{
   if(!poseReady)throw new Error("Zuerst LBS initialisieren.");
@@ -1895,15 +1993,17 @@ Die Rotationskonvertierung entspricht jetzt dem offiziellen SOMA-Demo-Pfad.`);
 function startPoseAnimation(mode){
  if(!poseReady||!poseEulerDeg)return;
  if(mode==="official"&&!officialAnimLoaded)return;
+ if(mode==="user"&&!userAnimLoaded)return;
  poseAnimMode=mode;
  poseAnimRunning=true;
  poseAnimStart=performance.now();
  poseAnimLastStep=0;
  poseAnimFrames=0;poseAnimLbsSum=0;poseAnimLbsMax=0;poseAnimLastUi=0;
- const label=mode==="official"?"NVIDIA LÄUFT":mode==="walk"?"GANG LÄUFT":"STRESS LÄUFT";
+ const label=mode==="official"?"NVIDIA LÄUFT":mode==="user"?"IMPORT LÄUFT":mode==="walk"?"GANG LÄUFT":"STRESS LÄUFT";
  setState("#animState",label,"ok");
  setState("#poseState","POSE-KONVENTION ANIMIERT","ok");
  $("#animOfficial").classList.toggle("activeAnim",mode==="official");
+ $("#animUser")?.classList.toggle("activeAnim",mode==="user");
  $("#animWalk").classList.toggle("activeAnim",mode==="walk");
  $("#animStress").classList.toggle("activeAnim",mode==="stress");
  info("#animPerf","Animation startet … 30 LBS-Updates/s Zielrate.")
@@ -1911,6 +2011,7 @@ function startPoseAnimation(mode){
 function stopPoseAnimation(resetPose=false){
  poseAnimRunning=false;
  $("#animOfficial")?.classList.remove("activeAnim");
+ $("#animUser")?.classList.remove("activeAnim");
  $("#animWalk")?.classList.remove("activeAnim");
  $("#animStress")?.classList.remove("activeAnim");
  if($("#animState"))setState("#animState","STOP","warn");
@@ -1926,10 +2027,10 @@ function updatePoseAnimation(now){
 
  const seconds=(now-poseAnimStart)/1000*poseAnimSpeed;
  let r;
- if(poseAnimMode==="official"){
-  const f=Math.floor(seconds*officialAnimFps)%officialAnimFrames;
-  const off=f*poseJointCount*9;
-  r=applyRelativePoseMatrices(currentDisplayRest(),officialAnimRel.subarray(off,off+poseJointCount*9),false,false,"NVIDIA-Motion")
+ if(poseAnimMode==="official"||poseAnimMode==="user"){
+  const isUser=poseAnimMode==="user",fps=isUser?userAnimFps:officialAnimFps,frames=isUser?userAnimFrames:officialAnimFrames,data=isUser?userAnimRel:officialAnimRel;
+  const f=Math.floor(seconds*fps)%frames,off=f*poseJointCount*9;
+  r=applyRelativePoseMatrices(currentDisplayRest(),data.subarray(off,off+poseJointCount*9),false,false,isUser?"Import-Motion":"NVIDIA-Motion")
  }else{
   if(poseAnimMode==="stress")setRigStressAnimationPose(seconds);
   else setWalkAnimationPose(seconds);
@@ -1944,7 +2045,7 @@ function updatePoseAnimation(now){
  if(now-poseAnimLastUi>500){
   poseAnimLastUi=now;
   const avg=poseAnimFrames?poseAnimLbsSum/poseAnimFrames:0;
-  const animLabel=poseAnimMode==="official"?"NVIDIA example_animation":poseAnimMode==="walk"?"Gang-Loop":"Rig-Stress";
+  const animLabel=poseAnimMode==="official"?"NVIDIA example_animation":poseAnimMode==="user"?`Import: ${userAnimName}`:poseAnimMode==="walk"?"Gang-Loop":"Rig-Stress";
   info("#animPerf",`${animLabel} · ${poseAnimSpeed.toFixed(2)}×
 LBS Ø ${avg.toFixed(1)} ms · Max ${poseAnimLbsMax.toFixed(1)} ms · ${currentDisplayRest().length/3} Vertices · ${currentRigMode==="current-expanded"?`${poseJointCount} Controls → ${targetJointCount} Skinning-Joints`:`${poseJointCount} Joints`}
 Ziel: ${poseAnimTargetFps} Pose-Updates/s · WebGL-Render-FPS oben rechts.`);
@@ -2141,6 +2242,46 @@ WICHTIG: Damit ist nur der Rig-Vertrag bestätigt. Das große USD wird absichtli
   rigPass=contractOK;setState("#poseState","BRAUCHT RIG-PACK","warn");updateDecision()
  }catch(e){console.error(e);setState("#rigState","FEHLER","bad");info("#rigInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}${e?.stack?"\n"+e.stack:""}`)}
 }
+function bootStatus(stage,detail="",cls="warn"){setState("#startupState",stage,cls);info("#startupInfo",detail)}
+async function autoStartRuntime(){
+ if(autoBootRunning)return false;
+ autoBootRunning=true;autoBootDone=false;$("#retryStartup").disabled=true;
+ try{
+  bootStatus("START 1/6","SOMA Basis/Topologie wird geladen …");
+  if(!shapePass&&!(await loadShape()))throw new Error("SOMA Basis konnte nicht geladen werden.");
+
+  bootStatus("START 2/6","Anny Low-Engine wird geladen und als Identity Engine aktiviert …");
+  if(!annyPackLoaded&&!(await loadAnnyPack()))throw new Error("Anny Low-Engine konnte nicht geladen werden.");
+  setShapeEngine("anny");
+
+  bootStatus("START 3/6","Current SOMA v0026 Rig-Pack wird geladen …");
+  if(!currentRigPackLoaded&&!(await loadCurrentRigPack()))throw new Error("SOMA Rig-Pack konnte nicht geladen werden.");
+
+  bootStatus("START 4/6","78 Public Controls → 122 interne SOMA-Joints werden aktiviert …");
+  if(currentRigMode!=="current-expanded"&&!activateCurrentExpandedRig())throw new Error("122-Joint-Runtime konnte nicht aktiviert werden.");
+
+  bootStatus("START 5/6","Anny Mid 18.056 wird geladen …");
+  if(!(await setDisplayLOD("mid")))throw new Error("Mid-LOD konnte nicht aktiviert werden.");
+
+  bootStatus("START 6/6","Shape + Rig + Mid sind aktiv. Kamera wird gesetzt …");
+  frame();autoBootDone=true;
+  bootStatus("SAMMY RUNTIME BEREIT",`✓ Automatischer Start abgeschlossen
+Identity: Anny v${annyMeta?.anny_version||"?"}
+Display: MID · ${currentDisplayRest().length/3} Vertices
+Rig: ${poseJointCount} Public Controls → ${targetJointCount} interne Skinning-Joints
+Adaptive Rebind: ${rigAdaptiveEnabled?"AKTIV":"AUS"}
+Manuelle Lade-/Rig-Buttons bleiben nur noch als Diagnose/Fallback erhalten.`,"ok");
+  testRig().catch(e=>console.warn("Background rig contract check",e));
+  return true
+ }catch(e){
+  console.error("Auto-start failed",e);
+  bootStatus("START FEHLER",`${e?.name||"Fehler"}: ${e?.message||String(e)}
+
+Die App bleibt bedienbar. „Automatik erneut starten“ versucht nur die fehlenden Schritte; persistente Assets werden aus dem iPhone-Cache wiederverwendet.`,"bad");
+  return false
+ }finally{autoBootRunning=false;$("#retryStartup").disabled=false}
+}
+
 $("#testRig").onclick=testRig;
 $("#loadCurrentRig").onclick=loadCurrentRigPack;
 $("#loadAnny").onclick=loadAnnyPack;
@@ -2164,6 +2305,10 @@ $("#poseRun").onclick=()=>posePreset("run");
 $("#poseAction").onclick=()=>posePreset("action");
 $("#poseGrip").onclick=()=>posePreset("grip");
 $("#animOfficial").onclick=async()=>{if(!officialAnimLoaded){const ok=await loadOfficialAnimation();if(!ok)return}startPoseAnimation("official")};
+$("#animFile").onchange=async e=>{const f=e.target.files?.[0];if(f)await loadUserAnimationFile(f)};
+$("#animUser").onclick=()=>startPoseAnimation("user");
+$("#animImportFps").onchange=e=>{userAnimFps=Math.max(1,Math.min(120,Number(e.target.value)||30));e.target.value=String(userAnimFps)};
+$("#retryStartup").onclick=autoStartRuntime;
 $("#animWalk").onclick=()=>startPoseAnimation("walk");
 $("#animStress").onclick=()=>startPoseAnimation("stress");
 $("#animStop").onclick=()=>stopPoseAnimation(false);
@@ -2190,11 +2335,11 @@ function updateDecision(){
   const expanded=currentRigMode==="current-expanded";
   if(expanded&&shapeEngine==="anny"&&annyPackLoaded){
    setState("#decision","ANNY → SOMA → 122 LBS AKTIV","ok");
-   info("#decisionInfo",`✓ v0.5.1: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
+   info("#decisionInfo",`✓ v0.5.2: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
 
 Aktuell im Browser steuerbar: ALLE nativen Anny-Phänotypen (Gender, Age, Height, Weight, Muscle, Proportions, Cupsize, Firmness sowie die drei Legacy-Phenotype-Anteile) plus sämtliche lokalen Anny-Changes aus dem offiziellen Asset. Male/Female bleiben als schnelle Presets; der native Gender-Blend ist im Advanced-Bereich ebenfalls sichtbar.
 
-Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.5.1 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
+Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.5.2 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
 
 Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zentimetermaße. Das ist erst der nächste, separate Measurement-Fit.`);
   }else if(expanded&&shapeAnalysis.ready){
@@ -2209,3 +2354,6 @@ Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zen
  }else if(shapePass&&rigPass){setState("#decision","NÄCHSTER TEST: CURRENT 122 LBS","warn");info("#decisionInfo","Shape und Current-Rig-Pack sind vorhanden. In Punkt 5 jetzt Expanded 122-Joint LBS aktivieren.")}
  else if(shapePass)setState("#decision","SHAPE BESTANDEN","ok")
 }
+
+// v0.5.2: no manual boot ritual.
+setTimeout(()=>autoStartRuntime(),0);
