@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.5.10
+# SOMA Browser PoC v0.5.11
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -253,9 +253,9 @@ Noch absichtlich **nicht als bestanden** markiert:
 Diese kommen erst nach dem realen iPhone-Pack-Test, damit wir die neue Grundlage nicht wieder in einem großen ungetesteten Umbau verstecken.
 
 
-## v0.5.10 – Current Expanded 122-Joint LBS
+## v0.5.11 – Current Expanded 122-Joint LBS
 
-Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen. v0.5.10 aktiviert nun den eigentlichen Expanded-Skinning-Pfad:
+Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen. v0.5.11 aktiviert nun den eigentlichen Expanded-Skinning-Pfad:
 
 - 77 user-facing SOMA Pose-Joints bleiben die Bedien-/Motion-Schnittstelle.
 - Intern werden die aktuellen 122 Target-Joints aus dem v0026-Rig verwendet.
@@ -267,12 +267,12 @@ Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen.
 - NVIDIA Motion, manuelle Joint-Slider und Shape-Regler gehen nach Aktivierung alle durch den Expanded-LBS-Pfad.
 - Rig-Debug kann zwischen Public 78 und Expanded 122 umschalten.
 
-Noch bewusst offen: das vollständige shape-adaptive **Rotation-Fitting** der offiziellen `SkeletonTransfer`-Pipeline. v0.5.10 verwendet für die Shape-Anpassung die offiziellen vorberechneten RBF-Jointpositionen und die aktuelle Procedural-Expansion, aber noch keine vollständige Browser-Portierung des Kabsch/Newton-Schulz Rotations-Fits.
+Noch bewusst offen: das vollständige shape-adaptive **Rotation-Fitting** der offiziellen `SkeletonTransfer`-Pipeline. v0.5.11 verwendet für die Shape-Anpassung die offiziellen vorberechneten RBF-Jointpositionen und die aktuelle Procedural-Expansion, aber noch keine vollständige Browser-Portierung des Kabsch/Newton-Schulz Rotations-Fits.
 
-- v0.5.10 merkt die zuletzt tatsächlich angewendete 78-Joint-Relativpose. Shape-Regler können dadurch eine laufende/aktuelle Pose nach dem Rebind wieder anwenden, statt beim Morphen ungewollt auf die Slider-Nullpose zurückzuspringen.
+- v0.5.11 merkt die zuletzt tatsächlich angewendete 78-Joint-Relativpose. Shape-Regler können dadurch eine laufende/aktuelle Pose nach dem Rebind wieder anwenden, statt beim Morphen ungewollt auf die Slider-Nullpose zurückzuspringen.
 
 
-## v0.5.10 – 122-Joint-Hierarchie reihenfolgeunabhängig
+## v0.5.11 – 122-Joint-Hierarchie reihenfolgeunabhängig
 
 Der erste echte iPhone-Test von v0.2.1 erreichte `PACK OK`, stoppte beim Aktivieren des Expanded-Rigs aber mit `122 FEHLER`. Der sichtbare Ablauf zeigte, dass der Public-Rig-Teil bereits initialisiert war und der Fehler erst beim Expanded-Posepfad auftrat.
 
@@ -284,10 +284,10 @@ Zusätzlich:
 - Bei einem 122-Fehler fällt die App sauber auf den funktionierenden Current-Public-78-Pfad zurück.
 - Im Rig-Pack-Infofeld wird die Zahl der Parent-Vorwärtsverweise angezeigt.
 
-Der vorhandene `soma_current_rig_pack_v0026.npz` und dessen persistenter Cache bleiben unverändert gültig; der GitHub-Actions-Builder muss für v0.5.10 nicht erneut ausgeführt werden.
+Der vorhandene `soma_current_rig_pack_v0026.npz` und dessen persistenter Cache bleiben unverändert gültig; der GitHub-Actions-Builder muss für v0.5.11 nicht erneut ausgeführt werden.
 
 
-## v0.5.10 – robuster Current-Rig-Pack Loader
+## v0.5.11 – robuster Current-Rig-Pack Loader
 
 Der bereits erzeugte `soma_current_rig_pack_v0026.npz` wird nicht neu erzeugt.
 
@@ -305,7 +305,7 @@ Damit darf ein kurzfristiges GitHub-Pages-/HTTP-Cache-Problem den 122-Joint-Test
 nicht mehr blockieren.
 
 
-## v0.5.10 – Joint-Name-Separator-Fix
+## v0.5.11 – Joint-Name-Separator-Fix
 
 Die v0.2.3-Fehlermeldung hat den eigentlichen Fehler sichtbar gemacht:
 Der erste erzeugte Rig-Pack speichert `target_joint_names_utf8` und
@@ -313,7 +313,7 @@ Der erste erzeugte Rig-Pack speichert `target_joint_names_utf8` und
 Newline-Zeichen. Dadurch sah der Browser die komplette Namensliste als einen
 einzigen Namen und konnte z. B. `LeftArm -> LeftForeArm` nicht auflösen.
 
-v0.5.10:
+v0.5.11:
 - liest sowohl echte Newlines als auch den bereits erzeugten Legacy-`\n`-Pack,
 - prüft 122 Target- und 78 Public-Namen explizit,
 - prüft alle Twist-Joint-Namen vor Aktivierung,
@@ -322,7 +322,7 @@ v0.5.10:
 Der vorhandene `soma_current_rig_pack_v0026.npz` muss NICHT neu erzeugt werden.
 
 
-## v0.5.10 – Shape-Space Analyzer + semantische Live-Modifier
+## v0.5.11 – Shape-Space Analyzer + semantische Live-Modifier
 
 Neuer PoC-Schritt nach bestandenem Current-v0026-122-Joint-LBS:
 
@@ -349,13 +349,13 @@ Neuer PoC-Schritt nach bestandenem Current-v0026-122-Joint-LBS:
 ### Wichtige Grenze dieses PoC
 
 Die Slider-/Solver-Architektur ist real. Die Messdefinitionen für Umfang und Tiefe
-sind in v0.5.10 aber bewusst sichtbare, rig-relative horizontale Slice-Proxies.
+sind in v0.5.11 aber bewusst sichtbare, rig-relative horizontale Slice-Proxies.
 Sie sind noch **keine** endgültig validierten anthropometrischen BODY-LAB-Maße.
 Die nächste Stufe kann diese Messfunktionen durch belastbare Landmark-/Messregeln
 ersetzen, ohne die Modifier-Architektur neu zu bauen.
 
 
-## v0.5.10 – Anny on top of the proven SOMA architecture
+## v0.5.11 – Anny on top of the proven SOMA architecture
 
 This version does **not** restart the project.
 
@@ -392,7 +392,7 @@ That is 216 rest shapes. Adult age (2/3), firmness (0.5) and equal race weights
 are fixed for this test.
 
 The browser performs multilinear interpolation inside those anchor cells. Gender
-is intentionally **discrete**: there is no male/female mixing in the v0.5.10 UI.
+is intentionally **discrete**: there is no male/female mixing in the v0.5.11 UI.
 
 The pack is low-LOD only (4505 vertices), so it is small enough for iPhone and
 persistent caching. Once an Anny rest shape is selected, the existing SOMA
@@ -420,7 +420,7 @@ measurements. If the integration is stable and anatomy is visibly useful, the
 next layer is the small measurement-conditioned fitter.
 
 
-## v0.5.10 – exact Anny engine + Low/Mid + all modifiers
+## v0.5.11 – exact Anny engine + Low/Mid + all modifiers
 
 The v0.4 grid is replaced by an exact browser representation of Anny's linear
 blendshape engine on canonical SOMA topology. GitHub Actions exports:
@@ -441,7 +441,7 @@ Mid is loaded only on demand and cached persistently. This keeps startup small w
 allowing direct inspection of the smoother surface that is relevant for Harness use.
 
 
-## v0.5.10 – Rig-Pack joint-name decoder fix
+## v0.5.11 – Rig-Pack joint-name decoder fix
 
 The Engine-v2 workflow regenerates `soma_current_rig_pack_v0026.npz` with real
 newline separators between joint names. v0.5.0 accidentally used a literal
@@ -450,7 +450,7 @@ as one single name and the UI reported:
 
 `Expanded Rig unerwartet klein: 1 Joints`
 
-v0.5.10 uses the existing compatibility decoder `decodePackedJointNames()`, which
+v0.5.11 uses the existing compatibility decoder `decodePackedJointNames()`, which
 supports both:
 - the original legacy pack with literal `\\n`
 - the current v2 pack with real newlines
@@ -458,7 +458,7 @@ supports both:
 No workflow or asset regeneration is required.
 
 
-## v0.5.10 – automatic runtime, origin fix, motion import
+## v0.5.11 – automatic runtime, origin fix, motion import
 
 On load the app now automatically loads the SOMA basis, Anny Low, current rig
 pack, activates the expanded 122-joint runtime, loads Anny Mid and switches the
@@ -478,7 +478,7 @@ runtime as the built-in NVIDIA animation. `root_translation` is detected but
 ignored for now so imported locomotion plays in-place.
 
 
-## v0.5.10 – Safari SOMA NPZ parser regression fix
+## v0.5.11 – Safari SOMA NPZ parser regression fix
 
 v0.5.2 introduced a fixed-width NumPy string decoder for future motion imports,
 but the JavaScript regex was emitted with an extra escape. The runtime therefore
@@ -486,12 +486,12 @@ looked for a literal `\d` instead of digit characters in dtypes such as `<U...`
 or `|S...`. `SOMA_neutral.npz` contains string metadata, so the automatic startup
 failed while decoding the base NPZ before any Anny/Mid/Rig step could run.
 
-v0.5.10 fixes the dtype and NUL regexes and keeps the v0.5.2 automatic startup,
+v0.5.11 fixes the dtype and NUL regexes and keeps the v0.5.2 automatic startup,
 origin normalization, Mid loading, 122-joint activation and animation-import UI.
 The Shape error box now also prints the actual error message before the stack.
 
 
-## v0.5.10 – direct Mixamo Bridge FBX export in Safari
+## v0.5.11 – direct Mixamo Bridge FBX export in Safari
 
 The separate GitHub/Blender bridge workflow is no longer required for the first
 Mixamo roundtrip.
@@ -519,7 +519,7 @@ animation. Upload it to Mixamo, apply a motion, then download the returned
 character **WITH SKIN** for the first converter/roundtrip analysis.
 
 
-## v0.5.10 – simplified Mixamo proxy rig
+## v0.5.11 – simplified Mixamo proxy rig
 
 The direct FBX bridge no longer exports the complete SOMA Public-78 skeleton.
 The first Mixamo test showed a rigid neck/head relation and unreliable fingers.
@@ -541,7 +541,7 @@ This is only the upload/roundtrip bridge. Sammy's actual runtime remains the
 SOMA public-78 -> internal-122 rig.
 
 
-## v0.5.10 – exact Mixamo X Bot skeleton contract
+## v0.5.11 – exact Mixamo X Bot skeleton contract
 
 The uploaded `X Bot.fbx` was parsed directly. Key facts:
 
@@ -556,7 +556,7 @@ The uploaded `X Bot.fbx` was parsed directly. Key facts:
 
 v0.5.5's three-phalange assumption was therefore wrong.
 
-v0.5.10 embeds only the extracted 65-bone structural/orientation contract — **not**
+v0.5.11 embeds only the extracted 65-bone structural/orientation contract — **not**
 the X Bot mesh or animation data. The exported bridge keeps the canonical SOMA
 body and SOMA joint locations/skin weights but uses Mixamo X Bot bone names,
 hierarchy and bind-axis orientations.
@@ -565,7 +565,7 @@ Output:
 `Sammy_Mixamo_XBotContract65.fbx`
 
 
-## v0.5.10 – direct Mixamo FBX import / retarget
+## v0.5.11 – direct Mixamo FBX import / retarget
 
 The real returned roundtrip file `Idle (2).fbx` was inspected first:
 
@@ -590,7 +590,7 @@ pre-rotations/local bone axes cancel against the imported bind pose.
 Root translation is detected but intentionally ignored for now (in-place).
 
 
-## v0.5.10 – reject incompatible old Mixamo bridge files
+## v0.5.11 – reject incompatible old Mixamo bridge files
 
 A real test exposed that the supplied `T-Pose.fbx` came from the old
 `Sammy_Mixamo_Proxy54` bridge, while `Idle (2).fbx` came from the current
@@ -600,7 +600,7 @@ Those skeleton contracts are not interchangeable. v0.5.8 therefore used a
 54-bone rest reference to calibrate a 65-bone animation, producing the severe
 pose corruption seen on iPhone.
 
-v0.5.10 now hard-validates Mixamo FBX files:
+v0.5.11 now hard-validates Mixamo FBX files:
 - current contract must contain exactly the 65 X-Bot-contract bones
 - old 54-bone Proxy54 files are rejected with an explicit message
 - a reference pose and animation must share the same 65-bone signature
@@ -610,14 +610,14 @@ it prevents invalid cross-generation calibration so the next test uses a
 genuinely matching T-pose/animation pair.
 
 
-## v0.5.10 – bridge is now actually bound in official SOMA T-pose
+## v0.5.11 – bridge is now actually bound in official SOMA T-pose
 
 The iPhone tests narrowed the remaining corruption to shoulders/arms/hands.
 A T-pose clip also produced a V-shaped arm pose, while torso/legs/head were
 mostly plausible. That is consistent with the bridge having exported the SOMA
 neutral bind-shape while Mixamo animation is referenced to a canonical T-pose.
 
-v0.5.10 changes the bridge construction itself:
+v0.5.11 changes the bridge construction itself:
 - `public_bind_shape_low` is LBS-deformed from `public_bind_pose_world` to
   `public_t_pose_world` before export.
 - the exported 65-bone X-Bot-compatible skeleton uses the SOMA official
@@ -628,3 +628,26 @@ v0.5.10 changes the bridge construction itself:
 New bridge filename: `Sammy_Mixamo_XBotContract65_TPose.fbx`.
 Animations should be downloaded again from Mixamo using this new bridge; old
 animations may contain the previous bridge's baked upper-limb offset.
+
+
+## v0.5.11 – Mixamo T-pose reference now samples the animation clip
+
+Direct comparison of the new pair proved the bridge itself survives Mixamo
+unchanged:
+- 4,505 mesh vertices: exact match before/after Mixamo
+- 65 bone names + hierarchy: exact match
+- static Lcl Translation/Rotation: exact match
+- bind-pose matrices: exact match
+
+Mixamo does **not** rewrite the static rig. Its downloaded T-pose file adds the
+actual Mixamo T-pose as animation curves on top of that unchanged static rig.
+The largest differences are in hands/fingers; shoulders/upper arms are nearly
+unchanged in world orientation.
+
+v0.5.8's reference loader captured the static skeleton before evaluating the
+clip, so it was mathematically the wrong zero pose. v0.5.11 evaluates frame 0
+of the returned Mixamo T-pose animation first and stores those animated world
+orientations as the reference for subsequent Mixamo FBX retargeting.
+
+Use `Sammy-T-Pose-Mixamo-Neu.fbx`-type files as reference. A direct app-export
+FBX without a Mixamo animation clip is explicitly rejected.
