@@ -14,7 +14,7 @@ FBX/BVH/Mixamo are not directly retargeted yet; they should go through a
 dedicated skeleton-to-SOMA converter rather than using guessed joint rotations.
 
 
-## Direct Mixamo FBX import (v0.5.7)
+## Direct Mixamo FBX import (v0.5.8)
 
 Use the FBX downloaded after uploading `Sammy_Mixamo_XBotContract65.fbx` to
 Mixamo. The file can now be selected directly in Sammy.

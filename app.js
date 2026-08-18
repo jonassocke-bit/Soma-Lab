@@ -14,7 +14,7 @@ const CURRENT_RIG_PACK_URL="./soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_SOURCE_SHA="86632764684281dc98f31ab9c4aac36a4cdbc428";
 
-// v0.5.7: exact browser-side Anny blendshape engine on canonical SOMA topology.
+// v0.5.8: exact browser-side Anny blendshape engine on canonical SOMA topology.
 // Low is loaded first; Mid (18,056 verts) is an optional persistent on-demand pack.
 const ANNY_SOURCE_SHA="72104cac8242d1735ec06433b65bec5e26953ce7";
 const ANNY_LOW_PACK_URL="./anny_soma_engine_low_v060.npz";
@@ -210,6 +210,7 @@ let officialAnimRel=null,officialAnimFrames=0,officialAnimFps=30,officialAnimLoa
 
 // Generic imported SOMA animation.
 let userAnimRel=null,userAnimFrames=0,userAnimFps=30,userAnimLoaded=false,userAnimName="",userAnimSource="";
+let mixamoReferencePose=null,mixamoReferenceName="";
 
 let poseAnimRunning=false,poseAnimMode="walk",poseAnimStart=0,poseAnimLastStep=0,poseAnimSpeed=1;
 let poseAnimTargetFps=30,poseAnimFrames=0,poseAnimLbsSum=0,poseAnimLbsMax=0,poseAnimLastUi=0;
@@ -223,7 +224,7 @@ let targetMidBoneIndices=null,targetMidBoneWeights=null,targetMidTopK=0;
 let poseMidBoneIndices=null,poseMidBoneWeights=null,poseMidTopK=0;
 let rigGroup=null,rigBoneLines=null,rigJointPoints=null,rigAxesX=null,rigAxesY=null,rigAxesZ=null;
 
-// v0.5.7 Shape-Space Analyzer.
+// v0.5.8 Shape-Space Analyzer.
 // The first semantic layer is deliberately measurement-driven: raw PCA stays the
 // engine underneath, while the UI exposes locally calibrated measurements in cm.
 const ANALYSIS_METRICS=[
@@ -441,7 +442,7 @@ async function loadCurrentRigPack(){
    }});
    currentRigPack=await decodeShapeNPZ(asset.u8)
   }
-  // v0.5.7: the fresh v2 rig-pack stores REAL newlines, while the very first
+  // v0.5.8: the fresh v2 rig-pack stores REAL newlines, while the very first
   // generated v1 pack accidentally stored the two literal characters "\\n".
   // Use the already existing compatibility decoder for both formats.
   const targetNames=decodePackedJointNames("target_joint_names_utf8",122);
@@ -463,7 +464,7 @@ async function loadCurrentRigPack(){
   if(missing.length)throw new Error("Rig-Pack unvollständig. Fehlt: "+missing.join(", "));
   const midRequired=["target_skinning_mid_data","target_skinning_mid_indices","target_skinning_mid_indptr","target_skinning_mid_shape","public_skinning_mid_data","public_skinning_mid_indices","public_skinning_mid_indptr","public_skinning_mid_shape"];
   const midMissing=midRequired.filter(k=>!packArray(k));
-  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.5.7 bitte den neuen ‘Build Anny SOMA Engine v2’-Workflow einmal ausführen; danach erneut laden.")}
+  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.5.8 bitte den neuen ‘Build Anny SOMA Engine v2’-Workflow einmal ausführen; danach erneut laden.")}
   if(targetNames.length<100)throw new Error(`Expanded Rig unerwartet klein: ${targetNames.length} Joints`);
   if(publicNames.length!==78)throw new Error(`Public Rig: ${publicNames.length} statt 78 Joints`);
   if(publicShape[0]!==4505||publicShape[1]!==78)throw new Error(`Public Low-Skinning unerwartet: ${JSON.stringify(publicShape)}`);
@@ -485,14 +486,14 @@ Mid-Skinning 18.056×122: ${packOptional("target_skinning_mid_shape")?"JA · ber
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
 Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":`${asset.source||"Repo"} · persistent gespeichert`}
 
-Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.5.7 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.5.8 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
   rigPass=true;updateDecision();return true
  }catch(e){
   console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
   info("#currentRigInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}
 
-v0.5.7 versucht den Rig-Pack in dieser Reihenfolge:
+v0.5.8 versucht den Rig-Pack in dieser Reihenfolge:
 1) persistenter iPhone-Cache
 2) GitHub Pages mit Cache-Busting
 3) raw.githubusercontent.com als Fallback
@@ -531,7 +532,7 @@ async function getMixamoFbxExporter(){
  return mixamoFbxExporterPromise
 }
 
-// v0.5.7: exact structural/orientation contract extracted from the uploaded
+// v0.5.8: exact structural/orientation contract extracted from the uploaded
 // standard Mixamo X Bot FBX. No X Bot mesh/animation is bundled.
 // The body stays canonical SOMA; only the 65-bone hierarchy, names and bind-axis
 // orientations mirror Mixamo's own standard character.
@@ -666,7 +667,7 @@ async function exportSammyMixamoBridge(){
   const mod=await getMixamoFbxExporter();if(!mod?.FBXExporter)throw new Error("FBXExporter-Modul wurde geladen, exportiert aber keine FBXExporter-Klasse.");
   const bytes=new mod.FBXExporter().parseSync(bridge.scene,{
    axisUp:"Y",axisForward:"-Z",unitScale:100,bakeSpaceTransform:false,includeAnimations:false,customProperties:true,
-   creator:"Sammy Mixamo XBotContract65 v0.5.7"
+   creator:"Sammy Mixamo XBotContract65 v0.5.8"
   });
   if(!(bytes instanceof Uint8Array)||bytes.byteLength<100000)throw new Error(`FBX-Ausgabe unerwartet klein/ungültig: ${bytes?.byteLength||0} Bytes`);
   const magic=new TextDecoder("latin1").decode(bytes.subarray(0,21));if(!magic.startsWith("Kaydara FBX Binary"))throw new Error("FBX-Datei hat keinen erwarteten Binary-FBX-Header.");
@@ -1013,7 +1014,7 @@ async function loadAnnyPack(){
   buildAnnyControls();setAnnyUiFromParams();$("#useAnny").disabled=false;setState("#annyState","LOW PACK OK","ok");
   info("#annyInfo",`✓ EXAKTE ANNY-BLENDSHAPE-ENGINE IM BROWSER\nQuelle: ${asset.cacheHit?"persistenter iPhone-Cache":asset.source}\nAnny v${annyMeta.anny_version} · Commit ${annyMeta.source_git_sha.slice(0,12)}\nLow: 4.505 Vertices · ${annyMeta.blendshape_count} Blendshapes\nPhänotyp-Blendshapes: ${annyMeta.phenotype_blendshape_count}\nLokale Modifikatoren: ${annyMeta.local_change_labels.length}\nAlle Phänotyp-Parameter + lokale Changes werden aus den offiziellen Anny-Blendshapes rekonstruiert – kein 216-Shape-Grid mehr.`);
   return true
- }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.5.7 den neuen Workflow „Build Anny SOMA Engine v2“ einmal ausführen.`);return false}
+ }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.5.8 den neuen Workflow „Build Anny SOMA Engine v2“ einmal ausführen.`);return false}
 }
 async function loadAnnyMidPack(){
  if(annyMidLoaded)return true;
@@ -1110,9 +1111,9 @@ function applyAnnyParams(){if(shapeEngine!=="anny")setShapeEngine("anny");else u
 function updateLodButtons(){$("#lodLow").classList.toggle("selected",displayLOD==="low");$("#lodMid").classList.toggle("selected",displayLOD==="mid");$("#lodBadge").textContent=displayLOD==="mid"?"18.056 V":"4.505 V"}
 async function setDisplayLOD(lod){
  if(lod===displayLOD)return true;if(lod==="mid"){
-  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.5.7 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return false}
+  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.5.8 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return false}
   if(!await loadAnnyMidPack())return false;
-  if(poseReady&&currentRigMode==="current-expanded"&&!packOptional("target_skinning_mid_shape")){info("#lodInfo","Mid-Shape ist vorhanden, aber der aktuelle Rig-Pack enthält noch keine 18k×122 Skinweights. Bitte den v0.5.7 Engine-v2-Workflow einmal ausführen; er erneuert Rig + Anny-Packs gemeinsam.");return false}
+  if(poseReady&&currentRigMode==="current-expanded"&&!packOptional("target_skinning_mid_shape")){info("#lodInfo","Mid-Shape ist vorhanden, aber der aktuelle Rig-Pack enthält noch keine 18k×122 Skinweights. Bitte den v0.5.8 Engine-v2-Workflow einmal ausführen; er erneuert Rig + Anny-Packs gemeinsam.");return false}
  }
  displayLOD=lod;updateLodButtons();updateShape(true);return true
 }
@@ -1483,7 +1484,7 @@ async function resetSemanticModifiers(){
 async function startFullShapeAnalysis(){
  if(shapeAnalysis.running)return;
  try{
-  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.5.7 Anny direkt über die nativen Parameter testen.");
+  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.5.8 Anny direkt über die nativen Parameter testen.");
   if(currentRigMode!=="current-expanded"||!poseReady)throw new Error("Zuerst Current Expanded 122-Joint LBS in Punkt 5 aktivieren.");
   stopPoseAnimation(false);shapeAnalysis.running=true;shapeAnalysis.ready=false;shapeAnalysis.stale=false;shapeAnalysis.internal=true;
   const token=++shapeAnalysis.cancelToken,btn=$("#startShapeAnalysis"),cancel=$("#cancelShapeAnalysis");btn.disabled=true;cancel.disabled=false;
@@ -1511,7 +1512,7 @@ async function startFullShapeAnalysis(){
   info("#analysisInfo",`✓ Lokale 7×128-Mess-Jacobian am aktuellen Körper erzeugt.
 ${qualities}
 
-Wichtig: Umfang/Tiefe sind in v0.5.7 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
+Wichtig: Umfang/Tiefe sind in v0.5.8 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
   updateDecision()
  }catch(e){
   console.error(e);
@@ -2129,6 +2130,47 @@ function convertSomaRotvecMotion(pack){
  return {data:out,frames:T,rawJ:J,format:"SOMA rotvec NPZ",hasRootTranslation:!!pack.root_translation}
 }
 
+const MIXAMO_REQUIRED_BONES=["hips","spine","spine1","spine2","neck","head",
+ "leftshoulder","leftarm","leftforearm","lefthand","rightshoulder","rightarm","rightforearm","righthand",
+ "leftupleg","leftleg","leftfoot","lefttoebase","rightupleg","rightleg","rightfoot","righttoebase"];
+function collectMixamoBones(root){
+ const bones=new Map(),boneNames=[];
+ root.traverse(o=>{
+  if(!o.isBone)return;
+  const k=mixamoBoneKey(o.name);
+  if(k&&!bones.has(k))bones.set(k,o);
+  boneNames.push(o.name)
+ });
+ return {bones,boneNames}
+}
+async function loadMixamoReferenceFile(file){
+ if(!file)throw new Error("Keine Referenzdatei gewählt.");
+ const FBXLoader=await getMixamoFbxLoaderClass(),loader=new FBXLoader();
+ setState("#userAnimRefState","LÄDT","warn");
+ const u8=new Uint8Array(await file.arrayBuffer());
+ const root=loader.parse(u8.buffer.slice(u8.byteOffset,u8.byteOffset+u8.byteLength),"");
+ if(!root)throw new Error("FBXLoader konnte die Referenzdatei nicht lesen.");
+ root.updateMatrixWorld(true);
+ const {bones}=collectMixamoBones(root);
+ const missing=MIXAMO_REQUIRED_BONES.filter(k=>!bones.has(k));
+ if(missing.length)throw new Error(`Keine kompatible Mixamo-T-Pose. Fehlende Bones: ${missing.join(", ")}`);
+ const bindQ=new Map(),bindPos=new Map(),tmpQ=new THREE.Quaternion(),tmpV=new THREE.Vector3();
+ for(const [k,b] of bones){
+  b.getWorldQuaternion(tmpQ);bindQ.set(k,tmpQ.clone());
+  b.getWorldPosition(tmpV);bindPos.set(k,tmpV.clone())
+ }
+ mixamoReferencePose={bindQ,bindPos,boneCount:bones.size};
+ mixamoReferenceName=file.name||"T-Pose.fbx";
+ setState("#userAnimRefState","BEREIT","ok");
+ info("#userAnimRefInfo",`✓ ${mixamoReferenceName}
+Bones: ${bones.size} · Referenzmodus: Welt-Restorientierung + Joint-Positionen aus echter T-Pose
+Diese Referenz wird ab jetzt für Mixamo-FBX-Importe verwendet. Schultern, Hals/Kopf und Finger sollten damit deutlich stabiler retargetet werden.`)
+}
+function clearMixamoReferenceFile(){
+ mixamoReferencePose=null;mixamoReferenceName="";
+ setState("#userAnimRefState","OPTIONAL","warn");
+ info("#userAnimRefInfo","Optional, aber empfohlen für Mixamo-FBX: dieselbe Figur einmal als neutrale T-Pose laden. Dann werden Animationen nicht gegen ihre eingebettete Startpose, sondern gegen diese echte Referenzpose retargetet. Das verbessert vor allem Schultern, Kopf/Hals und Finger.")
+}
 function mixamoBoneKey(name){
  return String(name||"").toLowerCase().replace(/^.*?mixamorig[:_]?/,"").replace(/[^a-z0-9]/g,"")
 }
@@ -2166,22 +2208,17 @@ async function convertMixamoFbxMotion(arrayBuffer,filename="Mixamo FBX"){
  if(!clip)throw new Error("FBX enthält keine Animation.");
 
  root.updateMatrixWorld(true);
- const bones=new Map(),boneNames=[];
- root.traverse(o=>{
-  if(!o.isBone)return;
-  const k=mixamoBoneKey(o.name);
-  if(k&&!bones.has(k))bones.set(k,o);
-  boneNames.push(o.name)
- });
+ const {bones}=collectMixamoBones(root);
 
- const required=["hips","spine","spine1","spine2","neck","head",
-  "leftshoulder","leftarm","leftforearm","lefthand","rightshoulder","rightarm","rightforearm","righthand",
-  "leftupleg","leftleg","leftfoot","lefttoebase","rightupleg","rightleg","rightfoot","righttoebase"];
- const missing=required.filter(k=>!bones.has(k));
+ const missing=MIXAMO_REQUIRED_BONES.filter(k=>!bones.has(k));
  if(missing.length)throw new Error(`Kein kompatibles Mixamo/X-Bot-Rig. Fehlende Bones: ${missing.join(", ")}`);
 
  const bindQ=new Map(),tmpQ=new THREE.Quaternion();
- for(const [k,b] of bones){b.getWorldQuaternion(tmpQ);bindQ.set(k,tmpQ.clone())}
+ for(const [k,b] of bones){
+  const refQ=mixamoReferencePose?.bindQ?.get(k);
+  if(refQ)bindQ.set(k,refQ.clone());
+  else {b.getWorldQuaternion(tmpQ);bindQ.set(k,tmpQ.clone())}
+ }
 
  const fps=detectAnimationFps(clip);
  const frames=Math.max(2,Math.round(clip.duration*fps)+1);
@@ -2265,7 +2302,7 @@ async function convertMixamoFbxMotion(arrayBuffer,filename="Mixamo FBX"){
  return {
   data:out,frames,rawJ:bones.size,format:"Mixamo FBX → SOMA 78",
   hasRootTranslation:true,fps,clipName:clip.name||filename,duration:clip.duration,
-  boneCount:bones.size,animatedBoneCount:animatedKeys.size
+  boneCount:bones.size,animatedBoneCount:animatedKeys.size,referenceUsed:!!mixamoReferencePose,referenceName:mixamoReferenceName||""
  }
 }
 
@@ -2291,7 +2328,8 @@ async function loadUserAnimationFile(file){
 Format: ${conv.format}
 Frames: ${conv.frames} · Joints/Bones: ${conv.rawJ} → ${poseJointCount} Public-Joints
 ${conv.duration?`Clip: ${conv.clipName||"Mixamo"} · ${conv.duration.toFixed(2)} s · ${conv.animatedBoneCount||"?"} animierte Bones
-`:""}Playback: ${userAnimFps} fps · Root Translation: ${conv.hasRootTranslation?"vorhanden, v0.5.7 spielt bewusst in-place":"keine"}
+`:""}${conv.referenceUsed?`Referenzpose: ${conv.referenceName||"geladen"} · explizite T-Pose-Kalibrierung aktiv
+`:""}Playback: ${userAnimFps} fps · Root Translation: ${conv.hasRootTranslation?"vorhanden, v0.5.8 spielt bewusst in-place":"keine"}
 Die Animation läuft durch denselben 78→122 Procedural-Twist/LBS-Pfad wie die eingebaute NVIDIA-Animation.`);
   return true
  }catch(e){
@@ -2642,6 +2680,11 @@ $("#poseAction").onclick=()=>posePreset("action");
 $("#poseGrip").onclick=()=>posePreset("grip");
 $("#animOfficial").onclick=async()=>{if(!officialAnimLoaded){const ok=await loadOfficialAnimation();if(!ok)return}startPoseAnimation("official")};
 $("#animFile").onchange=async e=>{const f=e.target.files?.[0];if(f)await loadUserAnimationFile(f)};
+$("#animRefFile").onchange=async e=>{
+ const f=e.target.files?.[0];if(!f)return;
+ try{await loadMixamoReferenceFile(f)}catch(err){console.error(err);setState("#userAnimRefState","FEHLER","bad");info("#userAnimRefInfo",`${err?.name||"Fehler"}: ${err?.message||String(err)}`)}
+};
+$("#animRefClear").onclick=()=>clearMixamoReferenceFile();
 $("#animUser").onclick=()=>startPoseAnimation("user");
 $("#animImportFps").onchange=e=>{userAnimFps=Math.max(1,Math.min(120,Number(e.target.value)||30));e.target.value=String(userAnimFps)};
 $("#retryStartup").onclick=autoStartRuntime;
@@ -2672,11 +2715,11 @@ function updateDecision(){
   const expanded=currentRigMode==="current-expanded";
   if(expanded&&shapeEngine==="anny"&&annyPackLoaded){
    setState("#decision","ANNY → SOMA → 122 LBS AKTIV","ok");
-   info("#decisionInfo",`✓ v0.5.7: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
+   info("#decisionInfo",`✓ v0.5.8: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
 
 Aktuell im Browser steuerbar: ALLE nativen Anny-Phänotypen (Gender, Age, Height, Weight, Muscle, Proportions, Cupsize, Firmness sowie die drei Legacy-Phenotype-Anteile) plus sämtliche lokalen Anny-Changes aus dem offiziellen Asset. Male/Female bleiben als schnelle Presets; der native Gender-Blend ist im Advanced-Bereich ebenfalls sichtbar.
 
-Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.5.7 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
+Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.5.8 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
 
 Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zentimetermaße. Das ist erst der nächste, separate Measurement-Fit.`);
   }else if(expanded&&shapeAnalysis.ready){
@@ -2692,5 +2735,5 @@ Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zen
  else if(shapePass)setState("#decision","SHAPE BESTANDEN","ok")
 }
 
-// v0.5.7: no manual boot ritual.
+// v0.5.8: no manual boot ritual.
 setTimeout(()=>autoStartRuntime(),0);
