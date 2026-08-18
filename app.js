@@ -400,7 +400,7 @@ Target-Hierarchie: ${targetHierarchyProbe.forwardRefs} Parent-Vorwärtsverweise 
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
 Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":`${asset.source||"Repo"} · persistent gespeichert`}
 
-Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.2.3 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.2.4 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
  }catch(e){
   console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
@@ -504,16 +504,38 @@ function bindAlignQuat(startId,endId){
  let z=v3Norm(v3Cross(x,y));y=v3Norm(v3Cross(z,x));
  return quatFromMat3([x[0],y[0],z[0],x[1],y[1],z[1],x[2],y[2],z[2]])
 }
+
+function decodePackedJointNames(key,expectedCount=0){
+ const text=decodeUtf8Array(packArray(key));
+ // The first generated v0026 pack accidentally stored the separator as the
+ // two literal characters "\" + "n" instead of a real newline. Support both
+ // formats so the already-cached/on-repo pack remains valid.
+ let names=text.includes("\n")
+  ? text.split("\n")
+  : text.includes("\\n")
+   ? text.split("\\n")
+   : [text];
+ names=names.map(s=>s.trim()).filter(Boolean);
+ if(expectedCount&&names.length!==expectedCount){
+  throw new Error(`${key}: ${names.length} Joint-Namen dekodiert, erwartet ${expectedCount}. Separator/Pack-Format stimmt nicht.`)
+ }
+ return names
+}
+
 function compileCurrentProcedural(){
  const def=JSON.parse(decodeUtf8Array(packArray("procedural_json_utf8")));
- const targetNames=decodeUtf8Array(packArray("target_joint_names_utf8")).split("\n").filter(Boolean),publicNames=decodeUtf8Array(packArray("public_joint_names_utf8")).split("\n").filter(Boolean);
+ const targetNames=decodePackedJointNames("target_joint_names_utf8",targetJointCount||122);
+ const publicNames=decodePackedJointNames("public_joint_names_utf8",poseJointCount||78);
  const ti=new Map(targetNames.map((n,i)=>[n,i])),pi=new Map(publicNames.map((n,i)=>[n,i]));
  const publicTarget=Int32Array.from(Array.from(packArray("public_target_indices").data,Number));
  const publicByTarget=new Int16Array(targetNames.length);publicByTarget.fill(-1);for(let p=0;p<publicTarget.length;p++)publicByTarget[publicTarget[p]]=p;
  const segments=(def.segments||[]).map(seg=>{
   const axis=seg.source_axis==="y"?1:seg.source_axis==="z"?2:0,start=pi.get(seg.start_joint),end=pi.get(seg.end_joint),parent=seg.parent_joint?pi.get(seg.parent_joint):poseParents[start];
   if(start==null||end==null||parent==null)throw new Error(`Procedural Segment-Mapping fehlt: ${seg.start_joint} → ${seg.end_joint}`);
-  return {...seg,axis,sign:Number(seg.source_sign??1),start,end,parent,twistTargetIds:seg.twist_joints.map(n=>ti.get(n)),alignQ:bindAlignQuat(start,end),bindQStart:quatFromMat4(poseTWorld,start*16),bindQEnd:quatFromMat4(poseTWorld,end*16),bindQParent:quatFromMat4(poseTWorld,parent*16)}
+  const twistTargetIds=seg.twist_joints.map(n=>ti.get(n));
+  const missingTwists=seg.twist_joints.filter((n,i)=>twistTargetIds[i]==null);
+  if(missingTwists.length)throw new Error(`Procedural Twist-Joints fehlen im Target-Rig: ${missingTwists.join(", ")}`);
+  return {...seg,axis,sign:Number(seg.source_sign??1),start,end,parent,twistTargetIds,alignQ:bindAlignQuat(start,end),bindQStart:quatFromMat4(poseTWorld,start*16),bindQEnd:quatFromMat4(poseTWorld,end*16),bindQParent:quatFromMat4(poseTWorld,parent*16)}
  });
  const rotationRows=new Map();for(const e of def.parameter_matrices?.rotation?.entries||[]){const r=ti.get(e.row),c=pi.get(e.column);if(r==null||c==null)continue;if(!rotationRows.has(r))rotationRows.set(r,[]);rotationRows.get(r).push([c,Number(e.value)])}
  const translationRows=new Map();for(const e of def.parameter_matrices?.translation?.entries||[]){const r=ti.get(e.row),c=ti.get(e.column);if(r==null||c==null)continue;if(!translationRows.has(r))translationRows.set(r,[]);translationRows.get(r).push([c,Number(e.value)])}

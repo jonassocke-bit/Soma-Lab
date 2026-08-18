@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.2.3
+# SOMA Browser PoC v0.2.4
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -253,9 +253,9 @@ Noch absichtlich **nicht als bestanden** markiert:
 Diese kommen erst nach dem realen iPhone-Pack-Test, damit wir die neue Grundlage nicht wieder in einem großen ungetesteten Umbau verstecken.
 
 
-## v0.2.3 – Current Expanded 122-Joint LBS
+## v0.2.4 – Current Expanded 122-Joint LBS
 
-Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen. v0.2.3 aktiviert nun den eigentlichen Expanded-Skinning-Pfad:
+Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen. v0.2.4 aktiviert nun den eigentlichen Expanded-Skinning-Pfad:
 
 - 77 user-facing SOMA Pose-Joints bleiben die Bedien-/Motion-Schnittstelle.
 - Intern werden die aktuellen 122 Target-Joints aus dem v0026-Rig verwendet.
@@ -267,12 +267,12 @@ Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen.
 - NVIDIA Motion, manuelle Joint-Slider und Shape-Regler gehen nach Aktivierung alle durch den Expanded-LBS-Pfad.
 - Rig-Debug kann zwischen Public 78 und Expanded 122 umschalten.
 
-Noch bewusst offen: das vollständige shape-adaptive **Rotation-Fitting** der offiziellen `SkeletonTransfer`-Pipeline. v0.2.3 verwendet für die Shape-Anpassung die offiziellen vorberechneten RBF-Jointpositionen und die aktuelle Procedural-Expansion, aber noch keine vollständige Browser-Portierung des Kabsch/Newton-Schulz Rotations-Fits.
+Noch bewusst offen: das vollständige shape-adaptive **Rotation-Fitting** der offiziellen `SkeletonTransfer`-Pipeline. v0.2.4 verwendet für die Shape-Anpassung die offiziellen vorberechneten RBF-Jointpositionen und die aktuelle Procedural-Expansion, aber noch keine vollständige Browser-Portierung des Kabsch/Newton-Schulz Rotations-Fits.
 
-- v0.2.3 merkt die zuletzt tatsächlich angewendete 78-Joint-Relativpose. Shape-Regler können dadurch eine laufende/aktuelle Pose nach dem Rebind wieder anwenden, statt beim Morphen ungewollt auf die Slider-Nullpose zurückzuspringen.
+- v0.2.4 merkt die zuletzt tatsächlich angewendete 78-Joint-Relativpose. Shape-Regler können dadurch eine laufende/aktuelle Pose nach dem Rebind wieder anwenden, statt beim Morphen ungewollt auf die Slider-Nullpose zurückzuspringen.
 
 
-## v0.2.3 – 122-Joint-Hierarchie reihenfolgeunabhängig
+## v0.2.4 – 122-Joint-Hierarchie reihenfolgeunabhängig
 
 Der erste echte iPhone-Test von v0.2.1 erreichte `PACK OK`, stoppte beim Aktivieren des Expanded-Rigs aber mit `122 FEHLER`. Der sichtbare Ablauf zeigte, dass der Public-Rig-Teil bereits initialisiert war und der Fehler erst beim Expanded-Posepfad auftrat.
 
@@ -284,10 +284,10 @@ Zusätzlich:
 - Bei einem 122-Fehler fällt die App sauber auf den funktionierenden Current-Public-78-Pfad zurück.
 - Im Rig-Pack-Infofeld wird die Zahl der Parent-Vorwärtsverweise angezeigt.
 
-Der vorhandene `soma_current_rig_pack_v0026.npz` und dessen persistenter Cache bleiben unverändert gültig; der GitHub-Actions-Builder muss für v0.2.3 nicht erneut ausgeführt werden.
+Der vorhandene `soma_current_rig_pack_v0026.npz` und dessen persistenter Cache bleiben unverändert gültig; der GitHub-Actions-Builder muss für v0.2.4 nicht erneut ausgeführt werden.
 
 
-## v0.2.3 – robuster Current-Rig-Pack Loader
+## v0.2.4 – robuster Current-Rig-Pack Loader
 
 Der bereits erzeugte `soma_current_rig_pack_v0026.npz` wird nicht neu erzeugt.
 
@@ -303,3 +303,20 @@ unangetastet.
 
 Damit darf ein kurzfristiges GitHub-Pages-/HTTP-Cache-Problem den 122-Joint-Test
 nicht mehr blockieren.
+
+
+## v0.2.4 – Joint-Name-Separator-Fix
+
+Die v0.2.3-Fehlermeldung hat den eigentlichen Fehler sichtbar gemacht:
+Der erste erzeugte Rig-Pack speichert `target_joint_names_utf8` und
+`public_joint_names_utf8` mit dem *literalen* Trenner `\n` statt echten
+Newline-Zeichen. Dadurch sah der Browser die komplette Namensliste als einen
+einzigen Namen und konnte z. B. `LeftArm -> LeftForeArm` nicht auflösen.
+
+v0.2.4:
+- liest sowohl echte Newlines als auch den bereits erzeugten Legacy-`\n`-Pack,
+- prüft 122 Target- und 78 Public-Namen explizit,
+- prüft alle Twist-Joint-Namen vor Aktivierung,
+- korrigiert zusätzlich den Extractor für jede spätere Rig-Pack-Neuerzeugung.
+
+Der vorhandene `soma_current_rig_pack_v0026.npz` muss NICHT neu erzeugt werden.
