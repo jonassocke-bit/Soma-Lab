@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.1.7
+# SOMA Browser PoC v0.1.8
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -177,3 +177,28 @@ Neu:
 Wichtig:
 Dieses sichtbare Rig-Debug nutzt weiterhin den aktuell aktiven 78-Joint-Browser-LBS-Pfad.
 Es ersetzt noch nicht den späteren echten v0.2-122-Joint/Procedural-Twist-Rig-Pack, hilft aber genau dabei, den Restfehler vor diesem nächsten Schritt sauber einzugrenzen.
+
+
+## v0.1.8 – adaptives mitmorphendes v0.1-Rig
+
+Aus dem v0.1.7-Debug ergab sich klar:
+- kleine Einzelwinkel (z. B. +10°) wirkten nicht grundsätzlich falsch,
+- aber das sichtbare Skelett saß bei gemorphten Shapes teilweise außerhalb des Körpervolumens,
+- also morphten Mesh und Skelett noch nicht gemeinsam.
+
+Daraufhin führt v0.1.8 eine **experimentelle shape-adaptive Rig-Anpassung** ein, ohne schon den großen v0.2-/122-Joint-Rig-Pack vorauszusetzen.
+
+Grundidee:
+- `bind_shape` aus dem eingebetteten SOMA-v0.1-Asset dient als Referenzkörper,
+- die vorhandenen Skinweights werden für jedes Joint als weiche Vertex-Anker verwendet,
+- daraus werden Joint-Schwerpunkte im `bind_shape` und im aktuellen gemorphten Shape verglichen,
+- die Joint-Translationen der Bindpose werden entsprechend angenähert verschoben,
+- daraus werden aktive Bindpose/Inverse-Bind-Matrizen neu aufgebaut.
+
+Wichtig:
+- Rotationskonvention bleibt die bereits korrigierte SOMA-T-Pose/Joint-Orient-Logik.
+- Dies ist **noch kein vollständiges shape-adaptives Rebinding**.
+- Der spätere v0.2-/122-Joint-/Twist-Rig-Pack bleibt weiterhin der nächste größere Datenstand.
+
+Ziel dieses Schritts:
+Das Skelett soll bei Shape-Änderungen sichtbar besser *im* Mannequin sitzen, bevor wir in den finalen Rig-Pack übergehen.

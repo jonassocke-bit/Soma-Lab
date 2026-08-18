@@ -161,13 +161,14 @@ const setState=(sel,txt,cls="")=>{const e=$(sel);e.textContent=txt;e.className=c
 const info=(sel,txt)=>$(sel).textContent=txt;
 
 let arrays=null, mean=null, dirs=null, eig=null, triangles=null, lowMap=null;
-let coeff=new Float32Array(128), mesh=null, geometry=null, baseLow=null, dirsLow=null, currentRestLow=null;
+let coeff=new Float32Array(128), mesh=null, geometry=null, baseLow=null, dirsLow=null, currentRestLow=null, bindShapeLow=null;
 let shapePass=false, rigPass=false, posePass=false;
 
 // Browser-LBS state. The currently cached Hugging-Face SOMA_neutral.npz is the
 // original public SOMA v0.1 asset, whose official runtime stored the 78-joint
 // rig, bind transforms and sparse skinning weights in this same NPZ.
 let poseReady=false, poseParents=null, poseLocalBase=null, poseBindWorld=null, poseInvBind=null, poseTWorld=null;
+let poseLocalActive=null,poseBindWorldActive=null,poseInvBindActive=null,rigAdaptiveEnabled=false;
 let poseOrient3=null,poseOrientParentT3=null,poseBoneIndices=null,poseBoneWeights=null,poseEulerDeg=null,poseJointCount=0,poseTopK=8;
 let officialAnimRel=null,officialAnimFrames=0,officialAnimFps=30,officialAnimLoaded=false;
 
@@ -325,7 +326,17 @@ function buildLowData(){
   dirsLow[doff+1]=Number(dirs.data[so+1])/100;
   dirsLow[doff+2]=Number(dirs.data[so+2])/100
  }
- if(useLow&&arrays.triangles_low)triangles=arrays.triangles_low
+ if(useLow&&arrays.triangles_low)triangles=arrays.triangles_low;
+ bindShapeLow=null;
+ if(arrays.bind_shape){
+  bindShapeLow=new Float32Array(n*3);
+  for(let i=0;i<n;i++){
+   const src=useLow?Number(lowMap.data[i]):i;
+   bindShapeLow[i*3]=Number(arrays.bind_shape.data[src*3])/100;
+   bindShapeLow[i*3+1]=Number(arrays.bind_shape.data[src*3+1])/100;
+   bindShapeLow[i*3+2]=Number(arrays.bind_shape.data[src*3+2])/100
+  }
+ }
 }
 function buildMesh(){
  geometry?.dispose();if(mesh)scene.remove(mesh);
@@ -350,8 +361,10 @@ function rebuildRestShape(){
 function updateShape(){
  if(!geometry)return;
  const t0=performance.now(),rest=rebuildRestShape();
- if(poseReady)applyPoseToRest(rest,false);
- else{
+ if(poseReady){
+  if(rigAdaptiveEnabled)recomputeAdaptiveRig();
+  applyPoseToRest(rest,false)
+ }else{
   const pos=geometry.attributes.position.array;pos.set(rest);
   geometry.attributes.position.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingSphere()
  }
@@ -578,7 +591,7 @@ function relativeToFinalLocal(relative3,outLocal4){
  for(let j=0;j<poseJointCount;j++){
   mat3Mul(poseOrientParentT3,j*9,relative3,j*9,tmp,0);
   mat3Mul(tmp,0,poseOrient3,j*9,finalR,0);
-  writeLocalMat4(finalR,0,poseLocalBase,j*16,outLocal4,j*16)
+  writeLocalMat4(finalR,0,poseLocalActive||poseLocalBase,j*16,outLocal4,j*16)
  }
 }
 
@@ -591,6 +604,86 @@ function copyRigMatricesToMeters(arr){
   out[o+3]/=100;out[o+7]/=100;out[o+11]/=100
  }
  return out
+}
+function resetActiveRigMatrices(){
+ poseLocalActive=poseLocalBase.slice();
+ poseBindWorldActive=poseBindWorld.slice();
+ poseInvBindActive=poseInvBind.slice()
+}
+function copyRotationAndBottom(src,so,dst,doff){
+ dst[doff]=src[so];dst[doff+1]=src[so+1];dst[doff+2]=src[so+2];
+ dst[doff+4]=src[so+4];dst[doff+5]=src[so+5];dst[doff+6]=src[so+6];
+ dst[doff+8]=src[so+8];dst[doff+9]=src[so+9];dst[doff+10]=src[so+10];
+ dst[doff+12]=0;dst[doff+13]=0;dst[doff+14]=0;dst[doff+15]=1
+}
+function worldToLocalWithFixedRotations(world){
+ const local=new Float32Array(world.length);
+ for(let j=0;j<poseJointCount;j++)copyRotationAndBottom(poseLocalBase,j*16,local,j*16);
+ local[3]=world[3];local[7]=world[7];local[11]=world[11];
+ for(let j=1;j<poseJointCount;j++){
+  const p=poseParents[j],po=p*16,jo=j*16;
+  const dx=world[jo+3]-world[po+3],dy=world[jo+7]-world[po+7],dz=world[jo+11]-world[po+11];
+  local[jo+3]=world[po]*dx+world[po+4]*dy+world[po+8]*dz;
+  local[jo+7]=world[po+1]*dx+world[po+5]*dy+world[po+9]*dz;
+  local[jo+11]=world[po+2]*dx+world[po+6]*dy+world[po+10]*dz
+ }
+ return local
+}
+function updateAdaptiveRigUI(msg,state="warn"){
+ if($("#adaptiveRigState"))setState("#adaptiveRigState",state==="ok"?"AKTIV":state==="bad"?"FEHLER":"AUS",state);
+ if($("#adaptiveRigInfo"))info("#adaptiveRigInfo",msg)
+}
+function recomputeAdaptiveRig(){
+ if(!poseReady)return null;
+ if(!rigAdaptiveEnabled||!bindShapeLow){
+  resetActiveRigMatrices();
+  updateAdaptiveRigUI(bindShapeLow
+   ?"Shape-adaptives Rig ist aus. Dann bleibt das Template-Skelett unverändert, auch wenn sich der Körper morpht."
+   :"Kein bind_shape im Asset gefunden – ohne diesen Referenzkörper kann das Rig noch nicht mit dem Mannequin mitmorphen.",bindShapeLow?"warn":"bad");
+  return {enabled:false}
+ }
+ const n=currentRestLow.length/3,bindSum=new Float32Array(poseJointCount*3),curSum=new Float32Array(poseJointCount*3),wSum=new Float32Array(poseJointCount);
+ const gamma=1.75;
+ for(let v=0;v<n;v++){
+  const bx=bindShapeLow[v*3],by=bindShapeLow[v*3+1],bz=bindShapeLow[v*3+2];
+  const cx=currentRestLow[v*3],cy=currentRestLow[v*3+1],cz=currentRestLow[v*3+2];
+  for(let k=0;k<poseTopK;k++){
+   const j=poseBoneIndices[v*poseTopK+k],w=poseBoneWeights[v*poseTopK+k];
+   if(j<0||w<=0)continue;
+   const ww=Math.pow(w,gamma),jo=j*3;
+   wSum[j]+=ww;
+   bindSum[jo]+=bx*ww;bindSum[jo+1]+=by*ww;bindSum[jo+2]+=bz*ww;
+   curSum[jo]+=cx*ww;curSum[jo+1]+=cy*ww;curSum[jo+2]+=cz*ww
+  }
+ }
+ const world=poseBindWorld.slice();
+ let maxShift=0,avgShift=0,count=0;
+ for(let j=1;j<poseJointCount;j++){
+  const ws=wSum[j];
+  if(ws<1e-9)continue;
+  const jo=j*3,mo=j*16;
+  const dx=curSum[jo]/ws-bindSum[jo]/ws,dy=curSum[jo+1]/ws-bindSum[jo+1]/ws,dz=curSum[jo+2]/ws-bindSum[jo+2]/ws;
+  world[mo+3]+=dx;world[mo+7]+=dy;world[mo+11]+=dz;
+  const dist=Math.hypot(dx,dy,dz);maxShift=Math.max(maxShift,dist);avgShift+=dist;count++
+ }
+ poseBindWorldActive=world;
+ poseLocalActive=worldToLocalWithFixedRotations(world);
+ poseInvBindActive=new Float32Array(poseJointCount*16);
+ for(let j=0;j<poseJointCount;j++)rigidInverse(poseBindWorldActive,j*16,poseInvBindActive,j*16);
+ const meanShift=count?avgShift/count:0;
+ updateAdaptiveRigUI(`✓ Shape-adaptives Rig aktiv
+Das Template-Skelett wird jetzt aus bind_shape → aktuellem Shape mit den vorhandenen Skinweights näherungsweise mitgezogen.
+Mittlere Joint-Verschiebung: ${(meanShift*1000).toFixed(1)} mm · Max: ${(maxShift*1000).toFixed(1)} mm · Joints mit Daten: ${count}/${poseJointCount-1}
+WICHTIG: Das ist noch eine v0.1-Übergangslösung. Der echte v0.2-/122-Joint-Rig-Pack + späteres shape-adaptives Rebinding bleibt der nächste größere Schritt.`,`ok`);
+ return {enabled:true,meanShift,maxShift,count}
+}
+function setAdaptiveRigEnabled(enabled,refreshPose=true){
+ rigAdaptiveEnabled=!!enabled;
+ const stats=recomputeAdaptiveRig();
+ const btn=$("#toggleAdaptiveRig");
+ if(btn)btn.textContent=rigAdaptiveEnabled?"Adaptive Rig AUS":"Adaptive Rig AN";
+ if(poseReady&&refreshPose)applyPoseToRest(currentRestLow,false,false);
+ return stats
 }
 
 function buildLowSkinningWeights(){
@@ -966,7 +1059,7 @@ function skinLocalMatrices(rest,local,markMoved=true,report=true,label="Browser-
   if(p<0||p>=j)throw new Error(`Ungültiger Parent ${p} für Joint ${j}`);
   mat4Mul(world,p*16,local,j*16,world,j*16)
  }
- for(let j=0;j<J;j++)mat4Mul(world,j*16,poseInvBind,j*16,bone,j*16);
+ for(let j=0;j<J;j++)mat4Mul(world,j*16,(poseInvBindActive||poseInvBind),j*16,bone,j*16);
 
  const pos=geometry.attributes.position.array,n=rest.length/3;
  let maxWeightErr=0;
@@ -994,8 +1087,8 @@ function skinLocalMatrices(rest,local,markMoved=true,report=true,label="Browser-
   posePass=true;setState("#poseState","POSE-KONVENTION AKTIV","ok");updateDecision()
  }
  if(report)info("#posePerf",`${label}: ${elapsed.toFixed(1)} ms · ${n} Vertices · ${J} Joints · max. Gewichtssummenfehler ${maxWeightErr.toExponential(1)}
-Rotationen laufen jetzt durch SOMAs T-Pose/Joint-Orient-Konvention; nicht mehr direkt durch die Bind-Achsen.
-Shape-Regler bleiben aktiv; shape-adaptives Rebinding ist weiterhin noch offen.`);
+Rotationen laufen durch SOMAs T-Pose/Joint-Orient-Konvention.
+Adaptive Rig-Translationen: ${rigAdaptiveEnabled?"AKTIV":"AUS"} · vollständiges shape-adaptives Rebinding bleibt weiterhin noch offen.`);
  return {ms:elapsed,maxWeightErr,world}
 }
 function applyRelativePoseMatrices(rest,relative3,markMoved=true,report=true,label="SOMA-relative LBS"){
@@ -1022,7 +1115,7 @@ function applyPoseToRest(rest,markMoved=true,report=true){
 }
 function bindLbsError(){
  const rest=currentRestLow,pos=geometry.attributes.position.array;
- skinLocalMatrices(rest,poseLocalBase,false,false,"Bind-LBS");
+ skinLocalMatrices(rest,poseLocalActive||poseLocalBase,false,false,"Bind-LBS");
  let max=0,rms=0;
  for(let i=0;i<rest.length;i++){const d=pos[i]-rest[i];max=Math.max(max,Math.abs(d));rms+=d*d}
  return {max,rms:Math.sqrt(rms/rest.length)}
@@ -1062,6 +1155,7 @@ function initEmbeddedPoseRig(){
 
   poseInvBind=new Float32Array(poseJointCount*16);
   for(let j=0;j<poseJointCount;j++)rigidInverse(poseBindWorld,j*16,poseInvBind,j*16);
+  resetActiveRigMatrices();
 
   // Strong validation: FK(bind_pose_local) must reproduce bind_pose_world.
   const fk=new Float32Array(poseJointCount*16);fk.set(poseLocalBase.subarray(0,16),0);
@@ -1077,6 +1171,8 @@ function initEmbeddedPoseRig(){
   poseEulerDeg=new Float32Array(poseJointCount*3);
   poseReady=true;
   buildPoseControls();
+  if(bindShapeLow) setAdaptiveRigEnabled(true,false);
+  else updateAdaptiveRigUI("bind_shape fehlt – deshalb kann das Skelett aktuell noch nicht mit dem gemorphten Mannequin mitwandern.","bad");
 
   const bindErr=bindLbsError();
   const orientErr=jointOrientZeroPoseError();
@@ -1100,8 +1196,11 @@ parentOrientᵀ × relativeRotation × jointOrient.
 
 Der Button „T-Pose“ ist jetzt deshalb wirklich die SOMA-All-Zero-Pose. Für den stärksten Gegencheck kannst du zusätzlich NVIDIAs echte example_animation.npy laden und abspielen.
 
-WICHTIG: Shape-adaptives Rebinding und der aktuelle v0.2-122-Joint/Twist-Rig sind weiterhin separate Folgetests.`);
-  info("#posePerf","SOMA-Nullpose aktiv. Teste zuerst T-Pose/Arme hoch, dann Einzelgelenk +10°/+20°/+30° mit sichtbarem Rig und danach die offizielle NVIDIA-Animation.")
+NEU v0.1.8: Das bereits vorhandene v0.1-Rig kann jetzt näherungsweise mit dem aktuellen Shape mitwandern.
+Dafür werden die eingebetteten bind_shape-Daten + vorhandene Skinweights benutzt, um die Joint-Positionen beim Morphen neu anzunähern.
+
+WICHTIG: Das ist noch kein vollständiges shape-adaptives Rebinding und ersetzt den späteren v0.2-122-Joint/Twist-Rig-Pack nicht.`);
+  info("#posePerf","SOMA-Nullpose aktiv. Teste jetzt zuerst mit AKTIVEM Adaptive-Rig: T-Pose, dann Arme hoch, dann Rig-Debug +10°/+20°/+30° und danach die offizielle NVIDIA-Animation.")
  }catch(e){
   console.error(e);poseReady=false;posePass=false;setState("#poseState","FEHLER","bad");info("#poseInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}${e?.stack?"\n"+e.stack:""}`)
  }
@@ -1153,6 +1252,8 @@ $("#animSpeed").oninput=e=>{
  poseAnimSpeed=Number(e.target.value);
  $("#animSpeedOut").value=poseAnimSpeed.toFixed(2)+"×"
 };
+$("#toggleAdaptiveRig").onclick=()=>setAdaptiveRigEnabled(!rigAdaptiveEnabled,true);
+$("#rebindAdaptiveRig").onclick=()=>{if(poseReady){recomputeAdaptiveRig();applyPoseToRest(currentRestLow,false,false)}};
 $("#toggleRig").onclick=toggleRigDebug;
 $("#toggleAxes").onclick=toggleRigAxes;
 $("#debug10").onclick=()=>applySingleJointDebug(10);
@@ -1163,7 +1264,7 @@ $("#debugMinus10").onclick=()=>applySingleJointDebug(-10);
 function updateDecision(){
  if(shapePass&&rigPass&&posePass){
   setState("#decision","LBS + POSE-KONVENTION AKTIV","ok");
-  info("#decisionInfo","Shape, PCA, echter browserseitiger LBS-Lauf und SOMAs T-Pose/Joint-Orient-Rotationskonvention sind aktiv. Dieser Test benutzt den offiziellen eingebetteten 78-Joint-Rig des SOMA-v0.1-Assets. Noch NICHT als endgültige BODY-LAB-Basis bewiesen sind: der aktualisierte v0.2-122-Joint/Procedural-Twist-Rig-Pack, shape-adaptive Gelenkpositionen/Rebinding und danach Shape+Pose unter diesen finalen Rig-Daten. Neu in v0.1.7 ist aber ein sichtbares Rig-/Achsen-Debugging direkt im Viewport, damit wir den Restfehler sauber vom reinen Twist-Rig-Thema trennen können. BODY LAB bleibt unverändert.")
+  info("#decisionInfo","Shape, PCA, echter browserseitiger LBS-Lauf, SOMAs T-Pose/Joint-Orient-Rotationskonvention und jetzt auch ein experimentell mitmorphendes v0.1-Rig sind aktiv. Dieser Test benutzt weiterhin den offiziellen eingebetteten 78-Joint-Rig des SOMA-v0.1-Assets. Noch NICHT als endgültige BODY-LAB-Basis bewiesen sind: der aktualisierte v0.2-122-Joint/Procedural-Twist-Rig-Pack, vollständiges shape-adaptives Rebinding und danach Shape+Pose unter diesen finalen Rig-Daten. v0.1.8 schließt davor die wichtigste Lücke: Das Skelett kann jetzt dem gemorphten Mannequin näherungsweise folgen. BODY LAB bleibt unverändert.")
  }else if(shapePass&&rigPass){
   setState("#decision","NÄCHSTER TEST: ECHTES LBS","warn");
   info("#decisionInfo","Shape und aktueller v0.2-Rig-Vertrag sind bewiesen. Punkt 5 kann jetzt den bereits im gecachten v0.1-SOMA-Asset eingebetteten echten 78-Joint-Rig mit Bindpose + Skinweights direkt im Browser testen – ohne 329-MB-Download.")

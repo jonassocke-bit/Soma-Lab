@@ -33,3 +33,5 @@ button:disabled{opacity:.4}
 #viewport canvas{touch-action:none}
 select#debugAxis{margin-top:4px}
 #rigDebugInfo{min-height:44px}
+
+#adaptiveRigInfo{min-height:56px}
