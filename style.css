@@ -72,3 +72,6 @@ button.selected{outline:2px solid rgba(255,255,255,.72);outline-offset:-2px;back
 .filePick{display:flex;align-items:center;justify-content:center;min-height:34px;padding:0 10px;border-radius:9px;background:#292b30;color:#eee;font-size:9px;font-weight:700;cursor:pointer;box-sizing:border-box}
 .filePick input{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px}
 #animImportFps{width:72px;background:#18191d;color:#eee;border:1px solid #35373d;border-radius:8px;padding:7px}
+
+#mixamoBridgeSection{border:1px solid rgba(255,255,255,.11)}
+#mixamoBridgeSection .primary{width:100%}
