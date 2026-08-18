@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.1.9
+# SOMA Browser PoC v0.2.0
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -218,3 +218,36 @@ v0.1.9 ändert deshalb nur die selbstgebauten Tests:
 - synthetischer Rig-Stress
 
 Die offizielle NVIDIA-Animation, Joint-Orient-Mathematik, Skinweights und adaptive Rig-Anpassung bleiben unverändert.
+
+
+## v0.2.0 – Current Rig-Pack Bootstrap
+
+Der bisherige v0.1-Pfad hat Shape, Browser-LBS, Posekonvention, NVIDIA-Motion und ein erstes mitmorphendes Rig bewiesen. v0.2.0 beginnt deshalb bewusst den Wechsel auf NVIDIAs aktuellen v0026-Rig-Datenstand.
+
+Der aktuelle `SOMA_template_rig.usda` ist ein Git-LFS-Asset mit rund 329 MB. Er wird **nicht** dauerhaft im iPhone-Browser verwendet. Stattdessen liegt diesem Projekt ein einmaliger GitHub-Actions-Extractor bei:
+
+- `extract_current_rig_pack.py`
+- `RIGPACK_WORKFLOW.yml`
+- `rigpack-setup.html`
+
+Der Builder extrahiert aus dem aktuellen USD:
+- Expanded Target-Rig (inkl. procedural/twist joints)
+- daraus offiziell abgeleiteten Public SOMA-Rig (78 inkl. Root)
+- Bind-/T-Pose und Hierarchien
+- Low-LOD-Skinweights für 4505 Vertices
+- Public↔Target-Mappings
+- kompletten Procedural-Sidecar
+- die vorab berechnete lineare RBF-Matrix für die offiziellen Current-Skeleton-Jointpositionen auf Low LOD
+
+Das Browser-Asset heißt `soma_current_rig_pack_v0026.npz` und wird nach dem ersten Laden wieder versionsübergreifend in `SomaLabAssetCache` gespeichert.
+
+### v0.2.0 Testgrenze
+
+Wenn der Pack auf dem iPhone erfolgreich geprüft wurde, kann v0.2.0 bereits den **aktuellen aus v0026 abgeleiteten 78-Joint-Public-Rig** aktivieren und dessen vorab berechnete RBF-Jointpositionen für Shape-Änderungen verwenden.
+
+Noch absichtlich **nicht als bestanden** markiert:
+- interner Expanded/Procedural/Twist-LBS-Pfad des aktuellen Target-Rigs
+- Current SkeletonTransfer Rotations-Fitting
+- Pose-Correctives
+
+Diese kommen erst nach dem realen iPhone-Pack-Test, damit wir die neue Grundlage nicht wieder in einem großen ungetesteten Umbau verstecken.

@@ -1,0 +1,47 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f1012"><title>SOMA Rig-Pack Setup</title><style>body{margin:0;background:#0f1012;color:#eee;font:14px -apple-system,BlinkMacSystemFont,system-ui;padding:calc(20px + env(safe-area-inset-top)) 16px 40px;line-height:1.45}main{max-width:720px;margin:auto}h1{font-size:22px}p,li{color:#c7c7ca}code,textarea{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}textarea{width:100%;height:330px;box-sizing:border-box;background:#17181b;color:#ddd;border:1px solid #34363c;border-radius:12px;padding:12px;font-size:10px}button,a{display:block;box-sizing:border-box;width:100%;border:0;border-radius:12px;padding:13px;margin:10px 0;background:#eee;color:#111;text-align:center;font-weight:700;text-decoration:none}.secondary{background:#24262b;color:#eee;border:1px solid #393b41}.ok{color:#74e6a0}small{color:#999}</style></head><body><main><h1>Einmalig: Current Rig-Pack bauen</h1><p>Der aktuelle NVIDIA-Rig liegt als <b>329-MB Git-LFS-USD</b> vor. Er soll nicht auf dem iPhone verarbeitet oder dauerhaft geladen werden. Deshalb lässt du GitHub Actions ihn genau einmal serverseitig in den kleinen Browser-Pack umwandeln.</p><ol><li>Die Dateien aus <b>SOMA_BROWSER_POC_V0.2.0.zip</b> zuerst wie gewohnt ins Soma-Lab-Repo laden.</li><li>GitHub öffnen → <b>Actions</b> → <b>New workflow</b> → <b>set up a workflow yourself</b>.</li><li>Den Standardinhalt komplett markieren und durch den unten kopierten Workflow ersetzen. Dateiname z. B. <code>build-soma-rig-pack.yml</code>. Committen.</li><li>Unter Actions den Workflow <b>Build SOMA Current Rig Pack</b> öffnen → <b>Run workflow</b>.</li><li>Nach erfolgreichem Lauf liegen <code>soma_current_rig_pack_v0026.npz</code> und die JSON-Prüfsumme automatisch im Repo. Danach zurück zu Soma-Lab und <b>Current Rig-Pack laden & prüfen</b>.</li></ol><button id="copy">Workflow kopieren</button><a class="secondary" href="https://github.com/jonassocke-bit/Soma-Lab/new/main?filename=.github%2Fworkflows%2Fbuild-soma-rig-pack.yml" target="_blank" rel="noopener">GitHub-Workflow-Datei anlegen</a><textarea id="yaml" readonly>name: Build SOMA Current Rig Pack
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-rig-pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout Soma-Lab
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: &#x27;3.11&#x27;
+
+      - name: Fetch pinned NVIDIA SOMA-X v0.2.x assets
+        run: |
+          git lfs install
+          rm -rf .soma-upstream
+          GIT_LFS_SKIP_SMUDGE=1 git clone --no-checkout https://github.com/NVlabs/SOMA-X.git .soma-upstream
+          git -C .soma-upstream checkout 86632764684281dc98f31ab9c4aac36a4cdbc428
+          git -C .soma-upstream lfs pull --include=&quot;assets/SOMA_template_rig.usda,assets/SOMA_neutral.npz&quot;
+
+      - name: Install extractor dependencies
+        run: python -m pip install --upgrade numpy scipy usd-core
+
+      - name: Extract compact browser rig pack
+        run: python extract_current_rig_pack.py .soma-upstream soma_current_rig_pack_v0026.npz
+
+      - name: Commit rig pack into Soma-Lab
+        run: |
+          git config user.name &quot;github-actions[bot]&quot;
+          git config user.email &quot;41898282+github-actions[bot]@users.noreply.github.com&quot;
+          git add soma_current_rig_pack_v0026.npz soma_current_rig_pack_v0026.json
+          if git diff --cached --quiet; then
+            echo &quot;Rig pack already current.&quot;
+          else
+            git commit -m &quot;Add generated SOMA v0026 browser rig pack&quot;
+            git push
+          fi
+</textarea><p id="msg"></p><a class="secondary" href="index.html">Zurück zu Soma-Lab</a><small>Der Workflow ist auf NVIDIA SOMA-X Commit 86632764684281dc98f31ab9c4aac36a4cdbc428 gepinnt. Das 329-MB-USD selbst wird nicht in dein Repo committed.</small></main><script>document.querySelector('#copy').onclick=async()=>{const t=document.querySelector('#yaml').value;await navigator.clipboard.writeText(t);document.querySelector('#msg').innerHTML='<span class="ok">✓ Workflow kopiert.</span>'}</script></body></html>
