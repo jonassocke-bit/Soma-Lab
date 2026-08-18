@@ -262,6 +262,36 @@ function decodeUtf8Array(a){
  return new TextDecoder("utf-8").decode(u8)
 }
 function packArray(name){return currentRigPack?.[name]||null}
+function hierarchyStats(parents){
+ let roots=0,forwardRefs=0,selfRoots=0,invalid=0;
+ for(let j=0;j<parents.length;j++){
+  const p=Number(parents[j]);
+  if(p<0||p>=parents.length){invalid++;continue}
+  if(p===j){roots++;selfRoots++;continue}
+  if(p>j)forwardRefs++
+ }
+ return {roots,selfRoots,forwardRefs,invalid}
+}
+function fkLocalToWorldAnyOrder(local,parents,label="Rig"){
+ const J=parents.length;
+ if(local.length!==J*16)throw new Error(`${label}: Local-Matrizen ${local.length/16} passen nicht zu ${J} Joints`);
+ const world=new Float32Array(J*16),state=new Uint8Array(J);
+ const build=j=>{
+  if(state[j]===2)return;
+  if(state[j]===1)throw new Error(`${label}: Zyklus in Joint-Hierarchie bei Joint ${j}`);
+  state[j]=1;
+  const p=Number(parents[j]);
+  if(p<0||p>=J)throw new Error(`${label}: ungültiger Parent ${p} bei Joint ${j}`);
+  if(p===j){world.set(local.subarray(j*16,j*16+16),j*16)}
+  else{
+   build(p);
+   mat4Mul(world,p*16,local,j*16,world,j*16)
+  }
+  state[j]=2
+ };
+ for(let j=0;j<J;j++)build(j);
+ return world
+}
 async function loadCurrentRigPack(){
  try{
   setState("#currentRigState","LÄDT","warn");
@@ -281,10 +311,12 @@ async function loadCurrentRigPack(){
   const publicShape=Array.from(packArray("public_skinning_shape")?.data||[],Number);
   const rbfShape=Array.from(packArray("public_rbf_shape")?.data||[],Number);
   const sourceSha=decodeUtf8Array(packArray("source_git_sha"));
+  const targetParentsProbe=Int32Array.from(Array.from(packArray("target_joint_parent_ids")?.data||[],Number));
+  const targetHierarchyProbe=hierarchyStats(targetParentsProbe);
   const required=[
    "target_joint_parent_ids","target_bind_pose_world","target_bind_pose_local","target_t_pose_world","target_t_pose_local","target_bind_shape_low",
    "target_skinning_data","target_skinning_indices","target_skinning_indptr","target_skinning_shape",
-   "public_joint_parent_ids","public_bind_pose_world","public_bind_pose_local","public_t_pose_world","public_bind_shape_low",
+   "public_joint_parent_ids","public_bind_pose_world","public_bind_pose_local","public_t_pose_world","public_t_pose_local","public_bind_shape_low",
    "public_skinning_data","public_skinning_indices","public_skinning_indptr","public_skinning_shape",
    "public_rbf_crow_indices","public_rbf_col_indices","public_rbf_values","public_rbf_shape","procedural_json_utf8"
   ];
@@ -305,10 +337,11 @@ Expanded Target-Rig: ${targetNames.length} Joints
 Public SOMA-Rig: ${publicNames.length} Joints inkl. Root
 Low-LOD Skinning: ${targetShape[0]} Vertices × ${targetShape[1]} Target-Joints
 Public RBF Skeleton-Fit: ${rbfShape[0]} × ${rbfShape[1]} · ${packArray("public_rbf_values").data.length} Nichtnull-Gewichte
+Target-Hierarchie: ${targetHierarchyProbe.forwardRefs} Parent-Vorwärtsverweise · ${targetHierarchyProbe.invalid} ungültige Parents
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
 Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":"Repo geladen + persistent gespeichert"}
 
-Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.2.1 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.2.2 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
  }catch(e){
   console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
@@ -459,15 +492,32 @@ function currentTwistAngles(publicWorld){
  return angles
 }
 function expandedTargetWorld(publicWorld){
- const J=targetJointCount,world=new Float32Array(J*16),twistAngles=currentTwistAngles(publicWorld),baseR=new Float32Array(9),twR=new Float32Array(9),finalR=new Float32Array(9),local=new Float32Array(16);
- for(let j=0;j<J;j++){
-  const pub=currentProcedural.publicByTarget[j];if(pub>=0){for(let q=0;q<16;q++)world[j*16+q]=publicWorld[pub*16+q];continue}
-  const p=targetParents[j];if(j>0&&(p<0||p>=j))throw new Error(`Target-Hierarchie nicht topologisch bei ${j}: Parent ${p}`);
-  rot3FromMat4(targetTLocal,j*16,baseR,0);const spec=currentProcedural.twistSpec.get(j);
-  if(spec){const r=axisRot3(twistAngles[j],spec.axis,spec.sign);twR.set(r);mat3Mul(baseR,0,twR,0,finalR,0)}else finalR.set(baseR);
-  local.fill(0);local[0]=finalR[0];local[1]=finalR[1];local[2]=finalR[2];local[3]=targetLocalTranslations[j*3];local[4]=finalR[3];local[5]=finalR[4];local[6]=finalR[5];local[7]=targetLocalTranslations[j*3+1];local[8]=finalR[6];local[9]=finalR[7];local[10]=finalR[8];local[11]=targetLocalTranslations[j*3+2];local[15]=1;
-  if(j===0)world.set(local,0);else mat4Mul(world,p*16,local,0,world,j*16)
+ const J=targetJointCount,world=new Float32Array(J*16),assigned=new Uint8Array(J),visiting=new Uint8Array(J);
+ const twistAngles=currentTwistAngles(publicWorld),baseR=new Float32Array(9),twR=new Float32Array(9),finalR=new Float32Array(9);
+ // Public joints already have their authoritative world transforms from the 78-joint FK.
+ for(let p=0;p<poseJointCount;p++){
+  const t=currentProcedural.publicTarget[p];
+  if(t<0||t>=J)throw new Error(`Public→Target Mapping ungültig: Public ${p} → Target ${t}`);
+  world.set(publicWorld.subarray(p*16,p*16+16),t*16);assigned[t]=1
  }
+ const build=j=>{
+  if(assigned[j])return;
+  if(visiting[j])throw new Error(`Target-Hierarchie enthält einen Zyklus bei Joint ${j} (${currentProcedural.targetNames[j]||"?"})`);
+  visiting[j]=1;
+  const p=Number(targetParents[j]);
+  if(p<0||p>=J)throw new Error(`Target-Hierarchie: Joint ${j} hat ungültigen Parent ${p}`);
+  rot3FromMat4(targetTLocal,j*16,baseR,0);
+  const spec=currentProcedural.twistSpec.get(j);
+  if(spec){const r=axisRot3(twistAngles[j],spec.axis,spec.sign);twR.set(r);mat3Mul(baseR,0,twR,0,finalR,0)}else finalR.set(baseR);
+  const local=new Float32Array(16);
+  local[0]=finalR[0];local[1]=finalR[1];local[2]=finalR[2];local[3]=targetLocalTranslations[j*3];
+  local[4]=finalR[3];local[5]=finalR[4];local[6]=finalR[5];local[7]=targetLocalTranslations[j*3+1];
+  local[8]=finalR[6];local[9]=finalR[7];local[10]=finalR[8];local[11]=targetLocalTranslations[j*3+2];local[15]=1;
+  if(p===j)world.set(local,j*16);
+  else{build(p);mat4Mul(world,p*16,local,0,world,j*16)}
+  visiting[j]=0;assigned[j]=1
+ };
+ for(let j=0;j<J;j++)build(j);
  return world
 }
 function skinExpandedWorld(rest,publicWorld,targetWorld,markMoved=true,report=true,label="Current Expanded LBS"){
@@ -502,7 +552,8 @@ function fitCurrentPublicRbfPositions(){
 }
 function setupCurrentPublicRigCore(){
  poseParents=Int32Array.from(Array.from(packArray("public_joint_parent_ids").data,Number));poseJointCount=poseParents.length;if(poseJointCount!==78)throw new Error(`Current Public Rig hat ${poseJointCount} statt 78 Joints`);
- poseLocalBase=copyPackMatricesToMeters(packArray("public_bind_pose_local"));poseBindWorld=copyPackMatricesToMeters(packArray("public_bind_pose_world"));poseTWorld=copyPackMatricesToMeters(packArray("public_t_pose_world"));
+ poseLocalBase=copyPackMatricesToMeters(packArray("public_bind_pose_local"));poseBindWorld=copyPackMatricesToMeters(packArray("public_bind_pose_world"));
+ const publicTLocal=copyPackMatricesToMeters(packArray("public_t_pose_local"));poseTWorld=fkLocalToWorldAnyOrder(publicTLocal,poseParents,"Public T-Pose");
  poseInvBind=new Float32Array(poseJointCount*16);for(let j=0;j<poseJointCount;j++)rigidInverse(poseBindWorld,j*16,poseInvBind,j*16);resetActiveRigMatrices();buildJointOrientData();
  bindShapeLow=new Float32Array(packArray("public_bind_shape_low").data.length);for(let i=0;i<bindShapeLow.length;i++)bindShapeLow[i]=Number(packArray("public_bind_shape_low").data[i])/100;
  const w=buildDirectLowSkinningFromPack("public",poseJointCount);poseEulerDeg=new Float32Array(poseJointCount*3);poseReady=true;buildPoseControls();rigAdaptiveEnabled=true;return w
@@ -511,22 +562,42 @@ function activateCurrentPublicRig(){
  try{
   if(!currentRigPackLoaded)throw new Error("Zuerst Current Rig-Pack laden & prüfen.");if(!arrays||!geometry)throw new Error("Zuerst Shape-Modell laden.");stopPoseAnimation(false);currentRigMode="current-public";currentTargetPoseWorld=null;
   const w=setupCurrentPublicRigCore(),stats=fitCurrentPublicRbfPositions();
-  if(stats)updateAdaptiveRigUI(`✓ CURRENT PUBLIC-RIG + OFFIZIELLE RBF-JOINTPOSITIONEN AKTIV\nRBF-fit Joints: ${stats.count}/${poseJointCount-1} · mittlere Verschiebung ${(stats.meanShift*1000).toFixed(1)} mm · max ${(stats.maxShift*1000).toFixed(1)} mm\n\nDas ist jetzt nur noch der 78-Joint-A/B-Fallback. Für die eigentliche v0.2.1-Prüfung bitte „Expanded 122-Joint LBS aktivieren“ nutzen.`,"ok");
+  if(stats)updateAdaptiveRigUI(`✓ CURRENT PUBLIC-RIG + OFFIZIELLE RBF-JOINTPOSITIONEN AKTIV\nRBF-fit Joints: ${stats.count}/${poseJointCount-1} · mittlere Verschiebung ${(stats.meanShift*1000).toFixed(1)} mm · max ${(stats.maxShift*1000).toFixed(1)} mm\n\nDas ist jetzt nur noch der 78-Joint-A/B-Fallback. Für die eigentliche v0.2.2-Prüfung bitte „Expanded 122-Joint LBS aktivieren“ nutzen.`,"ok");
   poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,false);setState("#poseState","CURRENT PUBLIC 78","ok");setState("#currentRigState","PUBLIC 78 AKTIV","ok");
   info("#poseInfo",`✓ Current Public-Rig als A/B-Fallback aktiv\nLow-LOD: ${w.n} Vertices · ${poseJointCount} Skinning-Joints\nShape-Anpassung: offizielle RBF-Jointpositionen`);updateDecision()
  }catch(e){console.error(e);setState("#poseState","CURRENT RIG FEHLER","bad");info("#poseInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}`)}
 }
 function activateCurrentExpandedRig(){
+ let stage="Start";
  try{
-  if(!currentRigPackLoaded)throw new Error("Zuerst Current Rig-Pack laden & prüfen.");if(!arrays||!geometry)throw new Error("Zuerst Shape-Modell laden.");stopPoseAnimation(false);currentRigMode="current-expanded";
-  setupCurrentPublicRigCore();
-  targetParents=Int32Array.from(Array.from(packArray("target_joint_parent_ids").data,Number));targetJointCount=targetParents.length;if(targetJointCount<100)throw new Error(`Expanded Target-Rig unerwartet klein: ${targetJointCount}`);
-  targetBindWorldTemplate=copyPackMatricesToMeters(packArray("target_bind_pose_world"));targetTLocal=copyPackMatricesToMeters(packArray("target_t_pose_local"));currentProcedural=compileCurrentProcedural();
-  const stats=fitCurrentPublicRbfPositions();rebuildExpandedTargetBind();const tw=buildTargetLowSkinningFromPack();
-  poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,true);setState("#poseState","CURRENT 122-JOINT LBS","ok");setState("#currentRigState","122 LBS AKTIV","ok");$("#toggleDebugTopology").disabled=false;
+  const errBox=$("#currentRigError");if(errBox){errBox.classList.add("hidden");errBox.textContent=""}
+  if(!currentRigPackLoaded)throw new Error("Zuerst Current Rig-Pack laden & prüfen.");
+  if(!arrays||!geometry)throw new Error("Zuerst Shape-Modell laden.");
+  stopPoseAnimation(false);currentRigMode="current-expanded";
+  stage="Current Public-Rig vorbereiten";setupCurrentPublicRigCore();
+  stage="122-Joint Hierarchie laden";targetParents=Int32Array.from(Array.from(packArray("target_joint_parent_ids").data,Number));targetJointCount=targetParents.length;if(targetJointCount<100)throw new Error(`Expanded Target-Rig unerwartet klein: ${targetJointCount}`);
+  const hs=hierarchyStats(targetParents);if(hs.invalid)throw new Error(`Target-Hierarchie enthält ${hs.invalid} ungültige Parent-Indizes`);
+  stage="Target Bind-/T-Pose laden";targetBindWorldTemplate=copyPackMatricesToMeters(packArray("target_bind_pose_world"));targetTLocal=copyPackMatricesToMeters(packArray("target_t_pose_local"));
+  // Gegencheck: T-Pose-FK muss unabhängig von der Reihenfolge der Joint-Indizes funktionieren.
+  fkLocalToWorldAnyOrder(targetTLocal,targetParents,"Target T-Pose");
+  stage="Procedural Twist kompilieren";currentProcedural=compileCurrentProcedural();
+  stage="Public RBF Shape-Fit";const stats=fitCurrentPublicRbfPositions();
+  stage="Expanded Bindpose/Rebind";rebuildExpandedTargetBind();
+  stage="122-Joint Skinweights";const tw=buildTargetLowSkinningFromPack();
+  stage="122-Joint Nullpose skinnen";poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,true);
+  setState("#poseState","CURRENT 122-JOINT LBS","ok");setState("#currentRigState","122 LBS AKTIV","ok");$("#toggleDebugTopology").disabled=false;
   updateAdaptiveRigUI(`✓ CURRENT SHAPE-FIT + EXPANDED TARGET-RIG AKTIV\nPublic RBF-fit: ${stats?.count||0}/${poseJointCount-1} Joints · mittlere Verschiebung ${((stats?.meanShift||0)*1000).toFixed(1)} mm\nTarget-Bindpose daraus auf ${targetJointCount} Joints expandiert; Twist-Helfer folgen den SOMA-Procedural-Matrizen.`,"ok");
-  info("#poseInfo",`✓ CURRENT v0026 EXPANDED-RIG IST JETZT DIE AKTIVE LBS-RUNTIME\nBedienung: 77 öffentliche Pose-Joints\nInternes Skinning: ${targetJointCount} Joints\nLow-LOD: ${tw.n} Vertices · Einflüsse/Vertex ${tw.minInflu}–${tw.rawMax}${tw.truncated?` · ${tw.truncated} Vertices auf Top-${tw.topK} begrenzt`:""}\nProcedural Twist: ${currentProcedural.segments.length} Segmente / ${currentProcedural.twistSpec.size} Twist-Joints\nRotationsextraktion: ${currentProcedural.mode}\n\nNVIDIA-Animation, Slider und Shape-Regler laufen ab jetzt alle durch den 122-Joint-Pfad.`);updateDecision();disposeRigDebugObjects();refreshRigDebug()
- }catch(e){console.error(e);currentRigMode="current-public";setState("#poseState","122 LBS FEHLER","bad");setState("#currentRigState","122 FEHLER","bad");info("#poseInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}${e?.stack?"\n"+e.stack:""}`)}
+  info("#poseInfo",`✓ CURRENT v0026 EXPANDED-RIG IST JETZT DIE AKTIVE LBS-RUNTIME\nBedienung: 77 öffentliche Pose-Joints\nInternes Skinning: ${targetJointCount} Joints\nLow-LOD: ${tw.n} Vertices · Einflüsse/Vertex ${tw.minInflu}–${tw.rawMax}${tw.truncated?` · ${tw.truncated} Vertices auf Top-${tw.topK} begrenzt`:""}\nProcedural Twist: ${currentProcedural.segments.length} Segmente / ${currentProcedural.twistSpec.size} Twist-Joints\nRotationsextraktion: ${currentProcedural.mode}\nHierarchie: ${hs.forwardRefs} Parent-Vorwärtsverweise werden jetzt reihenfolgeunabhängig aufgelöst.\n\nNVIDIA-Animation, Slider und Shape-Regler laufen ab jetzt alle durch den 122-Joint-Pfad.`);updateDecision();disposeRigDebugObjects();refreshRigDebug()
+ }catch(e){
+  console.error("Expanded 122 activation failed at",stage,e);
+  currentRigMode="current-public";currentTargetPoseWorld=null;$("#toggleDebugTopology").disabled=true;
+  // setupCurrentPublicRigCore() läuft vor dem Expanded-Teil; deshalb können wir auf einen
+  // definierten Public-Fallback zurückfallen, statt die Runtime halb umgeschaltet zu lassen.
+  try{if(poseReady&&poseEulerDeg){poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,false)}}catch(fallbackError){console.warn("Public fallback restore failed",fallbackError)}
+  setState("#poseState","122 LBS FEHLER","bad");setState("#currentRigState","122 FEHLER","bad");
+  const msg=`${stage}: ${e?.name||"Fehler"}: ${e?.message||String(e)}`;info("#poseInfo",msg+(e?.stack?"\n"+e.stack:""));
+  const errBox=$("#currentRigError");if(errBox){errBox.textContent="122-Aktivierung gestoppt bei „"+stage+"“\n"+(e?.message||String(e))+"\n\nDie App ist automatisch auf den funktionierenden Public-78-Fallback zurückgegangen.";errBox.classList.remove("hidden")}
+ }
 }
 async function fetchShapeAsset(forceNetwork=false){
  return fetchAssetBytes(ASSET_KEY.shape,SHAPE,{
@@ -1524,8 +1595,8 @@ function updateDecision(){
   const expanded=currentRigMode==="current-expanded";
   setState("#decision",expanded?"CURRENT 122-JOINT LBS AKTIV":currentRigMode==="current-public"?"CURRENT PUBLIC 78 AKTIV":"LBS + POSE-KONVENTION AKTIV","ok");
   info("#decisionInfo",expanded
-   ?`✓ v0.2.1: Der aktuelle v0026-Rig-Pack läuft jetzt auf dem iPhone als echter Expanded-LBS-Pfad. 77 steuerbare SOMA-Pose-Joints werden intern auf ${targetJointCount} Target-/Skinning-Joints erweitert; die SOMA-Procedural-Twist-Segmente werden automatisch erzeugt. Shape-Änderungen berechnen die Public-RBF-Jointpositionen neu und expandieren anschließend die Target-Bindpose neu.\n\nNoch offen für die endgültige BODY-LAB-Basis: das vollständige SOMA-Rotations-Fitting beim Shape-Transfer und danach systematische Shape+Pose-/Extremtests. BODY LAB bleibt unverändert.`
-   :"Der Browser-LBS-Pfad funktioniert. Für den eigentlichen aktuellen Rig-Test in v0.2.1 bitte den Expanded-122-Joint-Pfad in Punkt 5 aktivieren.")
+   ?`✓ v0.2.2: Der aktuelle v0026-Rig-Pack läuft jetzt auf dem iPhone als echter Expanded-LBS-Pfad. 77 steuerbare SOMA-Pose-Joints werden intern auf ${targetJointCount} Target-/Skinning-Joints erweitert; die SOMA-Procedural-Twist-Segmente werden automatisch erzeugt. Shape-Änderungen berechnen die Public-RBF-Jointpositionen neu und expandieren anschließend die Target-Bindpose neu.\n\nNoch offen für die endgültige BODY-LAB-Basis: das vollständige SOMA-Rotations-Fitting beim Shape-Transfer und danach systematische Shape+Pose-/Extremtests. BODY LAB bleibt unverändert.`
+   :"Der Browser-LBS-Pfad funktioniert. Für den eigentlichen aktuellen Rig-Test in v0.2.2 bitte den Expanded-122-Joint-Pfad in Punkt 5 aktivieren.")
  }else if(shapePass&&rigPass){setState("#decision","NÄCHSTER TEST: CURRENT 122 LBS","warn");info("#decisionInfo","Shape und Current-Rig-Pack sind vorhanden. In Punkt 5 jetzt Expanded 122-Joint LBS aktivieren.")}
  else if(shapePass)setState("#decision","SHAPE BESTANDEN","ok")
 }
