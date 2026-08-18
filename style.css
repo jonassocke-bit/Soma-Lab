@@ -40,3 +40,23 @@ select#debugAxis{margin-top:4px}
 .setupLink:active{background:rgba(255,255,255,.08)}
 
 .badBox{border:1px solid rgba(255,110,110,.45);white-space:pre-wrap}
+
+.analysisProgress{height:6px;background:#25262b;border-radius:6px;margin-top:9px;overflow:hidden}
+.analysisProgress div{height:100%;width:0;background:#eee;transition:width .08s linear}
+.analysisPcRow{display:flex;justify-content:space-between;align-items:center;margin-top:7px;font-size:9px}
+.analysisPcRow em{font-style:normal;color:#aaa}
+.metricGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:9px}
+.metricCard{background:#1b1c20;border-radius:10px;padding:8px;min-width:0}
+.metricCard b,.metricCard strong,.metricCard small{display:block}
+.metricCard b{font-size:8px;color:#a9abb2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.metricCard strong{font-size:13px;margin-top:3px}
+.metricCard small{font-size:8px;color:#888b92;margin-top:2px}
+.semanticControl{padding:9px 0;border-top:1px solid rgba(255,255,255,.06)}
+.semanticControl:first-child{border-top:0}
+.semanticHead{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.semanticHead b{font-size:9px}
+.semanticHead em{font-size:8px;font-style:normal}
+.semanticSlider{display:grid;grid-template-columns:1fr 64px;gap:8px;align-items:center;margin-top:6px}
+.semanticSlider input{width:100%}
+.semanticSlider output{font-size:9px;text-align:right;color:#ddd}
+.semanticControl>small{display:block;font-size:7.5px;color:#777b83;line-height:1.35;margin-top:3px}

@@ -186,6 +186,25 @@ let targetJointCount=0,targetParents=null,targetTLocal=null,targetBindWorldTempl
 let targetBoneIndices=null,targetBoneWeights=null,targetTopK=0;
 let rigGroup=null,rigBoneLines=null,rigJointPoints=null,rigAxesX=null,rigAxesY=null,rigAxesZ=null;
 
+// v0.3.0 Shape-Space Analyzer.
+// The first semantic layer is deliberately measurement-driven: raw PCA stays the
+// engine underneath, while the UI exposes locally calibrated measurements in cm.
+const ANALYSIS_METRICS=[
+ {key:"height",label:"Körperhöhe",short:"Höhe",range:8},
+ {key:"shoulder",label:"Schultergelenk-Breite",short:"Schulter",range:5},
+ {key:"chestCirc",label:"Brustumfang · Slice-Proxy",short:"Brust",range:12},
+ {key:"waistCirc",label:"Taillenumfang · Slice-Proxy",short:"Taille",range:12},
+ {key:"hipCirc",label:"Hüftumfang · Slice-Proxy",short:"Hüfte",range:12},
+ {key:"chestDepth",label:"Brusttiefe · Slice-Proxy",short:"Brusttiefe",range:6},
+ {key:"hipDepth",label:"Hüfttiefe · Slice-Proxy",short:"Hüfttiefe",range:6}
+];
+let shapeAnalysis={
+ running:false,ready:false,stale:false,internal:false,cancelToken:0,pcCount:0,
+ baseCoeff:null,baseRest:null,baseMetrics:null,jacobian:null,targets:null,
+ lastMetrics:null,scanDelta:.35,semanticToken:0,debounce:null
+};
+let measureOverlayVisible=true,measurementGroup=null;
+
 const scene=new THREE.Scene();
 const cam=new THREE.PerspectiveCamera(32,innerWidth/innerHeight,.01,100);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:"high-performance"});
@@ -400,7 +419,7 @@ Target-Hierarchie: ${targetHierarchyProbe.forwardRefs} Parent-Vorwärtsverweise 
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
 Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":`${asset.source||"Repo"} · persistent gespeichert`}
 
-Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.2.4 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.3.0 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
  }catch(e){
   console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
@@ -648,7 +667,7 @@ function activateCurrentPublicRig(){
   if(!currentRigPackLoaded)throw new Error("Zuerst Current Rig-Pack laden & prüfen.");if(!arrays||!geometry)throw new Error("Zuerst Shape-Modell laden.");stopPoseAnimation(false);currentRigMode="current-public";currentTargetPoseWorld=null;
   const w=setupCurrentPublicRigCore(),stats=fitCurrentPublicRbfPositions();
   if(stats)updateAdaptiveRigUI(`✓ CURRENT PUBLIC-RIG + OFFIZIELLE RBF-JOINTPOSITIONEN AKTIV\nRBF-fit Joints: ${stats.count}/${poseJointCount-1} · mittlere Verschiebung ${(stats.meanShift*1000).toFixed(1)} mm · max ${(stats.maxShift*1000).toFixed(1)} mm\n\nDas ist jetzt nur noch der 78-Joint-A/B-Fallback. Für die eigentliche v0.2.2-Prüfung bitte „Expanded 122-Joint LBS aktivieren“ nutzen.`,"ok");
-  poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,false);setState("#poseState","CURRENT PUBLIC 78","ok");setState("#currentRigState","PUBLIC 78 AKTIV","ok");
+  poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,false);setState("#poseState","CURRENT PUBLIC 78","ok");setState("#currentRigState","PUBLIC 78 AKTIV","ok");$("#startShapeAnalysis").disabled=true;
   info("#poseInfo",`✓ Current Public-Rig als A/B-Fallback aktiv\nLow-LOD: ${w.n} Vertices · ${poseJointCount} Skinning-Joints\nShape-Anpassung: offizielle RBF-Jointpositionen`);updateDecision()
  }catch(e){console.error(e);setState("#poseState","CURRENT RIG FEHLER","bad");info("#poseInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}`)}
 }
@@ -670,12 +689,12 @@ function activateCurrentExpandedRig(){
   stage="Expanded Bindpose/Rebind";rebuildExpandedTargetBind();
   stage="122-Joint Skinweights";const tw=buildTargetLowSkinningFromPack();
   stage="122-Joint Nullpose skinnen";poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,true);
-  setState("#poseState","CURRENT 122-JOINT LBS","ok");setState("#currentRigState","122 LBS AKTIV","ok");$("#toggleDebugTopology").disabled=false;
+  setState("#poseState","CURRENT 122-JOINT LBS","ok");setState("#currentRigState","122 LBS AKTIV","ok");$("#toggleDebugTopology").disabled=false;$("#startShapeAnalysis").disabled=false;
   updateAdaptiveRigUI(`✓ CURRENT SHAPE-FIT + EXPANDED TARGET-RIG AKTIV\nPublic RBF-fit: ${stats?.count||0}/${poseJointCount-1} Joints · mittlere Verschiebung ${((stats?.meanShift||0)*1000).toFixed(1)} mm\nTarget-Bindpose daraus auf ${targetJointCount} Joints expandiert; Twist-Helfer folgen den SOMA-Procedural-Matrizen.`,"ok");
   info("#poseInfo",`✓ CURRENT v0026 EXPANDED-RIG IST JETZT DIE AKTIVE LBS-RUNTIME\nBedienung: 77 öffentliche Pose-Joints\nInternes Skinning: ${targetJointCount} Joints\nLow-LOD: ${tw.n} Vertices · Einflüsse/Vertex ${tw.minInflu}–${tw.rawMax}${tw.truncated?` · ${tw.truncated} Vertices auf Top-${tw.topK} begrenzt`:""}\nProcedural Twist: ${currentProcedural.segments.length} Segmente / ${currentProcedural.twistSpec.size} Twist-Joints\nRotationsextraktion: ${currentProcedural.mode}\nHierarchie: ${hs.forwardRefs} Parent-Vorwärtsverweise werden jetzt reihenfolgeunabhängig aufgelöst.\n\nNVIDIA-Animation, Slider und Shape-Regler laufen ab jetzt alle durch den 122-Joint-Pfad.`);updateDecision();disposeRigDebugObjects();refreshRigDebug()
  }catch(e){
   console.error("Expanded 122 activation failed at",stage,e);
-  currentRigMode="current-public";currentTargetPoseWorld=null;$("#toggleDebugTopology").disabled=true;
+  currentRigMode="current-public";currentTargetPoseWorld=null;$("#toggleDebugTopology").disabled=true;$("#startShapeAnalysis").disabled=true;
   // setupCurrentPublicRigCore() läuft vor dem Expanded-Teil; deshalb können wir auf einen
   // definierten Public-Fallback zurückfallen, statt die Runtime halb umgeschaltet zu lassen.
   try{if(poseReady&&poseEulerDeg){poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,false)}}catch(fallbackError){console.warn("Public fallback restore failed",fallbackError)}
@@ -806,9 +825,296 @@ function updateShape(){
  }
  info("#shapePerf",`Letzte komplette Shape-Rekonstruktion: ${(performance.now()-t0).toFixed(1)} ms · 128 Komponenten verfügbar · Low-LOD ${rest.length/3} Vertices${poseReady?" · Pose danach erneut angewendet":""}`)
 }
+
+function nextPaint(delay=18){
+ return new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve,delay)))
+}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function analyzerMetricArray(m){return ANALYSIS_METRICS.map(d=>Number(m[d.key]))}
+function analyzerMetricObject(values){
+ const out={};for(let i=0;i<ANALYSIS_METRICS.length;i++)out[ANALYSIS_METRICS[i].key]=values[i];return out
+}
+function jointBindPos(name){
+ const j=jointIndex(name),w=poseBindWorldActive||poseBindWorld;
+ if(j<0||!w)return null;
+ const o=j*16;return [w[o+3],w[o+7],w[o+11]]
+}
+function convexHull2D(points){
+ if(points.length<=2)return points.slice();
+ const pts=points.map(p=>[p[0],p[1]]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+ const cross=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);
+ const lo=[];
+ for(const p of pts){while(lo.length>=2&&cross(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p)}
+ const hi=[];
+ for(let i=pts.length-1;i>=0;i--){const p=pts[i];while(hi.length>=2&&cross(hi[hi.length-2],hi[hi.length-1],p)<=0)hi.pop();hi.push(p)}
+ lo.pop();hi.pop();return lo.concat(hi)
+}
+function hullPerimeter(h){
+ if(h.length<2)return 0;
+ let s=0;for(let i=0;i<h.length;i++){const a=h[i],b=h[(i+1)%h.length];s+=Math.hypot(a[0]-b[0],a[1]-b[1])}return s
+}
+function sliceAtY(rest,y,baseBand,maxAbsX=Infinity,xCenter=0){
+ let points=[],band=baseBand;
+ for(let attempt=0;attempt<4;attempt++){
+  points=[];
+  for(let v=0;v<rest.length/3;v++){
+   const x=rest[v*3],vy=rest[v*3+1],z=rest[v*3+2];
+   if(Math.abs(vy-y)<=band&&Math.abs(x-xCenter)<=maxAbsX)points.push([x,z])
+  }
+  if(points.length>=24)break;
+  band*=1.55
+ }
+ if(points.length<6)return {y,band,points,hull:[],circ:NaN,width:NaN,depth:NaN};
+ const hull=convexHull2D(points);
+ let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity;
+ for(const p of points){minX=Math.min(minX,p[0]);maxX=Math.max(maxX,p[0]);minZ=Math.min(minZ,p[1]);maxZ=Math.max(maxZ,p[1])}
+ return {y,band,points,hull,circ:hullPerimeter(hull)*100,width:(maxX-minX)*100,depth:(maxZ-minZ)*100}
+}
+function measureCurrentRestShape(){
+ if(!currentRestLow)throw new Error("Kein aktueller Rest-Shape");
+ let minY=Infinity,maxY=-Infinity;
+ for(let v=0;v<currentRestLow.length/3;v++){const y=currentRestLow[v*3+1];minY=Math.min(minY,y);maxY=Math.max(maxY,y)}
+ const heightM=maxY-minY,baseBand=clamp(heightM*.0105,.014,.026);
+ const ls=jointBindPos("LeftShoulder"),rs=jointBindPos("RightShoulder"),hips=jointBindPos("Hips"),sp1=jointBindPos("Spine1"),sp2=jointBindPos("Spine2"),ch=jointBindPos("Chest"),ll=jointBindPos("LeftLeg"),rl=jointBindPos("RightLeg");
+ if(!ls||!rs||!hips||!sp1||!sp2||!ch||!ll||!rl)throw new Error("Current-Rig-Jointpositionen für Mess-Slices fehlen");
+ const centerX=hips[0],shoulderM=Math.abs(ls[0]-rs[0]);
+ // Levels are rig-relative so they follow body proportions rather than fixed world heights.
+ const chestY=sp2[1]*.58+ch[1]*.42;
+ const waistY=hips[1]*.42+sp1[1]*.58;
+ const legY=(ll[1]+rl[1])*.5;
+ const hipY=hips[1]*.36+legY*.64;
+ const chest=sliceAtY(currentRestLow,chestY,baseBand,Math.max(.16,shoulderM*.68),centerX);
+ const waist=sliceAtY(currentRestLow,waistY,baseBand*1.05,Infinity,centerX);
+ const hip=sliceAtY(currentRestLow,hipY,baseBand*1.12,Infinity,centerX);
+ const vals=[chest.circ,waist.circ,hip.circ,chest.depth,hip.depth];
+ if(vals.some(v=>!Number.isFinite(v)))throw new Error("Zu wenige Low-LOD-Vertices für einen Mess-Slice");
+ return {
+  height:heightM*100,
+  shoulder:shoulderM*100,
+  chestCirc:chest.circ,waistCirc:waist.circ,hipCirc:hip.circ,
+  chestDepth:chest.depth,hipDepth:hip.depth,
+  _slices:{chest,waist,hip},
+  _shoulders:{left:ls,right:rs}
+ }
+}
+function clearMeasurementOverlay(){
+ if(!measurementGroup)return;
+ scene.remove(measurementGroup);
+ measurementGroup.traverse(o=>{o.geometry?.dispose?.();o.material?.dispose?.()});
+ measurementGroup=null
+}
+function updateMeasurementOverlay(m){
+ if(!measureOverlayVisible||!m?._slices)return;
+ clearMeasurementOverlay();measurementGroup=new THREE.Group();
+ const specs=[
+  ["chest",0xff6b6b],["waist",0x6bff91],["hip",0x6ba7ff]
+ ];
+ for(const [key,color] of specs){
+  const s=m._slices[key];if(!s?.hull?.length)continue;
+  const arr=new Float32Array(s.hull.length*3);
+  for(let i=0;i<s.hull.length;i++){arr[i*3]=s.hull[i][0];arr[i*3+1]=s.y;arr[i*3+2]=s.hull[i][1]}
+  const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(arr,3));
+  measurementGroup.add(new THREE.LineLoop(g,new THREE.LineBasicMaterial({color,transparent:true,opacity:.95})))
+ }
+ const sh=m._shoulders;
+ if(sh){
+  const arr=new Float32Array([sh.left[0],sh.left[1],sh.left[2],sh.right[0],sh.right[1],sh.right[2]]);
+  const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(arr,3));
+  measurementGroup.add(new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0xffd36b,transparent:true,opacity:.95})))
+ }
+ scene.add(measurementGroup)
+}
+function toggleMeasureOverlay(){
+ measureOverlayVisible=!measureOverlayVisible;
+ $("#toggleMeasureLines").textContent=measureOverlayVisible?"Messlinien AUS":"Messlinien AN";
+ if(!measureOverlayVisible)clearMeasurementOverlay();
+ else if(shapeAnalysis.lastMetrics)updateMeasurementOverlay(shapeAnalysis.lastMetrics)
+}
+function renderAnalyzerMetrics(m,base=null){
+ const box=$("#analysisMetrics");if(!box||!m)return;
+ box.innerHTML=ANALYSIS_METRICS.map(d=>{
+  const v=m[d.key],b=base?.[d.key],delta=b==null?0:v-b;
+  return `<div class="metricCard"><b>${d.short}</b><strong>${v.toFixed(1)} cm</strong>${b==null?"":`<small>${Math.abs(delta)<.05?"Basis":`${delta>=0?"+":""}${delta.toFixed(1)} cm`}</small>`}</div>`
+ }).join("")
+}
+function syncRawPcUi(){
+ document.querySelectorAll("#sliders .slider").forEach((d,i)=>{
+  const r=d.querySelector("input"),o=d.querySelector("output");if(!r||!o)return;
+  r.value=String(clamp(coeff[i],-3,3));o.value=Number(coeff[i]).toFixed(2)
+ })
+}
+function markShapeAnalysisStale(reason="Raw-PCA wurde verändert"){
+ if(shapeAnalysis.internal||!shapeAnalysis.ready)return;
+ shapeAnalysis.stale=true;shapeAnalysis.ready=false;
+ setState("#analysisState","NEU ANALYSIEREN","warn");
+ info("#analysisInfo",`${reason}. Die semantischen Richtungen waren lokal am vorherigen Körper kalibriert. Bitte die 128-PC-Analyse am aktuellen Shape neu starten.`);
+ document.querySelectorAll(".semanticControl input").forEach(x=>x.disabled=true)
+}
+function analyzerIdentityRelative(){
+ const rel=new Float32Array(poseJointCount*9);for(let j=0;j<poseJointCount;j++)mat3Identity(rel,j*9);return rel
+}
+function applyAnalyzerRest(rest,relative=null){
+ currentRestLow.set(rest);
+ recomputeAdaptiveRig();
+ return applyRelativePoseMatrices(currentRestLow,relative||analyzerIdentityRelative(),false,false,"Shape-Analyzer live")
+}
+function makePerturbedRest(baseRest,k,signedDelta,out){
+ out.set(baseRest);
+ const n=baseRest.length/3,scale=signedDelta*Math.sqrt(Number(eig.data[k])),off=k*n*3;
+ for(let i=0;i<n*3;i++)out[i]+=dirsLow[off+i]*scale;
+ return out
+}
+function solveSmallLinear(A,b,n){
+ const M=A.map(r=>Float64Array.from(r)),x=Float64Array.from(b);
+ for(let c=0;c<n;c++){
+  let piv=c,max=Math.abs(M[c][c]);for(let r=c+1;r<n;r++){const v=Math.abs(M[r][c]);if(v>max){max=v;piv=r}}
+  if(max<1e-10)throw new Error("Mess-Jacobian ist numerisch singulär");
+  if(piv!==c){const tr=M[c];M[c]=M[piv];M[piv]=tr;const tv=x[c];x[c]=x[piv];x[piv]=tv}
+  const d=M[c][c];for(let j=c;j<n;j++)M[c][j]/=d;x[c]/=d;
+  for(let r=0;r<n;r++)if(r!==c){const f=M[r][c];if(Math.abs(f)<1e-14)continue;for(let j=c;j<n;j++)M[r][j]-=f*M[c][j];x[r]-=f*x[c]}
+ }
+ return x
+}
+function semanticPcCorrection(metricResidual){
+ const M=ANALYSIS_METRICS.length,K=shapeAnalysis.pcCount,J=shapeAnalysis.jacobian;
+ const G=Array.from({length:M},()=>new Float64Array(M));let trace=0;
+ for(let i=0;i<M;i++)for(let j=0;j<M;j++){let s=0;for(let k=0;k<K;k++)s+=J[i][k]*J[j][k];G[i][j]=s;if(i===j)trace+=s}
+ const lambda=Math.max(1e-5,(trace/Math.max(1,M))*.0015);
+ for(let i=0;i<M;i++)G[i][i]+=lambda;
+ const y=solveSmallLinear(G,metricResidual,M),d=new Float64Array(128);
+ for(let k=0;k<K;k++){let s=0;for(let i=0;i<M;i++)s+=J[i][k]*y[i];d[k]=s}
+ return d
+}
+function modifierQuality(metricIndex){
+ const M=ANALYSIS_METRICS.length,K=shapeAnalysis.pcCount,target=new Float64Array(M);target[metricIndex]=1;
+ try{
+  const d=semanticPcCorrection(target),pred=new Float64Array(M);let norm=0;
+  for(let k=0;k<K;k++){norm+=d[k]*d[k];for(let i=0;i<M;i++)pred[i]+=shapeAnalysis.jacobian[i][k]*d[k]}
+  norm=Math.sqrt(norm);
+  const gain=Math.abs(pred[metricIndex]),cross=Math.max(0,...Array.from(pred).map((v,i)=>i===metricIndex?0:Math.abs(v)));
+  const good=gain>.88&&cross<.18&&norm<2.2,mid=gain>.7&&cross<.4&&norm<4;
+  return {label:good?"lokal gut":mid?"lokal mittel":"lokal schwach",cls:good?"ok":mid?"warn":"bad",gain,cross,norm}
+ }catch(e){return {label:"nicht lösbar",cls:"bad",gain:0,cross:Infinity,norm:Infinity}}
+}
+function buildSemanticControls(){
+ const box=$("#semanticControls");box.innerHTML="";
+ shapeAnalysis.targets={};
+ ANALYSIS_METRICS.forEach((d,i)=>{
+  const b=shapeAnalysis.baseMetrics[d.key],q=modifierQuality(i);
+  shapeAnalysis.targets[d.key]=b;
+  const row=document.createElement("div");row.className="semanticControl";
+  row.innerHTML=`<div class="semanticHead"><b>${d.label}</b><em class="${q.cls}">${q.label}</em></div>
+   <div class="semanticSlider"><input type="range" min="${(b-d.range).toFixed(1)}" max="${(b+d.range).toFixed(1)}" step=".1" value="${b.toFixed(1)}"><output>${b.toFixed(1)} cm</output></div>
+   <small>Basis ${b.toFixed(1)} cm · lokale 1-cm-Richtung: ${q.norm.toFixed(2)}σ · Rest-Crosstalk ${Number.isFinite(q.cross)?q.cross.toFixed(2):"∞"} cm</small>`;
+  const r=row.querySelector("input"),o=row.querySelector("output");
+  r.oninput=()=>{
+   shapeAnalysis.targets[d.key]=Number(r.value);o.value=Number(r.value).toFixed(1)+" cm";
+   clearTimeout(shapeAnalysis.debounce);shapeAnalysis.debounce=setTimeout(()=>applySemanticTargetsLive(),65)
+  };
+  box.appendChild(row)
+ });
+ $("#semanticBox").classList.remove("hidden");
+ info("#semanticInfo","Die Regler sind keine umbenannten PCs: Jeder Zielwert wird als Kombination der analysierten PCA-Richtungen gelöst. Alle anderen sichtbaren Messgrößen werden dabei als Gegenbedingungen möglichst konstant gehalten.")
+}
+async function applySemanticTargetsLive(){
+ if(!shapeAnalysis.ready||shapeAnalysis.running)return;
+ const token=++shapeAnalysis.semanticToken;shapeAnalysis.internal=true;
+ try{
+  setState("#analysisState","MODIFIKATOR LÄUFT","ok");
+  coeff.set(shapeAnalysis.baseCoeff);
+  let current=shapeAnalysis.baseMetrics;
+  const target=ANALYSIS_METRICS.map(d=>shapeAnalysis.targets[d.key]);
+  let hitLimit=false;
+  for(let iter=0;iter<4;iter++){
+   if(token!==shapeAnalysis.semanticToken)return;
+   const cur=analyzerMetricArray(current),res=Float64Array.from(target.map((v,i)=>v-cur[i]));
+   const maxErr=Math.max(...Array.from(res,Math.abs));if(maxErr<.12)break;
+   const d=semanticPcCorrection(res);
+   for(let k=0;k<shapeAnalysis.pcCount;k++){
+    const next=coeff[k]+d[k],clamped=clamp(next,-3,3);if(Math.abs(clamped-next)>.001)hitLimit=true;coeff[k]=clamped
+   }
+   const rest=rebuildRestShape();applyAnalyzerRest(rest,analyzerIdentityRelative());
+   current=measureCurrentRestShape();shapeAnalysis.lastMetrics=current;
+   renderAnalyzerMetrics(current,shapeAnalysis.baseMetrics);updateMeasurementOverlay(current);syncRawPcUi();
+   info("#semanticInfo",`Live-Solver Iteration ${iter+1}/4 · größter Messfehler vor Korrektur ${maxErr.toFixed(2)} cm${hitLimit?" · PCA ±3σ-Grenze erreicht":""}`);
+   await nextPaint(28)
+  }
+  if(token!==shapeAnalysis.semanticToken)return;
+  const finalM=measureCurrentRestShape();shapeAnalysis.lastMetrics=finalM;renderAnalyzerMetrics(finalM,shapeAnalysis.baseMetrics);updateMeasurementOverlay(finalM);
+  const errs=ANALYSIS_METRICS.map((d,i)=>finalM[d.key]-target[i]),maxFinal=Math.max(...errs.map(Math.abs));
+  info("#semanticInfo",`✓ Semantischer Modifier angewendet · max. Zielabweichung ${maxFinal.toFixed(2)} cm${hitLimit?" · mindestens ein PC an ±3σ begrenzt":""}
+Aktueller Körper bleibt in T-Pose, damit die Messlinien direkt mit dem Modell vergleichbar bleiben.`);
+  setState("#analysisState",maxFinal<.5?"MODIFIKATOREN AKTIV":"ANNÄHERUNG","ok")
+ }catch(e){
+  console.error(e);setState("#analysisState","MODIFIER FEHLER","bad");info("#semanticInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}`)
+ }finally{shapeAnalysis.internal=false}
+}
+async function resetSemanticModifiers(){
+ if(!shapeAnalysis.baseCoeff)return;
+ ++shapeAnalysis.semanticToken;shapeAnalysis.internal=true;
+ try{
+  coeff.set(shapeAnalysis.baseCoeff);const rest=rebuildRestShape();applyAnalyzerRest(rest,analyzerIdentityRelative());
+  const m=measureCurrentRestShape();shapeAnalysis.lastMetrics=m;
+  for(const d of ANALYSIS_METRICS)shapeAnalysis.targets[d.key]=shapeAnalysis.baseMetrics[d.key];
+  document.querySelectorAll(".semanticControl").forEach((row,i)=>{const d=ANALYSIS_METRICS[i],b=shapeAnalysis.baseMetrics[d.key],r=row.querySelector("input"),o=row.querySelector("output");r.value=b.toFixed(1);o.value=b.toFixed(1)+" cm"});
+  renderAnalyzerMetrics(m,shapeAnalysis.baseMetrics);updateMeasurementOverlay(m);syncRawPcUi();setState("#analysisState","ANALYSE BEREIT","ok");info("#semanticInfo","Semantische Modifikatoren auf die analysierte Basis zurückgesetzt.")
+ }finally{shapeAnalysis.internal=false}
+}
+async function startFullShapeAnalysis(){
+ if(shapeAnalysis.running)return;
+ try{
+  if(currentRigMode!=="current-expanded"||!poseReady)throw new Error("Zuerst Current Expanded 122-Joint LBS in Punkt 5 aktivieren.");
+  stopPoseAnimation(false);shapeAnalysis.running=true;shapeAnalysis.ready=false;shapeAnalysis.stale=false;shapeAnalysis.internal=true;
+  const token=++shapeAnalysis.cancelToken,btn=$("#startShapeAnalysis"),cancel=$("#cancelShapeAnalysis");btn.disabled=true;cancel.disabled=false;
+  setState("#analysisState","SCAN LÄUFT","warn");$("#analysisBar").style.width="0%";
+  info("#analysisInfo","Die App schaltet für die Messung in die T-Pose und fährt jetzt jeden der 128 SOMA-PCs sichtbar mit ±0,35σ ab. Das Modell im Viewport ist dabei der reale Scan – keine Hintergrundsimulation.");
+  const identity=analyzerIdentityRelative();poseEulerDeg?.fill(0);syncPoseSlidersFromJoint();applyRelativePoseMatrices(currentRestLow,identity,false,false,"Analyzer T-Pose");
+  shapeAnalysis.baseCoeff=Float32Array.from(coeff);shapeAnalysis.baseRest=Float32Array.from(rebuildRestShape());currentRestLow.set(shapeAnalysis.baseRest);recomputeAdaptiveRig();applyRelativePoseMatrices(currentRestLow,identity,false,false,"Analyzer Basis");
+  const base=measureCurrentRestShape();shapeAnalysis.baseMetrics=base;shapeAnalysis.lastMetrics=base;renderAnalyzerMetrics(base);updateMeasurementOverlay(base);
+  const M=ANALYSIS_METRICS.length,K=128,J=Array.from({length:M},()=>new Float32Array(K)),plusRest=new Float32Array(shapeAnalysis.baseRest.length),minusRest=new Float32Array(shapeAnalysis.baseRest.length),delta=shapeAnalysis.scanDelta;
+  for(let k=0;k<K;k++){
+   if(token!==shapeAnalysis.cancelToken)throw new Error("Analyse vom Nutzer gestoppt");
+   makePerturbedRest(shapeAnalysis.baseRest,k,delta,plusRest);applyAnalyzerRest(plusRest,identity);
+   setState("#analysisPc",`PC ${k+1}/128 · +${delta.toFixed(2)}σ`,"warn");$("#analysisBar").style.width=((k+.35)/K*100).toFixed(1)+"%";await nextPaint(16);
+   const mp=analyzerMetricArray(measureCurrentRestShape());
+   makePerturbedRest(shapeAnalysis.baseRest,k,-delta,minusRest);applyAnalyzerRest(minusRest,identity);
+   setState("#analysisPc",`PC ${k+1}/128 · −${delta.toFixed(2)}σ`,"warn");$("#analysisBar").style.width=((k+.75)/K*100).toFixed(1)+"%";await nextPaint(16);
+   const mm=analyzerMetricArray(measureCurrentRestShape());
+   for(let i=0;i<M;i++)J[i][k]=(mp[i]-mm[i])/(2*delta)
+  }
+  coeff.set(shapeAnalysis.baseCoeff);currentRestLow.set(shapeAnalysis.baseRest);applyAnalyzerRest(shapeAnalysis.baseRest,identity);
+  const restored=measureCurrentRestShape();shapeAnalysis.baseMetrics=restored;shapeAnalysis.lastMetrics=restored;shapeAnalysis.jacobian=J;shapeAnalysis.pcCount=128;shapeAnalysis.ready=true;shapeAnalysis.running=false;
+  renderAnalyzerMetrics(restored);updateMeasurementOverlay(restored);buildSemanticControls();syncRawPcUi();
+  $("#analysisBar").style.width="100%";setState("#analysisPc","128/128 PCs vermessen","ok");setState("#analysisState","128 PCs ANALYSIERT","ok");
+  const qualities=ANALYSIS_METRICS.map((d,i)=>`${d.short}: ${modifierQuality(i).label}`).join(" · ");
+  info("#analysisInfo",`✓ Lokale 7×128-Mess-Jacobian am aktuellen Körper erzeugt.
+${qualities}
+
+Wichtig: Umfang/Tiefe sind in v0.3.0 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
+  updateDecision()
+ }catch(e){
+  console.error(e);
+  shapeAnalysis.running=false;shapeAnalysis.ready=false;
+  // Always leave the mannequin in the known analysis basis instead of a half-scanned PC.
+  try{
+   if(shapeAnalysis.baseCoeff&&shapeAnalysis.baseRest){
+    coeff.set(shapeAnalysis.baseCoeff);currentRestLow.set(shapeAnalysis.baseRest);
+    applyAnalyzerRest(shapeAnalysis.baseRest,analyzerIdentityRelative());syncRawPcUi()
+   }
+  }catch(restoreError){console.warn("Analyzer restore failed",restoreError)}
+  setState("#analysisState",String(e?.message||e).includes("gestoppt")?"GESTOPPT":"ANALYSE FEHLER",String(e?.message||e).includes("gestoppt")?"warn":"bad");
+  info("#analysisInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}`)
+ }finally{
+  shapeAnalysis.internal=false;$("#startShapeAnalysis").disabled=currentRigMode!=="current-expanded";$("#cancelShapeAnalysis").disabled=true
+ }
+}
+function cancelShapeAnalysis(){
+ if(!shapeAnalysis.running)return;++shapeAnalysis.cancelToken
+}
+
 function buildSliders(){
  const box=$("#sliders");box.innerHTML="";
- for(let i=0;i<10;i++){const d=document.createElement("div");d.className="slider";d.innerHTML=`<label>PC ${i+1}</label><input type="range" min="-3" max="3" step=".05" value="0"><output>0.00</output>`;const r=d.querySelector("input"),o=d.querySelector("output");r.oninput=()=>{coeff[i]=+r.value;o.value=(+r.value).toFixed(2);updateShape()};box.appendChild(d)}
+ for(let i=0;i<10;i++){const d=document.createElement("div");d.className="slider";d.innerHTML=`<label>PC ${i+1}</label><input type="range" min="-3" max="3" step=".05" value="0"><output>0.00</output>`;const r=d.querySelector("input"),o=d.querySelector("output");r.oninput=()=>{coeff[i]=+r.value;o.value=(+r.value).toFixed(2);markShapeAnalysisStale(`PC ${i+1} wurde manuell verändert`);updateShape()};box.appendChild(d)}
 }
 function frame(){
  if(!mesh)return;geometry.computeBoundingBox();const b=geometry.boundingBox,c=new THREE.Vector3(),s=new THREE.Vector3();b.getCenter(c);b.getSize(s);orbit.target.copy(c);const d=Math.max(2.5,s.y*1.45);cam.position.set(0,c.y,d);orbit.update()
@@ -816,8 +1122,8 @@ function frame(){
 $("#loadShape").onclick=loadShape;$("#frame").onclick=frame;
 $("#front").onclick=()=>{if(!mesh)return;const c=orbit.target,d=cam.position.distanceTo(c);cam.position.set(c.x,c.y,c.z+d);cam.lookAt(c);orbit.update()};
 $("#side").onclick=()=>{if(!mesh)return;const c=orbit.target,d=cam.position.distanceTo(c);cam.position.set(c.x+d,c.y,c.z);cam.lookAt(c);orbit.update()};
-$("#reset").onclick=()=>{coeff.fill(0);document.querySelectorAll("#sliders .slider input").forEach((r,i)=>{r.value=0;r.nextElementSibling.value="0.00"});updateShape()};
-$("#random").onclick=()=>{coeff.fill(0);for(let i=0;i<12;i++)coeff[i]=(Math.random()*2-1)*1.6;document.querySelectorAll("#sliders .slider input").forEach((r,i)=>{r.value=coeff[i];r.nextElementSibling.value=coeff[i].toFixed(2)});updateShape()};
+$("#reset").onclick=()=>{coeff.fill(0);document.querySelectorAll("#sliders .slider input").forEach((r,i)=>{r.value=0;r.nextElementSibling.value="0.00"});markShapeAnalysisStale("Shape wurde auf PCA-Null zurückgesetzt");updateShape()};
+$("#random").onclick=()=>{coeff.fill(0);for(let i=0;i<12;i++)coeff[i]=(Math.random()*2-1)*1.6;document.querySelectorAll("#sliders .slider input").forEach((r,i)=>{r.value=coeff[i];r.nextElementSibling.value=coeff[i].toFixed(2)});markShapeAnalysisStale("Zufalls-Shape wurde erzeugt");updateShape()};
 
 
 const EMBEDDED_RIG_KEYS=[
@@ -1674,14 +1980,27 @@ $("#debug10").onclick=()=>applySingleJointDebug(10);
 $("#debug20").onclick=()=>applySingleJointDebug(20);
 $("#debug30").onclick=()=>applySingleJointDebug(30);
 $("#debugMinus10").onclick=()=>applySingleJointDebug(-10);
+$("#startShapeAnalysis").onclick=startFullShapeAnalysis;
+$("#cancelShapeAnalysis").onclick=cancelShapeAnalysis;
+$("#toggleMeasureLines").onclick=toggleMeasureOverlay;
+$("#resetSemantic").onclick=resetSemanticModifiers;
 
 function updateDecision(){
  if(shapePass&&rigPass&&posePass){
   const expanded=currentRigMode==="current-expanded";
-  setState("#decision",expanded?"CURRENT 122-JOINT LBS AKTIV":currentRigMode==="current-public"?"CURRENT PUBLIC 78 AKTIV":"LBS + POSE-KONVENTION AKTIV","ok");
-  info("#decisionInfo",expanded
-   ?`✓ v0.2.2: Der aktuelle v0026-Rig-Pack läuft jetzt auf dem iPhone als echter Expanded-LBS-Pfad. 77 steuerbare SOMA-Pose-Joints werden intern auf ${targetJointCount} Target-/Skinning-Joints erweitert; die SOMA-Procedural-Twist-Segmente werden automatisch erzeugt. Shape-Änderungen berechnen die Public-RBF-Jointpositionen neu und expandieren anschließend die Target-Bindpose neu.\n\nNoch offen für die endgültige BODY-LAB-Basis: das vollständige SOMA-Rotations-Fitting beim Shape-Transfer und danach systematische Shape+Pose-/Extremtests. BODY LAB bleibt unverändert.`
-   :"Der Browser-LBS-Pfad funktioniert. Für den eigentlichen aktuellen Rig-Test in v0.2.2 bitte den Expanded-122-Joint-Pfad in Punkt 5 aktivieren.")
+  if(expanded&&shapeAnalysis.ready){
+   setState("#decision","RIG + SHAPE-ANALYZER AKTIV","ok");
+   info("#decisionInfo",`✓ v0.3.0 auf dem iPhone: Current v0026 Expanded-LBS ist aktiv UND der aktuelle Körper wurde lokal durch alle 128 SOMA-PCA-Dimensionen vermessen.
+
+Aus der 7×128-Mess-Jacobian werden jetzt eigene semantische Zielregler in Zentimetern berechnet. Der Live-Solver kombiniert dafür viele PCs und versucht gleichzeitig die übrigen sichtbaren Messgrößen konstant zu halten.
+
+Noch NICHT endgültig bewiesen: Die v0.3.0 Umfangs-/Tiefenmessungen sind bewusst sichtbare Slice-Proxies. Vor BODY LAB müssen diese Messdefinitionen noch gegen belastbare anthropometrische Landmarken und echte Maßregeln validiert werden. Die Modifier-Architektur selbst wird hier bereits real getestet.`);
+  }else{
+   setState("#decision",expanded?"CURRENT 122-JOINT LBS AKTIV":currentRigMode==="current-public"?"CURRENT PUBLIC 78 AKTIV":"LBS + POSE-KONVENTION AKTIV","ok");
+   info("#decisionInfo",expanded
+    ?`✓ Current v0026 Expanded-LBS läuft. Nächster Test in Punkt 7: alle 128 Shape-Komponenten live vermessen und daraus eigene semantische Modifier ableiten.`
+    :"Der Browser-LBS-Pfad funktioniert. Für den aktuellen Rig-/Analyzer-Test bitte den Expanded-122-Joint-Pfad in Punkt 5 aktivieren.")
+  }
  }else if(shapePass&&rigPass){setState("#decision","NÄCHSTER TEST: CURRENT 122 LBS","warn");info("#decisionInfo","Shape und Current-Rig-Pack sind vorhanden. In Punkt 5 jetzt Expanded 122-Joint LBS aktivieren.")}
  else if(shapePass)setState("#decision","SHAPE BESTANDEN","ok")
 }

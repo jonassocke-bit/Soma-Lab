@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>SOMA Browser PoC v0.2.4</title>
+<title>SOMA Browser PoC v0.3.0</title>
 <link rel="stylesheet" href="style.css">
 <script type="importmap">
 {"imports":{
@@ -16,7 +16,7 @@
 <body>
 <div id="viewport"></div>
 <header>
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.2.4</small><b>Shape · Rig · Pose Machbarkeit</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.3.0</small><b>Shape · Rig · Pose · Modifier</b></div>
  <span id="fps">– fps</span>
 </header>
 <main>
@@ -58,9 +58,9 @@
  </section>
 
  <section>
-  <div class="step"><i>6</i><div><b>Pose-Runtime – echtes Browser-LBS</b><small>Current Expanded-LBS · reihenfolgeunabhängige 122-Joint-FK · Procedural Twist · Shape + Pose live</small></div><em id="poseState">WARTE AUF SHAPE</em></div>
+  <div class="step"><i>6</i><div><b>Pose-Runtime – echtes Browser-LBS</b><small>Current Expanded-LBS · 122-Joint-FK · Procedural Twist · Shape + Pose live · Basis für Modifier</small></div><em id="poseState">WARTE AUF SHAPE</em></div>
   <button id="initPose" disabled>Legacy 78-Joint LBS (nur Fallback)</button>
-  <div id="poseInfo" class="info">Für v0.2.4 bitte in Punkt 5 „Expanded 122-Joint LBS aktivieren“. Dieser Legacy-Button bleibt nur als A/B-Fallback erhalten.</div>
+  <div id="poseInfo" class="info">Für v0.3.0 bitte in Punkt 5 „Expanded 122-Joint LBS aktivieren“. Dieser Legacy-Button bleibt nur als A/B-Fallback erhalten.</div>
   <div id="poseControls" class="hidden">
    <label class="fieldLabel">Gelenk
     <select id="poseJoint"></select>
@@ -104,7 +104,7 @@
      <button id="toggleAdaptiveRig">Adaptive Rig AUS</button>
      <button id="rebindAdaptiveRig">Rebind neu berechnen</button>
     </div>
-    <div id="adaptiveRigInfo" class="info">v0.2.4 nutzt im Current-Pfad die vorberechneten Public-RBF-Jointpositionen und expandiert daraus bei jeder Shape-Änderung die aktive 122-Joint-Target-Bindpose.</div>
+    <div id="adaptiveRigInfo" class="info">v0.3.0 nutzt im Current-Pfad die vorberechneten Public-RBF-Jointpositionen und expandiert daraus bei jeder Shape-Änderung die aktive 122-Joint-Target-Bindpose.</div>
    </div>
 
    <div class="animBox">
@@ -130,9 +130,29 @@
   </div>
  </section>
 
+ <section id="shapeAnalyzerSection">
+  <div class="step"><i>7</i><div><b>Shape-Space Analyzer → eigene Modifier</b><small>128 PCs live scannen · lokale Mess-Jacobian · cm-Zielregler</small></div><em id="analysisState">WARTE AUF 122 LBS</em></div>
+  <div class="row">
+   <button id="startShapeAnalysis" class="primary" disabled>128 PCs live analysieren</button>
+   <button id="cancelShapeAnalysis" disabled>Stop</button>
+   <button id="toggleMeasureLines">Messlinien AUS</button>
+  </div>
+  <div class="analysisProgress"><div id="analysisBar"></div></div>
+  <div class="analysisPcRow"><b>Live-Scan</b><em id="analysisPc">noch nicht gestartet</em></div>
+  <div id="analysisInfo" class="info">Nach Aktivierung des 122-Joint-Rigs fährt der Analyzer jeden SOMA-PC sichtbar mit +/−0,35σ ab. Währenddessen siehst du die tatsächliche Körperveränderung live im Viewport. Daraus wird lokal gemessen, welche Kombination der 128 PCs welche Körpermaße verändert.</div>
+  <div id="analysisMetrics" class="metricGrid"></div>
+
+  <div id="semanticBox" class="animBox hidden">
+   <div class="animHead"><b>Semantische BODY-LAB-Modifier · PoC</b><em class="ok">LIVE</em></div>
+   <div id="semanticControls"></div>
+   <div class="row"><button id="resetSemantic">Modifier auf Analyse-Basis zurücksetzen</button></div>
+   <div id="semanticInfo" class="info">Wird nach der 128-PC-Analyse erzeugt.</div>
+  </div>
+ </section>
+
  <section>
-  <div class="step"><i>7</i><div><b>Entscheidung</b><small>kein „wird schon gehen“</small></div><em id="decision">OFFEN</em></div>
-  <div id="decisionInfo" class="info">v0.2.4 prüft den eigentlichen Current-Rig-Pfad: 77 öffentliche SOMA-Pose-Joints steuern 122 interne Target-/Skinning-Joints mit Procedural Twist, RBF-Shape-Fit und Live-LBS auf dem iPhone.</div>
+  <div class="step"><i>8</i><div><b>Entscheidung</b><small>kein „wird schon gehen“</small></div><em id="decision">OFFEN</em></div>
+  <div id="decisionInfo" class="info">v0.3.0 prüft nach dem Current-122-Joint-Rig jetzt die nächste Kernfrage: Lassen sich die 128 statistischen SOMA-Komponenten live in kontrollierbare, verständliche Mess-Modifier übersetzen?</div>
  </section>
 </main>
 <script type="module" src="app.js"></script>

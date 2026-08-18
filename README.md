@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.2.4
+# SOMA Browser PoC v0.3.0
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -253,9 +253,9 @@ Noch absichtlich **nicht als bestanden** markiert:
 Diese kommen erst nach dem realen iPhone-Pack-Test, damit wir die neue Grundlage nicht wieder in einem großen ungetesteten Umbau verstecken.
 
 
-## v0.2.4 – Current Expanded 122-Joint LBS
+## v0.3.0 – Current Expanded 122-Joint LBS
 
-Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen. v0.2.4 aktiviert nun den eigentlichen Expanded-Skinning-Pfad:
+Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen. v0.3.0 aktiviert nun den eigentlichen Expanded-Skinning-Pfad:
 
 - 77 user-facing SOMA Pose-Joints bleiben die Bedien-/Motion-Schnittstelle.
 - Intern werden die aktuellen 122 Target-Joints aus dem v0026-Rig verwendet.
@@ -267,12 +267,12 @@ Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen.
 - NVIDIA Motion, manuelle Joint-Slider und Shape-Regler gehen nach Aktivierung alle durch den Expanded-LBS-Pfad.
 - Rig-Debug kann zwischen Public 78 und Expanded 122 umschalten.
 
-Noch bewusst offen: das vollständige shape-adaptive **Rotation-Fitting** der offiziellen `SkeletonTransfer`-Pipeline. v0.2.4 verwendet für die Shape-Anpassung die offiziellen vorberechneten RBF-Jointpositionen und die aktuelle Procedural-Expansion, aber noch keine vollständige Browser-Portierung des Kabsch/Newton-Schulz Rotations-Fits.
+Noch bewusst offen: das vollständige shape-adaptive **Rotation-Fitting** der offiziellen `SkeletonTransfer`-Pipeline. v0.3.0 verwendet für die Shape-Anpassung die offiziellen vorberechneten RBF-Jointpositionen und die aktuelle Procedural-Expansion, aber noch keine vollständige Browser-Portierung des Kabsch/Newton-Schulz Rotations-Fits.
 
-- v0.2.4 merkt die zuletzt tatsächlich angewendete 78-Joint-Relativpose. Shape-Regler können dadurch eine laufende/aktuelle Pose nach dem Rebind wieder anwenden, statt beim Morphen ungewollt auf die Slider-Nullpose zurückzuspringen.
+- v0.3.0 merkt die zuletzt tatsächlich angewendete 78-Joint-Relativpose. Shape-Regler können dadurch eine laufende/aktuelle Pose nach dem Rebind wieder anwenden, statt beim Morphen ungewollt auf die Slider-Nullpose zurückzuspringen.
 
 
-## v0.2.4 – 122-Joint-Hierarchie reihenfolgeunabhängig
+## v0.3.0 – 122-Joint-Hierarchie reihenfolgeunabhängig
 
 Der erste echte iPhone-Test von v0.2.1 erreichte `PACK OK`, stoppte beim Aktivieren des Expanded-Rigs aber mit `122 FEHLER`. Der sichtbare Ablauf zeigte, dass der Public-Rig-Teil bereits initialisiert war und der Fehler erst beim Expanded-Posepfad auftrat.
 
@@ -284,10 +284,10 @@ Zusätzlich:
 - Bei einem 122-Fehler fällt die App sauber auf den funktionierenden Current-Public-78-Pfad zurück.
 - Im Rig-Pack-Infofeld wird die Zahl der Parent-Vorwärtsverweise angezeigt.
 
-Der vorhandene `soma_current_rig_pack_v0026.npz` und dessen persistenter Cache bleiben unverändert gültig; der GitHub-Actions-Builder muss für v0.2.4 nicht erneut ausgeführt werden.
+Der vorhandene `soma_current_rig_pack_v0026.npz` und dessen persistenter Cache bleiben unverändert gültig; der GitHub-Actions-Builder muss für v0.3.0 nicht erneut ausgeführt werden.
 
 
-## v0.2.4 – robuster Current-Rig-Pack Loader
+## v0.3.0 – robuster Current-Rig-Pack Loader
 
 Der bereits erzeugte `soma_current_rig_pack_v0026.npz` wird nicht neu erzeugt.
 
@@ -305,7 +305,7 @@ Damit darf ein kurzfristiges GitHub-Pages-/HTTP-Cache-Problem den 122-Joint-Test
 nicht mehr blockieren.
 
 
-## v0.2.4 – Joint-Name-Separator-Fix
+## v0.3.0 – Joint-Name-Separator-Fix
 
 Die v0.2.3-Fehlermeldung hat den eigentlichen Fehler sichtbar gemacht:
 Der erste erzeugte Rig-Pack speichert `target_joint_names_utf8` und
@@ -313,10 +313,43 @@ Der erste erzeugte Rig-Pack speichert `target_joint_names_utf8` und
 Newline-Zeichen. Dadurch sah der Browser die komplette Namensliste als einen
 einzigen Namen und konnte z. B. `LeftArm -> LeftForeArm` nicht auflösen.
 
-v0.2.4:
+v0.3.0:
 - liest sowohl echte Newlines als auch den bereits erzeugten Legacy-`\n`-Pack,
 - prüft 122 Target- und 78 Public-Namen explizit,
 - prüft alle Twist-Joint-Namen vor Aktivierung,
 - korrigiert zusätzlich den Extractor für jede spätere Rig-Pack-Neuerzeugung.
 
 Der vorhandene `soma_current_rig_pack_v0026.npz` muss NICHT neu erzeugt werden.
+
+
+## v0.3.0 – Shape-Space Analyzer + semantische Live-Modifier
+
+Neuer PoC-Schritt nach bestandenem Current-v0026-122-Joint-LBS:
+
+1. Das Modell wird für reproduzierbare Messung in die T-Pose gesetzt.
+2. Alle 128 SOMA-PCA-Komponenten werden am aktuellen Körper nacheinander mit
+   +0,35σ und −0,35σ abgefahren.
+3. Diese Morphs werden **real im Viewport gerendert**. Der Scan ist also live sichtbar.
+4. Für jeden Perturbationsschritt werden sieben lokale Mess-Proxies ausgewertet:
+   - Körperhöhe
+   - Schultergelenk-Breite
+   - Brustumfang
+   - Taillenumfang
+   - Hüftumfang
+   - Brusttiefe
+   - Hüfttiefe
+5. Daraus entsteht eine lokale 7×128-Jacobian `Messänderung / PCA-σ`.
+6. Die sichtbaren cm-Regler werden anschließend **nicht** auf einzelne PCs gemappt.
+   Ein regularisierter Minimum-Norm-Solver kombiniert alle 128 PCs, um den Zielwert
+   zu treffen und die übrigen sichtbaren Maße möglichst konstant zu halten.
+7. Bei jeder Slider-Bewegung konvergiert der Solver in mehreren kleinen Iterationen
+   sichtbar am Modell. Current RBF-Shape-Fit und 122-Joint-Bindpose werden dabei
+   nach jeder Formänderung neu aufgebaut.
+
+### Wichtige Grenze dieses PoC
+
+Die Slider-/Solver-Architektur ist real. Die Messdefinitionen für Umfang und Tiefe
+sind in v0.3.0 aber bewusst sichtbare, rig-relative horizontale Slice-Proxies.
+Sie sind noch **keine** endgültig validierten anthropometrischen BODY-LAB-Maße.
+Die nächste Stufe kann diese Messfunktionen durch belastbare Landmark-/Messregeln
+ersetzen, ohne die Modifier-Architektur neu zu bauen.
