@@ -14,6 +14,12 @@ const CURRENT_RIG_PACK_URL="./soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_SOURCE_SHA="86632764684281dc98f31ab9c4aac36a4cdbc428";
 
+// v0.4.0: Anny is added only as a second identity/shape source.
+// Rig, topology, pose runtime and rendering stay on the proven SOMA path.
+const ANNY_SOURCE_SHA="72104cac8242d1735ec06433b65bec5e26953ce7";
+const ANNY_PACK_URL="./anny_soma_identity_grid_v060.npz";
+const ANNY_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/anny_soma_identity_grid_v060.npz";
+
 const ASSET_DB="SomaLabAssetCache";
 const ASSET_DB_VERSION=1;
 const ASSET_STORE="assets";
@@ -63,7 +69,8 @@ const ASSET_KEY={
  shape:"SOMA-X/v0026/SOMA_neutral.npz",
  proc:"SOMA-X/8663276/SOMA_procedural_transforms.json",
  anim:"SOMA-X/f424385d/example_animation.npy",
- currentRig:"SOMA-X/8663276/browser-current-rig-pack-v0026-low-v1"
+ currentRig:"SOMA-X/8663276/browser-current-rig-pack-v0026-low-v1",
+ anny:"Anny/72104cac/soma-low-adult-identity-grid-v1"
 };
 let assetDBPromise=null;
 
@@ -168,6 +175,12 @@ let arrays=null, mean=null, dirs=null, eig=null, triangles=null, lowMap=null;
 let coeff=new Float32Array(128), mesh=null, geometry=null, baseLow=null, dirsLow=null, currentRestLow=null, bindShapeLow=null;
 let shapePass=false, rigPass=false, posePass=false;
 
+// Identity engine is deliberately separate from rigging.
+// Existing SOMA-PCA stays available as an A/B reference; Anny can replace only restVertices.
+let shapeEngine="soma-pca";
+let annyPack=null,annyPackLoaded=false,annyLastMs=0;
+let annyParams={gender:0,height:.5,weight:.5,muscle:.5,proportions:.5,cupsize:.5};
+
 // Browser-LBS state. The currently cached Hugging-Face SOMA_neutral.npz is the
 // original public SOMA v0.1 asset, whose official runtime stored the 78-joint
 // rig, bind transforms and sparse skinning weights in this same NPZ.
@@ -186,7 +199,7 @@ let targetJointCount=0,targetParents=null,targetTLocal=null,targetBindWorldTempl
 let targetBoneIndices=null,targetBoneWeights=null,targetTopK=0;
 let rigGroup=null,rigBoneLines=null,rigJointPoints=null,rigAxesX=null,rigAxesY=null,rigAxesZ=null;
 
-// v0.3.0 Shape-Space Analyzer.
+// v0.4.0 Shape-Space Analyzer.
 // The first semantic layer is deliberately measurement-driven: raw PCA stays the
 // engine underneath, while the UI exposes locally calibrated measurements in cm.
 const ANALYSIS_METRICS=[
@@ -419,7 +432,7 @@ Target-Hierarchie: ${targetHierarchyProbe.forwardRefs} Parent-Vorwärtsverweise 
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
 Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":`${asset.source||"Repo"} · persistent gespeichert`}
 
-Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.3.0 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.4.0 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
  }catch(e){
   console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
@@ -689,7 +702,7 @@ function activateCurrentExpandedRig(){
   stage="Expanded Bindpose/Rebind";rebuildExpandedTargetBind();
   stage="122-Joint Skinweights";const tw=buildTargetLowSkinningFromPack();
   stage="122-Joint Nullpose skinnen";poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,true);
-  setState("#poseState","CURRENT 122-JOINT LBS","ok");setState("#currentRigState","122 LBS AKTIV","ok");$("#toggleDebugTopology").disabled=false;$("#startShapeAnalysis").disabled=false;
+  setState("#poseState","CURRENT 122-JOINT LBS","ok");setState("#currentRigState","122 LBS AKTIV","ok");$("#toggleDebugTopology").disabled=false;$("#startShapeAnalysis").disabled=shapeEngine!=="soma-pca";
   updateAdaptiveRigUI(`✓ CURRENT SHAPE-FIT + EXPANDED TARGET-RIG AKTIV\nPublic RBF-fit: ${stats?.count||0}/${poseJointCount-1} Joints · mittlere Verschiebung ${((stats?.meanShift||0)*1000).toFixed(1)} mm\nTarget-Bindpose daraus auf ${targetJointCount} Joints expandiert; Twist-Helfer folgen den SOMA-Procedural-Matrizen.`,"ok");
   info("#poseInfo",`✓ CURRENT v0026 EXPANDED-RIG IST JETZT DIE AKTIVE LBS-RUNTIME\nBedienung: 77 öffentliche Pose-Joints\nInternes Skinning: ${targetJointCount} Joints\nLow-LOD: ${tw.n} Vertices · Einflüsse/Vertex ${tw.minInflu}–${tw.rawMax}${tw.truncated?` · ${tw.truncated} Vertices auf Top-${tw.topK} begrenzt`:""}\nProcedural Twist: ${currentProcedural.segments.length} Segmente / ${currentProcedural.twistSpec.size} Twist-Joints\nRotationsextraktion: ${currentProcedural.mode}\nHierarchie: ${hs.forwardRefs} Parent-Vorwärtsverweise werden jetzt reihenfolgeunabhängig aufgelöst.\n\nNVIDIA-Animation, Slider und Shape-Regler laufen ab jetzt alle durch den 122-Joint-Pfad.`);updateDecision();disposeRigDebugObjects();refreshRigDebug()
  }catch(e){
@@ -703,6 +716,152 @@ function activateCurrentExpandedRig(){
   const errBox=$("#currentRigError");if(errBox){errBox.textContent="122-Aktivierung gestoppt bei „"+stage+"“\n"+(e?.message||String(e))+"\n\nDie App ist automatisch auf den funktionierenden Public-78-Fallback zurückgegangen.";errBox.classList.remove("hidden")}
  }
 }
+
+function annyArray(name){
+ const a=annyPack?.[name];
+ if(!a)throw new Error(`Anny-Pack Array fehlt: ${name}`);
+ return a
+}
+async function fetchAnnyPackRobust({forceNetwork=false,onProgress=null}={}){
+ if(!forceNetwork){
+  try{
+   const cached=await assetCacheGet(ASSET_KEY.anny);
+   if(cached?.buffer){
+    const u8=new Uint8Array(cached.buffer);
+    if(onProgress)onProgress(u8.byteLength,u8.byteLength,true,"persistenter iPhone-Cache");
+    return {u8,cacheHit:true,size:u8.byteLength,source:"persistenter iPhone-Cache"}
+   }
+  }catch(e){console.warn("Anny cache read failed:",e)}
+ }
+ const stamp=ANNY_SOURCE_SHA.slice(0,12);
+ const pageUrl=new URL(ANNY_PACK_URL,document.baseURI);pageUrl.searchParams.set("anny",stamp);
+ const candidates=[
+  {label:"GitHub Pages",url:pageUrl.href},
+  {label:"GitHub Raw-Fallback",url:ANNY_PACK_RAW_URL+"?anny="+encodeURIComponent(stamp)}
+ ];
+ const errors=[];
+ for(const c of candidates){
+  try{
+   if(onProgress)onProgress(0,0,false,c.label+" …");
+   const r=await fetch(c.url,{mode:"cors",cache:"no-store"});
+   if(!r.ok)throw new Error("HTTP "+r.status);
+   const u8=new Uint8Array(await r.arrayBuffer());
+   if(u8.byteLength<250000)throw new Error(`Antwort unerwartet klein: ${u8.byteLength} Bytes`);
+   if(onProgress)onProgress(u8.byteLength,u8.byteLength,false,c.label);
+   try{await assetCachePut(ASSET_KEY.anny,ANNY_PACK_URL,u8,r.headers.get("content-type")||"application/octet-stream")}catch(e){console.warn("Anny cache write failed",e)}
+   return {u8,cacheHit:false,size:u8.byteLength,source:c.label}
+  }catch(e){errors.push(c.label+": "+(e?.message||String(e)));console.warn(c.label,e)}
+ }
+ throw new Error("Anny-Pack nicht erreichbar. "+errors.join(" · "))
+}
+async function loadAnnyPack(){
+ try{
+  if(!arrays||!baseLow)throw new Error("Zuerst in Punkt 1 das SOMA Shape-Asset laden – es liefert die kanonische Low-LOD-Zuordnung.");
+  setState("#annyState","LÄDT","warn");await requestPersistentStorage();
+  let asset=await fetchAnnyPackRobust({onProgress:(got,total,cacheHit,source)=>{
+   info("#annyInfo",cacheHit?`✓ Anny-Pack aus persistentem iPhone-Cache · ${(got/1048576).toFixed(1)} MB`
+    :`${source||"Anny-Pack"}${got?` · ${(got/1048576).toFixed(1)} MB`:""}`)
+  }});
+  try{annyPack=await decodeShapeNPZ(asset.u8)}
+  catch(firstError){
+   if(!asset.cacheHit)throw firstError;
+   await assetCacheDelete(ASSET_KEY.anny);
+   info("#annyInfo","Lokaler Anny-Pack-Cache war ungültig · wird einmalig neu geladen …");
+   asset=await fetchAnnyPackRobust({forceNetwork:true});annyPack=await decodeShapeNPZ(asset.u8)
+  }
+  const grid=annyArray("grid_rest_low"),dims=grid.shape.map(Number);
+  const expected=[2,2,3,3,2,3,baseLow.length/3,3];
+  if(dims.length!==expected.length||dims.some((v,i)=>v!==expected[i]))
+   throw new Error(`Anny grid_rest_low Shape ${JSON.stringify(dims)} statt ${JSON.stringify(expected)}`);
+  for(const k of ["gender_anchors","height_anchors","weight_anchors","muscle_anchors","proportions_anchors","cupsize_anchors"])annyArray(k);
+  annyPackLoaded=true;setState("#annyState","PACK OK","ok");
+  $("#useAnny").disabled=false;
+  const minH=Number(annyArray("height_range_m").data[0]),maxH=Number(annyArray("height_range_m").data[1]);
+  info("#annyInfo",`✓ OFFIZIELLER ANNY → SOMA LOW-LOD PACK LESBAR
+Quelle: ${asset.cacheHit?"persistenter iPhone-Cache":asset.source}
+Anny Commit: ${decodeUtf8Array(annyArray("source_git_sha"))}
+Grid: Gender 2 × Height 2 × Weight 3 × Muscle 3 × Proportions 2 × Cupsize 3
+Rest-Shapes: 216 · Vertices je Shape: ${baseLow.length/3}
+Pack-Höhenbereich: ${minH.toFixed(2)}–${maxH.toFixed(2)} m
+Fixiert für diesen PoC: Adult age = 0.667 · firmness = 0.5 · race = gleichgewichtet
+
+Wichtig: Gender wird im Browser ABSICHTLICH nicht interpoliert. Male/Female sind getrennte native Anny-Anker.`);
+ }catch(e){
+  console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;
+  info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}
+
+Falls der Pack noch nicht im Repo liegt: unten „Einmalige Anny-Pack-Erstellung“ öffnen und den neuen GitHub-Action-Workflow genau einmal ausführen.`)
+ }
+}
+function bracketAnchors(key,value){
+ const a=Array.from(annyArray(key).data,Number);
+ if(value<=a[0])return [0,0,0];
+ if(value>=a[a.length-1])return [a.length-1,a.length-1,0];
+ for(let i=0;i<a.length-1;i++)if(value>=a[i]&&value<=a[i+1]){
+  const t=(value-a[i])/(a[i+1]-a[i]);return [i,i+1,t]
+ }
+ return [0,0,0]
+}
+function rebuildAnnyRestShape(){
+ if(!annyPackLoaded)throw new Error("Anny-Pack noch nicht geladen");
+ const t0=performance.now(),grid=annyArray("grid_rest_low").data,V=baseLow.length/3,stride=V*3;
+ if(!currentRestLow||currentRestLow.length!==stride)currentRestLow=new Float32Array(stride);
+ currentRestLow.fill(0);
+ const g=annyParams.gender>=.5?1:0;
+ const hb=bracketAnchors("height_anchors",annyParams.height),wb=bracketAnchors("weight_anchors",annyParams.weight),
+       mb=bracketAnchors("muscle_anchors",annyParams.muscle),pb=bracketAnchors("proportions_anchors",annyParams.proportions),
+       cb=bracketAnchors("cupsize_anchors",g?annyParams.cupsize:.5);
+ const axes=[hb,wb,mb,pb,cb],sizes=[2,3,3,2,3];
+ for(let mask=0;mask<32;mask++){
+  const ids=[],ws=[];let weight=1;
+  for(let a=0;a<5;a++){
+   const [lo,hi,t]=axes[a],useHi=(mask>>a)&1;
+   if(lo===hi){ids[a]=lo;if(useHi){weight=0;break}}
+   else{ids[a]=useHi?hi:lo;weight*=useHi?t:(1-t)}
+  }
+  if(weight===0)continue;
+  const [h,w,m,p,c]=ids;
+  const shapeIndex=(((((g*sizes[0]+h)*sizes[1]+w)*sizes[2]+m)*sizes[3]+p)*sizes[4]+c);
+  const off=shapeIndex*stride;
+  for(let i=0;i<stride;i++)currentRestLow[i]+=Number(grid[off+i])*weight
+ }
+ annyLastMs=performance.now()-t0;return currentRestLow
+}
+function setAnnyUiFromParams(){
+ $("#annyMale").classList.toggle("selected",annyParams.gender<.5);
+ $("#annyFemale").classList.toggle("selected",annyParams.gender>=.5);
+ const pairs=[["annyHeight","height"],["annyWeight","weight"],["annyMuscle","muscle"],["annyProportions","proportions"],["annyCup","cupsize"]];
+ for(const [id,key] of pairs){const r=$("#"+id),o=$("#"+id+"Out");if(r)r.value=annyParams[key];if(o)o.value=Number(annyParams[key]).toFixed(2)}
+ $("#annyCup").disabled=annyParams.gender<.5;
+}
+function setShapeEngine(engine){
+ if(engine==="anny"&&!annyPackLoaded){info("#annyInfo","Anny-Pack zuerst laden.");return}
+ shapeEngine=engine;
+ document.querySelectorAll("#sliders input,#random,#reset").forEach(x=>x.disabled=engine==="anny");
+ $("#useAnny").classList.toggle("selected",engine==="anny");$("#useSoma").classList.toggle("selected",engine==="soma-pca");
+ if(engine==="anny"){
+  shapeAnalysis.ready=false;shapeAnalysis.stale=true;$("#startShapeAnalysis").disabled=true;
+  setState("#pcaState","A/B REFERENZ","warn");setState("#annyState","ANNY AKTIV","ok");
+ }else{
+  setState("#pcaState","AKTIV","ok");setState("#annyState",annyPackLoaded?"PACK OK":"BEREIT",annyPackLoaded?"ok":"");
+  $("#startShapeAnalysis").disabled=!(currentRigMode==="current-expanded");
+ }
+ updateShape();updateDecision()
+}
+function applyAnnyParams(){
+ if(shapeEngine!=="anny")setShapeEngine("anny");else updateShape();
+ setAnnyUiFromParams();
+ if(poseReady){
+  try{
+   const m=measureCurrentRestShape();
+   info("#annyLiveInfo",`Anny live: ${annyParams.gender<.5?"MALE":"FEMALE"} · native H ${annyParams.height.toFixed(2)} · W ${annyParams.weight.toFixed(2)} · Muscle ${annyParams.muscle.toFixed(2)} · Proportions ${annyParams.proportions.toFixed(2)}${annyParams.gender>=.5?` · Cup ${annyParams.cupsize.toFixed(2)}`:""}
+Browser-Interpolation: ${annyLastMs.toFixed(1)} ms
+Mess-Proxies am aktuellen Restkörper: Höhe ${m.height.toFixed(1)} cm · Brust ${m.chestCirc.toFixed(1)} · Taille ${m.waistCirc.toFixed(1)} · Hüfte ${m.hipCirc.toFixed(1)} cm
+Das sind noch keine final validierten Schneidermaße.`)
+  }catch(e){info("#annyLiveInfo",`Anny live · Browser-Interpolation ${annyLastMs.toFixed(1)} ms · Rig/Messung noch nicht aktiv.`)}
+ }else info("#annyLiveInfo",`Anny live · Browser-Interpolation ${annyLastMs.toFixed(1)} ms · aktiviere anschließend das 122-Joint-Rig für Shape+Pose-Test.`)
+}
+
 async function fetchShapeAsset(forceNetwork=false){
  return fetchAssetBytes(ASSET_KEY.shape,SHAPE,{
   fallbackSize:27488638,
@@ -801,7 +960,7 @@ function buildMesh(){
  scene.add(mesh);setState("#meshState","GERENDERT","ok");setState("#pcaState","AKTIV","ok");frame();
  info("#meshInfo",`✓ ${currentRestLow.length/3} Vertices · ${idx.length/3} Dreiecke · Three.js WebGL`)
 }
-function rebuildRestShape(){
+function rebuildSomaPcaRestShape(){
  if(!currentRestLow||currentRestLow.length!==baseLow.length)currentRestLow=new Float32Array(baseLow.length);
  currentRestLow.set(baseLow);
  const n=baseLow.length/3,K=eig.data.length;
@@ -811,6 +970,9 @@ function rebuildRestShape(){
   for(let i=0;i<n*3;i++)currentRestLow[i]+=dirsLow[off+i]*scale
  }
  return currentRestLow
+}
+function rebuildRestShape(){
+ return shapeEngine==="anny"?rebuildAnnyRestShape():rebuildSomaPcaRestShape()
 }
 function updateShape(){
  if(!geometry)return;
@@ -823,7 +985,10 @@ function updateShape(){
   const pos=geometry.attributes.position.array;pos.set(rest);
   geometry.attributes.position.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingSphere()
  }
- info("#shapePerf",`Letzte komplette Shape-Rekonstruktion: ${(performance.now()-t0).toFixed(1)} ms · 128 Komponenten verfügbar · Low-LOD ${rest.length/3} Vertices${poseReady?" · Pose danach erneut angewendet":""}`)
+ const engineText=shapeEngine==="anny"
+  ?`Anny native Grid · ${annyParams.gender<.5?"Male":"Female"} · H ${annyParams.height.toFixed(2)} · W ${annyParams.weight.toFixed(2)}`
+  :"SOMA PCA · 128 Komponenten";
+ info("#shapePerf",`Letzte komplette Shape-Rekonstruktion: ${(performance.now()-t0).toFixed(1)} ms · ${engineText} · Low-LOD ${rest.length/3} Vertices${poseReady?" · Rig-Rebind + aktuelle Pose erneut angewendet":""}`)
 }
 
 function nextPaint(delay=18){
@@ -1063,6 +1228,7 @@ async function resetSemanticModifiers(){
 async function startFullShapeAnalysis(){
  if(shapeAnalysis.running)return;
  try{
+  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.4.0 Anny direkt über die nativen Parameter testen.");
   if(currentRigMode!=="current-expanded"||!poseReady)throw new Error("Zuerst Current Expanded 122-Joint LBS in Punkt 5 aktivieren.");
   stopPoseAnimation(false);shapeAnalysis.running=true;shapeAnalysis.ready=false;shapeAnalysis.stale=false;shapeAnalysis.internal=true;
   const token=++shapeAnalysis.cancelToken,btn=$("#startShapeAnalysis"),cancel=$("#cancelShapeAnalysis");btn.disabled=true;cancel.disabled=false;
@@ -1090,7 +1256,7 @@ async function startFullShapeAnalysis(){
   info("#analysisInfo",`✓ Lokale 7×128-Mess-Jacobian am aktuellen Körper erzeugt.
 ${qualities}
 
-Wichtig: Umfang/Tiefe sind in v0.3.0 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
+Wichtig: Umfang/Tiefe sind in v0.4.0 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
   updateDecision()
  }catch(e){
   console.error(e);
@@ -1953,6 +2119,16 @@ WICHTIG: Damit ist nur der Rig-Vertrag bestätigt. Das große USD wird absichtli
 }
 $("#testRig").onclick=testRig;
 $("#loadCurrentRig").onclick=loadCurrentRigPack;
+$("#loadAnny").onclick=loadAnnyPack;
+$("#useAnny").onclick=()=>setShapeEngine("anny");
+$("#useSoma").onclick=()=>setShapeEngine("soma-pca");
+$("#annyMale").onclick=()=>{annyParams.gender=0;annyParams.cupsize=.5;applyAnnyParams()};
+$("#annyFemale").onclick=()=>{annyParams.gender=1;applyAnnyParams()};
+for(const [id,key] of [["annyHeight","height"],["annyWeight","weight"],["annyMuscle","muscle"],["annyProportions","proportions"],["annyCup","cupsize"]]){
+ const r=$("#"+id),o=$("#"+id+"Out");r.oninput=()=>{annyParams[key]=Number(r.value);o.value=Number(r.value).toFixed(2);applyAnnyParams()}
+}
+$("#annyMaleAvg").onclick=()=>{annyParams={gender:0,height:.5,weight:.5,muscle:.5,proportions:.5,cupsize:.5};setAnnyUiFromParams();applyAnnyParams()};
+$("#annyFemaleAvg").onclick=()=>{annyParams={gender:1,height:.5,weight:.5,muscle:.5,proportions:.5,cupsize:.5};setAnnyUiFromParams();applyAnnyParams()};
 $("#activateCurrentRig").onclick=activateCurrentPublicRig;
 $("#activateExpandedRig").onclick=activateCurrentExpandedRig;
 $("#initPose").onclick=initEmbeddedPoseRig;
@@ -1988,18 +2164,23 @@ $("#resetSemantic").onclick=resetSemanticModifiers;
 function updateDecision(){
  if(shapePass&&rigPass&&posePass){
   const expanded=currentRigMode==="current-expanded";
-  if(expanded&&shapeAnalysis.ready){
-   setState("#decision","RIG + SHAPE-ANALYZER AKTIV","ok");
-   info("#decisionInfo",`✓ v0.3.0 auf dem iPhone: Current v0026 Expanded-LBS ist aktiv UND der aktuelle Körper wurde lokal durch alle 128 SOMA-PCA-Dimensionen vermessen.
+  if(expanded&&shapeEngine==="anny"&&annyPackLoaded){
+   setState("#decision","ANNY → SOMA → 122 LBS AKTIV","ok");
+   info("#decisionInfo",`✓ v0.4.0: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
 
-Aus der 7×128-Mess-Jacobian werden jetzt eigene semantische Zielregler in Zentimetern berechnet. Der Live-Solver kombiniert dafür viele PCs und versucht gleichzeitig die übrigen sichtbaren Messgrößen konstant zu halten.
+Aktuell im Browser steuerbar: diskretes Male/Female plus Anny-native Height, Weight, Muscle, Proportions und (Female) Cupsize. Adult age/firmness/race sind für diesen ersten Integrations-PoC fixiert.
 
-Noch NICHT endgültig bewiesen: Die v0.3.0 Umfangs-/Tiefenmessungen sind bewusst sichtbare Slice-Proxies. Vor BODY LAB müssen diese Messdefinitionen noch gegen belastbare anthropometrische Landmarken und echte Maßregeln validiert werden. Die Modifier-Architektur selbst wird hier bereits real getestet.`);
+Der entscheidende Test ist jetzt visuell: Male/Female-Average wechseln, Parameter einzeln bewegen und anschließend dieselben Posen/Animationen benutzen. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
+
+Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zentimetermaße. Das ist erst der nächste, separate Measurement-Fit.`);
+  }else if(expanded&&shapeAnalysis.ready){
+   setState("#decision","SOMA PCA ANALYSE AKTIV","warn");
+   info("#decisionInfo","Der alte SOMA-PCA-Analyzer bleibt nur als A/B-Referenz erhalten. Für den neuen Pfad in Punkt 3A Anny laden und aktivieren.");
   }else{
    setState("#decision",expanded?"CURRENT 122-JOINT LBS AKTIV":currentRigMode==="current-public"?"CURRENT PUBLIC 78 AKTIV":"LBS + POSE-KONVENTION AKTIV","ok");
    info("#decisionInfo",expanded
-    ?`✓ Current v0026 Expanded-LBS läuft. Nächster Test in Punkt 7: alle 128 Shape-Komponenten live vermessen und daraus eigene semantische Modifier ableiten.`
-    :"Der Browser-LBS-Pfad funktioniert. Für den aktuellen Rig-/Analyzer-Test bitte den Expanded-122-Joint-Pfad in Punkt 5 aktivieren.")
+    ?`✓ Current v0026 Expanded-LBS läuft. Nächster Test: Punkt 3A Anny-Pack laden, Anny aktivieren und denselben Rig-/Pose-Pfad mit Anny-Shapes testen.`
+    :"Der Browser-LBS-Pfad funktioniert. Für den Anny-Integrationsnachweis bitte Expanded 122-Joint LBS in Punkt 5 aktivieren.")
   }
  }else if(shapePass&&rigPass){setState("#decision","NÄCHSTER TEST: CURRENT 122 LBS","warn");info("#decisionInfo","Shape und Current-Rig-Pack sind vorhanden. In Punkt 5 jetzt Expanded 122-Joint LBS aktivieren.")}
  else if(shapePass)setState("#decision","SHAPE BESTANDEN","ok")

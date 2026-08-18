@@ -1,0 +1,55 @@
+name: Build Anny SOMA Identity Pack
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-anny-pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout Soma-Lab
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check existing SOMA rig pack
+        run: |
+          test -f soma_current_rig_pack_v0026.npz
+          echo "Existing SOMA low-LOD map found."
+
+      - name: Fetch pinned official Anny v0.6 source
+        run: |
+          rm -rf .anny-upstream
+          git clone https://github.com/naver/anny.git .anny-upstream
+          git -C .anny-upstream checkout 72104cac8242d1735ec06433b65bec5e26953ce7
+          echo "Anny commit: $(git -C .anny-upstream rev-parse HEAD)"
+
+      - name: Install Anny
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ./.anny-upstream
+
+      - name: Build compact Anny → SOMA browser identity grid
+        env:
+          ANNY_CACHE_DIR: ${{ github.workspace }}/.anny-cache
+        run: |
+          python extract_anny_soma_pack.py soma_current_rig_pack_v0026.npz anny_soma_identity_grid_v060.npz
+
+      - name: Commit generated browser pack
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add anny_soma_identity_grid_v060.npz anny_soma_identity_grid_v060.json
+          if git diff --cached --quiet; then
+            echo "Anny identity pack already current."
+          else
+            git commit -m "Add generated Anny SOMA browser identity pack"
+            git push
+          fi

@@ -1,0 +1,71 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f1012"><title>Anny→SOMA Pack Setup</title><style>body{margin:0;background:#0f1012;color:#eee;font:14px -apple-system,BlinkMacSystemFont,system-ui;padding:calc(20px + env(safe-area-inset-top)) 16px 40px;line-height:1.45}main{max-width:720px;margin:auto}h1{font-size:22px}p,li{color:#c7c7ca}code,textarea{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}textarea{width:100%;height:370px;box-sizing:border-box;background:#17181b;color:#ddd;border:1px solid #34363c;border-radius:12px;padding:12px;font-size:10px}button,a{display:block;box-sizing:border-box;width:100%;border:0;border-radius:12px;padding:13px;margin:10px 0;background:#eee;color:#111;text-align:center;font-weight:700;text-decoration:none}.secondary{background:#24262b;color:#eee;border:1px solid #393b41}.ok{color:#74e6a0}small{color:#999}</style></head><body><main>
+<h1>Einmalig: Anny→SOMA Identity-Pack bauen</h1>
+<p>v0.4.0 wirft die bestehende SOMA-Architektur nicht weg. GitHub Actions startet einmalig das gepinnte offizielle Anny v0.6, erzeugt 216 native Adult-Shape-Anker direkt auf <b>SOMA-Topologie</b> und committed nur den kompakten Browser-Pack.</p>
+<ol>
+<li>Die Dateien aus <b>SOMA_BROWSER_POC_V0.4.0.zip</b> zuerst ins bestehende Soma-Lab-Repo hochladen. Die vorhandene <code>soma_current_rig_pack_v0026.npz</code> unbedingt behalten.</li>
+<li>GitHub → <b>Actions</b> → <b>New workflow</b> → <b>set up a workflow yourself</b>.</li>
+<li>Standardinhalt durch den Workflow unten ersetzen. Dateiname z. B. <code>build-anny-soma-pack.yml</code>. Committen.</li>
+<li>Workflow <b>Build Anny SOMA Identity Pack</b> öffnen → <b>Run workflow</b>.</li>
+<li>Nach Erfolg liegen <code>anny_soma_identity_grid_v060.npz</code> und <code>.json</code> im Repo. Dann Soma-Lab neu laden → Punkt 3A.</li>
+</ol>
+<button id="copy">Workflow kopieren</button>
+<a class="secondary" href="https://github.com/jonassocke-bit/Soma-Lab/new/main?filename=.github%2Fworkflows%2Fbuild-anny-soma-pack.yml" target="_blank" rel="noopener">GitHub-Workflow-Datei anlegen</a>
+<textarea id="yaml" readonly>name: Build Anny SOMA Identity Pack
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-anny-pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout Soma-Lab
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: &#x27;3.11&#x27;
+
+      - name: Check existing SOMA rig pack
+        run: |
+          test -f soma_current_rig_pack_v0026.npz
+          echo &quot;Existing SOMA low-LOD map found.&quot;
+
+      - name: Fetch pinned official Anny v0.6 source
+        run: |
+          rm -rf .anny-upstream
+          git clone https://github.com/naver/anny.git .anny-upstream
+          git -C .anny-upstream checkout 72104cac8242d1735ec06433b65bec5e26953ce7
+          echo &quot;Anny commit: $(git -C .anny-upstream rev-parse HEAD)&quot;
+
+      - name: Install Anny
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ./.anny-upstream
+
+      - name: Build compact Anny → SOMA browser identity grid
+        env:
+          ANNY_CACHE_DIR: ${{ github.workspace }}/.anny-cache
+        run: |
+          python extract_anny_soma_pack.py soma_current_rig_pack_v0026.npz anny_soma_identity_grid_v060.npz
+
+      - name: Commit generated browser pack
+        run: |
+          git config user.name &quot;github-actions[bot]&quot;
+          git config user.email &quot;41898282+github-actions[bot]@users.noreply.github.com&quot;
+          git add anny_soma_identity_grid_v060.npz anny_soma_identity_grid_v060.json
+          if git diff --cached --quiet; then
+            echo &quot;Anny identity pack already current.&quot;
+          else
+            git commit -m &quot;Add generated Anny SOMA browser identity pack&quot;
+            git push
+          fi
+</textarea>
+<p id="msg"></p><a class="secondary" href="index.html">Zurück zu Soma-Lab</a>
+<small>Gepinnt auf Anny Commit 72104cac8242d1735ec06433b65bec5e26953ce7. Der Browser-Pack enthält nur Low-LOD-Rest-Shapes; PyTorch/Anny laufen nicht auf dem iPhone. Gender bleibt diskret Male/Female.</small>
+</main><script>document.querySelector('#copy').onclick=async()=>{const t=document.querySelector('#yaml').value;await navigator.clipboard.writeText(t);document.querySelector('#msg').innerHTML='<span class="ok">✓ Workflow kopiert.</span>'}</script></body></html>

@@ -60,3 +60,7 @@ select#debugAxis{margin-top:4px}
 .semanticSlider input{width:100%}
 .semanticSlider output{font-size:9px;text-align:right;color:#ddd}
 .semanticControl>small{display:block;font-size:7.5px;color:#777b83;line-height:1.35;margin-top:3px}
+
+.segmented{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+button.selected{outline:2px solid rgba(255,255,255,.72);outline-offset:-2px;background:#d8d9dd;color:#111}
+#annySection .slider small{font-size:7px;color:#888}

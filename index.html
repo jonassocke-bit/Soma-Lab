@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>SOMA Browser PoC v0.3.0</title>
+<title>SOMA Browser PoC v0.4.0</title>
 <link rel="stylesheet" href="style.css">
 <script type="importmap">
 {"imports":{
@@ -16,7 +16,7 @@
 <body>
 <div id="viewport"></div>
 <header>
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.3.0</small><b>Shape · Rig · Pose · Modifier</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.4.0</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main>
@@ -40,6 +40,28 @@
   <div id="shapePerf" class="info">Die ersten 10 Komponenten werden als Slider gezeigt; intern sind alle 128 verfügbar.</div>
  </section>
 
+ <section id="annySection">
+  <div class="step"><i>3A</i><div><b>Anny als zweite Identity Engine</b><small>native Anny-Phänotypen → kanonische SOMA-Topologie → bestehendes Rig</small></div><em id="annyState">BEREIT</em></div>
+  <div class="row">
+   <button id="loadAnny" class="primary">Anny→SOMA Pack laden</button>
+   <button id="useAnny" disabled>Anny verwenden</button>
+   <button id="useSoma" class="selected">SOMA-PCA A/B</button>
+  </div>
+  <div class="segmented">
+   <button id="annyMale" class="selected">Male</button>
+   <button id="annyFemale">Female</button>
+  </div>
+  <div class="slider"><label>Anny Height</label><input id="annyHeight" type="range" min="0" max="1" step=".01" value=".5"><output id="annyHeightOut">0.50</output></div>
+  <div class="slider"><label>Anny Weight</label><input id="annyWeight" type="range" min="0" max="1" step=".01" value=".5"><output id="annyWeightOut">0.50</output></div>
+  <div class="slider"><label>Anny Muscle</label><input id="annyMuscle" type="range" min="0" max="1" step=".01" value=".5"><output id="annyMuscleOut">0.50</output></div>
+  <div class="slider"><label>Anny Proportions</label><input id="annyProportions" type="range" min="0" max="1" step=".01" value=".5"><output id="annyProportionsOut">0.50</output></div>
+  <div class="slider"><label>Anny Cupsize <small>(nur Female)</small></label><input id="annyCup" type="range" min="0" max="1" step=".01" value=".5" disabled><output id="annyCupOut">0.50</output></div>
+  <div class="row"><button id="annyMaleAvg">Male Average</button><button id="annyFemaleAvg">Female Average</button></div>
+  <div id="annyInfo" class="info">Der Pack wird einmalig in GitHub Actions aus dem gepinnten offiziellen Anny v0.6-Code erzeugt. Er enthält 216 Anny-Rest-Shapes auf SOMA Low-LOD. Im Browser wird Anny anschließend ohne PyTorch aus seinen nativen Anchor-Zellen interpoliert.</div>
+  <div id="annyLiveInfo" class="info">Noch nicht aktiv.</div>
+  <a class="setupLink" href="anny-pack-setup.html">Einmalige Anny-Pack-Erstellung öffnen</a>
+ </section>
+
  <section>
   <div class="step"><i>4</i><div><b>Rig-Vertrag prüfen</b><small>öffentliche 78-Joint-Struktur + Procedural-Sidecar</small></div><em id="rigState">BEREIT</em></div>
   <button id="testRig" class="primary">Rig-Assets prüfen</button>
@@ -60,7 +82,7 @@
  <section>
   <div class="step"><i>6</i><div><b>Pose-Runtime – echtes Browser-LBS</b><small>Current Expanded-LBS · 122-Joint-FK · Procedural Twist · Shape + Pose live · Basis für Modifier</small></div><em id="poseState">WARTE AUF SHAPE</em></div>
   <button id="initPose" disabled>Legacy 78-Joint LBS (nur Fallback)</button>
-  <div id="poseInfo" class="info">Für v0.3.0 bitte in Punkt 5 „Expanded 122-Joint LBS aktivieren“. Dieser Legacy-Button bleibt nur als A/B-Fallback erhalten.</div>
+  <div id="poseInfo" class="info">Für v0.4.0 bitte in Punkt 5 „Expanded 122-Joint LBS aktivieren“. Dieser Legacy-Button bleibt nur als A/B-Fallback erhalten.</div>
   <div id="poseControls" class="hidden">
    <label class="fieldLabel">Gelenk
     <select id="poseJoint"></select>
@@ -104,7 +126,7 @@
      <button id="toggleAdaptiveRig">Adaptive Rig AUS</button>
      <button id="rebindAdaptiveRig">Rebind neu berechnen</button>
     </div>
-    <div id="adaptiveRigInfo" class="info">v0.3.0 nutzt im Current-Pfad die vorberechneten Public-RBF-Jointpositionen und expandiert daraus bei jeder Shape-Änderung die aktive 122-Joint-Target-Bindpose.</div>
+    <div id="adaptiveRigInfo" class="info">v0.4.0 nutzt im Current-Pfad die vorberechneten Public-RBF-Jointpositionen und expandiert daraus bei jeder Shape-Änderung die aktive 122-Joint-Target-Bindpose.</div>
    </div>
 
    <div class="animBox">
@@ -131,7 +153,7 @@
  </section>
 
  <section id="shapeAnalyzerSection">
-  <div class="step"><i>7</i><div><b>Shape-Space Analyzer → eigene Modifier</b><small>128 PCs live scannen · lokale Mess-Jacobian · cm-Zielregler</small></div><em id="analysisState">WARTE AUF 122 LBS</em></div>
+  <div class="step"><i>7</i><div><b>SOMA-PCA Analyzer · A/B-Referenz</b><small>alter Entanglement-Test · nur noch Vergleich, nicht BODY-LAB-Shape-Engine</small></div><em id="analysisState">WARTE AUF 122 LBS</em></div>
   <div class="row">
    <button id="startShapeAnalysis" class="primary" disabled>128 PCs live analysieren</button>
    <button id="cancelShapeAnalysis" disabled>Stop</button>
@@ -139,7 +161,7 @@
   </div>
   <div class="analysisProgress"><div id="analysisBar"></div></div>
   <div class="analysisPcRow"><b>Live-Scan</b><em id="analysisPc">noch nicht gestartet</em></div>
-  <div id="analysisInfo" class="info">Nach Aktivierung des 122-Joint-Rigs fährt der Analyzer jeden SOMA-PC sichtbar mit +/−0,35σ ab. Währenddessen siehst du die tatsächliche Körperveränderung live im Viewport. Daraus wird lokal gemessen, welche Kombination der 128 PCs welche Körpermaße verändert.</div>
+  <div id="analysisInfo" class="info">Dieser alte Analyzer bleibt bewusst erhalten, damit Anny direkt gegen den bereits getesteten SOMA-PCA-Raum verglichen werden kann. Sobald Anny aktiv ist, ist dieser Test deaktiviert.</div>
   <div id="analysisMetrics" class="metricGrid"></div>
 
   <div id="semanticBox" class="animBox hidden">
@@ -152,7 +174,7 @@
 
  <section>
   <div class="step"><i>8</i><div><b>Entscheidung</b><small>kein „wird schon gehen“</small></div><em id="decision">OFFEN</em></div>
-  <div id="decisionInfo" class="info">v0.3.0 prüft nach dem Current-122-Joint-Rig jetzt die nächste Kernfrage: Lassen sich die 128 statistischen SOMA-Komponenten live in kontrollierbare, verständliche Mess-Modifier übersetzen?</div>
+  <div id="decisionInfo" class="info">v0.4.0 prüft jetzt den kleinsten Integrationsnachweis: Anny erzeugt die Körperform, SOMA bleibt Topologie/Rig/Pose-System. Erst wenn dieser Pfad visuell stabil ist, kommt der Measurement-Fit.</div>
  </section>
 </main>
 <script type="module" src="app.js"></script>
