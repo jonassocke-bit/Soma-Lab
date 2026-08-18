@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.2.0
+# SOMA Browser PoC v0.2.1
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -251,3 +251,22 @@ Noch absichtlich **nicht als bestanden** markiert:
 - Pose-Correctives
 
 Diese kommen erst nach dem realen iPhone-Pack-Test, damit wir die neue Grundlage nicht wieder in einem großen ungetesteten Umbau verstecken.
+
+
+## v0.2.1 – Current Expanded 122-Joint LBS
+
+Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen. v0.2.1 aktiviert nun den eigentlichen Expanded-Skinning-Pfad:
+
+- 77 user-facing SOMA Pose-Joints bleiben die Bedien-/Motion-Schnittstelle.
+- Intern werden die aktuellen 122 Target-Joints aus dem v0026-Rig verwendet.
+- Low-LOD Skinweights stammen direkt aus `target_skinning_*` des erzeugten Current Rig-Packs.
+- Public RBF Skeleton-Fit läuft beim Shape-Morphing weiter.
+- Die fitted Public-Bindpose wird über SOMAs Procedural-Translation-Matrix auf den Expanded Target-Rig übertragen.
+- Die acht SOMA Twist-Segmente werden aus dem Sidecar kompiliert; deren Twist-Helfer werden automatisch aus der Public-Pose abgeleitet.
+- Der aktuelle Sidecar-Modus `aligned_x_swing_twist` wird browserseitig ausgewertet.
+- NVIDIA Motion, manuelle Joint-Slider und Shape-Regler gehen nach Aktivierung alle durch den Expanded-LBS-Pfad.
+- Rig-Debug kann zwischen Public 78 und Expanded 122 umschalten.
+
+Noch bewusst offen: das vollständige shape-adaptive **Rotation-Fitting** der offiziellen `SkeletonTransfer`-Pipeline. v0.2.1 verwendet für die Shape-Anpassung die offiziellen vorberechneten RBF-Jointpositionen und die aktuelle Procedural-Expansion, aber noch keine vollständige Browser-Portierung des Kabsch/Newton-Schulz Rotations-Fits.
+
+- v0.2.1 merkt die zuletzt tatsächlich angewendete 78-Joint-Relativpose. Shape-Regler können dadurch eine laufende/aktuelle Pose nach dem Rebind wieder anwenden, statt beim Morphen ungewollt auf die Slider-Nullpose zurückzuspringen.

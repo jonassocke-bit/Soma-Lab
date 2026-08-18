@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>SOMA Browser PoC v0.2.0</title>
+<title>SOMA Browser PoC v0.2.1</title>
 <link rel="stylesheet" href="style.css">
 <script type="importmap">
 {"imports":{
@@ -16,7 +16,7 @@
 <body>
 <div id="viewport"></div>
 <header>
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.2.0</small><b>Shape · Rig · Pose Machbarkeit</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.2.1</small><b>Shape · Rig · Pose Machbarkeit</b></div>
  <span id="fps">– fps</span>
 </header>
 <main>
@@ -48,17 +48,18 @@
  </section>
 
  <section>
-  <div class="step"><i>5</i><div><b>Current v0.2.x Rig-Pack</b><small>v0026 Expanded-Rig + Current Public-Rig + offizielle RBF-Skeleton-Fit-Daten</small></div><em id="currentRigState">BEREIT</em></div>
+  <div class="step"><i>5</i><div><b>Current v0.2.x Rig-Pack</b><small>v0026 Expanded-Rig · 77 Public Controls → 122 interne Skinning-Joints · RBF Shape-Fit</small></div><em id="currentRigState">BEREIT</em></div>
   <button id="loadCurrentRig" class="primary">Current Rig-Pack laden & prüfen</button>
-  <button id="activateCurrentRig" disabled>Current Public-Rig aktivieren</button>
+  <button id="activateExpandedRig" class="primary" disabled>Expanded 122-Joint LBS aktivieren</button>
+  <button id="activateCurrentRig" disabled>Public 78 nur A/B-Fallback</button>
   <div id="currentRigInfo" class="info">Beim ersten Mal muss der kompakte Pack einmalig aus NVIDIAs 329-MB-Git-LFS-Template erzeugt werden. Danach liegt nur der kleine Pack in diesem Repo und zusätzlich persistent auf deinem iPhone.</div>
   <a class="setupLink" href="rigpack-setup.html">Einmalige Rig-Pack-Erstellung öffnen</a>
  </section>
 
  <section>
-  <div class="step"><i>6</i><div><b>Pose-Runtime – echtes Browser-LBS</b><small>echtes LBS · adaptives mitmorphendes Rig · sichtbares Rig/Achsen-Debugging</small></div><em id="poseState">WARTE AUF SHAPE</em></div>
-  <button id="initPose" class="primary" disabled>LBS initialisieren & testen</button>
-  <div id="poseInfo" class="info">Nach Punkt 1 wird geprüft, ob das bereits gecachte offizielle SOMA-Asset die eingebetteten Rig-Daten der ersten SOMA-Version enthält.</div>
+  <div class="step"><i>6</i><div><b>Pose-Runtime – echtes Browser-LBS</b><small>Current Expanded-LBS · Procedural Twist · Shape + Pose live · Rig-Debug 78/122</small></div><em id="poseState">WARTE AUF SHAPE</em></div>
+  <button id="initPose" disabled>Legacy 78-Joint LBS (nur Fallback)</button>
+  <div id="poseInfo" class="info">Für v0.2.1 bitte in Punkt 5 „Expanded 122-Joint LBS aktivieren“. Dieser Legacy-Button bleibt nur als A/B-Fallback erhalten.</div>
   <div id="poseControls" class="hidden">
    <label class="fieldLabel">Gelenk
     <select id="poseJoint"></select>
@@ -102,7 +103,7 @@
      <button id="toggleAdaptiveRig">Adaptive Rig AUS</button>
      <button id="rebindAdaptiveRig">Rebind neu berechnen</button>
     </div>
-    <div id="adaptiveRigInfo" class="info">In v0.1.7 blieb das Template-Skelett trotz Shape-Morphing stehen. v0.2.0 zieht das vorhandene 78-Joint-Rig jetzt näherungsweise mit dem gemorphten Mannequin mit.</div>
+    <div id="adaptiveRigInfo" class="info">v0.2.1 nutzt im Current-Pfad die vorberechneten Public-RBF-Jointpositionen und expandiert daraus bei jeder Shape-Änderung die aktive 122-Joint-Target-Bindpose.</div>
    </div>
 
    <div class="animBox">
@@ -110,6 +111,7 @@
     <div class="row poseButtons">
      <button id="toggleRig">Skelett ein-/ausblenden</button>
      <button id="toggleAxes">Achsen</button>
+     <button id="toggleDebugTopology" disabled>Debug: Expanded 122</button>
     </div>
     <label class="fieldLabel">Einzelgelenk-Testachse
      <select id="debugAxis"><option value="X">X</option><option value="Y">Y</option><option value="Z" selected>Z</option></select>
@@ -129,7 +131,7 @@
 
  <section>
   <div class="step"><i>7</i><div><b>Entscheidung</b><small>kein „wird schon gehen“</small></div><em id="decision">OFFEN</em></div>
-  <div id="decisionInfo" class="info">Bestehen müssen: Shape laden → Mesh rendern → PCA live → aktueller Rig-Vertrag → echtes Browser-LBS. Danach folgt separat der aktuelle v0.2-122-Joint/Procedural-Rig-Pack + shape-adaptives Rebinding. v0.2.0 bringt vorher das sichtbare Rig-/Achsen-Debug direkt in den Viewport.</div>
+  <div id="decisionInfo" class="info">v0.2.1 prüft den eigentlichen Current-Rig-Pfad: 77 öffentliche SOMA-Pose-Joints steuern 122 interne Target-/Skinning-Joints mit Procedural Twist, RBF-Shape-Fit und Live-LBS auf dem iPhone.</div>
  </section>
 </main>
 <script type="module" src="app.js"></script>

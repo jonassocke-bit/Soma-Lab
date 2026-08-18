@@ -172,15 +172,17 @@ let shapePass=false, rigPass=false, posePass=false;
 // rig, bind transforms and sparse skinning weights in this same NPZ.
 let poseReady=false, poseParents=null, poseLocalBase=null, poseBindWorld=null, poseInvBind=null, poseTWorld=null;
 let poseLocalActive=null,poseBindWorldActive=null,poseInvBindActive=null,rigAdaptiveEnabled=false;
-let poseOrient3=null,poseOrientParentT3=null,poseBoneIndices=null,poseBoneWeights=null,poseEulerDeg=null,poseJointCount=0,poseTopK=8;
+let poseOrient3=null,poseOrientParentT3=null,poseBoneIndices=null,poseBoneWeights=null,poseEulerDeg=null,poseJointCount=0,poseTopK=8,lastAppliedRelative3=null;
 let officialAnimRel=null,officialAnimFrames=0,officialAnimFps=30,officialAnimLoaded=false;
 
 let poseAnimRunning=false,poseAnimMode="walk",poseAnimStart=0,poseAnimLastStep=0,poseAnimSpeed=1;
 let poseAnimTargetFps=30,poseAnimFrames=0,poseAnimLbsSum=0,poseAnimLbsMax=0,poseAnimLastUi=0;
 
-let currentPoseWorld=null,rigDebugVisible=false,rigAxesVisible=false;
+let currentPoseWorld=null,currentTargetPoseWorld=null,rigDebugVisible=false,rigAxesVisible=false,rigDebugUseExpanded=true,rigDebugJointCount=0;
 let currentRigPack=null,currentRigPackLoaded=false,currentRigMode="legacy-embedded";
-let currentRigRbf=null;
+let currentRigRbf=null,currentProcedural=null;
+let targetJointCount=0,targetParents=null,targetTLocal=null,targetBindWorldTemplate=null,targetBindWorldActive=null,targetInvBindActive=null,targetLocalTranslations=null;
+let targetBoneIndices=null,targetBoneWeights=null,targetTopK=0;
 let rigGroup=null,rigBoneLines=null,rigJointPoints=null,rigAxesX=null,rigAxesY=null,rigAxesZ=null;
 
 const scene=new THREE.Scene();
@@ -280,7 +282,7 @@ async function loadCurrentRigPack(){
   const rbfShape=Array.from(packArray("public_rbf_shape")?.data||[],Number);
   const sourceSha=decodeUtf8Array(packArray("source_git_sha"));
   const required=[
-   "target_joint_parent_ids","target_bind_pose_world","target_t_pose_world","target_bind_shape_low",
+   "target_joint_parent_ids","target_bind_pose_world","target_bind_pose_local","target_t_pose_world","target_t_pose_local","target_bind_shape_low",
    "target_skinning_data","target_skinning_indices","target_skinning_indptr","target_skinning_shape",
    "public_joint_parent_ids","public_bind_pose_world","public_bind_pose_local","public_t_pose_world","public_bind_shape_low",
    "public_skinning_data","public_skinning_indices","public_skinning_indptr","public_skinning_shape",
@@ -295,6 +297,7 @@ async function loadCurrentRigPack(){
   if(rbfShape[0]!==78||rbfShape[1]!==4505)throw new Error(`RBF-Matrix unerwartet: ${JSON.stringify(rbfShape)}`);
   currentRigPackLoaded=true;
   $("#activateCurrentRig").disabled=false;
+  $("#activateExpandedRig").disabled=false;
   setState("#currentRigState","PACK OK","ok");
   info("#currentRigInfo",`✓ CURRENT RIG-PACK IM IPHONE-BROWSER GEPRÜFT
 Quelle: NVlabs/SOMA-X ${sourceSha.slice(0,12)||"?"}
@@ -305,9 +308,9 @@ Public RBF Skeleton-Fit: ${rbfShape[0]} × ${rbfShape[1]} · ${packArray("public
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
 Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":"Repo geladen + persistent gespeichert"}
 
-Damit ist erstmals der aktuelle v0.2.x-Rig-Datenstand als kleiner Browser-Pack vorhanden. Der Expanded/Twist-LBS-Pfad wird bewusst erst im nächsten Schritt aktiviert, nachdem dieser Pack auf deinem iPhone real bestanden hat.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.2.1 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
  }catch(e){
-  console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;
+  console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
   const is404=String(e?.message||e).includes("HTTP 404");
   info("#currentRigInfo",is404
@@ -341,8 +344,147 @@ function buildDirectLowSkinningFromPack(prefix,jointCount){
  if(empty)throw new Error(`${empty} Low-LOD-Vertices ohne Skinweights`);
  return {fullV:n,J,n,minInflu,maxInflu}
 }
+function buildTargetLowSkinningFromPack(){
+ const shape=Array.from(packArray("target_skinning_shape").data,Number),n=shape[0],J=shape[1];
+ if(n!==currentRestLow.length/3||J!==targetJointCount)throw new Error(`Target-Skinning ${n}×${J} passt nicht zu ${currentRestLow.length/3}×${targetJointCount}`);
+ const temp=Array.from({length:n},()=>[]);
+ const data=packArray("target_skinning_data").data,indices=packArray("target_skinning_indices").data,indptr=packArray("target_skinning_indptr").data;
+ for(let j=0;j<J;j++)for(let p=Number(indptr[j]);p<Number(indptr[j+1]);p++){
+  const v=Number(indices[p]),w=Number(data[p]);if(v>=0&&v<n&&w>1e-12)temp[v].push([j,w])
+ }
+ let rawMax=0,minInflu=999;for(const list of temp){rawMax=Math.max(rawMax,list.length);minInflu=Math.min(minInflu,list.length)}
+ targetTopK=Math.max(1,Math.min(24,rawMax));
+ targetBoneIndices=new Int16Array(n*targetTopK);targetBoneIndices.fill(-1);targetBoneWeights=new Float32Array(n*targetTopK);
+ let empty=0,maxInflu=0,truncated=0;
+ for(let v=0;v<n;v++){
+  const all=temp[v].sort((a,b)=>b[1]-a[1]);if(all.length>targetTopK)truncated++;
+  const list=all.slice(0,targetTopK);maxInflu=Math.max(maxInflu,list.length);
+  let sum=0;for(const x of list)sum+=x[1];if(sum<=0){empty++;continue}
+  for(let k=0;k<list.length;k++){targetBoneIndices[v*targetTopK+k]=list[k][0];targetBoneWeights[v*targetTopK+k]=list[k][1]/sum}
+ }
+ if(empty)throw new Error(`${empty} Low-LOD-Vertices ohne Target-Skinweights`);
+ return {n,J,minInflu,maxInflu,rawMax,truncated,topK:targetTopK}
+}
+function v3Norm(v){const n=Math.hypot(v[0],v[1],v[2])||1;return [v[0]/n,v[1]/n,v[2]/n]}
+function v3Dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]}
+function v3Cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}
+function v3ProjectPlane(v,n){const d=v3Dot(v,n),p=[v[0]-d*n[0],v[1]-d*n[1],v[2]-d*n[2]],len=Math.hypot(...p);return {v:len>1e-12?[p[0]/len,p[1]/len,p[2]/len]:[0,0,0],len}}
+function quatNorm(q){const n=Math.hypot(q[0],q[1],q[2],q[3])||1;return [q[0]/n,q[1]/n,q[2]/n,q[3]/n]}
+function quatConj(q){return [-q[0],-q[1],-q[2],q[3]]}
+function quatMul(a,b){return [
+ a[3]*b[0]+a[0]*b[3]+a[1]*b[2]-a[2]*b[1],
+ a[3]*b[1]-a[0]*b[2]+a[1]*b[3]+a[2]*b[0],
+ a[3]*b[2]+a[0]*b[1]-a[1]*b[0]+a[2]*b[3],
+ a[3]*b[3]-a[0]*b[0]-a[1]*b[1]-a[2]*b[2]
+]}
+function quatFromMat3(m,o=0){
+ const m00=m[o],m01=m[o+1],m02=m[o+2],m10=m[o+3],m11=m[o+4],m12=m[o+5],m20=m[o+6],m21=m[o+7],m22=m[o+8];
+ let x,y,z,w,s;const tr=m00+m11+m22;
+ if(tr>0){s=Math.sqrt(tr+1)*2;w=.25*s;x=(m21-m12)/s;y=(m02-m20)/s;z=(m10-m01)/s}
+ else if(m00>m11&&m00>m22){s=Math.sqrt(1+m00-m11-m22)*2;w=(m21-m12)/s;x=.25*s;y=(m01+m10)/s;z=(m02+m20)/s}
+ else if(m11>m22){s=Math.sqrt(1+m11-m00-m22)*2;w=(m02-m20)/s;x=(m01+m10)/s;y=.25*s;z=(m12+m21)/s}
+ else{s=Math.sqrt(1+m22-m00-m11)*2;w=(m10-m01)/s;x=(m02+m20)/s;y=(m12+m21)/s;z=.25*s}
+ let q=quatNorm([x,y,z,w]);if(q[3]<0)q=q.map(v=>-v);return q
+}
+function quatFromMat4(m,o){return quatFromMat3([m[o],m[o+1],m[o+2],m[o+4],m[o+5],m[o+6],m[o+8],m[o+9],m[o+10]])}
+function quatTwistAngle(q,axis=0){
+ let n=quatNorm(q);if(n[3]<0)n=n.map(v=>-v);
+ const h=quatNorm([n[0],n[1],n[2],n[3]+1]);return 4*Math.atan2(h[axis],h[3])
+}
+function axisRot3(angle,axis,sign=1){
+ const a=angle*sign,c=Math.cos(a),s=Math.sin(a);
+ if(axis===0)return new Float32Array([1,0,0,0,c,-s,0,s,c]);
+ if(axis===1)return new Float32Array([c,0,s,0,1,0,-s,0,c]);
+ return new Float32Array([c,-s,0,s,c,0,0,0,1])
+}
+function bindAlignQuat(startId,endId){
+ const so=startId*16,eo=endId*16;
+ const span=v3Norm([poseTWorld[eo+3]-poseTWorld[so+3],poseTWorld[eo+7]-poseTWorld[so+7],poseTWorld[eo+11]-poseTWorld[so+11]]);
+ const upX=[poseTWorld[so],poseTWorld[so+4],poseTWorld[so+8]];
+ const yCand=[poseTWorld[so+1],poseTWorld[so+5],poseTWorld[so+9]],zCand=[poseTWorld[so+2],poseTWorld[so+6],poseTWorld[so+10]];
+ const sgn=v3Dot(upX,span)>=0?1:-1,x=[span[0]*sgn,span[1]*sgn,span[2]*sgn];
+ const py=v3ProjectPlane(yCand,x),pz=v3ProjectPlane(zCand,x),pwy=v3ProjectPlane([0,1,0],x),pwz=v3ProjectPlane([0,0,1],x);
+ let y=py.len>1e-8?py.v:pz.len>1e-8?pz.v:pwy.len>1e-8?pwy.v:pwz.v;
+ let z=v3Norm(v3Cross(x,y));y=v3Norm(v3Cross(z,x));
+ return quatFromMat3([x[0],y[0],z[0],x[1],y[1],z[1],x[2],y[2],z[2]])
+}
+function compileCurrentProcedural(){
+ const def=JSON.parse(decodeUtf8Array(packArray("procedural_json_utf8")));
+ const targetNames=decodeUtf8Array(packArray("target_joint_names_utf8")).split("\n").filter(Boolean),publicNames=decodeUtf8Array(packArray("public_joint_names_utf8")).split("\n").filter(Boolean);
+ const ti=new Map(targetNames.map((n,i)=>[n,i])),pi=new Map(publicNames.map((n,i)=>[n,i]));
+ const publicTarget=Int32Array.from(Array.from(packArray("public_target_indices").data,Number));
+ const publicByTarget=new Int16Array(targetNames.length);publicByTarget.fill(-1);for(let p=0;p<publicTarget.length;p++)publicByTarget[publicTarget[p]]=p;
+ const segments=(def.segments||[]).map(seg=>{
+  const axis=seg.source_axis==="y"?1:seg.source_axis==="z"?2:0,start=pi.get(seg.start_joint),end=pi.get(seg.end_joint),parent=seg.parent_joint?pi.get(seg.parent_joint):poseParents[start];
+  if(start==null||end==null||parent==null)throw new Error(`Procedural Segment-Mapping fehlt: ${seg.start_joint} → ${seg.end_joint}`);
+  return {...seg,axis,sign:Number(seg.source_sign??1),start,end,parent,twistTargetIds:seg.twist_joints.map(n=>ti.get(n)),alignQ:bindAlignQuat(start,end),bindQStart:quatFromMat4(poseTWorld,start*16),bindQEnd:quatFromMat4(poseTWorld,end*16),bindQParent:quatFromMat4(poseTWorld,parent*16)}
+ });
+ const rotationRows=new Map();for(const e of def.parameter_matrices?.rotation?.entries||[]){const r=ti.get(e.row),c=pi.get(e.column);if(r==null||c==null)continue;if(!rotationRows.has(r))rotationRows.set(r,[]);rotationRows.get(r).push([c,Number(e.value)])}
+ const translationRows=new Map();for(const e of def.parameter_matrices?.translation?.entries||[]){const r=ti.get(e.row),c=ti.get(e.column);if(r==null||c==null)continue;if(!translationRows.has(r))translationRows.set(r,[]);translationRows.get(r).push([c,Number(e.value)])}
+ const twistSpec=new Map();for(const seg of segments)for(const id of seg.twistTargetIds)twistSpec.set(id,{axis:seg.axis,sign:seg.sign});
+ const mode=typeof def.rotation_extraction==="string"?def.rotation_extraction:"mixed";
+ if(mode!=="aligned_x_swing_twist")console.warn("SOMA procedural extraction mode:",mode,"– Browserpfad ist auf aligned_x_swing_twist optimiert.");
+ return {def,targetNames,publicNames,ti,pi,publicTarget,publicByTarget,segments,rotationRows,translationRows,twistSpec,mode}
+}
+function applyProceduralTranslations(world){
+ if(!currentProcedural)return world;
+ const J=targetJointCount,input=new Float32Array(J*3);for(let j=0;j<J;j++){input[j*3]=world[j*16+3];input[j*3+1]=world[j*16+7];input[j*3+2]=world[j*16+11]}
+ for(const [row,entries] of currentProcedural.translationRows){let x=0,y=0,z=0;for(const [col,w] of entries){x+=w*input[col*3];y+=w*input[col*3+1];z+=w*input[col*3+2]}const o=row*16;world[o+3]=x;world[o+7]=y;world[o+11]=z}
+ return world
+}
+function computeTargetLocalTranslations(world){
+ const out=new Float32Array(targetJointCount*3);out[0]=world[3];out[1]=world[7];out[2]=world[11];
+ for(let j=1;j<targetJointCount;j++){const p=targetParents[j],po=p*16,jo=j*16,dx=world[jo+3]-world[po+3],dy=world[jo+7]-world[po+7],dz=world[jo+11]-world[po+11];out[j*3]=world[po]*dx+world[po+4]*dy+world[po+8]*dz;out[j*3+1]=world[po+1]*dx+world[po+5]*dy+world[po+9]*dz;out[j*3+2]=world[po+2]*dx+world[po+6]*dy+world[po+10]*dz}
+ return out
+}
+function rebuildExpandedTargetBind(){
+ if(!currentProcedural||!poseBindWorldActive)return null;
+ const world=targetBindWorldTemplate.slice();
+ for(let p=0;p<poseJointCount;p++){const t=currentProcedural.publicTarget[p];for(let q=0;q<16;q++)world[t*16+q]=poseBindWorldActive[p*16+q]}
+ applyProceduralTranslations(world);targetBindWorldActive=world;targetLocalTranslations=computeTargetLocalTranslations(world);targetInvBindActive=new Float32Array(targetJointCount*16);for(let j=0;j<targetJointCount;j++)rigidInverse(world,j*16,targetInvBindActive,j*16);
+ return world
+}
+function publicWorldFromRelative(relative3){
+ const local=new Float32Array(poseJointCount*16);relativeToFinalLocal(relative3,local);const world=new Float32Array(poseJointCount*16);world.set(local.subarray(0,16),0);for(let j=1;j<poseJointCount;j++)mat4Mul(world,poseParents[j]*16,local,j*16,world,j*16);return world
+}
+function currentTwistAngles(publicWorld){
+ const twistValues=new Float32Array(poseJointCount),angles=new Float32Array(targetJointCount);
+ for(const seg of currentProcedural.segments){
+  const vq=(id,bq)=>quatNorm(quatMul(quatMul(quatFromMat4(publicWorld,id*16),quatConj(bq)),seg.alignQ));
+  const qs=vq(seg.start,seg.bindQStart),qe=vq(seg.end,seg.bindQEnd),qp=vq(seg.parent,seg.bindQParent);
+  const local=quatTwistAngle(quatNorm(quatMul(quatConj(qs),qe)),0),inherited=quatTwistAngle(quatNorm(quatMul(quatConj(qp),qs)),0);
+  twistValues[seg.end]=local;if(seg.reverse)twistValues[seg.start]=inherited
+ }
+ for(const [row,entries] of currentProcedural.rotationRows){let a=0;for(const [col,w] of entries)a+=w*twistValues[col];angles[row]=a}
+ return angles
+}
+function expandedTargetWorld(publicWorld){
+ const J=targetJointCount,world=new Float32Array(J*16),twistAngles=currentTwistAngles(publicWorld),baseR=new Float32Array(9),twR=new Float32Array(9),finalR=new Float32Array(9),local=new Float32Array(16);
+ for(let j=0;j<J;j++){
+  const pub=currentProcedural.publicByTarget[j];if(pub>=0){for(let q=0;q<16;q++)world[j*16+q]=publicWorld[pub*16+q];continue}
+  const p=targetParents[j];if(j>0&&(p<0||p>=j))throw new Error(`Target-Hierarchie nicht topologisch bei ${j}: Parent ${p}`);
+  rot3FromMat4(targetTLocal,j*16,baseR,0);const spec=currentProcedural.twistSpec.get(j);
+  if(spec){const r=axisRot3(twistAngles[j],spec.axis,spec.sign);twR.set(r);mat3Mul(baseR,0,twR,0,finalR,0)}else finalR.set(baseR);
+  local.fill(0);local[0]=finalR[0];local[1]=finalR[1];local[2]=finalR[2];local[3]=targetLocalTranslations[j*3];local[4]=finalR[3];local[5]=finalR[4];local[6]=finalR[5];local[7]=targetLocalTranslations[j*3+1];local[8]=finalR[6];local[9]=finalR[7];local[10]=finalR[8];local[11]=targetLocalTranslations[j*3+2];local[15]=1;
+  if(j===0)world.set(local,0);else mat4Mul(world,p*16,local,0,world,j*16)
+ }
+ return world
+}
+function skinExpandedWorld(rest,publicWorld,targetWorld,markMoved=true,report=true,label="Current Expanded LBS"){
+ if(!geometry||!targetInvBindActive)return null;const t0=performance.now(),J=targetJointCount,bone=new Float32Array(J*16);for(let j=0;j<J;j++)mat4Mul(targetWorld,j*16,targetInvBindActive,j*16,bone,j*16);
+ const pos=geometry.attributes.position.array,n=rest.length/3;let maxWeightErr=0;
+ for(let v=0;v<n;v++){const x=rest[v*3],y=rest[v*3+1],z=rest[v*3+2];let ox=0,oy=0,oz=0,ws=0;for(let k=0;k<targetTopK;k++){const bi=targetBoneIndices[v*targetTopK+k],w=targetBoneWeights[v*targetTopK+k];if(bi<0||w<=0)continue;const bo=bi*16;ox+=w*(bone[bo]*x+bone[bo+1]*y+bone[bo+2]*z+bone[bo+3]);oy+=w*(bone[bo+4]*x+bone[bo+5]*y+bone[bo+6]*z+bone[bo+7]);oz+=w*(bone[bo+8]*x+bone[bo+9]*y+bone[bo+10]*z+bone[bo+11]);ws+=w}maxWeightErr=Math.max(maxWeightErr,Math.abs(1-ws));pos[v*3]=ox;pos[v*3+1]=oy;pos[v*3+2]=oz}
+ geometry.attributes.position.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingSphere();currentPoseWorld=publicWorld.slice();currentTargetPoseWorld=targetWorld.slice();refreshRigDebug();
+ const elapsed=performance.now()-t0;if(markMoved){posePass=true;setState("#poseState","CURRENT 122-JOINT LBS","ok");updateDecision()}
+ if(report)info("#posePerf",`${label}: ${elapsed.toFixed(1)} ms · ${n} Vertices · 78 Public-Joints → ${J} interne Skinning-Joints · Top-${targetTopK}\nGewichtssummenfehler max. ${maxWeightErr.toExponential(1)}\nProcedural Twist: ${currentProcedural?.segments?.length||0} Segmente · ${currentProcedural?.twistSpec?.size||0} Twist-Joints · ${currentProcedural?.mode||"?"}`);
+ return {ms:elapsed,maxWeightErr,world:publicWorld,targetWorld}
+}
+function applyCurrentExpandedPose(rest,relative3,markMoved=true,report=true,label="Current 122-Joint LBS"){
+ const publicWorld=publicWorldFromRelative(relative3),targetWorld=expandedTargetWorld(publicWorld);return skinExpandedWorld(rest,publicWorld,targetWorld,markMoved,report,label)
+}
+
 function fitCurrentPublicRbfPositions(){
- if(!currentRigPackLoaded||currentRigMode!=="current-public")return null;
+ if(!currentRigPackLoaded||(currentRigMode!=="current-public"&&currentRigMode!=="current-expanded"))return null;
  const crow=packArray("public_rbf_crow_indices").data,col=packArray("public_rbf_col_indices").data,val=packArray("public_rbf_values").data;
  const world=poseBindWorld.slice();let moved=0,maxShift=0,sumShift=0;
  for(let j=1;j<poseJointCount;j++){
@@ -358,25 +500,33 @@ function fitCurrentPublicRbfPositions(){
  for(let j=0;j<poseJointCount;j++)rigidInverse(poseBindWorldActive,j*16,poseInvBindActive,j*16);
  return {count:moved,meanShift:moved?sumShift/moved:0,maxShift}
 }
+function setupCurrentPublicRigCore(){
+ poseParents=Int32Array.from(Array.from(packArray("public_joint_parent_ids").data,Number));poseJointCount=poseParents.length;if(poseJointCount!==78)throw new Error(`Current Public Rig hat ${poseJointCount} statt 78 Joints`);
+ poseLocalBase=copyPackMatricesToMeters(packArray("public_bind_pose_local"));poseBindWorld=copyPackMatricesToMeters(packArray("public_bind_pose_world"));poseTWorld=copyPackMatricesToMeters(packArray("public_t_pose_world"));
+ poseInvBind=new Float32Array(poseJointCount*16);for(let j=0;j<poseJointCount;j++)rigidInverse(poseBindWorld,j*16,poseInvBind,j*16);resetActiveRigMatrices();buildJointOrientData();
+ bindShapeLow=new Float32Array(packArray("public_bind_shape_low").data.length);for(let i=0;i<bindShapeLow.length;i++)bindShapeLow[i]=Number(packArray("public_bind_shape_low").data[i])/100;
+ const w=buildDirectLowSkinningFromPack("public",poseJointCount);poseEulerDeg=new Float32Array(poseJointCount*3);poseReady=true;buildPoseControls();rigAdaptiveEnabled=true;return w
+}
 function activateCurrentPublicRig(){
  try{
-  if(!currentRigPackLoaded)throw new Error("Zuerst Current Rig-Pack laden & prüfen.");
-  if(!arrays||!geometry)throw new Error("Zuerst Shape-Modell laden.");
-  stopPoseAnimation(false);currentRigMode="current-public";
-  poseParents=Int32Array.from(Array.from(packArray("public_joint_parent_ids").data,Number));poseJointCount=poseParents.length;
-  if(poseJointCount!==78)throw new Error(`Current Public Rig hat ${poseJointCount} statt 78 Joints`);
-  poseLocalBase=copyPackMatricesToMeters(packArray("public_bind_pose_local"));poseBindWorld=copyPackMatricesToMeters(packArray("public_bind_pose_world"));poseTWorld=copyPackMatricesToMeters(packArray("public_t_pose_world"));
-  poseInvBind=new Float32Array(poseJointCount*16);for(let j=0;j<poseJointCount;j++)rigidInverse(poseBindWorld,j*16,poseInvBind,j*16);
-  resetActiveRigMatrices();buildJointOrientData();
-  bindShapeLow=new Float32Array(packArray("public_bind_shape_low").data.length);for(let i=0;i<bindShapeLow.length;i++)bindShapeLow[i]=Number(packArray("public_bind_shape_low").data[i])/100;
-  const w=buildDirectLowSkinningFromPack("public",poseJointCount);
-  poseEulerDeg=new Float32Array(poseJointCount*3);poseReady=true;buildPoseControls();rigAdaptiveEnabled=true;
-  const stats=fitCurrentPublicRbfPositions();
-  if(stats)updateAdaptiveRigUI(`✓ CURRENT PUBLIC-RIG + OFFIZIELLE RBF-JOINTPOSITIONEN AKTIV\nRBF-fit Joints: ${stats.count}/${poseJointCount-1} · mittlere Verschiebung ${(stats.meanShift*1000).toFixed(1)} mm · max ${(stats.maxShift*1000).toFixed(1)} mm\n\nDieser Schritt nutzt die aus NVIDIAs aktuellem v0026-Template extrahierte Public-Rig-Ableitung und die exakt vorab berechnete RBF-Positionsmatrix. Rotations-Fitting + interner ${decodeUtf8Array(packArray("target_joint_names_utf8")).split("\\n").filter(Boolean).length}-Joint-Twist-LBS sind noch nicht aktiviert.`,"ok");
-  poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,false);setState("#poseState","CURRENT PUBLIC RIG","ok");
-  info("#poseInfo",`✓ Aktueller aus v0026 abgeleiteter 78-Joint-Public-Rig aktiv\nLow-LOD: ${w.n} Vertices · Skinning-Einflüsse ${w.minInflu}–${w.maxInflu}\nShape-Anpassung: offizielle RBF-Jointpositionen aus dem Current Rig-Pack\n\nDas ist der A/B-Zwischentest vor dem internen 122-Joint-Procedural/Twist-LBS. NVIDIA-Animation und Rig-Debug können jetzt direkt mit diesem aktuellen Public-Rig getestet werden.`);
-  updateDecision()
+  if(!currentRigPackLoaded)throw new Error("Zuerst Current Rig-Pack laden & prüfen.");if(!arrays||!geometry)throw new Error("Zuerst Shape-Modell laden.");stopPoseAnimation(false);currentRigMode="current-public";currentTargetPoseWorld=null;
+  const w=setupCurrentPublicRigCore(),stats=fitCurrentPublicRbfPositions();
+  if(stats)updateAdaptiveRigUI(`✓ CURRENT PUBLIC-RIG + OFFIZIELLE RBF-JOINTPOSITIONEN AKTIV\nRBF-fit Joints: ${stats.count}/${poseJointCount-1} · mittlere Verschiebung ${(stats.meanShift*1000).toFixed(1)} mm · max ${(stats.maxShift*1000).toFixed(1)} mm\n\nDas ist jetzt nur noch der 78-Joint-A/B-Fallback. Für die eigentliche v0.2.1-Prüfung bitte „Expanded 122-Joint LBS aktivieren“ nutzen.`,"ok");
+  poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,false);setState("#poseState","CURRENT PUBLIC 78","ok");setState("#currentRigState","PUBLIC 78 AKTIV","ok");
+  info("#poseInfo",`✓ Current Public-Rig als A/B-Fallback aktiv\nLow-LOD: ${w.n} Vertices · ${poseJointCount} Skinning-Joints\nShape-Anpassung: offizielle RBF-Jointpositionen`);updateDecision()
  }catch(e){console.error(e);setState("#poseState","CURRENT RIG FEHLER","bad");info("#poseInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}`)}
+}
+function activateCurrentExpandedRig(){
+ try{
+  if(!currentRigPackLoaded)throw new Error("Zuerst Current Rig-Pack laden & prüfen.");if(!arrays||!geometry)throw new Error("Zuerst Shape-Modell laden.");stopPoseAnimation(false);currentRigMode="current-expanded";
+  setupCurrentPublicRigCore();
+  targetParents=Int32Array.from(Array.from(packArray("target_joint_parent_ids").data,Number));targetJointCount=targetParents.length;if(targetJointCount<100)throw new Error(`Expanded Target-Rig unerwartet klein: ${targetJointCount}`);
+  targetBindWorldTemplate=copyPackMatricesToMeters(packArray("target_bind_pose_world"));targetTLocal=copyPackMatricesToMeters(packArray("target_t_pose_local"));currentProcedural=compileCurrentProcedural();
+  const stats=fitCurrentPublicRbfPositions();rebuildExpandedTargetBind();const tw=buildTargetLowSkinningFromPack();
+  poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,true);setState("#poseState","CURRENT 122-JOINT LBS","ok");setState("#currentRigState","122 LBS AKTIV","ok");$("#toggleDebugTopology").disabled=false;
+  updateAdaptiveRigUI(`✓ CURRENT SHAPE-FIT + EXPANDED TARGET-RIG AKTIV\nPublic RBF-fit: ${stats?.count||0}/${poseJointCount-1} Joints · mittlere Verschiebung ${((stats?.meanShift||0)*1000).toFixed(1)} mm\nTarget-Bindpose daraus auf ${targetJointCount} Joints expandiert; Twist-Helfer folgen den SOMA-Procedural-Matrizen.`,"ok");
+  info("#poseInfo",`✓ CURRENT v0026 EXPANDED-RIG IST JETZT DIE AKTIVE LBS-RUNTIME\nBedienung: 77 öffentliche Pose-Joints\nInternes Skinning: ${targetJointCount} Joints\nLow-LOD: ${tw.n} Vertices · Einflüsse/Vertex ${tw.minInflu}–${tw.rawMax}${tw.truncated?` · ${tw.truncated} Vertices auf Top-${tw.topK} begrenzt`:""}\nProcedural Twist: ${currentProcedural.segments.length} Segmente / ${currentProcedural.twistSpec.size} Twist-Joints\nRotationsextraktion: ${currentProcedural.mode}\n\nNVIDIA-Animation, Slider und Shape-Regler laufen ab jetzt alle durch den 122-Joint-Pfad.`);updateDecision();disposeRigDebugObjects();refreshRigDebug()
+ }catch(e){console.error(e);currentRigMode="current-public";setState("#poseState","122 LBS FEHLER","bad");setState("#currentRigState","122 FEHLER","bad");info("#poseInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}${e?.stack?"\n"+e.stack:""}`)}
 }
 async function fetchShapeAsset(forceNetwork=false){
  return fetchAssetBytes(ASSET_KEY.shape,SHAPE,{
@@ -492,7 +642,8 @@ function updateShape(){
  const t0=performance.now(),rest=rebuildRestShape();
  if(poseReady){
   if(rigAdaptiveEnabled)recomputeAdaptiveRig();
-  applyPoseToRest(rest,false)
+  if(lastAppliedRelative3&&lastAppliedRelative3.length===poseJointCount*9)applyRelativePoseMatrices(rest,lastAppliedRelative3,false,false,"Shape-Rebind + aktuelle Pose");
+  else applyPoseToRest(rest,false)
  }else{
   const pos=geometry.attributes.position.array;pos.set(rest);
   geometry.attributes.position.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingSphere()
@@ -576,66 +727,27 @@ function transformPoint(m,mo,x,y,z){
 }
 function jointIndex(name){return PUBLIC_JOINT_NAMES.indexOf(name)}
 
+function disposeRigDebugObjects(){
+ if(!rigGroup)return;scene.remove(rigGroup);for(const o of [rigBoneLines,rigJointPoints,rigAxesX,rigAxesY,rigAxesZ]){o?.geometry?.dispose();o?.material?.dispose()}rigGroup=rigBoneLines=rigJointPoints=rigAxesX=rigAxesY=rigAxesZ=null;rigDebugJointCount=0
+}
+function rigDebugData(){
+ if(currentRigMode==="current-expanded"&&rigDebugUseExpanded&&currentTargetPoseWorld)return {world:currentTargetPoseWorld,parents:targetParents,count:targetJointCount,label:`Expanded ${targetJointCount}`};
+ return {world:currentPoseWorld,parents:poseParents,count:poseJointCount,label:`Public ${poseJointCount}`}
+}
 function ensureRigDebugObjects(){
- if(rigGroup||!poseReady)return;
- rigGroup=new THREE.Group();
- const bonePairs=Math.max(0,poseJointCount-1);
- const boneGeo=new THREE.BufferGeometry();
- boneGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(bonePairs*2*3),3));
- rigBoneLines=new THREE.LineSegments(boneGeo,new THREE.LineBasicMaterial({color:0xffcf66,transparent:true,opacity:.95}));
- rigGroup.add(rigBoneLines);
-
- const pointGeo=new THREE.BufferGeometry();
- pointGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(poseJointCount*3),3));
- rigJointPoints=new THREE.Points(pointGeo,new THREE.PointsMaterial({color:0x58f0a8,size:.04,sizeAttenuation:true}));
- rigGroup.add(rigJointPoints);
-
- const makeAxis=(color)=>{
-  const g=new THREE.BufferGeometry();
-  g.setAttribute("position",new THREE.BufferAttribute(new Float32Array(poseJointCount*2*3),3));
-  const l=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color,transparent:true,opacity:.92}));
-  rigGroup.add(l);return l
- };
- rigAxesX=makeAxis(0xff5d5d);
- rigAxesY=makeAxis(0x5dff7d);
- rigAxesZ=makeAxis(0x58a6ff);
- rigGroup.visible=rigDebugVisible;
- scene.add(rigGroup)
+ if(!poseReady)return;const d=rigDebugData();if(!d.world)return;if(rigGroup&&rigDebugJointCount===d.count)return;if(rigGroup)disposeRigDebugObjects();rigDebugJointCount=d.count;rigGroup=new THREE.Group();
+ const boneGeo=new THREE.BufferGeometry();boneGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(Math.max(0,d.count-1)*2*3),3));rigBoneLines=new THREE.LineSegments(boneGeo,new THREE.LineBasicMaterial({color:0xffcf66,transparent:true,opacity:.95}));rigGroup.add(rigBoneLines);
+ const pointGeo=new THREE.BufferGeometry();pointGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(d.count*3),3));rigJointPoints=new THREE.Points(pointGeo,new THREE.PointsMaterial({color:0x58f0a8,size:.04,sizeAttenuation:true}));rigGroup.add(rigJointPoints);
+ const makeAxis=color=>{const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(new Float32Array(d.count*2*3),3));const l=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color,transparent:true,opacity:.92}));rigGroup.add(l);return l};rigAxesX=makeAxis(0xff5d5d);rigAxesY=makeAxis(0x5dff7d);rigAxesZ=makeAxis(0x58a6ff);rigGroup.visible=rigDebugVisible;scene.add(rigGroup)
 }
 function refreshRigDebug(){
- if(!poseReady||!currentPoseWorld)return;
- ensureRigDebugObjects();
- if(!rigGroup)return;
- rigGroup.visible=rigDebugVisible;
- const jointPos=rigJointPoints.geometry.attributes.position.array;
- const bonePos=rigBoneLines.geometry.attributes.position.array;
- const axisX=rigAxesX.geometry.attributes.position.array;
- const axisY=rigAxesY.geometry.attributes.position.array;
- const axisZ=rigAxesZ.geometry.attributes.position.array;
- const axisScale=.09;
- let bp=0,ax=0;
- for(let j=0;j<poseJointCount;j++){
-  const o=j*16;
-  const p=transformPoint(currentPoseWorld,o,0,0,0);
-  jointPos[j*3]=p[0];jointPos[j*3+1]=p[1];jointPos[j*3+2]=p[2];
-  if(j>0){
-   const pp=transformPoint(currentPoseWorld,poseParents[j]*16,0,0,0);
-   bonePos[bp++]=pp[0];bonePos[bp++]=pp[1];bonePos[bp++]=pp[2];
-   bonePos[bp++]=p[0];bonePos[bp++]=p[1];bonePos[bp++]=p[2]
-  }
-  const px=transformPoint(currentPoseWorld,o,axisScale,0,0);
-  const py=transformPoint(currentPoseWorld,o,0,axisScale,0);
-  const pz=transformPoint(currentPoseWorld,o,0,0,axisScale);
-  for(const end of [px,py,pz]){
-   const arr=end===px?axisX:end===py?axisY:axisZ;
-  }
-  axisX[ax]=p[0];axisX[ax+1]=p[1];axisX[ax+2]=p[2];axisX[ax+3]=px[0];axisX[ax+4]=px[1];axisX[ax+5]=px[2];
-  axisY[ax]=p[0];axisY[ax+1]=p[1];axisY[ax+2]=p[2];axisY[ax+3]=py[0];axisY[ax+4]=py[1];axisY[ax+5]=py[2];
-  axisZ[ax]=p[0];axisZ[ax+1]=p[1];axisZ[ax+2]=p[2];axisZ[ax+3]=pz[0];axisZ[ax+4]=pz[1];axisZ[ax+5]=pz[2];
-  ax+=6
- }
- for(const obj of [rigJointPoints,rigBoneLines,rigAxesX,rigAxesY,rigAxesZ])obj.geometry.attributes.position.needsUpdate=true;
- rigAxesX.visible=rigAxesVisible;rigAxesY.visible=rigAxesVisible;rigAxesZ.visible=rigAxesVisible;
+ if(!poseReady)return;const d=rigDebugData();if(!d.world)return;ensureRigDebugObjects();if(!rigGroup)return;rigGroup.visible=rigDebugVisible;
+ const jointPos=rigJointPoints.geometry.attributes.position.array,bonePos=rigBoneLines.geometry.attributes.position.array,axisX=rigAxesX.geometry.attributes.position.array,axisY=rigAxesY.geometry.attributes.position.array,axisZ=rigAxesZ.geometry.attributes.position.array,axisScale=.09;let bp=0,ax=0;
+ for(let j=0;j<d.count;j++){const o=j*16,p=transformPoint(d.world,o,0,0,0);jointPos[j*3]=p[0];jointPos[j*3+1]=p[1];jointPos[j*3+2]=p[2];if(j>0){const pp=transformPoint(d.world,d.parents[j]*16,0,0,0);bonePos[bp++]=pp[0];bonePos[bp++]=pp[1];bonePos[bp++]=pp[2];bonePos[bp++]=p[0];bonePos[bp++]=p[1];bonePos[bp++]=p[2]}const px=transformPoint(d.world,o,axisScale,0,0),py=transformPoint(d.world,o,0,axisScale,0),pz=transformPoint(d.world,o,0,0,axisScale);axisX[ax]=p[0];axisX[ax+1]=p[1];axisX[ax+2]=p[2];axisX[ax+3]=px[0];axisX[ax+4]=px[1];axisX[ax+5]=px[2];axisY[ax]=p[0];axisY[ax+1]=p[1];axisY[ax+2]=p[2];axisY[ax+3]=py[0];axisY[ax+4]=py[1];axisY[ax+5]=py[2];axisZ[ax]=p[0];axisZ[ax+1]=p[1];axisZ[ax+2]=p[2];axisZ[ax+3]=pz[0];axisZ[ax+4]=pz[1];axisZ[ax+5]=pz[2];ax+=6}
+ for(const obj of [rigJointPoints,rigBoneLines,rigAxesX,rigAxesY,rigAxesZ])obj.geometry.attributes.position.needsUpdate=true;rigAxesX.visible=rigAxesVisible;rigAxesY.visible=rigAxesVisible;rigAxesZ.visible=rigAxesVisible
+}
+function toggleDebugTopology(){
+ if(currentRigMode!=="current-expanded"||!currentTargetPoseWorld)return;rigDebugUseExpanded=!rigDebugUseExpanded;disposeRigDebugObjects();const d=rigDebugData();$("#toggleDebugTopology").textContent=rigDebugUseExpanded?`Debug: Expanded ${targetJointCount}`:`Debug: Public ${poseJointCount}`;info("#rigDebugInfo",`Rig-Debug zeigt jetzt ${d.label}. Im Expanded-Modus werden die zusätzlichen Twist-/Hilfsjoints sichtbar.`);refreshRigDebug()
 }
 function toggleRigDebug(){
  rigDebugVisible=!rigDebugVisible;
@@ -764,11 +876,14 @@ function updateAdaptiveRigUI(msg,state="warn"){
 }
 function recomputeAdaptiveRig(){
  if(!poseReady)return null;
- if(rigAdaptiveEnabled&&currentRigMode==="current-public"&&currentRigPackLoaded){
+ if(rigAdaptiveEnabled&&(currentRigMode==="current-public"||currentRigMode==="current-expanded")&&currentRigPackLoaded){
   const stats=fitCurrentPublicRbfPositions();
-  if(stats)updateAdaptiveRigUI(`✓ Current Public-Rig: offizielle RBF-Jointpositionen aktiv
-Mittlere Joint-Verschiebung ${(stats.meanShift*1000).toFixed(1)} mm · Max ${(stats.maxShift*1000).toFixed(1)} mm · ${stats.count}/${poseJointCount-1} Joints
-Rotations-Fitting und 122-Joint-Twist-LBS folgen im nächsten Current-Rig-Schritt.`,`ok`);
+  if(currentRigMode==="current-expanded")rebuildExpandedTargetBind();
+  if(stats)updateAdaptiveRigUI(currentRigMode==="current-expanded"
+   ?`✓ Current Expanded-Rig: Public-RBF-Fit → ${targetJointCount}-Joint-Target-Bindpose aktualisiert
+Mittlere Public-Joint-Verschiebung ${(stats.meanShift*1000).toFixed(1)} mm · Max ${(stats.maxShift*1000).toFixed(1)} mm · ${stats.count}/${poseJointCount-1} Joints`
+   :`✓ Current Public-Rig: offizielle RBF-Jointpositionen aktiv
+Mittlere Joint-Verschiebung ${(stats.meanShift*1000).toFixed(1)} mm · Max ${(stats.maxShift*1000).toFixed(1)} mm · ${stats.count}/${poseJointCount-1} Joints`,`ok`);
   return stats
  }
  if(!rigAdaptiveEnabled||!bindShapeLow){
@@ -1179,7 +1294,7 @@ function updatePoseAnimation(now){
   const avg=poseAnimFrames?poseAnimLbsSum/poseAnimFrames:0;
   const animLabel=poseAnimMode==="official"?"NVIDIA example_animation":poseAnimMode==="walk"?"Gang-Loop":"Rig-Stress";
   info("#animPerf",`${animLabel} · ${poseAnimSpeed.toFixed(2)}×
-LBS Ø ${avg.toFixed(1)} ms · Max ${poseAnimLbsMax.toFixed(1)} ms · ${currentRestLow.length/3} Vertices · ${poseJointCount} Joints
+LBS Ø ${avg.toFixed(1)} ms · Max ${poseAnimLbsMax.toFixed(1)} ms · ${currentRestLow.length/3} Vertices · ${currentRigMode==="current-expanded"?`${poseJointCount} Controls → ${targetJointCount} Skinning-Joints`:`${poseJointCount} Joints`}
 Ziel: ${poseAnimTargetFps} Pose-Updates/s · WebGL-Render-FPS oben rechts.`);
   syncPoseSlidersFromJoint();
   updateDecision()
@@ -1230,9 +1345,9 @@ Adaptive Rig-Translationen: ${rigAdaptiveEnabled?"AKTIV":"AUS"} · vollständige
  return {ms:elapsed,maxWeightErr,world}
 }
 function applyRelativePoseMatrices(rest,relative3,markMoved=true,report=true,label="SOMA-relative LBS"){
- const local=new Float32Array(poseJointCount*16);
- relativeToFinalLocal(relative3,local);
- return skinLocalMatrices(rest,local,markMoved,report,label)
+ lastAppliedRelative3=new Float32Array(relative3);
+ if(currentRigMode==="current-expanded")return applyCurrentExpandedPose(rest,relative3,markMoved,report,label==="SOMA-relative LBS"?"Current 122-Joint LBS":label+" · 122-Joint");
+ const local=new Float32Array(poseJointCount*16);relativeToFinalLocal(relative3,local);return skinLocalMatrices(rest,local,markMoved,report,label)
 }
 function buildRelativeEulerMatrices(){
  const rel=new Float32Array(poseJointCount*9);
@@ -1377,6 +1492,7 @@ WICHTIG: Damit ist nur der Rig-Vertrag bestätigt. Das große USD wird absichtli
 $("#testRig").onclick=testRig;
 $("#loadCurrentRig").onclick=loadCurrentRigPack;
 $("#activateCurrentRig").onclick=activateCurrentPublicRig;
+$("#activateExpandedRig").onclick=activateCurrentExpandedRig;
 $("#initPose").onclick=initEmbeddedPoseRig;
 $("#poseReset").onclick=clearPose;
 $("#poseT").onclick=()=>posePreset("tpose");
@@ -1396,6 +1512,7 @@ $("#animSpeed").oninput=e=>{
 $("#toggleAdaptiveRig").onclick=()=>setAdaptiveRigEnabled(!rigAdaptiveEnabled,true);
 $("#rebindAdaptiveRig").onclick=()=>{if(poseReady){recomputeAdaptiveRig();applyPoseToRest(currentRestLow,false,false)}};
 $("#toggleRig").onclick=toggleRigDebug;
+$("#toggleDebugTopology").onclick=toggleDebugTopology;
 $("#toggleAxes").onclick=toggleRigAxes;
 $("#debug10").onclick=()=>applySingleJointDebug(10);
 $("#debug20").onclick=()=>applySingleJointDebug(20);
@@ -1404,12 +1521,11 @@ $("#debugMinus10").onclick=()=>applySingleJointDebug(-10);
 
 function updateDecision(){
  if(shapePass&&rigPass&&posePass){
-  setState("#decision",currentRigMode==="current-public"?"CURRENT PUBLIC RIG AKTIV":"LBS + POSE-KONVENTION AKTIV","ok");
-  info("#decisionInfo","Shape, PCA, echter browserseitiger LBS-Lauf, SOMAs T-Pose/Joint-Orient-Rotationskonvention und jetzt auch ein experimentell mitmorphendes v0.1-Rig sind aktiv. Dieser Test benutzt weiterhin den offiziellen eingebetteten 78-Joint-Rig des SOMA-v0.1-Assets. Noch NICHT als endgültige BODY-LAB-Basis bewiesen sind: der aktualisierte v0.2-122-Joint/Procedural-Twist-Rig-Pack, vollständiges shape-adaptives Rebinding und danach Shape+Pose unter diesen finalen Rig-Daten. v0.1.8 schließt davor die wichtigste Lücke: Das Skelett kann jetzt dem gemorphten Mannequin näherungsweise folgen. BODY LAB bleibt unverändert.")
- }else if(shapePass&&rigPass){
-  setState("#decision","NÄCHSTER TEST: ECHTES LBS","warn");
-  info("#decisionInfo","Shape und aktueller v0.2-Rig-Vertrag sind bewiesen. Punkt 5 kann jetzt den bereits im gecachten v0.1-SOMA-Asset eingebetteten echten 78-Joint-Rig mit Bindpose + Skinweights direkt im Browser testen – ohne 329-MB-Download.")
- }else if(shapePass){
-  setState("#decision","SHAPE BESTANDEN","ok")
- }
+  const expanded=currentRigMode==="current-expanded";
+  setState("#decision",expanded?"CURRENT 122-JOINT LBS AKTIV":currentRigMode==="current-public"?"CURRENT PUBLIC 78 AKTIV":"LBS + POSE-KONVENTION AKTIV","ok");
+  info("#decisionInfo",expanded
+   ?`✓ v0.2.1: Der aktuelle v0026-Rig-Pack läuft jetzt auf dem iPhone als echter Expanded-LBS-Pfad. 77 steuerbare SOMA-Pose-Joints werden intern auf ${targetJointCount} Target-/Skinning-Joints erweitert; die SOMA-Procedural-Twist-Segmente werden automatisch erzeugt. Shape-Änderungen berechnen die Public-RBF-Jointpositionen neu und expandieren anschließend die Target-Bindpose neu.\n\nNoch offen für die endgültige BODY-LAB-Basis: das vollständige SOMA-Rotations-Fitting beim Shape-Transfer und danach systematische Shape+Pose-/Extremtests. BODY LAB bleibt unverändert.`
+   :"Der Browser-LBS-Pfad funktioniert. Für den eigentlichen aktuellen Rig-Test in v0.2.1 bitte den Expanded-122-Joint-Pfad in Punkt 5 aktivieren.")
+ }else if(shapePass&&rigPass){setState("#decision","NÄCHSTER TEST: CURRENT 122 LBS","warn");info("#decisionInfo","Shape und Current-Rig-Pack sind vorhanden. In Punkt 5 jetzt Expanded 122-Joint LBS aktivieren.")}
+ else if(shapePass)setState("#decision","SHAPE BESTANDEN","ok")
 }
