@@ -1,0 +1,13 @@
+{
+  "schema": "anny-soma-browser-exact-engine-v2",
+  "lod": "mid",
+  "source_git_sha": "72104cac8242d1735ec06433b65bec5e26953ce7",
+  "anny_version": "0.6.0",
+  "vertex_count": 18056,
+  "blendshape_count": 1136,
+  "phenotype_blendshape_count": 624,
+  "local_change_count": 256,
+  "browser_parity_max_abs": 8.940696716308594e-08,
+  "pack_bytes": 60269359,
+  "pack_sha256": "4914dc67d30f91785e4e8968fc9d684d6dd8ac0e6586dd30e31d8d8cc8f4527b"
+}
