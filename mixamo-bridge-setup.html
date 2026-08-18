@@ -1,0 +1,11 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sammy Mixamo Bridge Setup</title>
+<style>body{font-family:system-ui;background:#101114;color:#eee;max-width:780px;margin:auto;padding:22px;line-height:1.45}section{background:#191b20;border:1px solid #30333a;border-radius:14px;padding:16px;margin:14px 0}code{display:block;white-space:pre-wrap;background:#0c0d10;padding:10px;border-radius:9px}b{color:#fff}.ok{color:#8de3a7}</style></head><body>
+<h1>Sammy · Mixamo Bridge v0.1</h1>
+<section><b>1 · Dateien hochladen</b><p><code>build_sammy_mixamo_bridge.py
+MIXAMO_BRIDGE_WORKFLOW.yml</code></p></section>
+<section><b>2 · Workflow anlegen</b><p>Lege in GitHub die Datei <code>.github/workflows/build-sammy-mixamo-bridge.yml</code> an und kopiere den vollständigen Inhalt von <code>MIXAMO_BRIDGE_WORKFLOW.yml</code> hinein.</p></section>
+<section><b>3 · Action ausführen</b><p>GitHub → Actions → <b>Build Sammy Mixamo Bridge</b> → Run workflow.</p><p class="ok">Bei Erfolg entstehen <code>mixamo_bridge/Sammy_Mixamo_Bridge.fbx
+mixamo_bridge/Sammy_Mixamo_Bridge_manifest.json</code></p></section>
+<section><b>4 · Mixamo-Test</b><p>FBX als rigged character hochladen → Walking wählen → FBX Binary, With Skin, 30 fps, Keyframe Reduction None, möglichst In Place → herunterladen.</p></section>
+<section><b>5 · Rückgabe hier hochladen</b><p>Das von Mixamo heruntergeladene FBX hier in ChatGPT hochladen. Dann bauen wir den Converter gegen den echten Roundtrip.</p></section>
+</body></html>

@@ -1,0 +1,83 @@
+name: Build Sammy Mixamo Bridge
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Soma-Lab
+        uses: actions/checkout@v4
+
+      - name: Verify current browser rig pack
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test -s soma_current_rig_pack_v0026.npz
+          python - <<'PY'
+          import numpy as np
+          with np.load('soma_current_rig_pack_v0026.npz', allow_pickle=False) as p:
+              assert tuple(p['public_skinning_shape']) == (4505,78)
+              print('Current rig pack OK:', tuple(p['public_skinning_shape']))
+          PY
+
+      - name: Fetch pinned SOMA low topology asset
+        shell: bash
+        env:
+          SOMA_SHA: 86632764684281dc98f31ab9c4aac36a4cdbc428
+        run: |
+          set -euxo pipefail
+          rm -rf .soma-upstream
+          GIT_LFS_SKIP_SMUDGE=1 git clone -q https://github.com/NVlabs/SOMA-X.git .soma-upstream
+          git -C .soma-upstream checkout -q "$SOMA_SHA"
+          git -C .soma-upstream lfs pull --include="assets/SOMA_neutral.npz"
+          test "$(stat -c%s .soma-upstream/assets/SOMA_neutral.npz)" -gt 1000000
+
+      - name: Install Blender
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y blender
+          blender --version | head -3
+
+      - name: Build rigged FBX bridge
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p mixamo_bridge
+          blender --background --factory-startup \
+            --python build_sammy_mixamo_bridge.py -- \
+            --rigpack soma_current_rig_pack_v0026.npz \
+            --core .soma-upstream/assets/SOMA_neutral.npz \
+            --out mixamo_bridge/Sammy_Mixamo_Bridge.fbx
+          test "$(stat -c%s mixamo_bridge/Sammy_Mixamo_Bridge.fbx)" -gt 100000
+          ls -lh mixamo_bridge/
+
+      - name: Upload bridge artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sammy-Mixamo-Bridge
+          path: |
+            mixamo_bridge/Sammy_Mixamo_Bridge.fbx
+            mixamo_bridge/Sammy_Mixamo_Bridge_manifest.json
+          if-no-files-found: error
+
+      - name: Commit bridge to repository
+        shell: bash
+        run: |
+          set -euxo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mixamo_bridge/Sammy_Mixamo_Bridge.fbx mixamo_bridge/Sammy_Mixamo_Bridge_manifest.json
+          if git diff --cached --quiet; then
+            echo "Bridge unchanged; nothing to commit."
+          else
+            git commit -m "Build canonical Sammy Mixamo bridge FBX"
+            git push
+          fi
