@@ -1,0 +1,13 @@
+{
+  "schema": "soma-browser-current-rig-pack-v1",
+  "source_git_sha": "86632764684281dc98f31ab9c4aac36a4cdbc428",
+  "template_rig_sha256": "79f02176534ebc0671c76bf09203bbee8e1621f8b6d34cc63aec69b73460bba2",
+  "template_rig_bytes": 344934193,
+  "skin_mesh_name": "c_skin_mid",
+  "target_joint_count": 122,
+  "public_joint_count": 78,
+  "low_vertex_count": 4505,
+  "rbf_nnz": 8219,
+  "pack_bytes": 204297,
+  "pack_sha256": "71127a1331c52dc5993e4cb28f21a246c6b66a2e9615621e26b2e610067e0c03"
+}
