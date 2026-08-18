@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>SOMA Browser PoC v0.5.0</title>
+<title>SOMA Browser PoC v0.5.1</title>
 <link rel="stylesheet" href="style.css">
 <script type="importmap">
 {"imports":{
@@ -16,7 +16,7 @@
 <body>
 <div id="viewport"></div>
 <header>
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.5.0</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.5.1</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main>
@@ -66,7 +66,7 @@
    <div class="info">Alle offiziellen lokalen Anny-Changes werden dynamisch aus dem Pack gelesen, nach den MakeHuman/Anny-Asset-Kategorien gruppiert und mit ihrem Roh-Namen angezeigt. Werte laufen nativ von −1 bis +1.</div>
    <div id="annyLocalGroups"></div>
   </details>
-  <div id="annyInfo" class="info">v0.5.0 verwendet nicht mehr das 216-Shape-Grid, sondern exportiert die echte Anny-Template-/Blendshape-Engine auf SOMA-Topologie. Dadurch sind alle nativen Parameter und alle lokalen Changes verfügbar.</div>
+  <div id="annyInfo" class="info">v0.5.1 verwendet nicht mehr das 216-Shape-Grid, sondern exportiert die echte Anny-Template-/Blendshape-Engine auf SOMA-Topologie. Dadurch sind alle nativen Parameter und alle lokalen Changes verfügbar.</div>
   <div id="annyLiveInfo" class="info">Noch nicht aktiv.</div>
   <a class="setupLink" href="anny-pack-setup.html">Einmalige Engine-v2-Pack-Erstellung öffnen</a>
  </section>
@@ -90,7 +90,7 @@
  <section>
   <div class="step"><i>6</i><div><b>Pose-Runtime – echtes Browser-LBS</b><small>Current Expanded-LBS · 122-Joint-FK · Procedural Twist · Shape + Pose live · Basis für Modifier</small></div><em id="poseState">WARTE AUF SHAPE</em></div>
   <button id="initPose" disabled>Legacy 78-Joint LBS (nur Fallback)</button>
-  <div id="poseInfo" class="info">Für v0.5.0 bitte in Punkt 5 „Expanded 122-Joint LBS aktivieren“. Mid nutzt denselben 122-Joint-Pfad mit 18.056 SOMA-Vertices.</div>
+  <div id="poseInfo" class="info">Für v0.5.1 bitte in Punkt 5 „Expanded 122-Joint LBS aktivieren“. Mid nutzt denselben 122-Joint-Pfad mit 18.056 SOMA-Vertices.</div>
   <div id="poseControls" class="hidden">
    <label class="fieldLabel">Gelenk
     <select id="poseJoint"></select>
@@ -134,7 +134,7 @@
      <button id="toggleAdaptiveRig">Adaptive Rig AUS</button>
      <button id="rebindAdaptiveRig">Rebind neu berechnen</button>
     </div>
-    <div id="adaptiveRigInfo" class="info">v0.5.0 nutzt im Current-Pfad die vorberechneten Public-RBF-Jointpositionen und expandiert daraus bei jeder Shape-Änderung die aktive 122-Joint-Target-Bindpose.</div>
+    <div id="adaptiveRigInfo" class="info">v0.5.1 nutzt im Current-Pfad die vorberechneten Public-RBF-Jointpositionen und expandiert daraus bei jeder Shape-Änderung die aktive 122-Joint-Target-Bindpose.</div>
    </div>
 
    <div class="animBox">
@@ -182,7 +182,7 @@
 
  <section>
   <div class="step"><i>8</i><div><b>Entscheidung</b><small>kein „wird schon gehen“</small></div><em id="decision">OFFEN</em></div>
-  <div id="decisionInfo" class="info">v0.5.0 prüft jetzt den kleinsten Integrationsnachweis: Anny erzeugt die Körperform, SOMA bleibt Topologie/Rig/Pose-System. Erst wenn dieser Pfad visuell stabil ist, kommt der Measurement-Fit.</div>
+  <div id="decisionInfo" class="info">v0.5.1 prüft jetzt den kleinsten Integrationsnachweis: Anny erzeugt die Körperform, SOMA bleibt Topologie/Rig/Pose-System. Erst wenn dieser Pfad visuell stabil ist, kommt der Measurement-Fit.</div>
  </section>
 </main>
 <script type="module" src="app.js"></script>
