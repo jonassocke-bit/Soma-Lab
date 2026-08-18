@@ -14,7 +14,7 @@ const CURRENT_RIG_PACK_URL="./soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_SOURCE_SHA="86632764684281dc98f31ab9c4aac36a4cdbc428";
 
-// v0.5.4: exact browser-side Anny blendshape engine on canonical SOMA topology.
+// v0.5.5: exact browser-side Anny blendshape engine on canonical SOMA topology.
 // Low is loaded first; Mid (18,056 verts) is an optional persistent on-demand pack.
 const ANNY_SOURCE_SHA="72104cac8242d1735ec06433b65bec5e26953ce7";
 const ANNY_LOW_PACK_URL="./anny_soma_engine_low_v060.npz";
@@ -216,7 +216,7 @@ let targetMidBoneIndices=null,targetMidBoneWeights=null,targetMidTopK=0;
 let poseMidBoneIndices=null,poseMidBoneWeights=null,poseMidTopK=0;
 let rigGroup=null,rigBoneLines=null,rigJointPoints=null,rigAxesX=null,rigAxesY=null,rigAxesZ=null;
 
-// v0.5.4 Shape-Space Analyzer.
+// v0.5.5 Shape-Space Analyzer.
 // The first semantic layer is deliberately measurement-driven: raw PCA stays the
 // engine underneath, while the UI exposes locally calibrated measurements in cm.
 const ANALYSIS_METRICS=[
@@ -434,7 +434,7 @@ async function loadCurrentRigPack(){
    }});
    currentRigPack=await decodeShapeNPZ(asset.u8)
   }
-  // v0.5.4: the fresh v2 rig-pack stores REAL newlines, while the very first
+  // v0.5.5: the fresh v2 rig-pack stores REAL newlines, while the very first
   // generated v1 pack accidentally stored the two literal characters "\\n".
   // Use the already existing compatibility decoder for both formats.
   const targetNames=decodePackedJointNames("target_joint_names_utf8",122);
@@ -456,7 +456,7 @@ async function loadCurrentRigPack(){
   if(missing.length)throw new Error("Rig-Pack unvollständig. Fehlt: "+missing.join(", "));
   const midRequired=["target_skinning_mid_data","target_skinning_mid_indices","target_skinning_mid_indptr","target_skinning_mid_shape","public_skinning_mid_data","public_skinning_mid_indices","public_skinning_mid_indptr","public_skinning_mid_shape"];
   const midMissing=midRequired.filter(k=>!packArray(k));
-  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.5.4 bitte den neuen ‘Build Anny SOMA Engine v2’-Workflow einmal ausführen; danach erneut laden.")}
+  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.5.5 bitte den neuen ‘Build Anny SOMA Engine v2’-Workflow einmal ausführen; danach erneut laden.")}
   if(targetNames.length<100)throw new Error(`Expanded Rig unerwartet klein: ${targetNames.length} Joints`);
   if(publicNames.length!==78)throw new Error(`Public Rig: ${publicNames.length} statt 78 Joints`);
   if(publicShape[0]!==4505||publicShape[1]!==78)throw new Error(`Public Low-Skinning unerwartet: ${JSON.stringify(publicShape)}`);
@@ -478,14 +478,14 @@ Mid-Skinning 18.056×122: ${packOptional("target_skinning_mid_shape")?"JA · ber
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
 Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":`${asset.source||"Repo"} · persistent gespeichert`}
 
-Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.5.4 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.5.5 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
   rigPass=true;updateDecision();return true
  }catch(e){
   console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
   info("#currentRigInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}
 
-v0.5.4 versucht den Rig-Pack in dieser Reihenfolge:
+v0.5.5 versucht den Rig-Pack in dieser Reihenfolge:
 1) persistenter iPhone-Cache
 2) GitHub Pages mit Cache-Busting
 3) raw.githubusercontent.com als Fallback
@@ -523,44 +523,140 @@ async function getMixamoFbxExporter(){
  }
  return mixamoFbxExporterPromise
 }
-function buildPublicTop4SkinningForExport(vertexCount,jointCount){
- const data=packArray("public_skinning_data")?.data,indices=packArray("public_skinning_indices")?.data,indptr=packArray("public_skinning_indptr")?.data;
- const shape=Array.from(packArray("public_skinning_shape")?.data||[],Number);
- if(!data||!indices||!indptr||shape[0]!==vertexCount||shape[1]!==jointCount)throw new Error(`Public-Skinning für FBX fehlt/unerwartet: ${JSON.stringify(shape)}`);
- const perVertex=Array.from({length:vertexCount},()=>[]);
- for(let j=0;j<jointCount;j++){
-  for(let p=Number(indptr[j]);p<Number(indptr[j+1]);p++){
-   const v=Number(indices[p]),w=Number(data[p]);
-   if(v>=0&&v<vertexCount&&w>1e-10)perVertex[v].push([j,w])
+
+const MIXAMO_PROXY_BONES=[
+ ["mixamorig:Hips","Hips",null],
+ ["mixamorig:Spine","Spine1","mixamorig:Hips"],
+ ["mixamorig:Spine1","Spine2","mixamorig:Spine"],
+ ["mixamorig:Spine2","Chest","mixamorig:Spine1"],
+ ["mixamorig:Neck","Neck1","mixamorig:Spine2"],
+ ["mixamorig:Head","Head","mixamorig:Neck"],
+
+ ["mixamorig:LeftShoulder","LeftShoulder","mixamorig:Spine2"],
+ ["mixamorig:LeftArm","LeftArm","mixamorig:LeftShoulder"],
+ ["mixamorig:LeftForeArm","LeftForeArm","mixamorig:LeftArm"],
+ ["mixamorig:LeftHand","LeftHand","mixamorig:LeftForeArm"],
+ ["mixamorig:RightShoulder","RightShoulder","mixamorig:Spine2"],
+ ["mixamorig:RightArm","RightArm","mixamorig:RightShoulder"],
+ ["mixamorig:RightForeArm","RightForeArm","mixamorig:RightArm"],
+ ["mixamorig:RightHand","RightHand","mixamorig:RightForeArm"],
+
+ ["mixamorig:LeftUpLeg","LeftLeg","mixamorig:Hips"],
+ ["mixamorig:LeftLeg","LeftShin","mixamorig:LeftUpLeg"],
+ ["mixamorig:LeftFoot","LeftFoot","mixamorig:LeftLeg"],
+ ["mixamorig:LeftToeBase","LeftToeBase","mixamorig:LeftFoot"],
+ ["mixamorig:LeftToe_End","LeftToeEnd","mixamorig:LeftToeBase"],
+ ["mixamorig:RightUpLeg","RightLeg","mixamorig:Hips"],
+ ["mixamorig:RightLeg","RightShin","mixamorig:RightUpLeg"],
+ ["mixamorig:RightFoot","RightFoot","mixamorig:RightLeg"],
+ ["mixamorig:RightToeBase","RightToeBase","mixamorig:RightFoot"],
+ ["mixamorig:RightToe_End","RightToeEnd","mixamorig:RightToeBase"],
+
+ ["mixamorig:LeftHandThumb1","LeftHandThumb1","mixamorig:LeftHand"],
+ ["mixamorig:LeftHandThumb2","LeftHandThumb2","mixamorig:LeftHandThumb1"],
+ ["mixamorig:LeftHandThumb3","LeftHandThumb3","mixamorig:LeftHandThumb2"],
+ ["mixamorig:LeftHandIndex1","LeftHandIndex1","mixamorig:LeftHand"],
+ ["mixamorig:LeftHandIndex2","LeftHandIndex2","mixamorig:LeftHandIndex1"],
+ ["mixamorig:LeftHandIndex3","LeftHandIndex3","mixamorig:LeftHandIndex2"],
+ ["mixamorig:LeftHandMiddle1","LeftHandMiddle1","mixamorig:LeftHand"],
+ ["mixamorig:LeftHandMiddle2","LeftHandMiddle2","mixamorig:LeftHandMiddle1"],
+ ["mixamorig:LeftHandMiddle3","LeftHandMiddle3","mixamorig:LeftHandMiddle2"],
+ ["mixamorig:LeftHandRing1","LeftHandRing1","mixamorig:LeftHand"],
+ ["mixamorig:LeftHandRing2","LeftHandRing2","mixamorig:LeftHandRing1"],
+ ["mixamorig:LeftHandRing3","LeftHandRing3","mixamorig:LeftHandRing2"],
+ ["mixamorig:LeftHandPinky1","LeftHandPinky1","mixamorig:LeftHand"],
+ ["mixamorig:LeftHandPinky2","LeftHandPinky2","mixamorig:LeftHandPinky1"],
+ ["mixamorig:LeftHandPinky3","LeftHandPinky3","mixamorig:LeftHandPinky2"],
+
+ ["mixamorig:RightHandThumb1","RightHandThumb1","mixamorig:RightHand"],
+ ["mixamorig:RightHandThumb2","RightHandThumb2","mixamorig:RightHandThumb1"],
+ ["mixamorig:RightHandThumb3","RightHandThumb3","mixamorig:RightHandThumb2"],
+ ["mixamorig:RightHandIndex1","RightHandIndex1","mixamorig:RightHand"],
+ ["mixamorig:RightHandIndex2","RightHandIndex2","mixamorig:RightHandIndex1"],
+ ["mixamorig:RightHandIndex3","RightHandIndex3","mixamorig:RightHandIndex2"],
+ ["mixamorig:RightHandMiddle1","RightHandMiddle1","mixamorig:RightHand"],
+ ["mixamorig:RightHandMiddle2","RightHandMiddle2","mixamorig:RightHandMiddle1"],
+ ["mixamorig:RightHandMiddle3","RightHandMiddle3","mixamorig:RightHandMiddle2"],
+ ["mixamorig:RightHandRing1","RightHandRing1","mixamorig:RightHand"],
+ ["mixamorig:RightHandRing2","RightHandRing2","mixamorig:RightHandRing1"],
+ ["mixamorig:RightHandRing3","RightHandRing3","mixamorig:RightHandRing2"],
+ ["mixamorig:RightHandPinky1","RightHandPinky1","mixamorig:RightHand"],
+ ["mixamorig:RightHandPinky2","RightHandPinky2","mixamorig:RightHandPinky1"],
+ ["mixamorig:RightHandPinky3","RightHandPinky3","mixamorig:RightHandPinky2"]
+];
+
+function mixamoProxySourceToTargetMap(publicNames){
+ const targetByProxy=new Map(MIXAMO_PROXY_BONES.map((b,i)=>[b[0],i]));
+ const direct=new Map(MIXAMO_PROXY_BONES.map((b,i)=>[b[1],i]));
+ const fallback=new Map();
+
+ // Face/end helpers -> Head.
+ for(const n of ["Root","HeadEnd","Jaw","LeftEye","RightEye","Neck2"])fallback.set(n,targetByProxy.get("mixamorig:Head"));
+ // Neck1 itself remains the Mixamo Neck.
+ fallback.set("Neck1",targetByProxy.get("mixamorig:Neck"));
+
+ // SOMA has four index/middle/ring/pinky phalanges + end. Mixamo standard has three.
+ for(const side of ["Left","Right"]){
+  fallback.set(`${side}HandThumbEnd`,targetByProxy.get(`mixamorig:${side}HandThumb3`));
+  for(const f of ["Index","Middle","Ring","Pinky"]){
+   fallback.set(`${side}Hand${f}4`,targetByProxy.get(`mixamorig:${side}Hand${f}3`));
+   fallback.set(`${side}Hand${f}End`,targetByProxy.get(`mixamorig:${side}Hand${f}3`));
   }
  }
+
+ const out=new Int16Array(publicNames.length);out.fill(-1);
+ for(let j=0;j<publicNames.length;j++){
+  const n=publicNames[j];
+  if(direct.has(n))out[j]=direct.get(n);
+  else if(fallback.has(n))out[j]=fallback.get(n);
+ }
+ return out
+}
+
+function buildMixamoProxySkinning(vertexCount,publicNames){
+ const data=packArray("public_skinning_data")?.data,indices=packArray("public_skinning_indices")?.data,indptr=packArray("public_skinning_indptr")?.data;
+ const shape=Array.from(packArray("public_skinning_shape")?.data||[],Number);
+ if(!data||!indices||!indptr||shape[0]!==vertexCount||shape[1]!==publicNames.length)throw new Error(`Public-Skinning für Mixamo-Proxy fehlt/unerwartet: ${JSON.stringify(shape)}`);
+
+ const srcToProxy=mixamoProxySourceToTargetMap(publicNames);
+ const temp=Array.from({length:vertexCount},()=>new Map());
+
+ for(let sj=0;sj<publicNames.length;sj++){
+  let pj=Number(srcToProxy[sj]);
+  if(pj<0)continue;
+  for(let p=Number(indptr[sj]);p<Number(indptr[sj+1]);p++){
+   const v=Number(indices[p]),w=Number(data[p]);
+   if(v<0||v>=vertexCount||w<=1e-10)continue;
+   temp[v].set(pj,(temp[v].get(pj)||0)+w)
+  }
+ }
+
  const si=new Uint16Array(vertexCount*4),sw=new Float32Array(vertexCount*4);
- let empty=0,maxRaw=0,truncated=0;
+ let empty=0,truncated=0,maxRaw=0;
  for(let v=0;v<vertexCount;v++){
-  const raw=perVertex[v].sort((a,b)=>b[1]-a[1]);maxRaw=Math.max(maxRaw,raw.length);if(raw.length>4)truncated++;
-  const list=raw.slice(0,4);let sum=0;for(const x of list)sum+=x[1];
+  let list=Array.from(temp[v].entries()).sort((a,b)=>b[1]-a[1]);maxRaw=Math.max(maxRaw,list.length);
+  if(list.length>4){truncated++;list=list.slice(0,4)}
+  let sum=0;for(const x of list)sum+=x[1];
   if(sum<=1e-12){empty++;si[v*4]=0;sw[v*4]=1;continue}
   for(let k=0;k<list.length;k++){si[v*4+k]=list[k][0];sw[v*4+k]=list[k][1]/sum}
  }
- if(empty)console.warn(`Mixamo Bridge: ${empty} Vertices ohne Gewichte wurden an Root gebunden.`);
- return {skinIndex:si,skinWeight:sw,maxRaw,truncated,empty}
+ return {skinIndex:si,skinWeight:sw,maxRaw,truncated,empty,srcToProxy}
 }
+
 function buildSammyMixamoBridgeScene(){
  if(!currentRigPackLoaded||!currentRigPack)throw new Error("Current SOMA Rig-Pack ist noch nicht geladen.");
  if(!trianglesLow?.data)throw new Error("SOMA Low-Topologie ist noch nicht geladen.");
 
- const names=decodePackedJointNames("public_joint_names_utf8",78);
- const parents=Int32Array.from(Array.from(packArray("public_joint_parent_ids")?.data||[],Number));
- const bindLocal=copyPackMatricesToMeters(packArray("public_bind_pose_local"));
+ const publicNames=decodePackedJointNames("public_joint_names_utf8",78);
+ const publicByName=new Map(publicNames.map((n,i)=>[n,i]));
+ const bindWorld=copyPackMatricesToMeters(packArray("public_bind_pose_world"));
  const bindShape=packArray("public_bind_shape_low")?.data;
- if(parents.length!==78||bindLocal.length!==78*16||!bindShape)throw new Error("Public-78 Binddaten für Bridge unvollständig.");
+ if(!bindShape||bindWorld.length!==78*16)throw new Error("Public-78 Binddaten für Bridge unvollständig.");
 
  const V=bindShape.length/3;
  if(V!==4505)throw new Error(`Mixamo Bridge erwartet 4.505 Vertices, Pack hat ${V}.`);
 
- // Use the canonical SOMA bind body, not the currently edited Anny identity.
- // Center X/Z and place the lowest mesh point at Y=0 exactly like the previous
- // Blender bridge workflow.
+ // Canonical fixed neutral body; centered and grounded.
  const pos=new Float32Array(bindShape.length);
  let minX=Infinity,maxX=-Infinity,minY=Infinity,minZ=Infinity,maxZ=-Infinity;
  for(let v=0;v<V;v++){
@@ -575,131 +671,102 @@ function buildSammyMixamoBridgeScene(){
  g.setAttribute("position",new THREE.BufferAttribute(pos,3));
  const triData=trianglesLow.data;
  const idx=triData instanceof Uint32Array?triData.slice():new Uint32Array(Array.from(triData,Number));
- g.setIndex(new THREE.BufferAttribute(idx,1));
- g.computeVertexNormals();
+ g.setIndex(new THREE.BufferAttribute(idx,1));g.computeVertexNormals();
 
- const skin=buildPublicTop4SkinningForExport(V,names.length);
+ const skin=buildMixamoProxySkinning(V,publicNames);
  g.setAttribute("skinIndex",new THREE.Uint16BufferAttribute(skin.skinIndex,4));
  g.setAttribute("skinWeight",new THREE.Float32BufferAttribute(skin.skinWeight,4));
 
  const mat=new THREE.MeshStandardMaterial({color:0x9a9da5,roughness:.82,metalness:0,side:THREE.DoubleSide});
- const body=new THREE.SkinnedMesh(g,mat);
- body.name="Sammy_Mixamo_Bridge_Body";
- body.frustumCulled=false;
- body.userData={
-  SammyBridgeVersion:"sammy-mixamo-bridge-browser-v1",
-  SammyPurpose:"Upload to Mixamo, apply an animation, download WITH SKIN, then import the returned FBX into Sammy.",
-  SomaPublicJointCount:78,
-  SomaVertexCount:V
- };
+ const body=new THREE.SkinnedMesh(g,mat);body.name="Sammy_Mixamo_Bridge_Body";body.frustumCulled=false;
 
- const bones=names.map((name,j)=>{
-  const b=new THREE.Bone();b.name=name;b.userData={SomaPublicIndex:j};return b
+ const bones=MIXAMO_PROXY_BONES.map((spec,i)=>{
+  const b=new THREE.Bone();b.name=spec[0];b.userData={SammyProxyIndex:i,SomaSourceJoint:spec[1]};return b
  });
- let rootId=0;
- for(let j=0;j<parents.length;j++)if(Number(parents[j])===j){rootId=j;break}
+ const proxyByName=new Map(MIXAMO_PROXY_BONES.map((b,i)=>[b[0],i]));
 
- // Apply canonical local bind matrices. The global bridge centering is added
- // only to the root translation so mesh and skeleton remain in the same space.
- for(let j=0;j<bones.length;j++){
-  const m=rowMajorMat4ToThree(bindLocal,j*16);
-  if(j===rootId){
-   const e=m.elements;
-   // Matrix4.elements is column-major internally: translation slots 12/13/14.
-   e[12]+=shift.x;e[13]+=shift.y;e[14]+=shift.z
+ // Representative SOMA world matrices define each proxy joint's bind frame.
+ const worldMats=MIXAMO_PROXY_BONES.map(spec=>{
+  const sj=publicByName.get(spec[1]);if(sj==null)throw new Error(`SOMA Source-Joint fehlt: ${spec[1]}`);
+  const m=rowMajorMat4ToThree(bindWorld,sj*16);
+  m.elements[12]+=shift.x;m.elements[13]+=shift.y;m.elements[14]+=shift.z;
+  return m
+ });
+
+ for(let i=0;i<bones.length;i++){
+  const parentName=MIXAMO_PROXY_BONES[i][2],wm=worldMats[i];
+  let lm;
+  if(parentName==null)lm=wm.clone();
+  else{
+   const pi=proxyByName.get(parentName);if(pi==null)throw new Error(`Proxy-Parent fehlt: ${parentName}`);
+   lm=worldMats[pi].clone().invert().multiply(wm)
   }
-  m.decompose(bones[j].position,bones[j].quaternion,bones[j].scale);
-  bones[j].updateMatrix()
+  lm.decompose(bones[i].position,bones[i].quaternion,bones[i].scale);bones[i].updateMatrix()
  }
- for(let j=0;j<bones.length;j++){
-  const p=Number(parents[j]);
-  if(j!==rootId&&p>=0&&p<bones.length&&p!==j)bones[p].add(bones[j])
+ for(let i=0;i<bones.length;i++){
+  const p=MIXAMO_PROXY_BONES[i][2];
+  if(p!=null)bones[proxyByName.get(p)].add(bones[i])
  }
 
- const bridge=new THREE.Group();
- bridge.name="Sammy_Mixamo_Bridge";
- bridge.userData={
-  SammyBridgeVersion:"sammy-mixamo-bridge-browser-v1",
-  Source:"NVlabs SOMA-X public-78 contract",
-  RuntimeNote:"Sammy regenerates the internal 122-joint/twist rig after motion import."
- };
- bridge.add(bones[rootId]);bridge.add(body);
- bridge.updateMatrixWorld(true);
+ const bridge=new THREE.Group();bridge.name="Sammy_Mixamo_Proxy54";
+ bridge.add(bones[0]);bridge.add(body);bridge.updateMatrixWorld(true);
 
  const skeleton=new THREE.Skeleton(bones);
- body.bind(skeleton,new THREE.Matrix4());
- body.normalizeSkinWeights();
- bridge.updateMatrixWorld(true);
+ body.bind(skeleton,new THREE.Matrix4());body.normalizeSkinWeights();bridge.updateMatrixWorld(true);
 
- const exportScene=new THREE.Scene();
- exportScene.name="Sammy_Mixamo_Bridge_Scene";
- exportScene.add(bridge);
- exportScene.updateMatrixWorld(true);
-
+ const exportScene=new THREE.Scene();exportScene.name="Sammy_Mixamo_Proxy54_Scene";exportScene.add(bridge);exportScene.updateMatrixWorld(true);
  return {scene:exportScene,body,bones,vertexCount:V,triangleCount:idx.length/3,skin,shift}
 }
+
 function disposeBridgeScene(b){
  if(!b)return;
  b.scene?.traverse?.(o=>{o.geometry?.dispose?.();if(Array.isArray(o.material))o.material.forEach(m=>m.dispose?.());else o.material?.dispose?.()})
 }
+
 async function exportSammyMixamoBridge(){
  let bridge=null;
  try{
   setState("#mixamoBridgeState","VORBEREITUNG","warn");
-  info("#mixamoBridgeInfo","Bridge-Daten werden vorbereitet …");
+  info("#mixamoBridgeInfo","Vereinfachtes Mixamo-Proxy-Rig wird vorbereitet …");
 
-  // No GitHub Action: use the exact same already-cached assets as Sammy.
   if(!shapePass){
-   info("#mixamoBridgeInfo","SOMA Topologie fehlt noch · wird jetzt automatisch geladen …");
    if(!(await loadShape()))throw new Error("SOMA Basis/Topologie konnte nicht geladen werden.")
   }
   if(!currentRigPackLoaded){
-   info("#mixamoBridgeInfo","SOMA Public-78 Rig-Pack fehlt noch · wird jetzt automatisch geladen …");
    if(!(await loadCurrentRigPack()))throw new Error("Current SOMA Rig-Pack konnte nicht geladen werden.")
   }
 
   setState("#mixamoBridgeState","BAUT FBX","warn");
   bridge=buildSammyMixamoBridgeScene();
 
-  info("#mixamoBridgeInfo",`Bridge lokal erzeugt: ${bridge.vertexCount} Vertices · ${bridge.triangleCount} Dreiecke · 78 Public-Joints.
-FBX-Writer wird einmalig geladen …`);
   const mod=await getMixamoFbxExporter();
   if(!mod?.FBXExporter)throw new Error("FBXExporter-Modul wurde geladen, exportiert aber keine FBXExporter-Klasse.");
 
   const exporter=new mod.FBXExporter();
-  // SOMA/Three is Y-up and our coordinates are meters. UnitScale=100 declares
-  // meter-sized source units in FBX while preserving a Mixamo-friendly Y-up file.
   const bytes=exporter.parseSync(bridge.scene,{
-   axisUp:"Y",
-   axisForward:"-Z",
-   unitScale:100,
-   bakeSpaceTransform:false,
-   includeAnimations:false,
-   customProperties:true,
-   creator:"Sammy / Soma-Lab Mixamo Bridge v0.5.4"
+   axisUp:"Y",axisForward:"-Z",unitScale:100,bakeSpaceTransform:false,
+   includeAnimations:false,customProperties:true,
+   creator:"Sammy Mixamo Proxy54 v0.5.5"
   });
   if(!(bytes instanceof Uint8Array)||bytes.byteLength<100000)throw new Error(`FBX-Ausgabe unerwartet klein/ungültig: ${bytes?.byteLength||0} Bytes`);
   const magic=new TextDecoder("latin1").decode(bytes.subarray(0,21));
   if(!magic.startsWith("Kaydara FBX Binary"))throw new Error("FBX-Datei hat keinen erwarteten Binary-FBX-Header.");
 
-  const filename="Sammy_Mixamo_Bridge_Public78.fbx";
+  const filename="Sammy_Mixamo_Proxy54.fbx";
   downloadBinaryFile(bytes,filename,"application/octet-stream");
-  setState("#mixamoBridgeState","FBX EXPORTIERT","ok");
+  setState("#mixamoBridgeState","PROXY EXPORTIERT","ok");
   info("#mixamoBridgeInfo",`✓ ${filename}
-${bridge.vertexCount} Vertices · ${bridge.triangleCount} Dreiecke · 78 SOMA Public-Joints
-Skinning: Top-4 für Mixamo (${bridge.skin.truncated} Vertices hatten nativ >4 Einflüsse und wurden normalisiert)
-Dateigröße: ${(bytes.byteLength/1048576).toFixed(2)} MB
-Koordinaten: Y-up · Körper zentriert · Füße auf Y=0
+54 bewusst Mixamo-nahe Bones statt des kompletten SOMA-Public-Rigs.
+Hals: Neck1/Neck2 wurden auf EINEN Mixamo-Neck reduziert; Kopf bleibt separat.
+Finger: 4 SOMA-Phalangen/End-Joints wurden auf die klassischen 3 Mixamo-Fingersegmente reduziert.
+Gesicht/Jaw/Eyes/HeadEnd und Root-Helfer werden nicht als eigene Mixamo-Bones exportiert.
+${bridge.vertexCount} Vertices · ${bridge.triangleCount} Dreiecke · ${(bytes.byteLength/1048576).toFixed(2)} MB
 
-Nächster Schritt: dieses FBX bei Mixamo als Character hochladen, Animation anwenden und anschließend FBX Binary · WITH SKIN · 30 fps herunterladen.`);
+Bitte genau dieses neue Proxy-FBX bei Mixamo hochladen und eine Animation mit deutlicher Kopf- und Fingerbewegung testen.`);
   return true
  }catch(e){
-  console.error(e);setState("#mixamoBridgeState","EXPORT FEHLER","bad");
-  info("#mixamoBridgeInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}`);
-  return false
- }finally{
-  disposeBridgeScene(bridge)
- }
+  console.error(e);setState("#mixamoBridgeState","EXPORT FEHLER","bad");info("#mixamoBridgeInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}`);return false
+ }finally{disposeBridgeScene(bridge)}
 }
 
 function buildDirectLowSkinningFromPack(prefix,jointCount){
@@ -1028,7 +1095,7 @@ async function loadAnnyPack(){
   buildAnnyControls();setAnnyUiFromParams();$("#useAnny").disabled=false;setState("#annyState","LOW PACK OK","ok");
   info("#annyInfo",`✓ EXAKTE ANNY-BLENDSHAPE-ENGINE IM BROWSER\nQuelle: ${asset.cacheHit?"persistenter iPhone-Cache":asset.source}\nAnny v${annyMeta.anny_version} · Commit ${annyMeta.source_git_sha.slice(0,12)}\nLow: 4.505 Vertices · ${annyMeta.blendshape_count} Blendshapes\nPhänotyp-Blendshapes: ${annyMeta.phenotype_blendshape_count}\nLokale Modifikatoren: ${annyMeta.local_change_labels.length}\nAlle Phänotyp-Parameter + lokale Changes werden aus den offiziellen Anny-Blendshapes rekonstruiert – kein 216-Shape-Grid mehr.`);
   return true
- }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.5.4 den neuen Workflow „Build Anny SOMA Engine v2“ einmal ausführen.`);return false}
+ }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.5.5 den neuen Workflow „Build Anny SOMA Engine v2“ einmal ausführen.`);return false}
 }
 async function loadAnnyMidPack(){
  if(annyMidLoaded)return true;
@@ -1125,9 +1192,9 @@ function applyAnnyParams(){if(shapeEngine!=="anny")setShapeEngine("anny");else u
 function updateLodButtons(){$("#lodLow").classList.toggle("selected",displayLOD==="low");$("#lodMid").classList.toggle("selected",displayLOD==="mid");$("#lodBadge").textContent=displayLOD==="mid"?"18.056 V":"4.505 V"}
 async function setDisplayLOD(lod){
  if(lod===displayLOD)return true;if(lod==="mid"){
-  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.5.4 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return false}
+  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.5.5 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return false}
   if(!await loadAnnyMidPack())return false;
-  if(poseReady&&currentRigMode==="current-expanded"&&!packOptional("target_skinning_mid_shape")){info("#lodInfo","Mid-Shape ist vorhanden, aber der aktuelle Rig-Pack enthält noch keine 18k×122 Skinweights. Bitte den v0.5.4 Engine-v2-Workflow einmal ausführen; er erneuert Rig + Anny-Packs gemeinsam.");return false}
+  if(poseReady&&currentRigMode==="current-expanded"&&!packOptional("target_skinning_mid_shape")){info("#lodInfo","Mid-Shape ist vorhanden, aber der aktuelle Rig-Pack enthält noch keine 18k×122 Skinweights. Bitte den v0.5.5 Engine-v2-Workflow einmal ausführen; er erneuert Rig + Anny-Packs gemeinsam.");return false}
  }
  displayLOD=lod;updateLodButtons();updateShape(true);return true
 }
@@ -1498,7 +1565,7 @@ async function resetSemanticModifiers(){
 async function startFullShapeAnalysis(){
  if(shapeAnalysis.running)return;
  try{
-  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.5.4 Anny direkt über die nativen Parameter testen.");
+  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.5.5 Anny direkt über die nativen Parameter testen.");
   if(currentRigMode!=="current-expanded"||!poseReady)throw new Error("Zuerst Current Expanded 122-Joint LBS in Punkt 5 aktivieren.");
   stopPoseAnimation(false);shapeAnalysis.running=true;shapeAnalysis.ready=false;shapeAnalysis.stale=false;shapeAnalysis.internal=true;
   const token=++shapeAnalysis.cancelToken,btn=$("#startShapeAnalysis"),cancel=$("#cancelShapeAnalysis");btn.disabled=true;cancel.disabled=false;
@@ -1526,7 +1593,7 @@ async function startFullShapeAnalysis(){
   info("#analysisInfo",`✓ Lokale 7×128-Mess-Jacobian am aktuellen Körper erzeugt.
 ${qualities}
 
-Wichtig: Umfang/Tiefe sind in v0.5.4 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
+Wichtig: Umfang/Tiefe sind in v0.5.5 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
   updateDecision()
  }catch(e){
   console.error(e);
@@ -2161,7 +2228,7 @@ async function loadUserAnimationFile(file){
   info("#userAnimInfo",`✓ ${name}
 Format: ${conv.format}
 Frames: ${conv.frames} · Joints: ${conv.rawJ} → ${poseJointCount} Public-Joints
-Playback: ${userAnimFps} fps · Root Translation: ${conv.hasRootTranslation?"vorhanden, v0.5.4 spielt bewusst in-place":"keine"}
+Playback: ${userAnimFps} fps · Root Translation: ${conv.hasRootTranslation?"vorhanden, v0.5.5 spielt bewusst in-place":"keine"}
 Die Animation läuft durch denselben 78→122 Procedural-Twist/LBS-Pfad wie die eingebaute NVIDIA-Animation.`);
   return true
  }catch(e){
@@ -2542,11 +2609,11 @@ function updateDecision(){
   const expanded=currentRigMode==="current-expanded";
   if(expanded&&shapeEngine==="anny"&&annyPackLoaded){
    setState("#decision","ANNY → SOMA → 122 LBS AKTIV","ok");
-   info("#decisionInfo",`✓ v0.5.4: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
+   info("#decisionInfo",`✓ v0.5.5: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
 
 Aktuell im Browser steuerbar: ALLE nativen Anny-Phänotypen (Gender, Age, Height, Weight, Muscle, Proportions, Cupsize, Firmness sowie die drei Legacy-Phenotype-Anteile) plus sämtliche lokalen Anny-Changes aus dem offiziellen Asset. Male/Female bleiben als schnelle Presets; der native Gender-Blend ist im Advanced-Bereich ebenfalls sichtbar.
 
-Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.5.4 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
+Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.5.5 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
 
 Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zentimetermaße. Das ist erst der nächste, separate Measurement-Fit.`);
   }else if(expanded&&shapeAnalysis.ready){
@@ -2562,5 +2629,5 @@ Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zen
  else if(shapePass)setState("#decision","SHAPE BESTANDEN","ok")
 }
 
-// v0.5.4: no manual boot ritual.
+// v0.5.5: no manual boot ritual.
 setTimeout(()=>autoStartRuntime(),0);
