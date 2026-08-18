@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.4.0
+# SOMA Browser PoC v0.5.0
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -253,9 +253,9 @@ Noch absichtlich **nicht als bestanden** markiert:
 Diese kommen erst nach dem realen iPhone-Pack-Test, damit wir die neue Grundlage nicht wieder in einem großen ungetesteten Umbau verstecken.
 
 
-## v0.4.0 – Current Expanded 122-Joint LBS
+## v0.5.0 – Current Expanded 122-Joint LBS
 
-Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen. v0.4.0 aktiviert nun den eigentlichen Expanded-Skinning-Pfad:
+Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen. v0.5.0 aktiviert nun den eigentlichen Expanded-Skinning-Pfad:
 
 - 77 user-facing SOMA Pose-Joints bleiben die Bedien-/Motion-Schnittstelle.
 - Intern werden die aktuellen 122 Target-Joints aus dem v0026-Rig verwendet.
@@ -267,12 +267,12 @@ Nach dem realen iPhone-Test von v0.2.0 ist der kompakte v0026-Rig-Pack bewiesen.
 - NVIDIA Motion, manuelle Joint-Slider und Shape-Regler gehen nach Aktivierung alle durch den Expanded-LBS-Pfad.
 - Rig-Debug kann zwischen Public 78 und Expanded 122 umschalten.
 
-Noch bewusst offen: das vollständige shape-adaptive **Rotation-Fitting** der offiziellen `SkeletonTransfer`-Pipeline. v0.4.0 verwendet für die Shape-Anpassung die offiziellen vorberechneten RBF-Jointpositionen und die aktuelle Procedural-Expansion, aber noch keine vollständige Browser-Portierung des Kabsch/Newton-Schulz Rotations-Fits.
+Noch bewusst offen: das vollständige shape-adaptive **Rotation-Fitting** der offiziellen `SkeletonTransfer`-Pipeline. v0.5.0 verwendet für die Shape-Anpassung die offiziellen vorberechneten RBF-Jointpositionen und die aktuelle Procedural-Expansion, aber noch keine vollständige Browser-Portierung des Kabsch/Newton-Schulz Rotations-Fits.
 
-- v0.4.0 merkt die zuletzt tatsächlich angewendete 78-Joint-Relativpose. Shape-Regler können dadurch eine laufende/aktuelle Pose nach dem Rebind wieder anwenden, statt beim Morphen ungewollt auf die Slider-Nullpose zurückzuspringen.
+- v0.5.0 merkt die zuletzt tatsächlich angewendete 78-Joint-Relativpose. Shape-Regler können dadurch eine laufende/aktuelle Pose nach dem Rebind wieder anwenden, statt beim Morphen ungewollt auf die Slider-Nullpose zurückzuspringen.
 
 
-## v0.4.0 – 122-Joint-Hierarchie reihenfolgeunabhängig
+## v0.5.0 – 122-Joint-Hierarchie reihenfolgeunabhängig
 
 Der erste echte iPhone-Test von v0.2.1 erreichte `PACK OK`, stoppte beim Aktivieren des Expanded-Rigs aber mit `122 FEHLER`. Der sichtbare Ablauf zeigte, dass der Public-Rig-Teil bereits initialisiert war und der Fehler erst beim Expanded-Posepfad auftrat.
 
@@ -284,10 +284,10 @@ Zusätzlich:
 - Bei einem 122-Fehler fällt die App sauber auf den funktionierenden Current-Public-78-Pfad zurück.
 - Im Rig-Pack-Infofeld wird die Zahl der Parent-Vorwärtsverweise angezeigt.
 
-Der vorhandene `soma_current_rig_pack_v0026.npz` und dessen persistenter Cache bleiben unverändert gültig; der GitHub-Actions-Builder muss für v0.4.0 nicht erneut ausgeführt werden.
+Der vorhandene `soma_current_rig_pack_v0026.npz` und dessen persistenter Cache bleiben unverändert gültig; der GitHub-Actions-Builder muss für v0.5.0 nicht erneut ausgeführt werden.
 
 
-## v0.4.0 – robuster Current-Rig-Pack Loader
+## v0.5.0 – robuster Current-Rig-Pack Loader
 
 Der bereits erzeugte `soma_current_rig_pack_v0026.npz` wird nicht neu erzeugt.
 
@@ -305,7 +305,7 @@ Damit darf ein kurzfristiges GitHub-Pages-/HTTP-Cache-Problem den 122-Joint-Test
 nicht mehr blockieren.
 
 
-## v0.4.0 – Joint-Name-Separator-Fix
+## v0.5.0 – Joint-Name-Separator-Fix
 
 Die v0.2.3-Fehlermeldung hat den eigentlichen Fehler sichtbar gemacht:
 Der erste erzeugte Rig-Pack speichert `target_joint_names_utf8` und
@@ -313,7 +313,7 @@ Der erste erzeugte Rig-Pack speichert `target_joint_names_utf8` und
 Newline-Zeichen. Dadurch sah der Browser die komplette Namensliste als einen
 einzigen Namen und konnte z. B. `LeftArm -> LeftForeArm` nicht auflösen.
 
-v0.4.0:
+v0.5.0:
 - liest sowohl echte Newlines als auch den bereits erzeugten Legacy-`\n`-Pack,
 - prüft 122 Target- und 78 Public-Namen explizit,
 - prüft alle Twist-Joint-Namen vor Aktivierung,
@@ -322,7 +322,7 @@ v0.4.0:
 Der vorhandene `soma_current_rig_pack_v0026.npz` muss NICHT neu erzeugt werden.
 
 
-## v0.4.0 – Shape-Space Analyzer + semantische Live-Modifier
+## v0.5.0 – Shape-Space Analyzer + semantische Live-Modifier
 
 Neuer PoC-Schritt nach bestandenem Current-v0026-122-Joint-LBS:
 
@@ -349,13 +349,13 @@ Neuer PoC-Schritt nach bestandenem Current-v0026-122-Joint-LBS:
 ### Wichtige Grenze dieses PoC
 
 Die Slider-/Solver-Architektur ist real. Die Messdefinitionen für Umfang und Tiefe
-sind in v0.4.0 aber bewusst sichtbare, rig-relative horizontale Slice-Proxies.
+sind in v0.5.0 aber bewusst sichtbare, rig-relative horizontale Slice-Proxies.
 Sie sind noch **keine** endgültig validierten anthropometrischen BODY-LAB-Maße.
 Die nächste Stufe kann diese Messfunktionen durch belastbare Landmark-/Messregeln
 ersetzen, ohne die Modifier-Architektur neu zu bauen.
 
 
-## v0.4.0 – Anny on top of the proven SOMA architecture
+## v0.5.0 – Anny on top of the proven SOMA architecture
 
 This version does **not** restart the project.
 
@@ -392,7 +392,7 @@ That is 216 rest shapes. Adult age (2/3), firmness (0.5) and equal race weights
 are fixed for this test.
 
 The browser performs multilinear interpolation inside those anchor cells. Gender
-is intentionally **discrete**: there is no male/female mixing in the v0.4.0 UI.
+is intentionally **discrete**: there is no male/female mixing in the v0.5.0 UI.
 
 The pack is low-LOD only (4505 vertices), so it is small enough for iPhone and
 persistent caching. Once an Anny rest shape is selected, the existing SOMA
@@ -418,3 +418,24 @@ Pass condition for this version is **integration stability**, not centimeter
 accuracy. No claim is made yet that Anny's native 0–1 parameters equal physical
 measurements. If the integration is stable and anatomy is visibly useful, the
 next layer is the small measurement-conditioned fitter.
+
+
+## v0.5.0 – exact Anny engine + Low/Mid + all modifiers
+
+The v0.4 grid is replaced by an exact browser representation of Anny's linear
+blendshape engine on canonical SOMA topology. GitHub Actions exports:
+
+- `anny_soma_engine_low_v060.npz` – 4,505 vertices, all phenotype + local blendshapes.
+- `anny_soma_engine_mid_v060.npz` – 18,056 vertices, same exact engine for visual/Harness inspection.
+
+The browser mirrors Anny's official phenotype coefficient logic (piecewise-linear
+anchors, multiplicative phenotype masks, normalized race weights, and the native
+positive/negative local-change pair coefficients). All `model.local_change_labels`
+are exposed dynamically and grouped from Anny's bundled `target.json` categories.
+
+The same workflow also regenerates `soma_current_rig_pack_v0026.npz` with both
+Low and Mid 122-joint skinning weights. Skeleton fitting still uses Low; Mid uses
+the same fitted 122-joint transforms with the canonical 18,056-vertex skin weights.
+
+Mid is loaded only on demand and cached persistently. This keeps startup small while
+allowing direct inspection of the smoother surface that is relevant for Harness use.

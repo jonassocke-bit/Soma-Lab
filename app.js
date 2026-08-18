@@ -14,11 +14,13 @@ const CURRENT_RIG_PACK_URL="./soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_SOURCE_SHA="86632764684281dc98f31ab9c4aac36a4cdbc428";
 
-// v0.4.0: Anny is added only as a second identity/shape source.
-// Rig, topology, pose runtime and rendering stay on the proven SOMA path.
+// v0.5.0: exact browser-side Anny blendshape engine on canonical SOMA topology.
+// Low is loaded first; Mid (18,056 verts) is an optional persistent on-demand pack.
 const ANNY_SOURCE_SHA="72104cac8242d1735ec06433b65bec5e26953ce7";
-const ANNY_PACK_URL="./anny_soma_identity_grid_v060.npz";
-const ANNY_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/anny_soma_identity_grid_v060.npz";
+const ANNY_LOW_PACK_URL="./anny_soma_engine_low_v060.npz";
+const ANNY_LOW_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/anny_soma_engine_low_v060.npz";
+const ANNY_MID_PACK_URL="./anny_soma_engine_mid_v060.npz";
+const ANNY_MID_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/anny_soma_engine_mid_v060.npz";
 
 const ASSET_DB="SomaLabAssetCache";
 const ASSET_DB_VERSION=1;
@@ -69,8 +71,9 @@ const ASSET_KEY={
  shape:"SOMA-X/v0026/SOMA_neutral.npz",
  proc:"SOMA-X/8663276/SOMA_procedural_transforms.json",
  anim:"SOMA-X/f424385d/example_animation.npy",
- currentRig:"SOMA-X/8663276/browser-current-rig-pack-v0026-low-v1",
- anny:"Anny/72104cac/soma-low-adult-identity-grid-v1"
+ currentRig:"SOMA-X/8663276/browser-current-rig-pack-v0026-low-mid-v2",
+ annyLow:"Anny/72104cac/soma-exact-engine-low-v2",
+ annyMid:"Anny/72104cac/soma-exact-engine-mid-v2"
 };
 let assetDBPromise=null;
 
@@ -172,14 +175,16 @@ const setState=(sel,txt,cls="")=>{const e=$(sel);e.textContent=txt;e.className=c
 const info=(sel,txt)=>$(sel).textContent=txt;
 
 let arrays=null, mean=null, dirs=null, eig=null, triangles=null, lowMap=null;
-let coeff=new Float32Array(128), mesh=null, geometry=null, baseLow=null, dirsLow=null, currentRestLow=null, bindShapeLow=null;
+let trianglesLow=null,trianglesMid=null,displayLOD="low";
+let coeff=new Float32Array(128), mesh=null, geometry=null, baseLow=null, dirsLow=null, currentRestLow=null,currentRestMid=null, bindShapeLow=null;
 let shapePass=false, rigPass=false, posePass=false;
 
 // Identity engine is deliberately separate from rigging.
 // Existing SOMA-PCA stays available as an A/B reference; Anny can replace only restVertices.
 let shapeEngine="soma-pca";
-let annyPack=null,annyPackLoaded=false,annyLastMs=0;
-let annyParams={gender:0,height:.5,weight:.5,muscle:.5,proportions:.5,cupsize:.5};
+let annyLowPack=null,annyMidPack=null,annyPackLoaded=false,annyMidLoaded=false,annyMeta=null,annyLastMs=0;
+let annyParams={gender:0,age:2/3,muscle:.5,weight:.5,height:.5,proportions:.5,cupsize:.5,firmness:.5,african:.5,asian:.5,caucasian:.5};
+let annyLocalValues={};
 
 // Browser-LBS state. The currently cached Hugging-Face SOMA_neutral.npz is the
 // original public SOMA v0.1 asset, whose official runtime stored the 78-joint
@@ -197,9 +202,11 @@ let currentRigPack=null,currentRigPackLoaded=false,currentRigMode="legacy-embedd
 let currentRigRbf=null,currentProcedural=null;
 let targetJointCount=0,targetParents=null,targetTLocal=null,targetBindWorldTemplate=null,targetBindWorldActive=null,targetInvBindActive=null,targetLocalTranslations=null;
 let targetBoneIndices=null,targetBoneWeights=null,targetTopK=0;
+let targetMidBoneIndices=null,targetMidBoneWeights=null,targetMidTopK=0;
+let poseMidBoneIndices=null,poseMidBoneWeights=null,poseMidTopK=0;
 let rigGroup=null,rigBoneLines=null,rigJointPoints=null,rigAxesX=null,rigAxesY=null,rigAxesZ=null;
 
-// v0.4.0 Shape-Space Analyzer.
+// v0.5.0 Shape-Space Analyzer.
 // The first semantic layer is deliberately measurement-driven: raw PCA stays the
 // engine underneath, while the UI exposes locally calibrated measurements in cm.
 const ANALYSIS_METRICS=[
@@ -295,6 +302,7 @@ function decodeUtf8Array(a){
  return new TextDecoder("utf-8").decode(u8)
 }
 function packArray(name){return currentRigPack?.[name]||null}
+function packOptional(name){return currentRigPack?.[name]||null}
 function hierarchyStats(parents){
  let roots=0,forwardRefs=0,selfRoots=0,invalid=0;
  for(let j=0;j<parents.length;j++){
@@ -413,11 +421,15 @@ async function loadCurrentRigPack(){
   ];
   const missing=required.filter(k=>!packArray(k));
   if(missing.length)throw new Error("Rig-Pack unvollständig. Fehlt: "+missing.join(", "));
+  const midRequired=["target_skinning_mid_data","target_skinning_mid_indices","target_skinning_mid_indptr","target_skinning_mid_shape","public_skinning_mid_data","public_skinning_mid_indices","public_skinning_mid_indptr","public_skinning_mid_shape"];
+  const midMissing=midRequired.filter(k=>!packArray(k));
+  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.5.0 bitte den neuen ‘Build Anny SOMA Engine v2’-Workflow einmal ausführen; danach erneut laden.")}
   if(targetNames.length<100)throw new Error(`Expanded Rig unerwartet klein: ${targetNames.length} Joints`);
   if(publicNames.length!==78)throw new Error(`Public Rig: ${publicNames.length} statt 78 Joints`);
   if(publicShape[0]!==4505||publicShape[1]!==78)throw new Error(`Public Low-Skinning unerwartet: ${JSON.stringify(publicShape)}`);
   if(targetShape[0]!==4505||targetShape[1]!==targetNames.length)throw new Error(`Target Low-Skinning unerwartet: ${JSON.stringify(targetShape)}`);
   if(rbfShape[0]!==78||rbfShape[1]!==4505)throw new Error(`RBF-Matrix unerwartet: ${JSON.stringify(rbfShape)}`);
+  targetMidBoneIndices=null;targetMidBoneWeights=null;targetMidTopK=0;poseMidBoneIndices=null;poseMidBoneWeights=null;poseMidTopK=0;
   currentRigPackLoaded=true;
   $("#activateCurrentRig").disabled=false;
   $("#activateExpandedRig").disabled=false;
@@ -429,21 +441,22 @@ Public SOMA-Rig: ${publicNames.length} Joints inkl. Root
 Low-LOD Skinning: ${targetShape[0]} Vertices × ${targetShape[1]} Target-Joints
 Public RBF Skeleton-Fit: ${rbfShape[0]} × ${rbfShape[1]} · ${packArray("public_rbf_values").data.length} Nichtnull-Gewichte
 Target-Hierarchie: ${targetHierarchyProbe.forwardRefs} Parent-Vorwärtsverweise · ${targetHierarchyProbe.invalid} ungültige Parents
+Mid-Skinning 18.056×122: ${packOptional("target_skinning_mid_shape")?"JA · bereit":"NEIN · alter Rig-Pack"}
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
 Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":`${asset.source||"Repo"} · persistent gespeichert`}
 
-Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.4.0 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.5.0 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
  }catch(e){
   console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
   info("#currentRigInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}
 
-v0.2.3 versucht den bereits erzeugten Pack in dieser Reihenfolge:
+v0.5.0 versucht den Rig-Pack in dieser Reihenfolge:
 1) persistenter iPhone-Cache
 2) GitHub Pages mit Cache-Busting
 3) raw.githubusercontent.com als Fallback
 
-Der Pack muss NICHT erneut per GitHub Action erzeugt werden, solange soma_current_rig_pack_v0026.npz im Repo liegt.`)
+Für Mid ist einmalig der neue Engine-v2-Workflow nötig, weil er den bisherigen Low-only-Rig-Pack um echte 18.056×122 Skinweights erweitert.`)
  }
 }
 function copyPackMatricesToMeters(arr){
@@ -493,6 +506,16 @@ function buildTargetLowSkinningFromPack(){
  if(empty)throw new Error(`${empty} Low-LOD-Vertices ohne Target-Skinweights`);
  return {n,J,minInflu,maxInflu,rawMax,truncated,topK:targetTopK}
 }
+function buildSparseSkinningArrays(prefix,expectedN,expectedJ,maxK=24){
+ const shape=Array.from(packArray(prefix+"_shape").data,Number),n=shape[0],J=shape[1];if(n!==expectedN||J!==expectedJ)throw new Error(`${prefix} ${n}×${J} statt ${expectedN}×${expectedJ}`);
+ const temp=Array.from({length:n},()=>[]),data=packArray(prefix+"_data").data,indices=packArray(prefix+"_indices").data,indptr=packArray(prefix+"_indptr").data;
+ for(let j=0;j<J;j++)for(let p=Number(indptr[j]);p<Number(indptr[j+1]);p++){const v=Number(indices[p]),w=Number(data[p]);if(v>=0&&v<n&&w>1e-12)temp[v].push([j,w])}
+ let rawMax=0;for(const l of temp)rawMax=Math.max(rawMax,l.length);const topK=Math.max(1,Math.min(maxK,rawMax)),bi=new Int16Array(n*topK),bw=new Float32Array(n*topK);bi.fill(-1);let empty=0;
+ for(let v=0;v<n;v++){const list=temp[v].sort((a,b)=>b[1]-a[1]).slice(0,topK);let sum=0;for(const x of list)sum+=x[1];if(sum<=0){empty++;continue}for(let k=0;k<list.length;k++){bi[v*topK+k]=list[k][0];bw[v*topK+k]=list[k][1]/sum}}
+ if(empty)throw new Error(`${prefix}: ${empty} Vertices ohne Skinweights`);return {indices:bi,weights:bw,topK,n,J,rawMax}
+}
+function ensureTargetMidSkinning(){if(targetMidBoneIndices)return true;if(!packOptional("target_skinning_mid_shape"))return false;const r=buildSparseSkinningArrays("target_skinning_mid",18056,targetJointCount,24);targetMidBoneIndices=r.indices;targetMidBoneWeights=r.weights;targetMidTopK=r.topK;return true}
+function ensurePublicMidSkinning(){if(poseMidBoneIndices)return true;if(!packOptional("public_skinning_mid_shape"))return false;const r=buildSparseSkinningArrays("public_skinning_mid",18056,poseJointCount,12);poseMidBoneIndices=r.indices;poseMidBoneWeights=r.weights;poseMidTopK=r.topK;return true}
 function v3Norm(v){const n=Math.hypot(v[0],v[1],v[2])||1;return [v[0]/n,v[1]/n,v[2]/n]}
 function v3Dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]}
 function v3Cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}
@@ -639,11 +662,11 @@ function expandedTargetWorld(publicWorld){
 }
 function skinExpandedWorld(rest,publicWorld,targetWorld,markMoved=true,report=true,label="Current Expanded LBS"){
  if(!geometry||!targetInvBindActive)return null;const t0=performance.now(),J=targetJointCount,bone=new Float32Array(J*16);for(let j=0;j<J;j++)mat4Mul(targetWorld,j*16,targetInvBindActive,j*16,bone,j*16);
- const pos=geometry.attributes.position.array,n=rest.length/3;let maxWeightErr=0;
- for(let v=0;v<n;v++){const x=rest[v*3],y=rest[v*3+1],z=rest[v*3+2];let ox=0,oy=0,oz=0,ws=0;for(let k=0;k<targetTopK;k++){const bi=targetBoneIndices[v*targetTopK+k],w=targetBoneWeights[v*targetTopK+k];if(bi<0||w<=0)continue;const bo=bi*16;ox+=w*(bone[bo]*x+bone[bo+1]*y+bone[bo+2]*z+bone[bo+3]);oy+=w*(bone[bo+4]*x+bone[bo+5]*y+bone[bo+6]*z+bone[bo+7]);oz+=w*(bone[bo+8]*x+bone[bo+9]*y+bone[bo+10]*z+bone[bo+11]);ws+=w}maxWeightErr=Math.max(maxWeightErr,Math.abs(1-ws));pos[v*3]=ox;pos[v*3+1]=oy;pos[v*3+2]=oz}
+ const pos=geometry.attributes.position.array,n=rest.length/3,useMid=n===18056;if(useMid&&!ensureTargetMidSkinning())throw new Error("Mid 122-Joint Skinweights fehlen im Rig-Pack");const bIdx=useMid?targetMidBoneIndices:targetBoneIndices,bW=useMid?targetMidBoneWeights:targetBoneWeights,topK=useMid?targetMidTopK:targetTopK;let maxWeightErr=0;
+ for(let v=0;v<n;v++){const x=rest[v*3],y=rest[v*3+1],z=rest[v*3+2];let ox=0,oy=0,oz=0,ws=0;for(let k=0;k<topK;k++){const bi=bIdx[v*topK+k],w=bW[v*topK+k];if(bi<0||w<=0)continue;const bo=bi*16;ox+=w*(bone[bo]*x+bone[bo+1]*y+bone[bo+2]*z+bone[bo+3]);oy+=w*(bone[bo+4]*x+bone[bo+5]*y+bone[bo+6]*z+bone[bo+7]);oz+=w*(bone[bo+8]*x+bone[bo+9]*y+bone[bo+10]*z+bone[bo+11]);ws+=w}maxWeightErr=Math.max(maxWeightErr,Math.abs(1-ws));pos[v*3]=ox;pos[v*3+1]=oy;pos[v*3+2]=oz}
  geometry.attributes.position.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingSphere();currentPoseWorld=publicWorld.slice();currentTargetPoseWorld=targetWorld.slice();refreshRigDebug();
  const elapsed=performance.now()-t0;if(markMoved){posePass=true;setState("#poseState","CURRENT 122-JOINT LBS","ok");updateDecision()}
- if(report)info("#posePerf",`${label}: ${elapsed.toFixed(1)} ms · ${n} Vertices · 78 Public-Joints → ${J} interne Skinning-Joints · Top-${targetTopK}\nGewichtssummenfehler max. ${maxWeightErr.toExponential(1)}\nProcedural Twist: ${currentProcedural?.segments?.length||0} Segmente · ${currentProcedural?.twistSpec?.size||0} Twist-Joints · ${currentProcedural?.mode||"?"}`);
+ if(report)info("#posePerf",`${label}: ${elapsed.toFixed(1)} ms · ${n} Vertices · 78 Public-Joints → ${J} interne Skinning-Joints · Top-${useMid?targetMidTopK:targetTopK}\nGewichtssummenfehler max. ${maxWeightErr.toExponential(1)}\nProcedural Twist: ${currentProcedural?.segments?.length||0} Segmente · ${currentProcedural?.twistSpec?.size||0} Twist-Joints · ${currentProcedural?.mode||"?"}`);
  return {ms:elapsed,maxWeightErr,world:publicWorld,targetWorld}
 }
 function applyCurrentExpandedPose(rest,relative3,markMoved=true,report=true,label="Current 122-Joint LBS"){
@@ -680,7 +703,7 @@ function activateCurrentPublicRig(){
   if(!currentRigPackLoaded)throw new Error("Zuerst Current Rig-Pack laden & prüfen.");if(!arrays||!geometry)throw new Error("Zuerst Shape-Modell laden.");stopPoseAnimation(false);currentRigMode="current-public";currentTargetPoseWorld=null;
   const w=setupCurrentPublicRigCore(),stats=fitCurrentPublicRbfPositions();
   if(stats)updateAdaptiveRigUI(`✓ CURRENT PUBLIC-RIG + OFFIZIELLE RBF-JOINTPOSITIONEN AKTIV\nRBF-fit Joints: ${stats.count}/${poseJointCount-1} · mittlere Verschiebung ${(stats.meanShift*1000).toFixed(1)} mm · max ${(stats.maxShift*1000).toFixed(1)} mm\n\nDas ist jetzt nur noch der 78-Joint-A/B-Fallback. Für die eigentliche v0.2.2-Prüfung bitte „Expanded 122-Joint LBS aktivieren“ nutzen.`,"ok");
-  poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,false);setState("#poseState","CURRENT PUBLIC 78","ok");setState("#currentRigState","PUBLIC 78 AKTIV","ok");$("#startShapeAnalysis").disabled=true;
+  poseEulerDeg.fill(0);applyPoseToRest(currentDisplayRest(),false,false);setState("#poseState","CURRENT PUBLIC 78","ok");setState("#currentRigState","PUBLIC 78 AKTIV","ok");$("#startShapeAnalysis").disabled=true;
   info("#poseInfo",`✓ Current Public-Rig als A/B-Fallback aktiv\nLow-LOD: ${w.n} Vertices · ${poseJointCount} Skinning-Joints\nShape-Anpassung: offizielle RBF-Jointpositionen`);updateDecision()
  }catch(e){console.error(e);setState("#poseState","CURRENT RIG FEHLER","bad");info("#poseInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}`)}
 }
@@ -701,7 +724,7 @@ function activateCurrentExpandedRig(){
   stage="Public RBF Shape-Fit";const stats=fitCurrentPublicRbfPositions();
   stage="Expanded Bindpose/Rebind";rebuildExpandedTargetBind();
   stage="122-Joint Skinweights";const tw=buildTargetLowSkinningFromPack();
-  stage="122-Joint Nullpose skinnen";poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,true);
+  stage="122-Joint Nullpose skinnen";poseEulerDeg.fill(0);applyPoseToRest(currentDisplayRest(),false,true);
   setState("#poseState","CURRENT 122-JOINT LBS","ok");setState("#currentRigState","122 LBS AKTIV","ok");$("#toggleDebugTopology").disabled=false;$("#startShapeAnalysis").disabled=shapeEngine!=="soma-pca";
   updateAdaptiveRigUI(`✓ CURRENT SHAPE-FIT + EXPANDED TARGET-RIG AKTIV\nPublic RBF-fit: ${stats?.count||0}/${poseJointCount-1} Joints · mittlere Verschiebung ${((stats?.meanShift||0)*1000).toFixed(1)} mm\nTarget-Bindpose daraus auf ${targetJointCount} Joints expandiert; Twist-Helfer folgen den SOMA-Procedural-Matrizen.`,"ok");
   info("#poseInfo",`✓ CURRENT v0026 EXPANDED-RIG IST JETZT DIE AKTIVE LBS-RUNTIME\nBedienung: 77 öffentliche Pose-Joints\nInternes Skinning: ${targetJointCount} Joints\nLow-LOD: ${tw.n} Vertices · Einflüsse/Vertex ${tw.minInflu}–${tw.rawMax}${tw.truncated?` · ${tw.truncated} Vertices auf Top-${tw.topK} begrenzt`:""}\nProcedural Twist: ${currentProcedural.segments.length} Segmente / ${currentProcedural.twistSpec.size} Twist-Joints\nRotationsextraktion: ${currentProcedural.mode}\nHierarchie: ${hs.forwardRefs} Parent-Vorwärtsverweise werden jetzt reihenfolgeunabhängig aufgelöst.\n\nNVIDIA-Animation, Slider und Shape-Regler laufen ab jetzt alle durch den 122-Joint-Pfad.`);updateDecision();disposeRigDebugObjects();refreshRigDebug()
@@ -710,156 +733,154 @@ function activateCurrentExpandedRig(){
   currentRigMode="current-public";currentTargetPoseWorld=null;$("#toggleDebugTopology").disabled=true;$("#startShapeAnalysis").disabled=true;
   // setupCurrentPublicRigCore() läuft vor dem Expanded-Teil; deshalb können wir auf einen
   // definierten Public-Fallback zurückfallen, statt die Runtime halb umgeschaltet zu lassen.
-  try{if(poseReady&&poseEulerDeg){poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,false)}}catch(fallbackError){console.warn("Public fallback restore failed",fallbackError)}
+  try{if(poseReady&&poseEulerDeg){poseEulerDeg.fill(0);applyPoseToRest(currentDisplayRest(),false,false)}}catch(fallbackError){console.warn("Public fallback restore failed",fallbackError)}
   setState("#poseState","122 LBS FEHLER","bad");setState("#currentRigState","122 FEHLER","bad");
   const msg=`${stage}: ${e?.name||"Fehler"}: ${e?.message||String(e)}`;info("#poseInfo",msg+(e?.stack?"\n"+e.stack:""));
   const errBox=$("#currentRigError");if(errBox){errBox.textContent="122-Aktivierung gestoppt bei „"+stage+"“\n"+(e?.message||String(e))+"\n\nDie App ist automatisch auf den funktionierenden Public-78-Fallback zurückgegangen.";errBox.classList.remove("hidden")}
  }
 }
 
-function annyArray(name){
- const a=annyPack?.[name];
- if(!a)throw new Error(`Anny-Pack Array fehlt: ${name}`);
+function currentDisplayRest(){
+ return displayLOD==="mid"&&currentRestMid?currentRestMid:currentRestLow
+}
+function currentDisplayTriangles(){
+ return displayLOD==="mid"?(trianglesMid||arrays?.triangles):(trianglesLow||arrays?.triangles_low||triangles)
+}
+function annyPackForLOD(lod){return lod==="mid"?annyMidPack:annyLowPack}
+function annyArray(name,lod="low"){
+ const a=annyPackForLOD(lod)?.[name];
+ if(!a)throw new Error(`Anny-${lod}-Pack Array fehlt: ${name}`);
  return a
 }
-async function fetchAnnyPackRobust({forceNetwork=false,onProgress=null}={}){
+async function fetchAnnyEnginePack(lod,{forceNetwork=false,onProgress=null}={}){
+ const isMid=lod==="mid",key=isMid?ASSET_KEY.annyMid:ASSET_KEY.annyLow,url=isMid?ANNY_MID_PACK_URL:ANNY_LOW_PACK_URL,raw=isMid?ANNY_MID_PACK_RAW_URL:ANNY_LOW_PACK_RAW_URL;
  if(!forceNetwork){
-  try{
-   const cached=await assetCacheGet(ASSET_KEY.anny);
-   if(cached?.buffer){
-    const u8=new Uint8Array(cached.buffer);
-    if(onProgress)onProgress(u8.byteLength,u8.byteLength,true,"persistenter iPhone-Cache");
-    return {u8,cacheHit:true,size:u8.byteLength,source:"persistenter iPhone-Cache"}
-   }
-  }catch(e){console.warn("Anny cache read failed:",e)}
+  try{const c=await assetCacheGet(key);if(c?.buffer){const u8=new Uint8Array(c.buffer);if(onProgress)onProgress(u8.byteLength,u8.byteLength,true,"persistenter iPhone-Cache");return {u8,cacheHit:true,size:u8.byteLength,source:"persistenter iPhone-Cache"}}}catch(e){console.warn("Anny cache read",e)}
  }
- const stamp=ANNY_SOURCE_SHA.slice(0,12);
- const pageUrl=new URL(ANNY_PACK_URL,document.baseURI);pageUrl.searchParams.set("anny",stamp);
- const candidates=[
-  {label:"GitHub Pages",url:pageUrl.href},
-  {label:"GitHub Raw-Fallback",url:ANNY_PACK_RAW_URL+"?anny="+encodeURIComponent(stamp)}
- ];
- const errors=[];
+ const stamp=ANNY_SOURCE_SHA.slice(0,12),page=new URL(url,document.baseURI);page.searchParams.set("anny",stamp);
+ const candidates=[{label:"GitHub Pages",url:page.href},{label:"GitHub Raw-Fallback",url:raw+"?anny="+encodeURIComponent(stamp)}],errors=[];
  for(const c of candidates){
   try{
-   if(onProgress)onProgress(0,0,false,c.label+" …");
-   const r=await fetch(c.url,{mode:"cors",cache:"no-store"});
-   if(!r.ok)throw new Error("HTTP "+r.status);
-   const u8=new Uint8Array(await r.arrayBuffer());
-   if(u8.byteLength<250000)throw new Error(`Antwort unerwartet klein: ${u8.byteLength} Bytes`);
-   if(onProgress)onProgress(u8.byteLength,u8.byteLength,false,c.label);
-   try{await assetCachePut(ASSET_KEY.anny,ANNY_PACK_URL,u8,r.headers.get("content-type")||"application/octet-stream")}catch(e){console.warn("Anny cache write failed",e)}
+   if(onProgress)onProgress(0,0,false,c.label+" …");const r=await fetch(c.url,{mode:"cors",cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);
+   const u8=new Uint8Array(await r.arrayBuffer());if(u8.byteLength<150000)throw new Error(`Antwort unerwartet klein: ${u8.byteLength} Bytes`);
+   try{await assetCachePut(key,url,u8,r.headers.get("content-type")||"application/octet-stream")}catch(e){console.warn("Anny cache write",e)}
    return {u8,cacheHit:false,size:u8.byteLength,source:c.label}
-  }catch(e){errors.push(c.label+": "+(e?.message||String(e)));console.warn(c.label,e)}
+  }catch(e){errors.push(c.label+": "+(e?.message||String(e)))}
  }
- throw new Error("Anny-Pack nicht erreichbar. "+errors.join(" · "))
+ throw new Error(`Anny-${lod}-Pack nicht erreichbar. `+errors.join(" · "))
+}
+function decodeAnnyMeta(pack){
+ const a=pack?.meta_utf8;if(!a)throw new Error("Anny meta_utf8 fehlt");return JSON.parse(decodeUtf8Array(a))
+}
+function validateAnnyPack(pack,lod){
+ const meta=decodeAnnyMeta(pack),t=pack.template_vertices,b=pack.blendshapes,m=pack.phenotype_mask;
+ if(meta.schema!=="anny-soma-browser-exact-engine-v2")throw new Error(`Anny Schema ${meta.schema||"?"} statt v2`);
+ if(meta.source_git_sha!==ANNY_SOURCE_SHA)throw new Error(`Anny Commit ${meta.source_git_sha} statt ${ANNY_SOURCE_SHA}`);
+ const expectedV=lod==="mid"?18056:4505;
+ if(t.shape?.[0]!==expectedV||t.shape?.[1]!==3)throw new Error(`${lod} template ${JSON.stringify(t.shape)} statt [${expectedV},3]`);
+ if(b.shape?.[0]!==meta.blendshape_count||b.shape?.[1]!==expectedV||b.shape?.[2]!==3)throw new Error(`${lod} blendshapes ${JSON.stringify(b.shape)} unerwartet`);
+ if(m.shape?.[0]!==meta.phenotype_blendshape_count)throw new Error("Phenotype-Mask-Zeilen passen nicht");
+ return meta
 }
 async function loadAnnyPack(){
  try{
-  if(!arrays||!baseLow)throw new Error("Zuerst in Punkt 1 das SOMA Shape-Asset laden – es liefert die kanonische Low-LOD-Zuordnung.");
-  setState("#annyState","LÄDT","warn");await requestPersistentStorage();
-  let asset=await fetchAnnyPackRobust({onProgress:(got,total,cacheHit,source)=>{
-   info("#annyInfo",cacheHit?`✓ Anny-Pack aus persistentem iPhone-Cache · ${(got/1048576).toFixed(1)} MB`
-    :`${source||"Anny-Pack"}${got?` · ${(got/1048576).toFixed(1)} MB`:""}`)
-  }});
-  try{annyPack=await decodeShapeNPZ(asset.u8)}
-  catch(firstError){
-   if(!asset.cacheHit)throw firstError;
-   await assetCacheDelete(ASSET_KEY.anny);
-   info("#annyInfo","Lokaler Anny-Pack-Cache war ungültig · wird einmalig neu geladen …");
-   asset=await fetchAnnyPackRobust({forceNetwork:true});annyPack=await decodeShapeNPZ(asset.u8)
-  }
-  const grid=annyArray("grid_rest_low"),dims=grid.shape.map(Number);
-  const expected=[2,2,3,3,2,3,baseLow.length/3,3];
-  if(dims.length!==expected.length||dims.some((v,i)=>v!==expected[i]))
-   throw new Error(`Anny grid_rest_low Shape ${JSON.stringify(dims)} statt ${JSON.stringify(expected)}`);
-  for(const k of ["gender_anchors","height_anchors","weight_anchors","muscle_anchors","proportions_anchors","cupsize_anchors"])annyArray(k);
-  annyPackLoaded=true;setState("#annyState","PACK OK","ok");
-  $("#useAnny").disabled=false;
-  const minH=Number(annyArray("height_range_m").data[0]),maxH=Number(annyArray("height_range_m").data[1]);
-  info("#annyInfo",`✓ OFFIZIELLER ANNY → SOMA LOW-LOD PACK LESBAR
-Quelle: ${asset.cacheHit?"persistenter iPhone-Cache":asset.source}
-Anny Commit: ${decodeUtf8Array(annyArray("source_git_sha"))}
-Grid: Gender 2 × Height 2 × Weight 3 × Muscle 3 × Proportions 2 × Cupsize 3
-Rest-Shapes: 216 · Vertices je Shape: ${baseLow.length/3}
-Pack-Höhenbereich: ${minH.toFixed(2)}–${maxH.toFixed(2)} m
-Fixiert für diesen PoC: Adult age = 0.667 · firmness = 0.5 · race = gleichgewichtet
-
-Wichtig: Gender wird im Browser ABSICHTLICH nicht interpoliert. Male/Female sind getrennte native Anny-Anker.`);
- }catch(e){
-  console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;
-  info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}
-
-Falls der Pack noch nicht im Repo liegt: unten „Einmalige Anny-Pack-Erstellung“ öffnen und den neuen GitHub-Action-Workflow genau einmal ausführen.`)
- }
+  if(!arrays||!baseLow)throw new Error("Zuerst Punkt 1: SOMA Shape-Asset laden – es liefert Topologie + Low-Zuordnung.");
+  setState("#annyState","LOW LÄDT","warn");await requestPersistentStorage();
+  let asset=await fetchAnnyEnginePack("low",{onProgress:(got,total,hit,src)=>info("#annyInfo",hit?`✓ Low-Pack aus persistentem Cache · ${(got/1048576).toFixed(1)} MB`:`${src||"Low-Pack"}${got?` · ${(got/1048576).toFixed(1)} MB`:""}`)});
+  try{annyLowPack=await decodeShapeNPZ(asset.u8)}catch(first){if(!asset.cacheHit)throw first;await assetCacheDelete(ASSET_KEY.annyLow);asset=await fetchAnnyEnginePack("low",{forceNetwork:true});annyLowPack=await decodeShapeNPZ(asset.u8)}
+  annyMeta=validateAnnyPack(annyLowPack,"low");annyPackLoaded=true;annyLocalValues=Object.fromEntries(annyMeta.local_change_labels.map(x=>[x,0]));
+  buildAnnyControls();setAnnyUiFromParams();$("#useAnny").disabled=false;setState("#annyState","LOW PACK OK","ok");
+  info("#annyInfo",`✓ EXAKTE ANNY-BLENDSHAPE-ENGINE IM BROWSER\nQuelle: ${asset.cacheHit?"persistenter iPhone-Cache":asset.source}\nAnny v${annyMeta.anny_version} · Commit ${annyMeta.source_git_sha.slice(0,12)}\nLow: 4.505 Vertices · ${annyMeta.blendshape_count} Blendshapes\nPhänotyp-Blendshapes: ${annyMeta.phenotype_blendshape_count}\nLokale Modifikatoren: ${annyMeta.local_change_labels.length}\nAlle Phänotyp-Parameter + lokale Changes werden aus den offiziellen Anny-Blendshapes rekonstruiert – kein 216-Shape-Grid mehr.`);
+ }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.5.0 den neuen Workflow „Build Anny SOMA Engine v2“ einmal ausführen.`)}
 }
-function bracketAnchors(key,value){
- const a=Array.from(annyArray(key).data,Number);
- if(value<=a[0])return [0,0,0];
- if(value>=a[a.length-1])return [a.length-1,a.length-1,0];
- for(let i=0;i<a.length-1;i++)if(value>=a[i]&&value<=a[i+1]){
-  const t=(value-a[i])/(a[i+1]-a[i]);return [i,i+1,t]
+async function loadAnnyMidPack(){
+ if(annyMidLoaded)return true;
+ try{
+  setState("#annyMidState","MID LÄDT","warn");let asset=await fetchAnnyEnginePack("mid");
+  try{annyMidPack=await decodeShapeNPZ(asset.u8)}catch(first){if(!asset.cacheHit)throw first;await assetCacheDelete(ASSET_KEY.annyMid);asset=await fetchAnnyEnginePack("mid",{forceNetwork:true});annyMidPack=await decodeShapeNPZ(asset.u8)}
+  const meta=validateAnnyPack(annyMidPack,"mid");if(meta.blendshape_count!==annyMeta.blendshape_count)throw new Error("Low/Mid Blendshape-Anzahl weicht ab");
+  annyMidLoaded=true;setState("#annyMidState","MID PACK OK","ok");info("#lodInfo",`✓ Mid-Pack: 18.056 Vertices · ${(asset.size/1048576).toFixed(1)} MB · ${asset.cacheHit?"persistenter Cache":"persistent gespeichert"}`);return true
+ }catch(e){console.error(e);setState("#annyMidState","MID FEHLER","bad");info("#lodInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}`);return false}
+}
+function linearAnchorWeights(value,anchors){
+ const a=anchors.map(Number),w=new Float64Array(a.length);if(value<=a[0]){w[0]=1;return w}if(value>=a[a.length-1]){w[a.length-1]=1;return w}
+ for(let i=0;i<a.length-1;i++)if(value>=a[i]&&value<=a[i+1]){const t=(value-a[i])/(a[i+1]-a[i]);w[i]=1-t;w[i+1]=t;return w}w[0]=1;return w
+}
+function computeAnnyCoefficients(){
+ if(!annyMeta)throw new Error("Anny Meta fehlt");const vw=new Float64Array(annyMeta.variation_names.length),index=new Map(annyMeta.variation_names.map((n,i)=>[n,i]));
+ for(const feature of annyMeta.variation_order){
+  const names=annyMeta.phenotype_variations[feature];
+  if(feature==="race"){
+   const vals=[Math.max(0,annyParams.african),Math.max(0,annyParams.asian),Math.max(0,annyParams.caucasian)],sum=vals[0]+vals[1]+vals[2];
+   for(let i=0;i<names.length;i++)vw[index.get(names[i])]=sum>1e-12?vals[i]/sum:1/3
+  }else{
+   const ws=linearAnchorWeights(Number(annyParams[feature]??.5),annyMeta.anchors[feature]);for(let i=0;i<names.length;i++)vw[index.get(names[i])]=ws[i]
+  }
  }
- return [0,0,0]
+ const P=annyMeta.phenotype_blendshape_count,mask=annyArray("phenotype_mask","low").data,C=annyMeta.variation_names.length,out=new Float32Array(annyMeta.blendshape_count);
+ for(let r=0;r<P;r++){let x=1;for(let c=0;c<C;c++)if(Number(mask[r*C+c])>.5)x*=vw[c];out[r]=x}
+ let o=P;for(const label of annyMeta.local_change_labels){const v=Number(annyLocalValues[label]||0);out[o++]=Math.max(v,0);out[o++]=Math.max(-v,0)}
+ if(o!==out.length)throw new Error(`Anny coefficients ${o} statt ${out.length}`);return out
+}
+function reconstructAnnyLOD(lod,coeffs,out){
+ const pack=annyPackForLOD(lod);if(!pack)throw new Error(`Anny ${lod} Pack fehlt`);const t=pack.template_vertices.data,b=pack.blendshapes.data,N=t.length;
+ if(!out||out.length!==N)out=new Float32Array(N);for(let i=0;i<N;i++)out[i]=Number(t[i]);
+ for(let a=0;a<coeffs.length;a++){const c=coeffs[a];if(Math.abs(c)<1e-8)continue;const off=a*N;for(let i=0;i<N;i++)out[i]+=Number(b[off+i])*c}
+ return out
 }
 function rebuildAnnyRestShape(){
- if(!annyPackLoaded)throw new Error("Anny-Pack noch nicht geladen");
- const t0=performance.now(),grid=annyArray("grid_rest_low").data,V=baseLow.length/3,stride=V*3;
- if(!currentRestLow||currentRestLow.length!==stride)currentRestLow=new Float32Array(stride);
- currentRestLow.fill(0);
- const g=annyParams.gender>=.5?1:0;
- const hb=bracketAnchors("height_anchors",annyParams.height),wb=bracketAnchors("weight_anchors",annyParams.weight),
-       mb=bracketAnchors("muscle_anchors",annyParams.muscle),pb=bracketAnchors("proportions_anchors",annyParams.proportions),
-       cb=bracketAnchors("cupsize_anchors",g?annyParams.cupsize:.5);
- const axes=[hb,wb,mb,pb,cb],sizes=[2,3,3,2,3];
- for(let mask=0;mask<32;mask++){
-  const ids=[],ws=[];let weight=1;
-  for(let a=0;a<5;a++){
-   const [lo,hi,t]=axes[a],useHi=(mask>>a)&1;
-   if(lo===hi){ids[a]=lo;if(useHi){weight=0;break}}
-   else{ids[a]=useHi?hi:lo;weight*=useHi?t:(1-t)}
-  }
-  if(weight===0)continue;
-  const [h,w,m,p,c]=ids;
-  const shapeIndex=(((((g*sizes[0]+h)*sizes[1]+w)*sizes[2]+m)*sizes[3]+p)*sizes[4]+c);
-  const off=shapeIndex*stride;
-  for(let i=0;i<stride;i++)currentRestLow[i]+=Number(grid[off+i])*weight
- }
- annyLastMs=performance.now()-t0;return currentRestLow
+ const t0=performance.now(),cs=computeAnnyCoefficients();
+ if(displayLOD==="mid"){
+  if(!annyMidLoaded)throw new Error("Mid-Pack noch nicht geladen");currentRestMid=reconstructAnnyLOD("mid",cs,currentRestMid);
+  if(!currentRestLow||currentRestLow.length!==lowMap.data.length*3)currentRestLow=new Float32Array(lowMap.data.length*3);
+  for(let i=0;i<lowMap.data.length;i++){const s=Number(lowMap.data[i])*3,d=i*3;currentRestLow[d]=currentRestMid[s];currentRestLow[d+1]=currentRestMid[s+1];currentRestLow[d+2]=currentRestMid[s+2]}
+ }else currentRestLow=reconstructAnnyLOD("low",cs,currentRestLow);
+ annyLastMs=performance.now()-t0;return currentDisplayRest()
 }
+function prettyAnnyLabel(s){return s.replace(/-decr-incr$/," ↓/↑").replace(/-down-up$/," ↓/↑").replace(/-/g," ").replace(/\b\w/g,m=>m.toUpperCase())}
+function prettyAnnyCategory(s){const map={torso:"Torso",breast:"Brust",stomach:"Bauch",buttocks:"Gesäß",arms:"Arme",legs:"Beine",hands:"Hände",feet:"Füße",neck:"Hals",head:"Kopf",cheek:"Wangen",chin:"Kinn",ears:"Ohren",eyes:"Augen",forehead:"Stirn",jaw:"Kiefer",mouth:"Mund",nose:"Nase",genitals:"Genitalbereich"};return map[s]||prettyAnnyLabel(s)}
+function makeAnnySlider(label,key,min,max,step,value,onInput,raw=""){
+ const row=document.createElement("div");row.className="slider annySlider";row.dataset.search=(label+" "+raw).toLowerCase();row.innerHTML=`<label>${label}${raw?`<small>${raw}</small>`:""}</label><input type="range" min="${min}" max="${max}" step="${step}" value="${value}"><output>${Number(value).toFixed(2)}</output>`;
+ const r=row.querySelector("input"),o=row.querySelector("output");r.oninput=()=>{o.value=Number(r.value).toFixed(2);onInput(Number(r.value))};return row
+}
+function buildAnnyControls(){
+ if(!annyMeta)return;const core=$("#annyCoreControls"),adv=$("#annyAdvancedPhenotypes"),groups=$("#annyLocalGroups");core.innerHTML="";adv.innerHTML="";groups.innerHTML="";
+ const coreDefs=[["Age","age",annyMeta.anchors.age[0],annyMeta.anchors.age.at(-1),.01],["Height","height",0,1,.01],["Weight","weight",0,1,.01],["Muscle","muscle",0,1,.01],["Proportions","proportions",0,1,.01],["Cupsize","cupsize",0,1,.01],["Firmness","firmness",0,1,.01]];
+ for(const [label,key,min,max,step] of coreDefs)core.appendChild(makeAnnySlider(`Anny ${label}`,key,min,max,step,annyParams[key],v=>{annyParams[key]=v;applyAnnyParams()}));
+ adv.appendChild(makeAnnySlider("Native Gender Blend","gender",0,1,.01,annyParams.gender,v=>{annyParams.gender=v;applyAnnyParams()},"0 = male · 1 = female"));
+ for(const key of ["african","asian","caucasian"])adv.appendChild(makeAnnySlider(`Phenotype ${key[0].toUpperCase()+key.slice(1)}`,key,0,1,.01,annyParams[key],v=>{annyParams[key]=v;applyAnnyParams()},"artist-authored legacy phenotype"));
+ const by={};for(const label of annyMeta.local_change_labels){const cat=annyMeta.local_change_categories[label]||"other";(by[cat]??=[]).push(label)}
+ const order=[...(annyMeta.category_order||[]),...Object.keys(by).filter(x=>!(annyMeta.category_order||[]).includes(x))];
+ for(const cat of order){if(!by[cat]?.length)continue;const d=document.createElement("details");d.className="annyLocalCategory";d.innerHTML=`<summary>${prettyAnnyCategory(cat)} <small>${by[cat].length}</small></summary><div class="annyLocalRows"></div>`;const box=d.querySelector(".annyLocalRows");for(const label of by[cat].sort())box.appendChild(makeAnnySlider(prettyAnnyLabel(label),label,-1,1,.05,0,v=>{annyLocalValues[label]=v;applyAnnyParams()},label));groups.appendChild(d)}
+ $("#annyLocalSummary").textContent=`Alle lokalen Anny-Modifikatoren (${annyMeta.local_change_labels.length})`;
+ $("#annySearch").oninput=filterAnnyLocalControls
+}
+function filterAnnyLocalControls(){const q=$("#annySearch").value.trim().toLowerCase();document.querySelectorAll("#annyLocalGroups .annySlider").forEach(r=>r.hidden=!!q&&!r.dataset.search.includes(q));document.querySelectorAll("#annyLocalGroups .annyLocalCategory").forEach(d=>{const shown=[...d.querySelectorAll(".annySlider")].some(r=>!r.hidden);d.hidden=!shown;if(q&&shown)d.open=true})}
 function setAnnyUiFromParams(){
- $("#annyMale").classList.toggle("selected",annyParams.gender<.5);
- $("#annyFemale").classList.toggle("selected",annyParams.gender>=.5);
- const pairs=[["annyHeight","height"],["annyWeight","weight"],["annyMuscle","muscle"],["annyProportions","proportions"],["annyCup","cupsize"]];
- for(const [id,key] of pairs){const r=$("#"+id),o=$("#"+id+"Out");if(r)r.value=annyParams[key];if(o)o.value=Number(annyParams[key]).toFixed(2)}
- $("#annyCup").disabled=annyParams.gender<.5;
+ $("#annyMale").classList.toggle("selected",annyParams.gender<=.001);$("#annyFemale").classList.toggle("selected",annyParams.gender>=.999);
+ const keys=["age","height","weight","muscle","proportions","cupsize","firmness","gender","african","asian","caucasian"];
+ document.querySelectorAll("#annyCoreControls .annySlider,#annyAdvancedPhenotypes .annySlider").forEach(row=>{const raw=row.querySelector("label small")?.textContent||"",label=row.querySelector("label")?.childNodes[0]?.textContent||"";let key=keys.find(k=>label.toLowerCase().includes(k));if(label.includes("Gender"))key="gender";if(key&&key in annyParams){row.querySelector("input").value=annyParams[key];row.querySelector("output").value=Number(annyParams[key]).toFixed(2)}})
 }
+function resetAnnyLocal(){for(const k of Object.keys(annyLocalValues))annyLocalValues[k]=0;document.querySelectorAll("#annyLocalGroups input").forEach(r=>{r.value=0;r.closest(".slider").querySelector("output").value="0.00"});applyAnnyParams()}
+function resetAnnyPreset(gender){annyParams={gender,age:2/3,muscle:.5,weight:.5,height:.5,proportions:.5,cupsize:.5,firmness:.5,african:.5,asian:.5,caucasian:.5};resetAnnyLocal();setAnnyUiFromParams()}
 function setShapeEngine(engine){
- if(engine==="anny"&&!annyPackLoaded){info("#annyInfo","Anny-Pack zuerst laden.");return}
- shapeEngine=engine;
- document.querySelectorAll("#sliders input,#random,#reset").forEach(x=>x.disabled=engine==="anny");
- $("#useAnny").classList.toggle("selected",engine==="anny");$("#useSoma").classList.toggle("selected",engine==="soma-pca");
- if(engine==="anny"){
-  shapeAnalysis.ready=false;shapeAnalysis.stale=true;$("#startShapeAnalysis").disabled=true;
-  setState("#pcaState","A/B REFERENZ","warn");setState("#annyState","ANNY AKTIV","ok");
- }else{
-  setState("#pcaState","AKTIV","ok");setState("#annyState",annyPackLoaded?"PACK OK":"BEREIT",annyPackLoaded?"ok":"");
-  $("#startShapeAnalysis").disabled=!(currentRigMode==="current-expanded");
- }
+ if(engine==="anny"&&!annyPackLoaded){info("#annyInfo","Anny Low-Pack zuerst laden.");return}
+ if(engine==="soma-pca"&&displayLOD==="mid")displayLOD="low";shapeEngine=engine;updateLodButtons();
+ document.querySelectorAll("#sliders input,#random,#reset").forEach(x=>x.disabled=engine==="anny");$("#useAnny").classList.toggle("selected",engine==="anny");$("#useSoma").classList.toggle("selected",engine==="soma-pca");
+ if(engine==="anny"){shapeAnalysis.ready=false;shapeAnalysis.stale=true;$("#startShapeAnalysis").disabled=true;setState("#pcaState","A/B REFERENZ","warn");setState("#annyState","ANNY AKTIV","ok")}else{setState("#pcaState","AKTIV","ok");setState("#annyState",annyPackLoaded?"PACK OK":"BEREIT",annyPackLoaded?"ok":"");$("#startShapeAnalysis").disabled=!(currentRigMode==="current-expanded")}
  updateShape();updateDecision()
 }
-function applyAnnyParams(){
- if(shapeEngine!=="anny")setShapeEngine("anny");else updateShape();
- setAnnyUiFromParams();
- if(poseReady){
-  try{
-   const m=measureCurrentRestShape();
-   info("#annyLiveInfo",`Anny live: ${annyParams.gender<.5?"MALE":"FEMALE"} · native H ${annyParams.height.toFixed(2)} · W ${annyParams.weight.toFixed(2)} · Muscle ${annyParams.muscle.toFixed(2)} · Proportions ${annyParams.proportions.toFixed(2)}${annyParams.gender>=.5?` · Cup ${annyParams.cupsize.toFixed(2)}`:""}
-Browser-Interpolation: ${annyLastMs.toFixed(1)} ms
-Mess-Proxies am aktuellen Restkörper: Höhe ${m.height.toFixed(1)} cm · Brust ${m.chestCirc.toFixed(1)} · Taille ${m.waistCirc.toFixed(1)} · Hüfte ${m.hipCirc.toFixed(1)} cm
-Das sind noch keine final validierten Schneidermaße.`)
-  }catch(e){info("#annyLiveInfo",`Anny live · Browser-Interpolation ${annyLastMs.toFixed(1)} ms · Rig/Messung noch nicht aktiv.`)}
- }else info("#annyLiveInfo",`Anny live · Browser-Interpolation ${annyLastMs.toFixed(1)} ms · aktiviere anschließend das 122-Joint-Rig für Shape+Pose-Test.`)
+function applyAnnyParams(){if(shapeEngine!=="anny")setShapeEngine("anny");else updateShape();setAnnyUiFromParams();
+ try{const m=measureCurrentRestShape();info("#annyLiveInfo",`Anny exakt · Gender ${annyParams.gender.toFixed(2)} · Age ${annyParams.age.toFixed(2)} · H ${annyParams.height.toFixed(2)} · W ${annyParams.weight.toFixed(2)} · Muscle ${annyParams.muscle.toFixed(2)} · Proportions ${annyParams.proportions.toFixed(2)} · Cup ${annyParams.cupsize.toFixed(2)}\nAktive lokale Changes: ${Object.values(annyLocalValues).filter(v=>Math.abs(v)>1e-6).length} · Rekonstruktion ${annyLastMs.toFixed(1)} ms · Display ${displayLOD.toUpperCase()}\nMess-Proxies: Höhe ${m.height.toFixed(1)} cm · Brust ${m.chestCirc.toFixed(1)} · Taille ${m.waistCirc.toFixed(1)} · Hüfte ${m.hipCirc.toFixed(1)} cm`)}catch(e){info("#annyLiveInfo",`Anny exakt · ${displayLOD.toUpperCase()} · ${annyLastMs.toFixed(1)} ms`)}
+}
+function updateLodButtons(){$("#lodLow").classList.toggle("selected",displayLOD==="low");$("#lodMid").classList.toggle("selected",displayLOD==="mid");$("#lodBadge").textContent=displayLOD==="mid"?"18.056 V":"4.505 V"}
+async function setDisplayLOD(lod){
+ if(lod===displayLOD)return;if(lod==="mid"){
+  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.5.0 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return}
+  if(!await loadAnnyMidPack())return;
+  if(poseReady&&currentRigMode==="current-expanded"&&!packOptional("target_skinning_mid_shape")){info("#lodInfo","Mid-Shape ist vorhanden, aber der aktuelle Rig-Pack enthält noch keine 18k×122 Skinweights. Bitte den v0.5.0 Engine-v2-Workflow einmal ausführen; er erneuert Rig + Anny-Packs gemeinsam.");return}
+ }
+ displayLOD=lod;updateLodButtons();updateShape(true)
 }
 
 async function fetchShapeAsset(forceNetwork=false){
@@ -939,7 +960,7 @@ function buildLowData(){
   dirsLow[doff+1]=Number(dirs.data[so+1])/100;
   dirsLow[doff+2]=Number(dirs.data[so+2])/100
  }
- if(useLow&&arrays.triangles_low)triangles=arrays.triangles_low;
+ trianglesMid=arrays.triangles||triangles;trianglesLow=arrays.triangles_low||triangles;if(useLow&&arrays.triangles_low)triangles=arrays.triangles_low;
  bindShapeLow=null;
  if(arrays.bind_shape){
   bindShapeLow=new Float32Array(n*3);
@@ -951,14 +972,12 @@ function buildLowData(){
   }
  }
 }
-function buildMesh(){
- geometry?.dispose();if(mesh)scene.remove(mesh);
- geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.BufferAttribute(currentRestLow.slice(),3));
- const idx=triangles.data instanceof Int32Array?new Uint32Array(triangles.data):new Uint32Array(Array.from(triangles.data,Number));
- geometry.setIndex(new THREE.BufferAttribute(idx,1));geometry.computeVertexNormals();
- mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:0xc8c9cf,roughness:.78,metalness:0,side:THREE.DoubleSide}));
- scene.add(mesh);setState("#meshState","GERENDERT","ok");setState("#pcaState","AKTIV","ok");frame();
- info("#meshInfo",`✓ ${currentRestLow.length/3} Vertices · ${idx.length/3} Dreiecke · Three.js WebGL`)
+function buildMesh(doFrame=true){
+ const rest=currentDisplayRest();if(!rest)return;geometry?.dispose();if(mesh)scene.remove(mesh);
+ geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.BufferAttribute(rest.slice(),3));const tri=currentDisplayTriangles();
+ const idx=tri.data instanceof Int32Array?new Uint32Array(tri.data):new Uint32Array(Array.from(tri.data,Number));geometry.setIndex(new THREE.BufferAttribute(idx,1));geometry.computeVertexNormals();
+ mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:0xc8c9cf,roughness:.78,metalness:0,side:THREE.DoubleSide}));scene.add(mesh);setState("#meshState","GERENDERT","ok");if(shapeEngine==="soma-pca")setState("#pcaState","AKTIV","ok");if(doFrame)frame();
+ info("#meshInfo",`✓ ${rest.length/3} Vertices · ${idx.length/3} Dreiecke · ${displayLOD.toUpperCase()} · Three.js WebGL`)
 }
 function rebuildSomaPcaRestShape(){
  if(!currentRestLow||currentRestLow.length!==baseLow.length)currentRestLow=new Float32Array(baseLow.length);
@@ -972,11 +991,13 @@ function rebuildSomaPcaRestShape(){
  return currentRestLow
 }
 function rebuildRestShape(){
+ if(shapeEngine!=="anny"&&displayLOD!=="low"){displayLOD="low";updateLodButtons()}
  return shapeEngine==="anny"?rebuildAnnyRestShape():rebuildSomaPcaRestShape()
 }
 function updateShape(){
  if(!geometry)return;
  const t0=performance.now(),rest=rebuildRestShape();
+ if(!geometry||geometry.attributes.position.array.length!==rest.length)buildMesh(false);
  if(poseReady){
   if(rigAdaptiveEnabled)recomputeAdaptiveRig();
   if(lastAppliedRelative3&&lastAppliedRelative3.length===poseJointCount*9)applyRelativePoseMatrices(rest,lastAppliedRelative3,false,false,"Shape-Rebind + aktuelle Pose");
@@ -988,7 +1009,7 @@ function updateShape(){
  const engineText=shapeEngine==="anny"
   ?`Anny native Grid · ${annyParams.gender<.5?"Male":"Female"} · H ${annyParams.height.toFixed(2)} · W ${annyParams.weight.toFixed(2)}`
   :"SOMA PCA · 128 Komponenten";
- info("#shapePerf",`Letzte komplette Shape-Rekonstruktion: ${(performance.now()-t0).toFixed(1)} ms · ${engineText} · Low-LOD ${rest.length/3} Vertices${poseReady?" · Rig-Rebind + aktuelle Pose erneut angewendet":""}`)
+ info("#shapePerf",`Letzte komplette Shape-Rekonstruktion: ${(performance.now()-t0).toFixed(1)} ms · ${engineText} · ${displayLOD.toUpperCase()} ${rest.length/3} Vertices${poseReady?" · Rig-Rebind + aktuelle Pose erneut angewendet":""}`)
 }
 
 function nextPaint(delay=18){
@@ -1121,7 +1142,7 @@ function analyzerIdentityRelative(){
 function applyAnalyzerRest(rest,relative=null){
  currentRestLow.set(rest);
  recomputeAdaptiveRig();
- return applyRelativePoseMatrices(currentRestLow,relative||analyzerIdentityRelative(),false,false,"Shape-Analyzer live")
+ return applyRelativePoseMatrices(currentDisplayRest(),relative||analyzerIdentityRelative(),false,false,"Shape-Analyzer live")
 }
 function makePerturbedRest(baseRest,k,signedDelta,out){
  out.set(baseRest);
@@ -1228,14 +1249,14 @@ async function resetSemanticModifiers(){
 async function startFullShapeAnalysis(){
  if(shapeAnalysis.running)return;
  try{
-  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.4.0 Anny direkt über die nativen Parameter testen.");
+  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.5.0 Anny direkt über die nativen Parameter testen.");
   if(currentRigMode!=="current-expanded"||!poseReady)throw new Error("Zuerst Current Expanded 122-Joint LBS in Punkt 5 aktivieren.");
   stopPoseAnimation(false);shapeAnalysis.running=true;shapeAnalysis.ready=false;shapeAnalysis.stale=false;shapeAnalysis.internal=true;
   const token=++shapeAnalysis.cancelToken,btn=$("#startShapeAnalysis"),cancel=$("#cancelShapeAnalysis");btn.disabled=true;cancel.disabled=false;
   setState("#analysisState","SCAN LÄUFT","warn");$("#analysisBar").style.width="0%";
   info("#analysisInfo","Die App schaltet für die Messung in die T-Pose und fährt jetzt jeden der 128 SOMA-PCs sichtbar mit ±0,35σ ab. Das Modell im Viewport ist dabei der reale Scan – keine Hintergrundsimulation.");
-  const identity=analyzerIdentityRelative();poseEulerDeg?.fill(0);syncPoseSlidersFromJoint();applyRelativePoseMatrices(currentRestLow,identity,false,false,"Analyzer T-Pose");
-  shapeAnalysis.baseCoeff=Float32Array.from(coeff);shapeAnalysis.baseRest=Float32Array.from(rebuildRestShape());currentRestLow.set(shapeAnalysis.baseRest);recomputeAdaptiveRig();applyRelativePoseMatrices(currentRestLow,identity,false,false,"Analyzer Basis");
+  const identity=analyzerIdentityRelative();poseEulerDeg?.fill(0);syncPoseSlidersFromJoint();applyRelativePoseMatrices(currentDisplayRest(),identity,false,false,"Analyzer T-Pose");
+  shapeAnalysis.baseCoeff=Float32Array.from(coeff);shapeAnalysis.baseRest=Float32Array.from(rebuildRestShape());currentRestLow.set(shapeAnalysis.baseRest);recomputeAdaptiveRig();applyRelativePoseMatrices(currentDisplayRest(),identity,false,false,"Analyzer Basis");
   const base=measureCurrentRestShape();shapeAnalysis.baseMetrics=base;shapeAnalysis.lastMetrics=base;renderAnalyzerMetrics(base);updateMeasurementOverlay(base);
   const M=ANALYSIS_METRICS.length,K=128,J=Array.from({length:M},()=>new Float32Array(K)),plusRest=new Float32Array(shapeAnalysis.baseRest.length),minusRest=new Float32Array(shapeAnalysis.baseRest.length),delta=shapeAnalysis.scanDelta;
   for(let k=0;k<K;k++){
@@ -1256,7 +1277,7 @@ async function startFullShapeAnalysis(){
   info("#analysisInfo",`✓ Lokale 7×128-Mess-Jacobian am aktuellen Körper erzeugt.
 ${qualities}
 
-Wichtig: Umfang/Tiefe sind in v0.4.0 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
+Wichtig: Umfang/Tiefe sind in v0.5.0 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
   updateDecision()
  }catch(e){
   console.error(e);
@@ -1404,7 +1425,7 @@ function applySingleJointDebug(deg){
  const a=axis==="X"?0:axis==="Y"?1:2;
  poseEulerDeg[j*3+a]=deg;
  syncPoseSlidersFromJoint();
- applyPoseToRest(currentRestLow,true,true);
+ applyPoseToRest(currentDisplayRest(),true,true);
  info("#rigDebugInfo",`Einzelgelenk-Test: ${PUBLIC_JOINT_NAMES[j]||j} · Achse ${axis} · ${deg>=0?'+':''}${deg}°. Wenn das sichtbar viel stärker oder um eine unerwartete Achse wirkt, steckt der Restfehler weiterhin in der Pose-Interpretation und nicht nur im fehlenden Twist-Rig.`)
 }
 
@@ -1561,7 +1582,7 @@ function setAdaptiveRigEnabled(enabled,refreshPose=true){
  const stats=recomputeAdaptiveRig();
  const btn=$("#toggleAdaptiveRig");
  if(btn)btn.textContent=rigAdaptiveEnabled?"Adaptive Rig AUS":"Adaptive Rig AN";
- if(poseReady&&refreshPose)applyPoseToRest(currentRestLow,false,false);
+ if(poseReady&&refreshPose)applyPoseToRest(currentDisplayRest(),false,false);
  return stats
 }
 
@@ -1628,7 +1649,7 @@ function buildPoseControls(){
    stopPoseAnimation(false);
    const j=Number(sel.value),a=axis==="X"?0:axis==="Y"?1:2;
    poseEulerDeg[j*3+a]=Number(r.value);o.value=`${Number(r.value).toFixed(0)}°`;
-   applyPoseToRest(currentRestLow,true)
+   applyPoseToRest(currentDisplayRest(),true)
   }
  }
  syncPoseSlidersFromJoint();
@@ -1645,7 +1666,7 @@ function syncPoseSlidersFromJoint(){
 function clearPose(){
  if(!poseEulerDeg)return;
  stopPoseAnimation(false);
- poseEulerDeg.fill(0);syncPoseSlidersFromJoint();applyPoseToRest(currentRestLow,true)
+ poseEulerDeg.fill(0);syncPoseSlidersFromJoint();applyPoseToRest(currentDisplayRest(),true)
 }
 function setJointEuler(name,x=0,y=0,z=0){
  const j=jointIndex(name);if(j<0||j>=poseJointCount)return;
@@ -1730,7 +1751,7 @@ function posePreset(kind){
   setFingerCurl("Right",58)
  }
 
- syncPoseSlidersFromJoint();applyPoseToRest(currentRestLow,true)
+ syncPoseSlidersFromJoint();applyPoseToRest(currentDisplayRest(),true)
 }
 
 // Synthetic poses use the now verified SOMA relative-joint convention.
@@ -1891,7 +1912,7 @@ function stopPoseAnimation(resetPose=false){
  $("#animStress")?.classList.remove("activeAnim");
  if($("#animState"))setState("#animState","STOP","warn");
  if(resetPose&&poseEulerDeg){
-  poseEulerDeg.fill(0);syncPoseSlidersFromJoint();applyPoseToRest(currentRestLow,true)
+  poseEulerDeg.fill(0);syncPoseSlidersFromJoint();applyPoseToRest(currentDisplayRest(),true)
  }
 }
 function updatePoseAnimation(now){
@@ -1905,11 +1926,11 @@ function updatePoseAnimation(now){
  if(poseAnimMode==="official"){
   const f=Math.floor(seconds*officialAnimFps)%officialAnimFrames;
   const off=f*poseJointCount*9;
-  r=applyRelativePoseMatrices(currentRestLow,officialAnimRel.subarray(off,off+poseJointCount*9),false,false,"NVIDIA-Motion")
+  r=applyRelativePoseMatrices(currentDisplayRest(),officialAnimRel.subarray(off,off+poseJointCount*9),false,false,"NVIDIA-Motion")
  }else{
   if(poseAnimMode==="stress")setRigStressAnimationPose(seconds);
   else setWalkAnimationPose(seconds);
-  r=applyPoseToRest(currentRestLow,false,false)
+  r=applyPoseToRest(currentDisplayRest(),false,false)
  }
  if(!r)return;
  posePass=true;
@@ -1922,7 +1943,7 @@ function updatePoseAnimation(now){
   const avg=poseAnimFrames?poseAnimLbsSum/poseAnimFrames:0;
   const animLabel=poseAnimMode==="official"?"NVIDIA example_animation":poseAnimMode==="walk"?"Gang-Loop":"Rig-Stress";
   info("#animPerf",`${animLabel} · ${poseAnimSpeed.toFixed(2)}×
-LBS Ø ${avg.toFixed(1)} ms · Max ${poseAnimLbsMax.toFixed(1)} ms · ${currentRestLow.length/3} Vertices · ${currentRigMode==="current-expanded"?`${poseJointCount} Controls → ${targetJointCount} Skinning-Joints`:`${poseJointCount} Joints`}
+LBS Ø ${avg.toFixed(1)} ms · Max ${poseAnimLbsMax.toFixed(1)} ms · ${currentDisplayRest().length/3} Vertices · ${currentRigMode==="current-expanded"?`${poseJointCount} Controls → ${targetJointCount} Skinning-Joints`:`${poseJointCount} Joints`}
 Ziel: ${poseAnimTargetFps} Pose-Updates/s · WebGL-Render-FPS oben rechts.`);
   syncPoseSlidersFromJoint();
   updateDecision()
@@ -1942,13 +1963,13 @@ function skinLocalMatrices(rest,local,markMoved=true,report=true,label="Browser-
  }
  for(let j=0;j<J;j++)mat4Mul(world,j*16,(poseInvBindActive||poseInvBind),j*16,bone,j*16);
 
- const pos=geometry.attributes.position.array,n=rest.length/3;
+ const pos=geometry.attributes.position.array,n=rest.length/3,useMid=n===18056;if(useMid&&!ensurePublicMidSkinning())throw new Error("Mid Public-78 Skinweights fehlen im Rig-Pack");const pIdx=useMid?poseMidBoneIndices:poseBoneIndices,pW=useMid?poseMidBoneWeights:poseBoneWeights,pK=useMid?poseMidTopK:poseTopK;
  let maxWeightErr=0;
  for(let v=0;v<n;v++){
   const x=rest[v*3],y=rest[v*3+1],z=rest[v*3+2];
   let ox=0,oy=0,oz=0,ws=0;
-  for(let k=0;k<poseTopK;k++){
-   const bi=poseBoneIndices[v*poseTopK+k],w=poseBoneWeights[v*poseTopK+k];
+  for(let k=0;k<pK;k++){
+   const bi=pIdx[v*pK+k],w=pW[v*pK+k];
    if(bi<0||w<=0)continue;
    const bo=bi*16;
    ox+=w*(bone[bo]*x+bone[bo+1]*y+bone[bo+2]*z+bone[bo+3]);
@@ -1995,7 +2016,7 @@ function applyPoseToRest(rest,markMoved=true,report=true){
  return applyRelativePoseMatrices(rest,buildRelativeEulerMatrices(),markMoved,report,"SOMA-relative LBS")
 }
 function bindLbsError(){
- const rest=currentRestLow,pos=geometry.attributes.position.array;
+ const rest=currentDisplayRest(),pos=geometry.attributes.position.array;
  skinLocalMatrices(rest,poseLocalActive||poseLocalBase,false,false,"Bind-LBS");
  let max=0,rms=0;
  for(let i=0;i<rest.length;i++){const d=pos[i]-rest[i];max=Math.max(max,Math.abs(d));rms+=d*d}
@@ -2060,7 +2081,7 @@ function initEmbeddedPoseRig(){
   const orientErr=jointOrientZeroPoseError();
 
   // Visual reset now uses SOMA's real all-zero relative pose (= canonical T-pose convention).
-  poseEulerDeg.fill(0);applyPoseToRest(currentRestLow,false,false);
+  poseEulerDeg.fill(0);applyPoseToRest(currentDisplayRest(),false,false);
 
   setState("#poseState","KONVENTION BEREIT","ok");
   info("#poseInfo",`✓ RIG + SOMA-POSE-KONVENTION INITIALISIERT
@@ -2122,13 +2143,13 @@ $("#loadCurrentRig").onclick=loadCurrentRigPack;
 $("#loadAnny").onclick=loadAnnyPack;
 $("#useAnny").onclick=()=>setShapeEngine("anny");
 $("#useSoma").onclick=()=>setShapeEngine("soma-pca");
-$("#annyMale").onclick=()=>{annyParams.gender=0;annyParams.cupsize=.5;applyAnnyParams()};
+$("#annyMale").onclick=()=>{annyParams.gender=0;applyAnnyParams()};
 $("#annyFemale").onclick=()=>{annyParams.gender=1;applyAnnyParams()};
-for(const [id,key] of [["annyHeight","height"],["annyWeight","weight"],["annyMuscle","muscle"],["annyProportions","proportions"],["annyCup","cupsize"]]){
- const r=$("#"+id),o=$("#"+id+"Out");r.oninput=()=>{annyParams[key]=Number(r.value);o.value=Number(r.value).toFixed(2);applyAnnyParams()}
-}
-$("#annyMaleAvg").onclick=()=>{annyParams={gender:0,height:.5,weight:.5,muscle:.5,proportions:.5,cupsize:.5};setAnnyUiFromParams();applyAnnyParams()};
-$("#annyFemaleAvg").onclick=()=>{annyParams={gender:1,height:.5,weight:.5,muscle:.5,proportions:.5,cupsize:.5};setAnnyUiFromParams();applyAnnyParams()};
+$("#annyMaleAvg").onclick=()=>resetAnnyPreset(0);
+$("#annyFemaleAvg").onclick=()=>resetAnnyPreset(1);
+$("#resetAnnyLocal").onclick=resetAnnyLocal;
+$("#lodLow").onclick=()=>setDisplayLOD("low");
+$("#lodMid").onclick=()=>setDisplayLOD("mid");
 $("#activateCurrentRig").onclick=activateCurrentPublicRig;
 $("#activateExpandedRig").onclick=activateCurrentExpandedRig;
 $("#initPose").onclick=initEmbeddedPoseRig;
@@ -2148,7 +2169,7 @@ $("#animSpeed").oninput=e=>{
  $("#animSpeedOut").value=poseAnimSpeed.toFixed(2)+"×"
 };
 $("#toggleAdaptiveRig").onclick=()=>setAdaptiveRigEnabled(!rigAdaptiveEnabled,true);
-$("#rebindAdaptiveRig").onclick=()=>{if(poseReady){recomputeAdaptiveRig();applyPoseToRest(currentRestLow,false,false)}};
+$("#rebindAdaptiveRig").onclick=()=>{if(poseReady){recomputeAdaptiveRig();applyPoseToRest(currentDisplayRest(),false,false)}};
 $("#toggleRig").onclick=toggleRigDebug;
 $("#toggleDebugTopology").onclick=toggleDebugTopology;
 $("#toggleAxes").onclick=toggleRigAxes;
@@ -2166,11 +2187,11 @@ function updateDecision(){
   const expanded=currentRigMode==="current-expanded";
   if(expanded&&shapeEngine==="anny"&&annyPackLoaded){
    setState("#decision","ANNY → SOMA → 122 LBS AKTIV","ok");
-   info("#decisionInfo",`✓ v0.4.0: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
+   info("#decisionInfo",`✓ v0.5.0: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
 
-Aktuell im Browser steuerbar: diskretes Male/Female plus Anny-native Height, Weight, Muscle, Proportions und (Female) Cupsize. Adult age/firmness/race sind für diesen ersten Integrations-PoC fixiert.
+Aktuell im Browser steuerbar: ALLE nativen Anny-Phänotypen (Gender, Age, Height, Weight, Muscle, Proportions, Cupsize, Firmness sowie die drei Legacy-Phenotype-Anteile) plus sämtliche lokalen Anny-Changes aus dem offiziellen Asset. Male/Female bleiben als schnelle Presets; der native Gender-Blend ist im Advanced-Bereich ebenfalls sichtbar.
 
-Der entscheidende Test ist jetzt visuell: Male/Female-Average wechseln, Parameter einzeln bewegen und anschließend dieselben Posen/Animationen benutzen. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
+Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.5.0 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
 
 Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zentimetermaße. Das ist erst der nächste, separate Measurement-Fit.`);
   }else if(expanded&&shapeAnalysis.ready){

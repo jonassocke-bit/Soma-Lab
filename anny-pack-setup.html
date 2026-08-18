@@ -1,16 +1,18 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f1012"><title>Anny→SOMA Pack Setup</title><style>body{margin:0;background:#0f1012;color:#eee;font:14px -apple-system,BlinkMacSystemFont,system-ui;padding:calc(20px + env(safe-area-inset-top)) 16px 40px;line-height:1.45}main{max-width:720px;margin:auto}h1{font-size:22px}p,li{color:#c7c7ca}code,textarea{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}textarea{width:100%;height:370px;box-sizing:border-box;background:#17181b;color:#ddd;border:1px solid #34363c;border-radius:12px;padding:12px;font-size:10px}button,a{display:block;box-sizing:border-box;width:100%;border:0;border-radius:12px;padding:13px;margin:10px 0;background:#eee;color:#111;text-align:center;font-weight:700;text-decoration:none}.secondary{background:#24262b;color:#eee;border:1px solid #393b41}.ok{color:#74e6a0}small{color:#999}</style></head><body><main>
-<h1>Einmalig: Anny→SOMA Identity-Pack bauen</h1>
-<p>v0.4.0 wirft die bestehende SOMA-Architektur nicht weg. GitHub Actions startet einmalig das gepinnte offizielle Anny v0.6, erzeugt 216 native Adult-Shape-Anker direkt auf <b>SOMA-Topologie</b> und committed nur den kompakten Browser-Pack.</p>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f1012"><title>Anny→SOMA Engine v2 Setup</title><style>body{margin:0;background:#0f1012;color:#eee;font:14px -apple-system,BlinkMacSystemFont,system-ui;padding:calc(20px + env(safe-area-inset-top)) 16px 40px;line-height:1.45}main{max-width:720px;margin:auto}h1{font-size:22px}p,li{color:#c7c7ca}code,textarea{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}textarea{width:100%;height:430px;box-sizing:border-box;background:#17181b;color:#ddd;border:1px solid #34363c;border-radius:12px;padding:12px;font-size:10px}button,a{display:block;box-sizing:border-box;width:100%;border:0;border-radius:12px;padding:13px;margin:10px 0;background:#eee;color:#111;text-align:center;font-weight:700;text-decoration:none}.secondary{background:#24262b;color:#eee;border:1px solid #393b41}.ok{color:#74e6a0}.box{background:#18191d;border-radius:12px;padding:12px;margin:12px 0}small{color:#999}</style></head><body><main>
+<h1>Einmalig: Anny/SOMA Engine v2 bauen</h1>
+<div class="box"><b>Was dieser eine Workflow macht</b><p>Er erneuert den bestehenden SOMA-Rig-Pack um echte <b>18.056×122 Mid-Skinweights</b> und erzeugt anschließend zwei exakte Anny-Browser-Packs: Low (4.505 Vertices) und Mid (18.056 Vertices) mit allen nativen Phänotyp- und lokalen Blendshapes.</p></div>
 <ol>
-<li>Die Dateien aus <b>SOMA_BROWSER_POC_V0.4.0.zip</b> zuerst ins bestehende Soma-Lab-Repo hochladen. Die vorhandene <code>soma_current_rig_pack_v0026.npz</code> unbedingt behalten.</li>
+<li>Zuerst alle Dateien aus <b>SOMA_BROWSER_POC_V0.5.0.zip</b> ins bestehende Soma-Lab-Repo hochladen/ersetzen. Die vorhandenen alten NPZ-Dateien dürfen bleiben.</li>
 <li>GitHub → <b>Actions</b> → <b>New workflow</b> → <b>set up a workflow yourself</b>.</li>
-<li>Standardinhalt durch den Workflow unten ersetzen. Dateiname z. B. <code>build-anny-soma-pack.yml</code>. Committen.</li>
-<li>Workflow <b>Build Anny SOMA Identity Pack</b> öffnen → <b>Run workflow</b>.</li>
-<li>Nach Erfolg liegen <code>anny_soma_identity_grid_v060.npz</code> und <code>.json</code> im Repo. Dann Soma-Lab neu laden → Punkt 3A.</li>
+<li>Dateiname z. B. <code>build-anny-soma-engine-v2.yml</code>.</li>
+<li>Standardinhalt löschen und den Workflow unten einsetzen. Committen.</li>
+<li>Actions → <b>Build Anny SOMA Engine v2</b> → <b>Run workflow</b>.</li>
+<li>Nach grünem Lauf enthält das Repo zusätzlich <code>anny_soma_engine_low_v060.npz</code> und <code>anny_soma_engine_mid_v060.npz</code>; der vorhandene SOMA-Rig-Pack wurde zugleich auf v2 erweitert.</li>
+<li>Soma-Lab neu laden → Shape → Current Rig-Pack → Expanded 122 → Anny Engine Low. Mid wird erst beim ersten Antippen geladen und danach persistent gecacht.</li>
 </ol>
 <button id="copy">Workflow kopieren</button>
-<a class="secondary" href="https://github.com/jonassocke-bit/Soma-Lab/new/main?filename=.github%2Fworkflows%2Fbuild-anny-soma-pack.yml" target="_blank" rel="noopener">GitHub-Workflow-Datei anlegen</a>
-<textarea id="yaml" readonly>name: Build Anny SOMA Identity Pack
+<a class="secondary" href="https://github.com/jonassocke-bit/Soma-Lab/new/main?filename=.github%2Fworkflows%2Fbuild-anny-soma-engine-v2.yml" target="_blank" rel="noopener">Neue Workflow-Datei auf GitHub anlegen</a>
+<textarea id="yaml" readonly>name: Build Anny SOMA Engine v2
 
 on:
   workflow_dispatch:
@@ -19,9 +21,9 @@ permissions:
   contents: write
 
 jobs:
-  build-anny-pack:
+  build-engine:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 55
     steps:
       - name: Checkout Soma-Lab
         uses: actions/checkout@v4
@@ -31,10 +33,19 @@ jobs:
         with:
           python-version: &#x27;3.11&#x27;
 
-      - name: Check existing SOMA rig pack
+      - name: Fetch pinned NVIDIA SOMA-X assets
         run: |
-          test -f soma_current_rig_pack_v0026.npz
-          echo &quot;Existing SOMA low-LOD map found.&quot;
+          git lfs install
+          rm -rf .soma-upstream
+          GIT_LFS_SKIP_SMUDGE=1 git clone --no-checkout https://github.com/NVlabs/SOMA-X.git .soma-upstream
+          git -C .soma-upstream checkout 86632764684281dc98f31ab9c4aac36a4cdbc428
+          git -C .soma-upstream lfs pull --include=&quot;assets/SOMA_template_rig.usda,assets/SOMA_neutral.npz&quot;
+
+      - name: Install SOMA rig extractor dependencies
+        run: python -m pip install --upgrade numpy scipy usd-core
+
+      - name: Regenerate SOMA rig pack with Low + Mid skinning
+        run: python extract_current_rig_pack.py .soma-upstream soma_current_rig_pack_v0026.npz
 
       - name: Fetch pinned official Anny v0.6 source
         run: |
@@ -45,27 +56,32 @@ jobs:
 
       - name: Install Anny
         run: |
-          python -m pip install --upgrade pip
           python -m pip install -e ./.anny-upstream
 
-      - name: Build compact Anny → SOMA browser identity grid
+      - name: Build exact Anny browser engines (Low + Mid)
         env:
           ANNY_CACHE_DIR: ${{ github.workspace }}/.anny-cache
         run: |
-          python extract_anny_soma_pack.py soma_current_rig_pack_v0026.npz anny_soma_identity_grid_v060.npz
+          python extract_anny_soma_pack.py \
+            soma_current_rig_pack_v0026.npz \
+            anny_soma_engine_low_v060.npz \
+            anny_soma_engine_mid_v060.npz
 
-      - name: Commit generated browser pack
+      - name: Commit generated packs
         run: |
           git config user.name &quot;github-actions[bot]&quot;
           git config user.email &quot;41898282+github-actions[bot]@users.noreply.github.com&quot;
-          git add anny_soma_identity_grid_v060.npz anny_soma_identity_grid_v060.json
+          git add \
+            soma_current_rig_pack_v0026.npz soma_current_rig_pack_v0026.json \
+            anny_soma_engine_low_v060.npz anny_soma_engine_low_v060.json \
+            anny_soma_engine_mid_v060.npz anny_soma_engine_mid_v060.json
           if git diff --cached --quiet; then
-            echo &quot;Anny identity pack already current.&quot;
+            echo &quot;All engine packs already current.&quot;
           else
-            git commit -m &quot;Add generated Anny SOMA browser identity pack&quot;
+            git commit -m &quot;Add Anny exact Low/Mid engine and Mid SOMA skinning&quot;
             git push
           fi
 </textarea>
 <p id="msg"></p><a class="secondary" href="index.html">Zurück zu Soma-Lab</a>
-<small>Gepinnt auf Anny Commit 72104cac8242d1735ec06433b65bec5e26953ce7. Der Browser-Pack enthält nur Low-LOD-Rest-Shapes; PyTorch/Anny laufen nicht auf dem iPhone. Gender bleibt diskret Male/Female.</small>
+<small>Gepinnt: Anny 72104cac8242d1735ec06433b65bec5e26953ce7 · SOMA-X 86632764684281dc98f31ab9c4aac36a4cdbc428. Der Workflow prüft vor dem Commit die Browser-Koeffizienten gegen einen echten Anny-Forward-Pass.</small>
 </main><script>document.querySelector('#copy').onclick=async()=>{const t=document.querySelector('#yaml').value;await navigator.clipboard.writeText(t);document.querySelector('#msg').innerHTML='<span class="ok">✓ Workflow kopiert.</span>'}</script></body></html>
