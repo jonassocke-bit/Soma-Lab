@@ -11,6 +11,7 @@ const PROC=NVRAW+"SOMA_procedural_transforms.json";
 const RIG=NVMEDIA+"SOMA_template_rig.usda";
 const ANIM=HF+"example_animation.npy?download=true";
 const CURRENT_RIG_PACK_URL="./soma_current_rig_pack_v0026.npz";
+const CURRENT_RIG_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_SOURCE_SHA="86632764684281dc98f31ab9c4aac36a4cdbc428";
 
 const ASSET_DB="SomaLabAssetCache";
@@ -292,19 +293,77 @@ function fkLocalToWorldAnyOrder(local,parents,label="Rig"){
  for(let j=0;j<J;j++)build(j);
  return world
 }
+
+async function fetchCurrentRigPackRobust({forceNetwork=false,onProgress=null}={}){
+ if(!forceNetwork){
+  try{
+   const cached=await assetCacheGet(ASSET_KEY.currentRig);
+   if(cached?.buffer){
+    const u8=new Uint8Array(cached.buffer);
+    if(onProgress)onProgress(u8.byteLength,u8.byteLength,true,"persistenter iPhone-Cache");
+    return {u8,cacheHit:true,size:u8.byteLength,source:"persistenter iPhone-Cache"}
+   }
+  }catch(e){
+   console.warn("Current-Rig Cache lesen fehlgeschlagen:",e)
+  }
+ }
+
+ const stamp=CURRENT_RIG_PACK_SOURCE_SHA.slice(0,12);
+ const pageUrl=new URL(CURRENT_RIG_PACK_URL,document.baseURI);
+ pageUrl.searchParams.set("rig",stamp);
+ const candidates=[
+  {label:"GitHub Pages",url:pageUrl.href},
+  {label:"GitHub Raw-Fallback",url:CURRENT_RIG_PACK_RAW_URL+"?rig="+encodeURIComponent(stamp)}
+ ];
+ const errors=[];
+
+ for(const c of candidates){
+  try{
+   if(onProgress)onProgress(0,0,false,c.label+" …");
+   const r=await fetch(c.url,{mode:"cors",cache:"no-store"});
+   if(!r.ok)throw new Error("HTTP "+r.status);
+   const ab=await r.arrayBuffer();
+   const u8=new Uint8Array(ab);
+   if(u8.byteLength<100000)throw new Error("Antwort unerwartet klein: "+u8.byteLength+" Bytes");
+   if(onProgress)onProgress(u8.byteLength,u8.byteLength,false,c.label);
+   try{
+    await assetCachePut(ASSET_KEY.currentRig,CURRENT_RIG_PACK_URL,u8,r.headers.get("content-type")||"application/octet-stream")
+   }catch(e){
+    console.warn("Current-Rig Pack konnte nicht persistent gecacht werden:",e)
+   }
+   return {u8,cacheHit:false,size:u8.byteLength,source:c.label}
+  }catch(e){
+   errors.push(c.label+": "+(e?.message||String(e)));
+   console.warn("Current-Rig Quelle fehlgeschlagen:",c.label,e)
+  }
+ }
+ throw new Error("Rig-Pack konnte weder über GitHub Pages noch über GitHub Raw geladen werden. "+errors.join(" · "))
+}
+
 async function loadCurrentRigPack(){
  try{
   setState("#currentRigState","LÄDT","warn");
   await requestPersistentStorage();
-  const asset=await fetchAssetBytes(ASSET_KEY.currentRig,CURRENT_RIG_PACK_URL,{
-   fallbackSize:0,
-   onProgress:(got,total,cacheHit)=>{
+  let asset=await fetchCurrentRigPackRobust({
+   onProgress:(got,total,cacheHit,source)=>{
     info("#currentRigInfo",cacheHit
      ?`✓ Current Rig-Pack aus persistentem iPhone-Cache · ${(got/1048576).toFixed(2)} MB`
-     :`Current Rig-Pack ${(got/1048576).toFixed(2)}${total?` / ${(total/1048576).toFixed(2)}`:""} MB · wird danach persistent gecacht`)
+     :`${source||"Current Rig-Pack"}${got?` · ${(got/1048576).toFixed(2)} MB`:""}${total&&got!==total?` / ${(total/1048576).toFixed(2)} MB`:""}`
+    )
    }
   });
-  currentRigPack=await decodeShapeNPZ(asset.u8);
+  try{
+   currentRigPack=await decodeShapeNPZ(asset.u8)
+  }catch(firstError){
+   if(!asset.cacheHit)throw firstError;
+   console.warn("Current-Rig Cache ist ungültig; lösche nur diesen Cacheeintrag und lade neu:",firstError);
+   await assetCacheDelete(ASSET_KEY.currentRig);
+   info("#currentRigInfo","Lokaler Rig-Pack-Cache war ungültig · GitHub Pages/Raw wird einmalig neu versucht …");
+   asset=await fetchCurrentRigPackRobust({forceNetwork:true,onProgress:(got,total,cacheHit,source)=>{
+    info("#currentRigInfo",`${source||"Current Rig-Pack"}${got?` · ${(got/1048576).toFixed(2)} MB`:""}`)
+   }});
+   currentRigPack=await decodeShapeNPZ(asset.u8)
+  }
   const targetNames=decodeUtf8Array(packArray("target_joint_names_utf8")).split("\\n").filter(Boolean);
   const publicNames=decodeUtf8Array(packArray("public_joint_names_utf8")).split("\\n").filter(Boolean);
   const targetShape=Array.from(packArray("target_skinning_shape")?.data||[],Number);
@@ -339,16 +398,20 @@ Low-LOD Skinning: ${targetShape[0]} Vertices × ${targetShape[1]} Target-Joints
 Public RBF Skeleton-Fit: ${rbfShape[0]} × ${rbfShape[1]} · ${packArray("public_rbf_values").data.length} Nichtnull-Gewichte
 Target-Hierarchie: ${targetHierarchyProbe.forwardRefs} Parent-Vorwärtsverweise · ${targetHierarchyProbe.invalid} ungültige Parents
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
-Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":"Repo geladen + persistent gespeichert"}
+Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":`${asset.source||"Repo"} · persistent gespeichert`}
 
-Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.2.2 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.2.3 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
  }catch(e){
   console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
-  const is404=String(e?.message||e).includes("HTTP 404");
-  info("#currentRigInfo",is404
-   ?"Der kompakte Current Rig-Pack ist noch nicht im Repository. Öffne unten die EINMALIGE Rig-Pack-Erstellung. Danach erzeugt GitHub Actions den Pack aus NVIDIAs 329-MB-LFS-Rig und committet nur den kleinen Browser-Pack in dieses Repo."
-   :`${e?.name||"Fehler"}: ${e?.message||String(e)}`)
+  info("#currentRigInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}
+
+v0.2.3 versucht den bereits erzeugten Pack in dieser Reihenfolge:
+1) persistenter iPhone-Cache
+2) GitHub Pages mit Cache-Busting
+3) raw.githubusercontent.com als Fallback
+
+Der Pack muss NICHT erneut per GitHub Action erzeugt werden, solange soma_current_rig_pack_v0026.npz im Repo liegt.`)
  }
 }
 function copyPackMatricesToMeters(arr){
