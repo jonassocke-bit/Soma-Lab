@@ -1,0 +1,26 @@
+{
+  "schema": "anny-soma-browser-identity-grid-v1",
+  "source_git_sha": "72104cac8242d1735ec06433b65bec5e26953ce7",
+  "anny_version": "0.6.0",
+  "topology": "soma",
+  "low_vertex_count": 4505,
+  "grid_shape": [
+    2,
+    2,
+    3,
+    3,
+    2,
+    3,
+    4505,
+    3
+  ],
+  "rest_shape_count": 216,
+  "fixed_age": 0.6666666865348816,
+  "fixed_firmness": 0.5,
+  "height_range_m": [
+    1.2134838104248047,
+    2.4514575004577637
+  ],
+  "pack_bytes": 8317435,
+  "pack_sha256": "9a91168482bc0ab5bdd460c75394ec6c5021b3654fb36726d0eef079b428734c"
+}
