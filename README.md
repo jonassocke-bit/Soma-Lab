@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.1.8
+# SOMA Browser PoC v0.1.9
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -202,3 +202,19 @@ Wichtig:
 
 Ziel dieses Schritts:
 Das Skelett soll bei Shape-Änderungen sichtbar besser *im* Mannequin sitzen, bevor wir in den finalen Rig-Pack übergehen.
+
+
+## v0.1.9 – synthetische Knie-Richtung korrigiert
+
+Die offizielle NVIDIA-Animation funktioniert mit dem adaptiven Rig korrekt genug, während die selbstgebauten synthetischen Posen die Knie sichtbar in die falsche Richtung geknickt haben.
+
+Wichtig: Das war **kein globaler Y-Achsenfehler der SOMA-Runtime**. In unseren synthetischen Presets/Loops wird die Kniebeugung tatsächlich über die lokale X-Komponente der `LeftShin`/`RightShin`-Joints erzeugt. Der dort verwendete Vorzeichenwert war für die SOMA-Posekonvention falsch.
+
+v0.1.9 ändert deshalb nur die selbstgebauten Tests:
+- Kniebeuge
+- Laufpose
+- Action-Pose
+- synthetischer Gang-Loop
+- synthetischer Rig-Stress
+
+Die offizielle NVIDIA-Animation, Joint-Orient-Mathematik, Skinweights und adaptive Rig-Anpassung bleiben unverändert.

@@ -804,8 +804,8 @@ function posePreset(kind){
   setJointEuler("Spine2",-7,0,0);
   setJointEuler("LeftLeg",38,0,5);
   setJointEuler("RightLeg",38,0,-5);
-  setJointEuler("LeftShin",-67,0,0);
-  setJointEuler("RightShin",-67,0,0);
+  setJointEuler("LeftShin",67,0,0);
+  setJointEuler("RightShin",67,0,0);
   setJointEuler("LeftFoot",28,0,0);
   setJointEuler("RightFoot",28,0,0);
   setJointEuler("LeftArm",24,0,24);
@@ -814,10 +814,10 @@ function posePreset(kind){
   setJointEuler("RightForeArm",8,0,-18);
  }else if(kind==="run"){
   setJointEuler("LeftLeg",38,0,8);
-  setJointEuler("LeftShin",-52,0,0);
+  setJointEuler("LeftShin",52,0,0);
   setJointEuler("LeftFoot",20,0,0);
   setJointEuler("RightLeg",-29,0,-5);
-  setJointEuler("RightShin",-14,0,0);
+  setJointEuler("RightShin",14,0,0);
   setJointEuler("LeftArm",-28,0,18);
   setJointEuler("LeftForeArm",12,0,42);
   setJointEuler("RightArm",31,0,-18);
@@ -832,7 +832,7 @@ function posePreset(kind){
   setJointEuler("RightArm",28,0,-24);
   setJointEuler("RightForeArm",0,-18,-48);
   setJointEuler("LeftLeg",18,0,8);
-  setJointEuler("LeftShin",-38,0,0);
+  setJointEuler("LeftShin",38,0,0);
   setJointEuler("RightLeg",-12,0,-8);
   setJointEuler("Spine1",-4,12,0);
   setJointEuler("Spine2",-3,15,0);
@@ -854,6 +854,8 @@ function posePreset(kind){
  syncPoseSlidersFromJoint();applyPoseToRest(currentRestLow,true)
 }
 
+// Synthetic poses use the now verified SOMA relative-joint convention.
+// v0.1.9: knee/shin flexion sign corrected; NVIDIA motion path is untouched.
 function setWalkAnimationPose(seconds){
  poseEulerDeg.fill(0);
  const p=seconds*Math.PI*2*.82;
@@ -861,8 +863,8 @@ function setWalkAnimationPose(seconds){
 
  setJointEuler("LeftLeg",31*s,0,4*c);
  setJointEuler("RightLeg",-31*s,0,-4*c);
- setJointEuler("LeftShin",-8-34*Math.max(0,-s),0,0);
- setJointEuler("RightShin",-8-34*Math.max(0,s),0,0);
+ setJointEuler("LeftShin",8+34*Math.max(0,-s),0,0);
+ setJointEuler("RightShin",8+34*Math.max(0,s),0,0);
  setJointEuler("LeftFoot",8+12*Math.max(0,-s),0,0);
  setJointEuler("RightFoot",8+12*Math.max(0,s),0,0);
 
@@ -891,8 +893,8 @@ function setRigStressAnimationPose(seconds){
 
  setJointEuler("LeftLeg",26*b,0,8*c);
  setJointEuler("RightLeg",-26*b,0,-8*c);
- setJointEuler("LeftShin",-12-42*Math.max(0,-b),0,0);
- setJointEuler("RightShin",-12-42*Math.max(0,b),0,0);
+ setJointEuler("LeftShin",12+42*Math.max(0,-b),0,0);
+ setJointEuler("RightShin",12+42*Math.max(0,b),0,0);
  setJointEuler("LeftFoot",10+12*Math.max(0,-b),0,0);
  setJointEuler("RightFoot",10+12*Math.max(0,b),0,0);
 
