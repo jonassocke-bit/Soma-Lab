@@ -29,3 +29,7 @@ button:disabled{opacity:.4}
 .officialMotionRow{display:flex;gap:7px;align-items:center;margin-bottom:8px}
 .officialMotionRow button{flex:1}
 .officialMotionRow em{font-size:7.5px;line-height:1.25;font-style:normal;letter-spacing:.06em;color:#aaa;text-align:right;max-width:34%}
+
+#viewport canvas{touch-action:none}
+select#debugAxis{margin-top:4px}
+#rigDebugInfo{min-height:44px}

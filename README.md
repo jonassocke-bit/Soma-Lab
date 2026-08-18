@@ -1,4 +1,4 @@
-# SOMA Browser PoC v0.1.6
+# SOMA Browser PoC v0.1.7
 
 Standalone iPhone/browser feasibility test for NVIDIA SOMA-X.
 
@@ -153,3 +153,27 @@ Noch offen:
 - shape-adaptives Skeleton-Rebinding,
 - aktueller v0.2-122-Joint/Procedural-Twist-Rig-Pack,
 - Pose-Correctives.
+
+
+## v0.1.7 – sichtbares Rig-/Achsen-Debug im Viewport
+
+Der Nutzerbefund aus v0.1.5/v0.1.6 war konsistent:
+- die *richtigen* Gelenke werden bewegt,
+- aber die Wirkung vieler Posen/Animationen ist weiterhin zu stark bzw. teilweise achsenfalsch.
+
+Deshalb kombiniert v0.1.7 zwei Dinge in einem Schritt:
+1. die bisherige Pose-/Animationsprüfung bleibt erhalten,
+2. zusätzlich wird das aktuell aktive Skinning-Rig direkt im Viewport sichtbar gemacht.
+
+Neu:
+- gelbes Knochen-Overlay + grüne Joint-Punkte
+- optionale lokale Gelenkachsen (Rot = X, Grün = Y, Blau = Z)
+- Einzelgelenk-Tests für das aktuell gewählte Joint: +10°, +20°, +30°, −10°
+- direkte Trennung von
+  - „Joint korrekt adressiert, aber Achse/Winkel noch falsch“
+  - versus
+  - „unsere Preset-/Animationswinkel sind einfach zu aggressiv“
+
+Wichtig:
+Dieses sichtbare Rig-Debug nutzt weiterhin den aktuell aktiven 78-Joint-Browser-LBS-Pfad.
+Es ersetzt noch nicht den späteren echten v0.2-122-Joint/Procedural-Twist-Rig-Pack, hilft aber genau dabei, den Restfehler vor diesem nächsten Schritt sauber einzugrenzen.

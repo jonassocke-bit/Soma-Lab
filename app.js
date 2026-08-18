@@ -174,6 +174,9 @@ let officialAnimRel=null,officialAnimFrames=0,officialAnimFps=30,officialAnimLoa
 let poseAnimRunning=false,poseAnimMode="walk",poseAnimStart=0,poseAnimLastStep=0,poseAnimSpeed=1;
 let poseAnimTargetFps=30,poseAnimFrames=0,poseAnimLbsSum=0,poseAnimLbsMax=0,poseAnimLastUi=0;
 
+let currentPoseWorld=null,rigDebugVisible=false,rigAxesVisible=false;
+let rigGroup=null,rigBoneLines=null,rigJointPoints=null,rigAxesX=null,rigAxesY=null,rigAxesZ=null;
+
 const scene=new THREE.Scene();
 const cam=new THREE.PerspectiveCamera(32,innerWidth/innerHeight,.01,100);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:"high-performance"});
@@ -430,6 +433,98 @@ function transformPoint(m,mo,x,y,z){
  ]
 }
 function jointIndex(name){return PUBLIC_JOINT_NAMES.indexOf(name)}
+
+function ensureRigDebugObjects(){
+ if(rigGroup||!poseReady)return;
+ rigGroup=new THREE.Group();
+ const bonePairs=Math.max(0,poseJointCount-1);
+ const boneGeo=new THREE.BufferGeometry();
+ boneGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(bonePairs*2*3),3));
+ rigBoneLines=new THREE.LineSegments(boneGeo,new THREE.LineBasicMaterial({color:0xffcf66,transparent:true,opacity:.95}));
+ rigGroup.add(rigBoneLines);
+
+ const pointGeo=new THREE.BufferGeometry();
+ pointGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(poseJointCount*3),3));
+ rigJointPoints=new THREE.Points(pointGeo,new THREE.PointsMaterial({color:0x58f0a8,size:.04,sizeAttenuation:true}));
+ rigGroup.add(rigJointPoints);
+
+ const makeAxis=(color)=>{
+  const g=new THREE.BufferGeometry();
+  g.setAttribute("position",new THREE.BufferAttribute(new Float32Array(poseJointCount*2*3),3));
+  const l=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color,transparent:true,opacity:.92}));
+  rigGroup.add(l);return l
+ };
+ rigAxesX=makeAxis(0xff5d5d);
+ rigAxesY=makeAxis(0x5dff7d);
+ rigAxesZ=makeAxis(0x58a6ff);
+ rigGroup.visible=rigDebugVisible;
+ scene.add(rigGroup)
+}
+function refreshRigDebug(){
+ if(!poseReady||!currentPoseWorld)return;
+ ensureRigDebugObjects();
+ if(!rigGroup)return;
+ rigGroup.visible=rigDebugVisible;
+ const jointPos=rigJointPoints.geometry.attributes.position.array;
+ const bonePos=rigBoneLines.geometry.attributes.position.array;
+ const axisX=rigAxesX.geometry.attributes.position.array;
+ const axisY=rigAxesY.geometry.attributes.position.array;
+ const axisZ=rigAxesZ.geometry.attributes.position.array;
+ const axisScale=.09;
+ let bp=0,ax=0;
+ for(let j=0;j<poseJointCount;j++){
+  const o=j*16;
+  const p=transformPoint(currentPoseWorld,o,0,0,0);
+  jointPos[j*3]=p[0];jointPos[j*3+1]=p[1];jointPos[j*3+2]=p[2];
+  if(j>0){
+   const pp=transformPoint(currentPoseWorld,poseParents[j]*16,0,0,0);
+   bonePos[bp++]=pp[0];bonePos[bp++]=pp[1];bonePos[bp++]=pp[2];
+   bonePos[bp++]=p[0];bonePos[bp++]=p[1];bonePos[bp++]=p[2]
+  }
+  const px=transformPoint(currentPoseWorld,o,axisScale,0,0);
+  const py=transformPoint(currentPoseWorld,o,0,axisScale,0);
+  const pz=transformPoint(currentPoseWorld,o,0,0,axisScale);
+  for(const end of [px,py,pz]){
+   const arr=end===px?axisX:end===py?axisY:axisZ;
+  }
+  axisX[ax]=p[0];axisX[ax+1]=p[1];axisX[ax+2]=p[2];axisX[ax+3]=px[0];axisX[ax+4]=px[1];axisX[ax+5]=px[2];
+  axisY[ax]=p[0];axisY[ax+1]=p[1];axisY[ax+2]=p[2];axisY[ax+3]=py[0];axisY[ax+4]=py[1];axisY[ax+5]=py[2];
+  axisZ[ax]=p[0];axisZ[ax+1]=p[1];axisZ[ax+2]=p[2];axisZ[ax+3]=pz[0];axisZ[ax+4]=pz[1];axisZ[ax+5]=pz[2];
+  ax+=6
+ }
+ for(const obj of [rigJointPoints,rigBoneLines,rigAxesX,rigAxesY,rigAxesZ])obj.geometry.attributes.position.needsUpdate=true;
+ rigAxesX.visible=rigAxesVisible;rigAxesY.visible=rigAxesVisible;rigAxesZ.visible=rigAxesVisible;
+}
+function toggleRigDebug(){
+ rigDebugVisible=!rigDebugVisible;
+ if(rigGroup)rigGroup.visible=rigDebugVisible;
+ setState("#rigDebugState",rigDebugVisible?"SICHTBAR":"AUS",rigDebugVisible?"ok":"warn");
+ info("#rigDebugInfo",rigDebugVisible
+  ?`Skelett-Overlay aktiv. Gelbe Linien = Bone-Verbindungen, grüne Punkte = Joint-Positionen${rigAxesVisible?", RGB = lokale X/Y/Z-Achsen":""}. Nutze jetzt am besten Einzelgelenk-Tests mit +10°/+20°/+30°.`
+  :"Rig-Overlay aus. Damit können wir direkt sehen, ob ein Gelenk zwar korrekt adressiert wird, aber um die falsche Achse bzw. zu stark rotiert.");
+ refreshRigDebug()
+}
+function toggleRigAxes(){
+ rigAxesVisible=!rigAxesVisible;
+ if(rigAxesX){rigAxesX.visible=rigAxesVisible;rigAxesY.visible=rigAxesVisible;rigAxesZ.visible=rigAxesVisible}
+ setState("#rigDebugState",rigDebugVisible?(rigAxesVisible?"RIG+ACHSEN":"SICHTBAR"):(rigAxesVisible?"ACHSEN":"AUS"),rigDebugVisible||rigAxesVisible?"ok":"warn");
+ info("#rigDebugInfo",rigAxesVisible
+  ?"Lokale Gelenkachsen eingeblendet: Rot = X, Grün = Y, Blau = Z. Wenn ein +10°-Test optisch viel zu stark oder um die falsche Achse wirkt, sehen wir es jetzt direkt am Rig."
+  :"Achsen ausgeblendet. Skelett-Overlay bleibt optional sichtbar.");
+ refreshRigDebug()
+}
+function applySingleJointDebug(deg){
+ if(!poseReady||!poseEulerDeg)return;
+ stopPoseAnimation(false);
+ poseEulerDeg.fill(0);
+ const j=Number($("#poseJoint").value||1);
+ const axis=$("#debugAxis")?.value||"Z";
+ const a=axis==="X"?0:axis==="Y"?1:2;
+ poseEulerDeg[j*3+a]=deg;
+ syncPoseSlidersFromJoint();
+ applyPoseToRest(currentRestLow,true,true);
+ info("#rigDebugInfo",`Einzelgelenk-Test: ${PUBLIC_JOINT_NAMES[j]||j} · Achse ${axis} · ${deg>=0?'+':''}${deg}°. Wenn das sichtbar viel stärker oder um eine unerwartete Achse wirkt, steckt der Restfehler weiterhin in der Pose-Interpretation und nicht nur im fehlenden Twist-Rig.`)
+}
 
 function mat3Mul(a,ao,b,bo,out,oo){
  for(let r=0;r<3;r++)for(let c=0;c<3;c++){
@@ -891,6 +986,8 @@ function skinLocalMatrices(rest,local,markMoved=true,report=true,label="Browser-
   pos[v*3]=ox;pos[v*3+1]=oy;pos[v*3+2]=oz
  }
  geometry.attributes.position.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingSphere();
+ currentPoseWorld=world.slice();
+ refreshRigDebug();
 
  const elapsed=performance.now()-t0;
  if(markMoved){
@@ -1004,7 +1101,7 @@ parentOrientᵀ × relativeRotation × jointOrient.
 Der Button „T-Pose“ ist jetzt deshalb wirklich die SOMA-All-Zero-Pose. Für den stärksten Gegencheck kannst du zusätzlich NVIDIAs echte example_animation.npy laden und abspielen.
 
 WICHTIG: Shape-adaptives Rebinding und der aktuelle v0.2-122-Joint/Twist-Rig sind weiterhin separate Folgetests.`);
-  info("#posePerf","SOMA-Nullpose aktiv. Teste zuerst T-Pose/Arme hoch – danach am besten die offizielle NVIDIA-Animation.")
+  info("#posePerf","SOMA-Nullpose aktiv. Teste zuerst T-Pose/Arme hoch, dann Einzelgelenk +10°/+20°/+30° mit sichtbarem Rig und danach die offizielle NVIDIA-Animation.")
  }catch(e){
   console.error(e);poseReady=false;posePass=false;setState("#poseState","FEHLER","bad");info("#poseInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}${e?.stack?"\n"+e.stack:""}`)
  }
@@ -1056,11 +1153,17 @@ $("#animSpeed").oninput=e=>{
  poseAnimSpeed=Number(e.target.value);
  $("#animSpeedOut").value=poseAnimSpeed.toFixed(2)+"×"
 };
+$("#toggleRig").onclick=toggleRigDebug;
+$("#toggleAxes").onclick=toggleRigAxes;
+$("#debug10").onclick=()=>applySingleJointDebug(10);
+$("#debug20").onclick=()=>applySingleJointDebug(20);
+$("#debug30").onclick=()=>applySingleJointDebug(30);
+$("#debugMinus10").onclick=()=>applySingleJointDebug(-10);
 
 function updateDecision(){
  if(shapePass&&rigPass&&posePass){
   setState("#decision","LBS + POSE-KONVENTION AKTIV","ok");
-  info("#decisionInfo","Shape, PCA, echter browserseitiger LBS-Lauf und SOMAs T-Pose/Joint-Orient-Rotationskonvention sind aktiv. Dieser Test benutzt den offiziellen eingebetteten 78-Joint-Rig des SOMA-v0.1-Assets. Noch NICHT als endgültige BODY-LAB-Basis bewiesen sind: der aktualisierte v0.2-122-Joint/Procedural-Twist-Rig-Pack, shape-adaptive Gelenkpositionen/Rebinding und danach Shape+Pose unter diesen finalen Rig-Daten. BODY LAB bleibt unverändert.")
+  info("#decisionInfo","Shape, PCA, echter browserseitiger LBS-Lauf und SOMAs T-Pose/Joint-Orient-Rotationskonvention sind aktiv. Dieser Test benutzt den offiziellen eingebetteten 78-Joint-Rig des SOMA-v0.1-Assets. Noch NICHT als endgültige BODY-LAB-Basis bewiesen sind: der aktualisierte v0.2-122-Joint/Procedural-Twist-Rig-Pack, shape-adaptive Gelenkpositionen/Rebinding und danach Shape+Pose unter diesen finalen Rig-Daten. Neu in v0.1.7 ist aber ein sichtbares Rig-/Achsen-Debugging direkt im Viewport, damit wir den Restfehler sauber vom reinen Twist-Rig-Thema trennen können. BODY LAB bleibt unverändert.")
  }else if(shapePass&&rigPass){
   setState("#decision","NÄCHSTER TEST: ECHTES LBS","warn");
   info("#decisionInfo","Shape und aktueller v0.2-Rig-Vertrag sind bewiesen. Punkt 5 kann jetzt den bereits im gecachten v0.1-SOMA-Asset eingebetteten echten 78-Joint-Rig mit Bindpose + Skinweights direkt im Browser testen – ohne 329-MB-Download.")
