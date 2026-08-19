@@ -425,8 +425,8 @@ next layer is the small measurement-conditioned fitter.
 The v0.4 grid is replaced by an exact browser representation of Anny's linear
 blendshape engine on canonical SOMA topology. GitHub Actions exports:
 
-- `anny_soma_engine_low_v060.npz` – 4,505 vertices, all phenotype + local blendshapes.
-- `anny_soma_engine_mid_v060.npz` – 18,056 vertices, same exact engine for visual/Harness inspection.
+- `anny_soma_engine_low_v060_rigv3.npz` – 4,505 vertices, all phenotype + local blendshapes.
+- `anny_soma_engine_mid_v060_rigv3.npz` – 18,056 vertices, same exact engine for visual/Harness inspection.
 
 The browser mirrors Anny's official phenotype coefficient logic (piecewise-linear
 anchors, multiplicative phenotype masks, normalized race weights, and the native
@@ -971,3 +971,70 @@ controlled shape-adaptive orientation layer. We do not change those rotations
 blindly before a visible failure is demonstrated.
 
 The exact Axis16 comparator remains available as the source-side A/B reference.
+
+
+## v0.5.21 – exact identity-dependent Anny/SOMA rest rig
+
+The v0.5.20 visual test exposed the real remaining bug. The proven Mixamo
+motion was being applied to a morph target whose joint POSITIONS were adapted
+with the public RBF, while its rest bone ROTATIONS stayed at the template
+orientation. That is not the complete SOMA/Anny skeleton-transfer model.
+
+The official Anny `rig="soma"` implementation already solves this. For every
+blendshape identity it constructs a shape-dependent SOMA rest rig from:
+- linear blendshape-driven bone heads,
+- cached per-bone Procrustes covariance matrices,
+- identity-dependent orientation blendshapes,
+- SOMA child-offset orientation refinement,
+- canonical `reference_bone_orientations` for `local-ref`,
+- Anny's own SOMA skinning indices/weights.
+
+v0.5.21 mirrors that exact model in the browser.
+
+### New motion path
+
+`Mixamo Axis16`
+→ proven Public78 / local-ref pose delta
+→ exact current-identity Anny/SOMA rest rig
+→ Anny-compatible local-ref forward kinematics
+→ Anny SOMA skinning on the currently morphed Low/Mid body.
+
+The old public-RBF-position + fixed-rotation + expanded-122 path remains only as
+a legacy A/B diagnostic path. It is no longer used by "Morphbares Sammy".
+
+### Important conceptual point
+
+We do **not** replace Anny with a fixed SOMA body. `Anny(rig="soma",
+topology="soma")` is exactly the desired architecture: morphable Anny identity
+on canonical SOMA topology with the SOMA rig convention. The browser had only
+been exporting/using an incomplete subset of that model.
+
+### One-time GitHub Action
+
+v0.5.21 changes the Anny pack schema to
+`anny-soma-browser-exact-engine-v3`.
+
+Run once:
+**Build Anny SOMA Engine v3**
+
+It creates:
+- `anny_soma_engine_low_v060_rigv3.npz`
+- `anny_soma_engine_mid_v060_rigv3.npz`
+
+The v3 pack additionally contains official rest-rig parity fixtures. On load,
+the browser reconstructs those fixtures itself and refuses the exact morph-rig
+path if the error exceeds the safety threshold.
+
+### First iPhone test
+
+1. Run the v3 Action once.
+2. Reload GitHub Pages.
+3. Load the same Axis16 Mixamo T-pose reference.
+4. Load `Idle.fbx`.
+5. Press **Morphbares Sammy aktivieren**.
+6. Compare relaxed arms, knee bend, trunk posture and thumbs against Mixamo.
+7. Repeat with Headbutt.
+8. Move Anny Height/Weight/Muscle/Gender while the animation runs.
+
+If the rest-rig parity passes but the visible pose is still different, only then
+export another exact target/source pair for a frame-by-frame comparison.

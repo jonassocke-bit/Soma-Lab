@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
-"""Export Anny v0.6 as exact browser blendshape engine on canonical SOMA topology.
+"""Export Anny v0.6 as exact browser shape + SOMA rig engine.
 
-Outputs two NPZ files:
-- low  : 4,505 vertices, startup/fit mode
-- mid  : 18,056 vertices, visible/harness surface mode
+v3 adds the *identity-dependent SOMA rest rig* used by Anny itself:
+- exact blendshape-driven bone heads
+- cached Procrustes orientation matrices/blendshapes
+- child-offset orientation refinement data
+- reference bone orientations for local-ref pose parameterization
+- Anny's own 78-bone skinning indices/weights
+- official rest-rig parity fixtures
 
-The browser reconstructs the exact linear Anny rest mesh from template + blendshapes.
-No PyTorch is needed on iPhone after this one-time GitHub Action.
+This lets the browser reproduce `Anny(rig="soma", topology="soma",
+pose_parameterization="local-ref")` instead of only moving SOMA joint positions
+with an RBF while keeping template rotations frozen.
 """
 from __future__ import annotations
 
@@ -19,7 +24,7 @@ from anny.models.model_data import PHENOTYPE_VARIATIONS
 from anny.paths import get_anny_root_dir
 
 ANNY_EXPECTED_SHA="72104cac8242d1735ec06433b65bec5e26953ce7"
-SCHEMA="anny-soma-browser-exact-engine-v2"
+SCHEMA="anny-soma-browser-exact-engine-v3"
 
 
 def b(s: str) -> np.ndarray:
@@ -46,14 +51,12 @@ def category_metadata(local_labels: list[str]):
             for item in group.get("categories",[]):
                 candidates=[item.get("label"),item.get("name"),*(item.get("targets") or [])]
                 for x in candidates:
-                    if x in local_labels:
-                        mapping[x]=cat
+                    if x in local_labels:mapping[x]=cat
             for item in group.get("unsorted",[]):
                 if isinstance(item,str) and item in local_labels:mapping[item]=cat
                 elif isinstance(item,dict):
                     for x in [item.get("label"),item.get("name"),*(item.get("targets") or [])]:
                         if x in local_labels:mapping[x]=cat
-    # Conservative readable fallback for any labels not represented in target.json.
     hints=["breast","buttocks","stomach","torso","arms","legs","hands","feet","neck","head","cheek","chin","ears","eyes","forehead","jaw","mouth","nose","genitals"]
     for label in local_labels:
         if label not in mapping:
@@ -81,7 +84,9 @@ def browser_coeffs(meta, mask: np.ndarray, params: dict[str,float], local_values
             if value<=anchors[0]:w[0]=1
             elif value>=anchors[-1]:w[-1]=1
             else:
-                i=int(np.searchsorted(anchors,value)-1);t=(value-anchors[i])/(anchors[i+1]-anchors[i]);w[i]=1-t;w[i+1]=t
+                i=int(np.searchsorted(anchors,value)-1)
+                t=(value-anchors[i])/(anchors[i+1]-anchors[i])
+                w[i]=1-t;w[i+1]=t
             for n,v in zip(names,w):vw[col[n]]=v
     phen=np.prod(vw[None,:]*mask + (1-mask),axis=1)
     local=[]
@@ -93,65 +98,173 @@ def browser_coeffs(meta, mask: np.ndarray, params: dict[str,float], local_values
 def main():
     if len(sys.argv)!=4:
         raise SystemExit("Usage: extract_anny_soma_pack.py <rigpack.npz> <low_out.npz> <mid_out.npz>")
-    rigpack=Path(sys.argv[1]).resolve();low_out=Path(sys.argv[2]).resolve();mid_out=Path(sys.argv[3]).resolve()
+    rigpack=Path(sys.argv[1]).resolve()
+    low_out=Path(sys.argv[2]).resolve()
+    mid_out=Path(sys.argv[3]).resolve()
+
     with np.load(rigpack,allow_pickle=False) as rp:
         lod=np.asarray(rp["lod_mid_to_low"],dtype=np.int64)
     if lod.shape!=(4505,):raise RuntimeError(f"Unexpected SOMA low map {lod.shape}")
 
-    print("Instantiate official Anny: rig='soma', topology='soma', phenotypes='all', local_changes='all'",flush=True)
-    model=anny.Anny(rig="soma",topology="soma",pose_parameterization="local-ref",phenotypes="all",local_changes="all",facial_actions="none").to(device=torch.device("cpu"),dtype=torch.float32)
+    print("Instantiate official Anny exact SOMA model",flush=True)
+    model=anny.Anny(
+        rig="soma",topology="soma",pose_parameterization="local-ref",
+        phenotypes="all",local_changes="all",facial_actions="none"
+    ).to(device=torch.device("cpu"),dtype=torch.float32)
     model.eval()
+
     V=int(model.template_vertices.shape[0])
+    J=int(model.bone_count)
     if V!=18056:raise RuntimeError(f"Anny SOMA topology {V} vertices, expected 18056")
+    if J!=78:raise RuntimeError(f"Anny SOMA rig {J} bones, expected 78")
+    if model.bone_orientation!="cached":
+        raise RuntimeError(f"Expected cached SOMA bone orientations, got {model.bone_orientation!r}")
+    required=[
+        model.template_bone_heads,model.bone_heads_blendshapes,
+        model.bone_template_orientation_matrices,model.bone_orientation_blendshapes,
+        model.reference_bone_orientations,model.vertex_bone_indices,model.vertex_bone_weights,
+    ]
+    if any(x is None for x in required):raise RuntimeError("Anny SOMA exact-rig arrays are incomplete")
+    if model.rest_orientation_refiner is None:raise RuntimeError("Anny SOMA rest orientation refiner missing")
 
     phenotype_labels=list(model.phenotype_labels)
     local_labels=list(model.local_change_labels)
     blend_labels=list(model.blendshape_labels)
+    bone_labels=list(model.bone_labels)
+    bone_parents=np.asarray(model.bone_parents,dtype=np.int32)
+
     mask=model.stacked_phenotype_blend_shapes_mask.detach().cpu().numpy().astype(np.uint8)
-    P=int(mask.shape[0]);A=int(model.blendshapes.shape[0]);L=len(local_labels)
-    if A!=P+2*L:
-        raise RuntimeError(f"Blendshape contract changed: A={A}, phenotype={P}, local={L}; expected {P+2*L}")
+    Pn=int(mask.shape[0]);A=int(model.blendshapes.shape[0]);L=len(local_labels)
+    if A!=Pn+2*L:
+        raise RuntimeError(f"Blendshape contract changed: A={A}, phenotype={Pn}, local={L}; expected {Pn+2*L}")
 
     variation_order=list(PHENOTYPE_VARIATIONS.keys())
     variations={k:list(v) for k,v in PHENOTYPE_VARIATIONS.items()}
     variation_names=[n for k in variation_order for n in variations[k]]
-    if mask.shape[1]!=len(variation_names):raise RuntimeError(f"Mask columns {mask.shape[1]} vs variation names {len(variation_names)}")
+    if mask.shape[1]!=len(variation_names):
+        raise RuntimeError(f"Mask columns {mask.shape[1]} vs variation names {len(variation_names)}")
     anchors={}
     for feature in ["gender","age","muscle","weight","height","proportions","cupsize","firmness"]:
         anchors[feature]=model.anchors[feature].detach().cpu().numpy().astype(float).tolist()
     categories,category_order=category_metadata(local_labels)
-    meta=dict(schema=SCHEMA,source_git_sha=ANNY_EXPECTED_SHA,anny_version=importlib.metadata.version("anny"),topology="soma",coordinate_system="meters,+Y up",phenotype_labels=phenotype_labels,variation_order=variation_order,phenotype_variations=variations,variation_names=variation_names,anchors=anchors,phenotype_blendshape_count=P,blendshape_count=A,local_change_labels=local_labels,local_change_categories=categories,category_order=category_order)
 
-    # Anny is Z-up; current Soma-Lab renderer/runtime is Y-up. This is the same
-    # axis conversion used by Anny's own SOMA parity test.
+    skin_idx=model.vertex_bone_indices.detach().cpu().numpy()
+    skin_w=model.vertex_bone_weights.detach().cpu().numpy().astype(np.float32)
+    if skin_idx.shape[0]!=V or skin_w.shape!=skin_idx.shape:
+        raise RuntimeError(f"Unexpected Anny skinning arrays {skin_idx.shape}/{skin_w.shape}")
+    skin_topk=int(skin_idx.shape[1])
+
+    meta=dict(
+        schema=SCHEMA,source_git_sha=ANNY_EXPECTED_SHA,anny_version=importlib.metadata.version("anny"),
+        topology="soma",rig="soma",pose_parameterization="local-ref",
+        coordinate_system="meters,+Y up",
+        phenotype_labels=phenotype_labels,variation_order=variation_order,
+        phenotype_variations=variations,variation_names=variation_names,anchors=anchors,
+        phenotype_blendshape_count=Pn,blendshape_count=A,local_change_labels=local_labels,
+        local_change_categories=categories,category_order=category_order,
+        bone_count=J,bone_labels=bone_labels,bone_parents=bone_parents.tolist(),
+        skinning_topk=skin_topk,
+        rig_method="Anny cached Procrustes + ChildOffsetOrientationRefiner",
+    )
+
+    # Anny geometry/rig is Z-up. Browser/SOMA runtime is Y-up.
     Pmat=torch.tensor([[1.,0.,0.],[0.,0.,1.],[0.,-1.,0.]],dtype=torch.float32)
+    P4=torch.eye(4,dtype=torch.float32);P4[:3,:3]=Pmat
+
     template=(model.template_vertices.detach().cpu()@Pmat.T).numpy().astype(np.float32)
     blend=(model.blendshapes.detach().cpu()@Pmat.T).numpy().astype(np.float32)
 
-    height=float(template[:,1].max()-template[:,1].min())
-    if not (0.8<height<2.6):raise RuntimeError(f"Unit sanity failed: template height {height:.4f}")
+    # Exact shape-dependent SOMA rest-rig engine from Anny.
+    bone_heads=(model.template_bone_heads.detach().cpu()@Pmat.T).numpy().astype(np.float32)
+    bone_head_blend=(model.bone_heads_blendshapes.detach().cpu()@Pmat.T).numpy().astype(np.float32)
 
-    # Verify our browser coefficient implementation against official Anny on a
-    # mixed phenotype + one local modifier before writing files.
+    # Cached matrices are linear before special-Procrustes. Premultiplying each
+    # matrix by P transforms the resulting world orientation into browser Y-up.
+    M0=torch.matmul(Pmat,model.bone_template_orientation_matrices.detach().cpu())
+    MB=torch.matmul(Pmat,model.bone_orientation_blendshapes.detach().cpu())
+    refO=torch.matmul(Pmat,model.reference_bone_orientations.detach().cpu())
+
+    refiner=model.rest_orientation_refiner
+    child_idx=refiner.bone_children_indices.detach().cpu().numpy().astype(np.int16)
+    child_mask=refiner.bone_children_mask.detach().cpu().numpy().astype(np.uint8)
+    child_local=refiner.bone_children_local_offsets.detach().cpu().numpy().astype(np.float32)
+
+    # Shape parity fixture.
     params={"gender":1.0,"age":0.67,"muscle":0.23,"weight":0.81,"height":0.42,"proportions":0.31,"cupsize":0.76,"firmness":0.62,"african":0.2,"asian":0.3,"caucasian":0.5}
     local_values={local_labels[0]:0.37} if local_labels else {}
     coeff=browser_coeffs(meta,mask.astype(np.float64),params,local_values)
     recon=template+np.einsum("a,avc->vc",coeff,blend,optimize=True)
     with torch.no_grad():
-        official=model(phenotype_kwargs={k:torch.tensor([v],dtype=torch.float32) for k,v in params.items()},local_changes_kwargs={k:torch.tensor([v],dtype=torch.float32) for k,v in local_values.items()})["rest_vertices"][0]
+        official=model(
+            phenotype_kwargs={k:torch.tensor([v],dtype=torch.float32) for k,v in params.items()},
+            local_changes_kwargs={k:torch.tensor([v],dtype=torch.float32) for k,v in local_values.items()}
+        )["rest_vertices"][0]
         official=(official.cpu()@Pmat.T).numpy()
     maxerr=float(np.max(np.abs(recon-official)))
     if maxerr>2e-5:raise RuntimeError(f"Browser coefficient parity failed: max {maxerr}")
-    print(f"Browser coefficient parity max error: {maxerr:.3e}",flush=True)
+    print(f"Browser shape coefficient parity max error: {maxerr:.3e}",flush=True)
 
-    common=dict(meta_utf8=b(json.dumps(meta,separators=(",",":"))),phenotype_mask=mask,blendshape_labels_utf8=b("\n".join(blend_labels)),lod_mid_to_low=lod.astype(np.int32))
-    low_template=template[lod];low_blend=blend[:,lod,:]
-    np.savez_compressed(low_out,**common,template_vertices=low_template,blendshapes=low_blend)
-    np.savez_compressed(mid_out,**common,template_vertices=template,blendshapes=blend)
+    # Two official rest-rig fixtures. Browser v0.5.21 reconstructs these from
+    # the exported linear head/covariance engine and validates itself on load.
+    fixture_params=[
+        params,
+        {"gender":0.0,"age":0.55,"muscle":0.82,"weight":0.28,"height":0.78,"proportions":0.72,"cupsize":0.20,"firmness":0.35,"african":0.45,"asian":0.10,"caucasian":0.45},
+    ]
+    fixture_coeff=[]
+    for p in fixture_params:
+        fixture_coeff.append(browser_coeffs(meta,mask.astype(np.float64),p,{}))
+    fixture_coeff=np.stack(fixture_coeff).astype(np.float32)
+    with torch.no_grad():
+        rest=model.get_rest_model(torch.from_numpy(fixture_coeff))
+        poses=rest["rest_bone_poses"].detach().cpu()
+        poses_y=torch.matmul(P4[None,None],poses)
+    fixture_poses=poses_y.numpy().astype(np.float32)
+
+    common=dict(
+        meta_utf8=b(json.dumps(meta,separators=(",",":"))),
+        phenotype_mask=mask,
+        blendshape_labels_utf8=b("\n".join(blend_labels)),
+        bone_labels_utf8=b("\n".join(bone_labels)),
+        bone_parents=bone_parents,
+        template_bone_heads=bone_heads,
+        bone_heads_blendshapes=bone_head_blend,
+        bone_template_orientation_matrices=M0.numpy().astype(np.float32),
+        bone_orientation_blendshapes=MB.numpy().astype(np.float32),
+        reference_bone_orientations=refO.numpy().astype(np.float32),
+        bone_children_indices=child_idx,
+        bone_children_mask=child_mask,
+        bone_children_local_offsets=child_local,
+        rig_parity_coeffs=fixture_coeff,
+        rig_parity_rest_bone_poses=fixture_poses,
+        lod_mid_to_low=lod.astype(np.int32),
+    )
+
+    low_template=template[lod]
+    low_blend=blend[:,lod,:]
+    low_idx=skin_idx[lod].astype(np.int16)
+    low_w=skin_w[lod]
+    mid_idx=skin_idx.astype(np.int16)
+
+    np.savez_compressed(
+        low_out,**common,template_vertices=low_template,blendshapes=low_blend,
+        vertex_bone_indices=low_idx,vertex_bone_weights=low_w
+    )
+    np.savez_compressed(
+        mid_out,**common,template_vertices=template,blendshapes=blend,
+        vertex_bone_indices=mid_idx,vertex_bone_weights=skin_w
+    )
 
     for path,lodname,count in [(low_out,"low",4505),(mid_out,"mid",18056)]:
-        if path.stat().st_size>95*1024*1024:raise RuntimeError(f"{lodname} pack too large for normal Git commit: {path.stat().st_size/1048576:.1f} MB")
-        manifest=dict(schema=SCHEMA,lod=lodname,source_git_sha=ANNY_EXPECTED_SHA,anny_version=meta["anny_version"],vertex_count=count,blendshape_count=A,phenotype_blendshape_count=P,local_change_count=L,browser_parity_max_abs=maxerr,pack_bytes=path.stat().st_size,pack_sha256=sha256(path))
+        if path.stat().st_size>95*1024*1024:
+            raise RuntimeError(f"{lodname} pack too large for normal Git commit: {path.stat().st_size/1048576:.1f} MB")
+        manifest=dict(
+            schema=SCHEMA,lod=lodname,source_git_sha=ANNY_EXPECTED_SHA,
+            anny_version=meta["anny_version"],vertex_count=count,blendshape_count=A,
+            phenotype_blendshape_count=Pn,local_change_count=L,bone_count=J,
+            skinning_topk=skin_topk,browser_shape_parity_max_abs=maxerr,
+            rig_parity_fixture_count=len(fixture_coeff),
+            pack_bytes=path.stat().st_size,pack_sha256=sha256(path)
+        )
         path.with_suffix(".json").write_text(json.dumps(manifest,indent=2),encoding="utf-8")
         print(json.dumps(manifest,indent=2),flush=True)
 

@@ -1,18 +1,36 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f1012"><title>Anny→SOMA Engine v2 Setup</title><style>body{margin:0;background:#0f1012;color:#eee;font:14px -apple-system,BlinkMacSystemFont,system-ui;padding:calc(20px + env(safe-area-inset-top)) 16px 40px;line-height:1.45}main{max-width:720px;margin:auto}h1{font-size:22px}p,li{color:#c7c7ca}code,textarea{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}textarea{width:100%;height:430px;box-sizing:border-box;background:#17181b;color:#ddd;border:1px solid #34363c;border-radius:12px;padding:12px;font-size:10px}button,a{display:block;box-sizing:border-box;width:100%;border:0;border-radius:12px;padding:13px;margin:10px 0;background:#eee;color:#111;text-align:center;font-weight:700;text-decoration:none}.secondary{background:#24262b;color:#eee;border:1px solid #393b41}.ok{color:#74e6a0}.box{background:#18191d;border-radius:12px;padding:12px;margin:12px 0}small{color:#999}</style></head><body><main>
-<h1>Einmalig: Anny/SOMA Engine v2 bauen</h1>
-<div class="box"><b>Was dieser eine Workflow macht</b><p>Er erneuert den bestehenden SOMA-Rig-Pack um echte <b>18.056×122 Mid-Skinweights</b> und erzeugt anschließend zwei exakte Anny-Browser-Packs: Low (4.505 Vertices) und Mid (18.056 Vertices) mit allen nativen Phänotyp- und lokalen Blendshapes.</p></div>
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f1012">
+<title>Anny→SOMA Engine v3 Setup</title>
+<style>
+body{margin:0;background:#0f1012;color:#eee;font:14px -apple-system,BlinkMacSystemFont,system-ui;padding:calc(20px + env(safe-area-inset-top)) 16px 40px;line-height:1.45}
+main{max-width:760px;margin:auto} h1{font-size:22px} p,li{color:#c7c7ca}
+code,textarea{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+textarea{width:100%;height:520px;box-sizing:border-box;background:#17181b;color:#ddd;border:1px solid #34363c;border-radius:12px;padding:12px;font-size:10px}
+button,a{display:block;box-sizing:border-box;width:100%;border:0;border-radius:12px;padding:13px;margin:10px 0;background:#eee;color:#111;text-align:center;font-weight:700;text-decoration:none}
+.secondary{background:#24262b;color:#eee;border:1px solid #393b41} .ok{color:#74e6a0}
+.box{background:#18191d;border-radius:12px;padding:12px;margin:12px 0} small{color:#999}
+</style>
+</head>
+<body><main>
+<h1>Einmalig: Anny/SOMA Engine v3 bauen</h1>
+<div class="box">
+<p><b>Warum diesmal wirklich ein Action-Lauf nötig ist:</b> v0.5.21 braucht zusätzliche offizielle Anny-Rig-Daten. Der bisherige v2-Pack enthält nur die morphbare Oberfläche, aber nicht Annys shape-abhängige SOMA-Bone-Heads, Bone-Orientierungen und Skinweights.</p>
 <ol>
-<li>Zuerst alle Dateien aus <b>SOMA_BROWSER_POC_V0.5.0.zip</b> ins bestehende Soma-Lab-Repo hochladen/ersetzen. Die vorhandenen alten NPZ-Dateien dürfen bleiben.</li>
-<li>GitHub → <b>Actions</b> → <b>New workflow</b> → <b>set up a workflow yourself</b>.</li>
-<li>Dateiname z. B. <code>build-anny-soma-engine-v2.yml</code>.</li>
-<li>Standardinhalt löschen und den Workflow unten einsetzen. Committen.</li>
-<li>Actions → <b>Build Anny SOMA Engine v2</b> → <b>Run workflow</b>.</li>
-<li>Nach grünem Lauf enthält das Repo zusätzlich <code>anny_soma_engine_low_v060.npz</code> und <code>anny_soma_engine_mid_v060.npz</code>; der vorhandene SOMA-Rig-Pack wurde zugleich auf v2 erweitert.</li>
-<li>Soma-Lab neu laden → Shape → Current Rig-Pack → Expanded 122 → Anny Engine Low. Mid wird erst beim ersten Antippen geladen und danach persistent gecacht.</li>
+<li>Den kompletten v0.5.21-Inhalt ins Repo <code>Soma-Lab</code> hochladen.</li>
+<li><code>ANNY_PACK_WORKFLOW.yml</code> als <code>.github/workflows/build-anny-soma-engine-v3.yml</code> speichern.</li>
+<li>GitHub → <b>Actions</b> → <b>Build Anny SOMA Engine v3</b> → <b>Run workflow</b>.</li>
+<li>Warten, bis der Lauf grün ist. Er commitet die neuen <code>..._rigv3.npz</code>-Packs automatisch.</li>
+<li>GitHub Pages neu laden. Beim ersten Öffnen werden die neuen Packs einmal geladen und danach persistent gecacht.</li>
 </ol>
-<button id="copy">Workflow kopieren</button>
-<a class="secondary" href="https://github.com/jonassocke-bit/Soma-Lab/new/main?filename=.github%2Fworkflows%2Fbuild-anny-soma-engine-v2.yml" target="_blank" rel="noopener">Neue Workflow-Datei auf GitHub anlegen</a>
-<textarea id="yaml" readonly>name: Build Anny SOMA Engine v2
+<p class="ok">Der Browser führt zusätzlich zwei offizielle Anny-Rest-Rig-Paritätsfixtures aus. Wenn die mathematische Rekonstruktion nicht passt, wird der neue Morph-Pfad absichtlich nicht freigeschaltet.</p>
+</div>
+<a class="secondary" href="index.html">Zurück zu Soma-Lab</a>
+<h2>Workflow zum Kopieren</h2>
+<textarea readonly>name: Build Anny SOMA Engine v3
 
 on:
   workflow_dispatch:
@@ -58,14 +76,14 @@ jobs:
         run: |
           python -m pip install -e ./.anny-upstream
 
-      - name: Build exact Anny browser engines (Low + Mid)
+      - name: Build exact Anny browser shape + rig engines (Low + Mid)
         env:
           ANNY_CACHE_DIR: ${{ github.workspace }}/.anny-cache
         run: |
           python extract_anny_soma_pack.py \
             soma_current_rig_pack_v0026.npz \
-            anny_soma_engine_low_v060.npz \
-            anny_soma_engine_mid_v060.npz
+            anny_soma_engine_low_v060_rigv3.npz \
+            anny_soma_engine_mid_v060_rigv3.npz
 
       - name: Commit generated packs
         run: |
@@ -73,15 +91,13 @@ jobs:
           git config user.email &quot;41898282+github-actions[bot]@users.noreply.github.com&quot;
           git add \
             soma_current_rig_pack_v0026.npz soma_current_rig_pack_v0026.json \
-            anny_soma_engine_low_v060.npz anny_soma_engine_low_v060.json \
-            anny_soma_engine_mid_v060.npz anny_soma_engine_mid_v060.json
+            anny_soma_engine_low_v060_rigv3.npz anny_soma_engine_low_v060_rigv3.json \
+            anny_soma_engine_mid_v060_rigv3.npz anny_soma_engine_mid_v060_rigv3.json
           if git diff --cached --quiet; then
             echo &quot;All engine packs already current.&quot;
           else
-            git commit -m &quot;Add Anny exact Low/Mid engine and Mid SOMA skinning&quot;
+            git commit -m &quot;Add Anny exact shape + SOMA rest-rig engine v3&quot;
             git push
           fi
 </textarea>
-<p id="msg"></p><a class="secondary" href="index.html">Zurück zu Soma-Lab</a>
-<small>Gepinnt: Anny 72104cac8242d1735ec06433b65bec5e26953ce7 · SOMA-X 86632764684281dc98f31ab9c4aac36a4cdbc428. Der Workflow prüft vor dem Commit die Browser-Koeffizienten gegen einen echten Anny-Forward-Pass.</small>
-</main><script>document.querySelector('#copy').onclick=async()=>{const t=document.querySelector('#yaml').value;await navigator.clipboard.writeText(t);document.querySelector('#msg').innerHTML='<span class="ok">✓ Workflow kopiert.</span>'}</script></body></html>
+</main></body></html>

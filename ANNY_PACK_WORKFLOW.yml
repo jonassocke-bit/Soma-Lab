@@ -1,4 +1,4 @@
-name: Build Anny SOMA Engine v2
+name: Build Anny SOMA Engine v3
 
 on:
   workflow_dispatch:
@@ -44,14 +44,14 @@ jobs:
         run: |
           python -m pip install -e ./.anny-upstream
 
-      - name: Build exact Anny browser engines (Low + Mid)
+      - name: Build exact Anny browser shape + rig engines (Low + Mid)
         env:
           ANNY_CACHE_DIR: ${{ github.workspace }}/.anny-cache
         run: |
           python extract_anny_soma_pack.py \
             soma_current_rig_pack_v0026.npz \
-            anny_soma_engine_low_v060.npz \
-            anny_soma_engine_mid_v060.npz
+            anny_soma_engine_low_v060_rigv3.npz \
+            anny_soma_engine_mid_v060_rigv3.npz
 
       - name: Commit generated packs
         run: |
@@ -59,11 +59,11 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add \
             soma_current_rig_pack_v0026.npz soma_current_rig_pack_v0026.json \
-            anny_soma_engine_low_v060.npz anny_soma_engine_low_v060.json \
-            anny_soma_engine_mid_v060.npz anny_soma_engine_mid_v060.json
+            anny_soma_engine_low_v060_rigv3.npz anny_soma_engine_low_v060_rigv3.json \
+            anny_soma_engine_mid_v060_rigv3.npz anny_soma_engine_mid_v060_rigv3.json
           if git diff --cached --quiet; then
             echo "All engine packs already current."
           else
-            git commit -m "Add Anny exact Low/Mid engine and Mid SOMA skinning"
+            git commit -m "Add Anny exact shape + SOMA rest-rig engine v3"
             git push
           fi
