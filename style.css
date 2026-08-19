@@ -372,58 +372,38 @@ body.sammy-ready #sammyCameraDebugBtn{opacity:1;transition:opacity .4s ease}
 .sammyButtonRow.sammySkeletonOnly{grid-template-columns:1fr}
 
 
-/* Sammy v0.7.0 Measurement Calibration v1 */
-.sammyMeasurePanel{--sammy-panel-h:68vh}
-.sammyMeasurePanelTitle{display:flex;flex-direction:column;gap:2px}
-.sammyMeasurePanelTitle small{font-size:9px;color:#9699a2;font-weight:650;letter-spacing:.03em}
-.sammyMeasureIntro{
- margin:0 0 9px;padding:8px 10px;border-radius:11px;background:rgba(255,255,255,.045);
- font-size:9px;color:#9497a0;text-align:center
-}
+/* Sammy v0.7.1 Measurement Calibration v2 */
+.sammyMeasurePanel{--sammy-panel-h:62vh}
+.sammyMeasurePanelTitle{display:flex;flex-direction:column;gap:2px;min-width:0}
+.sammyMeasurePanelTitle small{font-size:8.5px;color:#9699a2;font-weight:650;letter-spacing:.025em;white-space:nowrap}
+.sammyMeasureHeadActions{display:flex;align-items:center;gap:6px}
+.sammyMeasureHeadActions #sammyMeasureUnisex{width:38px!important;height:30px!important;min-height:30px!important;padding:0!important;border-radius:15px!important;font-size:8px!important;letter-spacing:.08em}
+.sammyMeasureHeadActions #sammyMeasureUnisex.active{background:#ececef!important;color:#17181b!important}
+.sammyMeasureIntro{margin:0 0 9px;padding:8px 10px;border-radius:11px;background:rgba(255,255,255,.045);font-size:9px;color:#9497a0;text-align:center}
 .sammyMeasureOverlayModes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
 .sammyMeasureOverlayModes button{min-height:32px!important;font-size:9px!important;border-radius:10px!important}
 .sammyMeasureOverlayModes button.active{background:#ececef!important;color:#17181b!important}
 .sammyMeasureList{display:flex;flex-direction:column;gap:6px}
-.sammyMeasureRow{
- display:grid;grid-template-columns:minmax(0,1fr) 32px 34px;align-items:center;min-height:48px;
- border:1px solid rgba(255,255,255,.075);border-radius:13px;background:rgba(255,255,255,.042);overflow:hidden
-}
-.sammyMeasureRow.selected{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.095)}
-.sammyMeasureMain{
- min-width:0!important;width:100%;height:100%;min-height:46px!important;padding:7px 9px!important;border:0!important;
- border-radius:0!important;background:transparent!important;text-align:left!important
-}
+.sammyMeasureRow{border:1px solid rgba(255,255,255,.075);border-radius:13px;background:rgba(255,255,255,.042);overflow:hidden}
+.sammyMeasureRow.selected{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.085)}
+.sammyMeasureRowHead{display:grid;grid-template-columns:minmax(0,1fr) 32px 34px;align-items:center;min-height:48px}
+.sammyMeasureMain{min-width:0!important;width:100%;height:100%;min-height:46px!important;padding:7px 9px!important;border:0!important;border-radius:0!important;background:transparent!important;text-align:left!important}
 .sammyMeasureMain b{display:block;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sammyMeasureMain small{display:flex;align-items:center;gap:7px;margin-top:3px;font-size:8px;color:#888b94}
 .sammyMeasureMain strong{font-size:11px;color:#f1f1f3;font-variant-numeric:tabular-nums}
-.sammyMeasureState{padding:1px 5px;border-radius:7px;background:rgba(255,255,255,.06)}
-.sammyMeasureIconBtn{
- width:28px!important;height:28px!important;min-height:28px!important;padding:0!important;border-radius:50%!important;
- align-self:center;justify-self:center;font-size:13px!important;background:rgba(255,255,255,.055)!important
-}
-.sammyMeasureSexBtn{font-size:17px!important}
-.sammyMeasureEditor{
- margin-top:11px;padding:11px;border-radius:15px;border:1px solid rgba(255,255,255,.10);
- background:rgba(255,255,255,.04)
-}
-.sammyMeasureEditor.hidden{display:none}
-.sammyMeasureEditorHead{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
-.sammyMeasureEditorHead b{font-size:12px}.sammyMeasureEditorHead strong{font-size:13px;font-variant-numeric:tabular-nums}
-.sammyMeasureEditor label{display:block;margin:9px 0 4px;font-size:9px;color:#a7a9b0}
-.sammyMeasureOffsetHead{display:flex;justify-content:space-between;align-items:center}
-.sammyMeasureOffsetOut{font-variant-numeric:tabular-nums;color:#e5e5e8}
-.sammyMeasureEditor input[type="range"]{width:100%}
-.sammyMeasureEditor select,.sammyMeasureEditor textarea{
- box-sizing:border-box;width:100%;border:1px solid rgba(255,255,255,.10);border-radius:10px;
- background:rgba(0,0,0,.18);color:#eeeef1;font:inherit
-}
-.sammyMeasureEditor select{height:36px;padding:0 9px}.sammyMeasureEditor textarea{min-height:74px;padding:9px;resize:vertical;font-size:10px;line-height:1.4}
-.sammyMeasureEditorActions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
-.sammyMeasureEditorActions button{min-height:34px!important;font-size:9px!important}
-.sammyMeasureInfoBox{
- margin-top:10px;padding:10px;border-radius:11px;background:rgba(255,255,255,.055);font-size:9px;line-height:1.48;color:#c2c4ca
-}
-.sammyMeasureInfoBox b{display:block;margin:0 0 3px;color:#efeff2;font-size:9px}
-.sammyMeasureInfoBox p{margin:0 0 8px}.sammyMeasureInfoBox p:last-child{margin-bottom:0}
-.sammyMeasureExport{width:100%;margin-top:11px;background:#ececef!important;color:#17181b!important}
-.sammyMeasureSource{padding:8px 3px 0;text-align:center;font-size:7.5px;line-height:1.35;color:#676a72}
+.sammyMeasureState{padding:1px 5px;border-radius:7px;background:rgba(255,255,255,.06);white-space:nowrap}
+.sammyMeasureIconBtn{width:28px!important;height:28px!important;min-height:28px!important;padding:0!important;border-radius:50%!important;align-self:center;justify-self:center;font-size:13px!important;background:rgba(255,255,255,.055)!important}
+.sammyMeasureIconBtn.active{background:rgba(238,238,241,.92)!important;color:#17181b!important}
+.sammyMeasureSexBtn{font-size:17px!important;line-height:1!important}.sammyMeasureSexBtn span{display:block;transform:translateY(-1.5px)}
+.sammyMeasureInlineEditor{padding:9px 10px 11px;border-top:1px solid rgba(255,255,255,.075);background:rgba(0,0,0,.08)}
+.sammyMeasureInlineField{margin-bottom:8px}.sammyMeasureInlineField label{font-size:8.5px;color:#a7a9b0}.sammyMeasureInlineField input[type="range"]{width:100%;margin:5px 0 0}
+.sammyMeasureOffsetHead{display:flex;justify-content:space-between;align-items:center;gap:8px}.sammyMeasureOffsetHead span{font-size:8.5px;font-variant-numeric:tabular-nums;color:#e5e5e8}
+.sammyMeasureMirrorHint{display:block;margin-top:1px;font-size:7.5px;color:#747781}
+.sammyMeasureStatusButtons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin:8px 0}
+.sammyMeasureStatusButtons button{min-height:30px!important;padding:0 5px!important;border-radius:9px!important;font-size:8px!important}
+.sammyMeasureStatusButtons button.active{background:#ececef!important;color:#17181b!important}
+.sammyMeasureInlineEditor textarea{box-sizing:border-box;width:100%;min-height:54px;padding:8px;border:1px solid rgba(255,255,255,.10);border-radius:10px;background:rgba(0,0,0,.18);color:#eeeef1;font:inherit;font-size:9px;line-height:1.35;resize:vertical}
+.sammyMeasureInlineActions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px}.sammyMeasureInlineActions button{min-height:31px!important;padding:0 6px!important;border-radius:9px!important;font-size:8px!important}
+.sammyMeasureInfoBox{margin-top:9px;padding:9px;border-radius:11px;background:rgba(255,255,255,.055);font-size:8.5px;line-height:1.45;color:#c2c4ca}
+.sammyMeasureInfoBox b{display:block;margin:0 0 3px;color:#efeff2;font-size:8.5px}.sammyMeasureInfoBox p{margin:0 0 8px}.sammyMeasureInfoBox p:last-child{margin-bottom:0}
+.sammyMeasureExport{width:100%;margin-top:11px;background:#ececef!important;color:#17181b!important}.sammyMeasureSource{padding:8px 3px 0;text-align:center;font-size:7.5px;line-height:1.35;color:#676a72}

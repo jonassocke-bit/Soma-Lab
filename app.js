@@ -14,7 +14,7 @@ const CURRENT_RIG_PACK_URL="./soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_SOURCE_SHA="86632764684281dc98f31ab9c4aac36a4cdbc428";
 
-// v0.7.0: exact browser-side Anny blendshape engine on canonical SOMA topology.
+// v0.7.1: exact browser-side Anny blendshape engine on canonical SOMA topology.
 // Low is loaded first; Mid (18,056 verts) is an optional persistent on-demand pack.
 const ANNY_SOURCE_SHA="72104cac8242d1735ec06433b65bec5e26953ce7";
 const ANNY_LOW_PACK_URL="./anny_soma_engine_low_v060_rigv3.npz";
@@ -247,7 +247,7 @@ let targetMidBoneIndices=null,targetMidBoneWeights=null,targetMidTopK=0;
 let poseMidBoneIndices=null,poseMidBoneWeights=null,poseMidTopK=0;
 let rigGroup=null,rigBoneLines=null,rigJointPoints=null,rigAxesX=null,rigAxesY=null,rigAxesZ=null;
 
-// v0.7.0 Shape-Space Analyzer.
+// v0.7.1 Shape-Space Analyzer.
 // The first semantic layer is deliberately measurement-driven: raw PCA stays the
 // engine underneath, while the UI exposes locally calibrated measurements in cm.
 const ANALYSIS_METRICS=[
@@ -351,7 +351,7 @@ function parseNPY(u8){
     }
    }
    return {shape,descr,fortran,data:strings}
- } else throw new Error("NPY dtype "+descr+" noch nicht unterstützt (v0.7.0 unterstützt f4/f8, i1/i2/i4/i8, u1/u2/u4 sowie U/S-Strings)");
+ } else throw new Error("NPY dtype "+descr+" noch nicht unterstützt (v0.7.1 unterstützt f4/f8, i1/i2/i4/i8, u1/u2/u4 sowie U/S-Strings)");
  const bytes=Ctor.BYTES_PER_ELEMENT*count;
  if(dataOff+bytes>u8.byteLength)throw new Error(`NPY-Payload abgeschnitten: brauche ${bytes} Bytes ab Offset ${dataOff}, habe ${u8.byteLength-dataOff}`);
  // Safari/iOS-sicher: Payload in einen eigenen, bei ByteOffset 0 beginnenden Buffer kopieren.
@@ -469,7 +469,7 @@ async function loadCurrentRigPack(){
    }});
    currentRigPack=await decodeShapeNPZ(asset.u8)
   }
-  // v0.7.0: the fresh v2 rig-pack stores REAL newlines, while the very first
+  // v0.7.1: the fresh v2 rig-pack stores REAL newlines, while the very first
   // generated v1 pack accidentally stored the two literal characters "\\n".
   // Use the already existing compatibility decoder for both formats.
   const targetNames=decodePackedJointNames("target_joint_names_utf8",122);
@@ -491,7 +491,7 @@ async function loadCurrentRigPack(){
   if(missing.length)throw new Error("Rig-Pack unvollständig. Fehlt: "+missing.join(", "));
   const midRequired=["target_skinning_mid_data","target_skinning_mid_indices","target_skinning_mid_indptr","target_skinning_mid_shape","public_skinning_mid_data","public_skinning_mid_indices","public_skinning_mid_indptr","public_skinning_mid_shape"];
   const midMissing=midRequired.filter(k=>!packArray(k));
-  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.7.0 bitte den neuen ‘Build Anny SOMA Engine v3’-Workflow einmal ausführen; danach erneut laden.")}
+  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.7.1 bitte den neuen ‘Build Anny SOMA Engine v3’-Workflow einmal ausführen; danach erneut laden.")}
   if(targetNames.length<100)throw new Error(`Expanded Rig unerwartet klein: ${targetNames.length} Joints`);
   if(publicNames.length!==78)throw new Error(`Public Rig: ${publicNames.length} statt 78 Joints`);
   if(publicShape[0]!==4505||publicShape[1]!==78)throw new Error(`Public Low-Skinning unerwartet: ${JSON.stringify(publicShape)}`);
@@ -513,14 +513,14 @@ Mid-Skinning 18.056×122: ${packOptional("target_skinning_mid_shape")?"JA · ber
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
 Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":`${asset.source||"Repo"} · persistent gespeichert`}
 
-Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.7.0 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.7.1 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
   rigPass=true;updateDecision();return true
  }catch(e){
   console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
   info("#currentRigInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}
 
-v0.7.0 versucht den Rig-Pack in dieser Reihenfolge:
+v0.7.1 versucht den Rig-Pack in dieser Reihenfolge:
 1) persistenter iPhone-Cache
 2) GitHub Pages mit Cache-Busting
 3) raw.githubusercontent.com als Fallback
@@ -563,7 +563,7 @@ async function getMixamoFbxExporter(){
  return mixamoFbxExporterPromise
 }
 
-// v0.7.0: exact structural/orientation contract extracted from the uploaded
+// v0.7.1: exact structural/orientation contract extracted from the uploaded
 // standard Mixamo X Bot FBX. No X Bot mesh/animation is bundled.
 // The body stays canonical SOMA; only the 65-bone hierarchy, names and bind-axis
 // orientations mirror Mixamo's own standard character.
@@ -571,7 +571,7 @@ const MIXAMO_XBOT_CONTRACT=[{"name":"mixamorig:Hips","parent":null,"source":"Hip
 const MIXAMO_XBOT_BIND_POS={"mixamorig:Head":[-1.1167740467540036e-05,159.92947388295272,-1.519544836013904],"mixamorig:HeadTop_End":[-9.032325006838463e-06,181.96684254533193,5.981550311246772],"mixamorig:Hips":[-7.727290721959434e-06,104.27487182617188,1.5543158054351807],"mixamorig:LeftArm":[15.16280398737345,144.0613169434197,-5.548493116334514],"mixamorig:LeftFoot":[8.207781787278632,8.729486465454109,-2.74267363548298],"mixamorig:LeftForeArm":[43.00432564154204,144.0612843998952,-5.548470182817228],"mixamorig:LeftHand":[71.3331601752272,144.06125184318304,-5.548452286627384],"mixamorig:LeftHandIndex1":[80.44246662018536,143.54320687400264,-3.2885818548270533],"mixamorig:LeftHandIndex2":[84.1424666060649,143.54319761646747,-3.2889049733068427],"mixamorig:LeftHandIndex3":[86.9924665845382,143.54318854355162,-3.288554802246191],"mixamorig:LeftHandIndex4":[89.76733221262572,143.54317785204873,-3.288581527452206],"mixamorig:LeftHandMiddle1":[80.86656166454125,144.06127324020878,-5.548407829448358],"mixamorig:LeftHandMiddle2":[84.56656165731454,144.0612658926314,-5.548638965109337],"mixamorig:LeftHandMiddle3":[87.51656165734059,144.0612609995725,-5.548698191712874],"mixamorig:LeftHandMiddle4":[90.46942511611348,144.06125862699358,-5.548635289249731],"mixamorig:LeftHandPinky1":[79.4109415601394,143.5743653862144,-9.354708848005295],"mixamorig:LeftHandPinky2":[83.01091144311097,143.57439700191372,-9.339983336174745],"mixamorig:LeftHandPinky3":[85.11089736117005,143.5744128045394,-9.33227821942831],"mixamorig:LeftHandPinky4":[87.23641541005766,143.5744283503633,-9.324764594210082],"mixamorig:LeftHandRing1":[80.43769038202059,144.0182129663205,-7.413525827475825],"mixamorig:LeftHandRing2":[83.58769038195831,144.01820534746685,-7.413483459122235],"mixamorig:LeftHandRing3":[86.53769038190077,144.01819769136398,-7.413446424112027],"mixamorig:LeftHandRing4":[89.18200681682134,144.01819275635648,-7.413387583008608],"mixamorig:LeftHandThumb1":[73.79930097583673,142.48505615797941,-2.866718806843708],"mixamorig:LeftHandThumb2":[77.0171036834158,140.6130031455518,-0.9502315862892832],"mixamorig:LeftHandThumb3":[79.67311994929713,139.08420278085717,0.5642735030615138],"mixamorig:LeftHandThumb4":[81.6940079710372,137.9301277541478,1.6794071285865717],"mixamorig:LeftLeg":[8.20778179815179,53.15313720703123,0.30171799659729054],"mixamorig:LeftShoulder":[4.570434058827984,144.58590699501536,-3.3163728307836102],"mixamorig:LeftToeBase":[8.207779003812599,0.0008178479620539747,7.967886447906329],"mixamorig:LeftToe_End":[8.20777620817337,0.00014117703546079026,17.246023178100437],"mixamorig:LeftUpLeg":[8.207783699035648,97.52317047119146,-0.04523950815200806],"mixamorig:Neck":[-1.1632276864212932e-05,150.31158448448357,-3.204552560661874],"mixamorig:RightArm":[-15.162827141868377,144.06129423041162,-5.548499729823593],"mixamorig:RightFoot":[-8.207794193704466,8.729410171508846,-2.7428412437438388],"mixamorig:RightForeArm":[-43.00434516530863,144.06129641894498,-5.548503799133087],"mixamorig:RightHand":[-71.33318351367814,144.06129417324604,-5.548485070931586],"mixamorig:RightHandIndex1":[-80.44146740224393,143.5434327591923,-3.2886513313660655],"mixamorig:RightHandIndex2":[-84.14146720273779,143.54343753394087,-3.287436291149135],"mixamorig:RightHandIndex3":[-86.99146715506613,143.54344121268713,-3.2879575539852555],"mixamorig:RightHandIndex4":[-89.76365776784786,143.5434447896182,-3.2879771126055055],"mixamorig:RightHandMiddle1":[-80.86568473440799,144.0612550668732,-5.54851014811217],"mixamorig:RightHandMiddle2":[-84.56568287155386,144.06126259618017,-5.5447973243161],"mixamorig:RightHandMiddle3":[-87.51568215646527,144.06126861471554,-5.546851341368094],"mixamorig:RightHandMiddle4":[-90.46231088610809,144.0612746037648,-5.547006313378017],"mixamorig:RightHandPinky1":[-79.40985922265244,143.57459114056766,-9.354763679952702],"mixamorig:RightHandPinky2":[-83.00985727235272,143.57455779439576,-9.358510817893936],"mixamorig:RightHandPinky3":[-85.10984942758924,143.57453836367927,-9.364250815067884],"mixamorig:RightHandPinky4":[-87.22562730145525,143.57451875117627,-9.367931806157314],"mixamorig:RightHandRing1":[-80.43677556056942,144.01822525225458,-7.413619620513897],"mixamorig:RightHandRing2":[-83.81604840261204,144.01822504728736,-7.414673292681834],"mixamorig:RightHandRing3":[-86.70573305638166,144.01822487118628,-7.414294091534568],"mixamorig:RightHandRing4":[-89.34454856358145,144.01822471055002,-7.413352467132266],"mixamorig:RightHandThumb1":[-73.79798906754483,142.48731038443736,-2.8666334881430924],"mixamorig:RightHandThumb2":[-77.01317864323842,140.61453272160477,-0.9423520350092622],"mixamorig:RightHandThumb3":[-79.66801700056696,139.08654351500144,0.5702585782550695],"mixamorig:RightHandThumb4":[-81.68683313113226,137.93454105229316,1.6783110764053042],"mixamorig:RightLeg":[-8.207795136924904,53.153087615966854,0.3006949126720426],"mixamorig:RightShoulder":[-4.569982086496929,144.58610535851452,-3.31640209752816],"mixamorig:RightToeBase":[-8.207796980437466,0.0007403186173498,7.967719554901234],"mixamorig:RightToe_End":[-8.207799778823729,6.367982137992477e-05,17.245840072631964],"mixamorig:RightUpLeg":[-8.207794189453123,97.52320098876964,-0.04524400085210689],"mixamorig:Spine":[-1.2828927538068554e-05,114.45645904541018,1.6858367919921884],"mixamorig:Spine1":[-1.283931199672004e-05,124.35042239221895,0.2151254439192094],"mixamorig:Spine2":[-1.2848989892782088e-05,133.57119840012686,-1.1555181104463788]};
 const MIXAMO_XBOT_PRIMARY_CHILD={"mixamorig:Hips":"mixamorig:Spine","mixamorig:Spine":"mixamorig:Spine1","mixamorig:Spine1":"mixamorig:Spine2","mixamorig:Spine2":"mixamorig:Neck","mixamorig:Neck":"mixamorig:Head","mixamorig:Head":"mixamorig:HeadTop_End","mixamorig:RightShoulder":"mixamorig:RightArm","mixamorig:RightArm":"mixamorig:RightForeArm","mixamorig:RightForeArm":"mixamorig:RightHand","mixamorig:RightHand":"mixamorig:RightHandMiddle1","mixamorig:RightHandThumb1":"mixamorig:RightHandThumb2","mixamorig:RightHandThumb2":"mixamorig:RightHandThumb3","mixamorig:RightHandThumb3":"mixamorig:RightHandThumb4","mixamorig:RightHandIndex1":"mixamorig:RightHandIndex2","mixamorig:RightHandIndex2":"mixamorig:RightHandIndex3","mixamorig:RightHandIndex3":"mixamorig:RightHandIndex4","mixamorig:RightHandMiddle1":"mixamorig:RightHandMiddle2","mixamorig:RightHandMiddle2":"mixamorig:RightHandMiddle3","mixamorig:RightHandMiddle3":"mixamorig:RightHandMiddle4","mixamorig:RightHandRing1":"mixamorig:RightHandRing2","mixamorig:RightHandRing2":"mixamorig:RightHandRing3","mixamorig:RightHandRing3":"mixamorig:RightHandRing4","mixamorig:RightHandPinky1":"mixamorig:RightHandPinky2","mixamorig:RightHandPinky2":"mixamorig:RightHandPinky3","mixamorig:RightHandPinky3":"mixamorig:RightHandPinky4","mixamorig:LeftShoulder":"mixamorig:LeftArm","mixamorig:LeftArm":"mixamorig:LeftForeArm","mixamorig:LeftForeArm":"mixamorig:LeftHand","mixamorig:LeftHand":"mixamorig:LeftHandMiddle1","mixamorig:LeftHandThumb1":"mixamorig:LeftHandThumb2","mixamorig:LeftHandThumb2":"mixamorig:LeftHandThumb3","mixamorig:LeftHandThumb3":"mixamorig:LeftHandThumb4","mixamorig:LeftHandIndex1":"mixamorig:LeftHandIndex2","mixamorig:LeftHandIndex2":"mixamorig:LeftHandIndex3","mixamorig:LeftHandIndex3":"mixamorig:LeftHandIndex4","mixamorig:LeftHandMiddle1":"mixamorig:LeftHandMiddle2","mixamorig:LeftHandMiddle2":"mixamorig:LeftHandMiddle3","mixamorig:LeftHandMiddle3":"mixamorig:LeftHandMiddle4","mixamorig:LeftHandRing1":"mixamorig:LeftHandRing2","mixamorig:LeftHandRing2":"mixamorig:LeftHandRing3","mixamorig:LeftHandRing3":"mixamorig:LeftHandRing4","mixamorig:LeftHandPinky1":"mixamorig:LeftHandPinky2","mixamorig:LeftHandPinky2":"mixamorig:LeftHandPinky3","mixamorig:LeftHandPinky3":"mixamorig:LeftHandPinky4","mixamorig:RightUpLeg":"mixamorig:RightLeg","mixamorig:RightLeg":"mixamorig:RightFoot","mixamorig:RightFoot":"mixamorig:RightToeBase","mixamorig:RightToeBase":"mixamorig:RightToe_End","mixamorig:LeftUpLeg":"mixamorig:LeftLeg","mixamorig:LeftLeg":"mixamorig:LeftFoot","mixamorig:LeftFoot":"mixamorig:LeftToeBase","mixamorig:LeftToeBase":"mixamorig:LeftToe_End"};
 
-// v0.7.0 semantic hand-chain correction.
+// v0.7.1 semantic hand-chain correction.
 // SOMA non-thumb fingers contain one extra metacarpal articulation inside the
 // palm: Hand -> Finger1(metacarpal) -> Finger2(MCP) -> Finger3(PIP)
 // -> Finger4(DIP) -> FingerEnd(tip).
@@ -798,7 +798,7 @@ function buildSammyMixamoBridgeScene(){
  // IMPORTANT: previous bridges exported the neutral bind-shape while Mixamo's
  // animation convention is referenced to a canonical T-pose. That mismatch
  // survived mostly unnoticed in torso/legs but baked a constant offset into
- // shoulders, arms and hands. v0.7.0 bakes the official SOMA T-pose into the
+ // shoulders, arms and hands. v0.7.1 bakes the official SOMA T-pose into the
  // mesh BEFORE binding the Mixamo-compatible skeleton.
  const pos=posePublicBindShapeToOfficialTPose(bindShape,bindWorld,tPoseWorld,V);
  let minX=Infinity,maxX=-Infinity,minY=Infinity,minZ=Infinity,maxZ=-Infinity;
@@ -853,7 +853,7 @@ function buildSammyMixamoBridgeScene(){
  if(transported!==52)throw new Error(`Mixamo Frame-Transport unvollständig: ${transported}/52`);
  console.info(`Mixamo XBot→SOMA Frame-Transport: ${transported}/52 · max ${maxTransportDeg.toFixed(1)}° bei ${maxTransportBone}`);
 
- // v0.7.0: dedicated thumb-plane refinement. The general shortest-arc frame
+ // v0.7.1: dedicated thumb-plane refinement. The general shortest-arc frame
  // transport fixed the whole body substantially, but Mixamo still showed the
  // thumbs as the last visibly wrong chain. Thumbs need a stronger anatomical
  // guide than pure parent->child direction, so Thumb1 aligns to the palm
@@ -1001,7 +1001,7 @@ async function exportMixamoComparisonFrame(){
   host.userData={...host.userData,SammyDiagnostic:"Exact Axis16 comparison body",SourceAnimation:userAnimName,SourceFrame:frame,SourceFPS:userAnimFps,VertexCount:4505};
   bridge.scene.updateMatrixWorld(true);
   const mod=await getMixamoFbxExporter();
-  const bytes=new mod.FBXExporter().parseSync(bridge.scene,{axisUp:"Y",axisForward:"-Z",unitScale:100,bakeSpaceTransform:false,includeAnimations:false,customProperties:true,creator:"Sammy Axis16 Retarget Comparison v0.7.0"});
+  const bytes=new mod.FBXExporter().parseSync(bridge.scene,{axisUp:"Y",axisForward:"-Z",unitScale:100,bakeSpaceTransform:false,includeAnimations:false,customProperties:true,creator:"Sammy Axis16 Retarget Comparison v0.7.1"});
   if(!(bytes instanceof Uint8Array)||bytes.byteLength<100000)throw new Error(`Vergleichs-FBX ungültig/zu klein: ${bytes?.byteLength||0} Bytes`);
   const safe=String(userAnimName||"Mixamo").replace(/\.[^.]+$/,'').replace(/[^a-z0-9_-]+/gi,'_').slice(0,60)||"Mixamo";
   const filename=`Sammy_Retarget_ExactAxis16_${safe}_Frame${String(frame).padStart(4,'0')}.fbx`;
@@ -1023,7 +1023,7 @@ async function exportSammyMixamoBridge(){
   const mod=await getMixamoFbxExporter();if(!mod?.FBXExporter)throw new Error("FBXExporter-Modul wurde geladen, exportiert aber keine FBXExporter-Klasse.");
   const bytes=new mod.FBXExporter().parseSync(bridge.scene,{
    axisUp:"Y",axisForward:"-Z",unitScale:100,bakeSpaceTransform:false,includeAnimations:false,customProperties:true,
-   creator:"Sammy Mixamo XBotContract65 T-Pose Axis16 v0.7.0"
+   creator:"Sammy Mixamo XBotContract65 T-Pose Axis16 v0.7.1"
   });
   if(!(bytes instanceof Uint8Array)||bytes.byteLength<100000)throw new Error(`FBX-Ausgabe unerwartet klein/ungültig: ${bytes?.byteLength||0} Bytes`);
   const magic=new TextDecoder("latin1").decode(bytes.subarray(0,21));if(!magic.startsWith("Kaydara FBX Binary"))throw new Error("FBX-Datei hat keinen erwarteten Binary-FBX-Header.");
@@ -1032,7 +1032,7 @@ async function exportSammyMixamoBridge(){
   setState("#mixamoBridgeState","X-BOT BRIDGE EXPORTIERT","ok");
   info("#mixamoBridgeInfo",`✓ ${filename}
 65 Bones – exakt dieselbe Hierarchie und Bone-Namen wie das analysierte Mixamo X Bot.
-Mesh und Skeleton sind in die offizielle SOMA T-Pose gebacken. v0.7.0: 52-Bone-Frame-Transport + Thumb-Plane-Fix + korrigierte SOMA→Mixamo-Fingersemantik (Metacarpal/MCP/Terminal).
+Mesh und Skeleton sind in die offizielle SOMA T-Pose gebacken. v0.7.1: 52-Bone-Frame-Transport + Thumb-Plane-Fix + korrigierte SOMA→Mixamo-Fingersemantik (Metacarpal/MCP/Terminal).
 Hals: genau 1 Neck + Head + HeadTop_End.
 Finger: exakt 4 Bones pro Finger/Daumen wie beim X Bot – keine 3-Segment-Vereinfachung mehr.
 Bone-Achsen: X-Bot-Bindorientierungen; Joint-Positionen/Body/Skinning bleiben SOMA.
@@ -1370,7 +1370,7 @@ Aktive Anny Local Changes: ${localCount}
 ${frame?`Aktuelle importierte Pose: ${userAnimName} · Frame ${frame.frame}/${userAnimFrames-1}`:"Noch keine importierte Animation geladen."}
 Browser↔offizielles-Anny Rest-Rig Fixture: ${annyRigParity?`max ${annyRigParity.maxAbs.toExponential(2)} ${annyRigParity.ok?"✓":"FEHLER"}`:"noch nicht geprüft"}
 
-v0.7.0 korrigiert genau den im iPhone-Test sichtbaren Grundhaltungsfehler:
+v0.7.1 korrigiert genau den im iPhone-Test sichtbaren Grundhaltungsfehler:
 1. aktuelles Anny-Shape + dessen echtes Rest-Rig rekonstruieren,
 2. dieses Rig über seine EIGENEN Bonelängen in die bewährte Axis16/Mixamo-Referenzhaltung bringen,
 3. erst darauf die bereits verifizierten Mixamo-Weltbewegungsdeltas anwenden,
@@ -1635,7 +1635,7 @@ function buildAxis16CompatibleAnnyReferenceRig(nativeRig){
   heads[j*3+2]=heads[p*3+2]+dz*targetLen
  }
 
- // 2) CRITICAL v0.7.0 change:
+ // 2) CRITICAL v0.7.1 change:
  //    Never copy Axis16/XBot bone coordinate frames onto Anny bones.
  //    Instead rotate each NATIVE Anny bone frame by the world-space transport
  //    that moves its native child directions into the target T-pose directions.
@@ -1758,7 +1758,7 @@ function applyAnnyAxis16RetargetPose(rest,relative3,markMoved=true,report=true,l
  lastAppliedRelative3=new Float32Array(relative3);
  const rig=reconstructExactAnnyRestRig(annyLastCoeffs),worldDelta=publicRelativeToWorldDelta3(relative3),absolute3=new Float32Array(78*9),tmp=new Float32Array(9);
  const axisRef=buildAxis16CompatibleAnnyReferenceRig(rig);
- // v0.7.0: world motion delta is applied to the TRANSPORTED NATIVE ANNY frame.
+ // v0.7.1: world motion delta is applied to the TRANSPORTED NATIVE ANNY frame.
  // Never multiply by an XBot/Axis16 bone basis before inverse(native Anny bind).
  for(let j=0;j<78;j++){mat3Mul(worldDelta,j*9,axisRef.ref3,j*9,tmp,0);absolute3.set(tmp,j*9)}
  const fk=absoluteFkOnAxis16Reference(rig,axisRef,absolute3),lod=displayLOD==="mid"?"mid":"low",pack=annyPackForLOD(lod),idx=pack.vertex_bone_indices.data,w=pack.vertex_bone_weights.data,K=annyMeta.skinning_topk,pos=geometry.attributes.position.array,n=rest.length/3,t0=performance.now(),gy=annyGroundOffsetY;let maxWeightErr=0;
@@ -1816,7 +1816,7 @@ Skinning: Top-${annyMeta.skinning_topk}
 Browser↔offizielles-Anny Rest-Rig Fixture max. Fehler: ${rigParity.maxAbs.toExponential(2)}
 Damit werden beim Morphing jetzt nicht nur Joint-Positionen, sondern Anny/SOMAs echte shape-abhängige Bone-Orientierungen rekonstruiert.`);
   return true
- }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.7.0 den neuen Workflow „Build Anny SOMA Engine v3“ einmal ausführen.`);return false}
+ }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.7.1 den neuen Workflow „Build Anny SOMA Engine v3“ einmal ausführen.`);return false}
 }
 async function loadAnnyMidPack(){
  if(annyMidLoaded)return true;
@@ -1913,7 +1913,7 @@ function applyAnnyParams(){if(shapeEngine!=="anny")setShapeEngine("anny");else u
 function updateLodButtons(){$("#lodLow").classList.toggle("selected",displayLOD==="low");$("#lodMid").classList.toggle("selected",displayLOD==="mid");$("#lodBadge").textContent=displayLOD==="mid"?"18.056 V":"4.505 V"}
 async function setDisplayLOD(lod){
  if(lod===displayLOD)return true;if(lod==="mid"){
-  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.7.0 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return false}
+  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.7.1 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return false}
   if(!await loadAnnyMidPack())return false;
   if(poseReady&&currentRigMode==="current-expanded"&&!morphSammyTargetActive&&!packOptional("target_skinning_mid_shape")){info("#lodInfo","Mid-Shape ist vorhanden, aber der LEGACY-122-Pfad enthält noch keine 18k×122 Skinweights. Der Exact-Anny/SOMA-Morphpfad benötigt diese nicht.");return false}
  }
@@ -2292,7 +2292,7 @@ async function resetSemanticModifiers(){
 async function startFullShapeAnalysis(){
  if(shapeAnalysis.running)return;
  try{
-  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.7.0 Anny direkt über die nativen Parameter testen.");
+  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.7.1 Anny direkt über die nativen Parameter testen.");
   if(currentRigMode!=="current-expanded"||!poseReady)throw new Error("Zuerst Current Expanded 122-Joint LBS in Punkt 5 aktivieren.");
   stopPoseAnimation(false);shapeAnalysis.running=true;shapeAnalysis.ready=false;shapeAnalysis.stale=false;shapeAnalysis.internal=true;
   const token=++shapeAnalysis.cancelToken,btn=$("#startShapeAnalysis"),cancel=$("#cancelShapeAnalysis");btn.disabled=true;cancel.disabled=false;
@@ -2320,7 +2320,7 @@ async function startFullShapeAnalysis(){
   info("#analysisInfo",`✓ Lokale 7×128-Mess-Jacobian am aktuellen Körper erzeugt.
 ${qualities}
 
-Wichtig: Umfang/Tiefe sind in v0.7.0 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
+Wichtig: Umfang/Tiefe sind in v0.7.1 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
   updateDecision()
  }catch(e){
   console.error(e);
@@ -2705,7 +2705,7 @@ async function testAxisReferenceFixFromRepo(){
   if(rel.length!==78*9)throw new Error(`Probe-Pose hat ${rel.length} Werte statt ${78*9}.`);
   oracleModeActive=true;oracleProbe=probe;oracleDisplayFrame=Number(probe.source?.frame||0);
   stopPoseAnimation(false);
-  const result=applyAnnyAxis16RetargetPose(currentRestMid,rel,true,false,"v0.7.0 Axis16-Referenz-FK");
+  const result=applyAnnyAxis16RetargetPose(currentRestMid,rel,true,false,"v0.7.1 Axis16-Referenz-FK");
   if(mesh)mesh.visible=true;oracleSetBodyOpacity(.72);
   if(rigGroup)rigGroup.visible=false;rigDebugVisible=false;
   if(oracleOfficialSkeleton)oracleDisposeObject(oracleOfficialSkeleton);
@@ -2715,7 +2715,7 @@ async function testAxisReferenceFixFromRepo(){
   info("#morphFixInfo",`TEST AUS BEREITS VORHANDENER REPO-PROBE
 ${probe.source?.animation||"Animation"} · Frame ${probe.source?.frame??"?"}
 
-v0.7.0 ändert erstmals NICHT die Animation und NICHT Anny-FK selbst, sondern den dazwischenliegenden Referenzvertrag:
+v0.7.1 ändert erstmals NICHT die Animation und NICHT Anny-FK selbst, sondern den dazwischenliegenden Referenzvertrag:
 
 alt (kaputt):
 Axis16/XBot-BONE-ACHSEN wurden direkt auf Anny gesetzt
@@ -3427,7 +3427,7 @@ async function loadMixamoReferenceFile(file){
  const missing=MIXAMO_REQUIRED_BONES.filter(k=>!bones.has(k));
  if(missing.length)throw new Error(`Keine kompatible Mixamo-T-Pose. Fehlende Bones: ${missing.join(", ")}`);
 
- // CRITICAL v0.7.0 FIX:
+ // CRITICAL v0.7.1 FIX:
  // A Mixamo-returned T-pose FBX preserves our original static bind skeleton and
  // stores Mixamo's actual T-pose as ANIMATION CURVES. v0.5.8 incorrectly read
  // the untouched static skeleton as the reference. That makes a T-pose clip
@@ -3489,7 +3489,7 @@ Bones: ${bones.size}/65 ✓ · XBotContract65 / Axis16-Kalibrierung
 Referenzquelle: ANIMIERTE Mixamo-T-Pose (${clip.name||"Clip"}), nicht statische FBX-Bindpose
 T-Pose-Selbsttest: stabil · max ${stabilityDeg.toFixed(3)}° Drift
 Mixamo-T-Pose unterscheidet ${changed} Bones >0,01° von der statischen Bridge · max ${maxChangeDeg.toFixed(1)}° bei ${maxChangeBone||"?"}
-Die statische Axis16-Bridge ist ab v0.7.0 der Bewegungs-Nullpunkt. Der animierte Mixamo-T-Pose-Clip wird nur noch als Kalibrier-/Kompatibilitätsprüfung gespeichert, damit Mixamos eigene Wrist-/Thumb-Pose nicht versehentlich aus jeder Animation herausgerechnet wird.`)
+Die statische Axis16-Bridge ist ab v0.7.1 der Bewegungs-Nullpunkt. Der animierte Mixamo-T-Pose-Clip wird nur noch als Kalibrier-/Kompatibilitätsprüfung gespeichert, damit Mixamos eigene Wrist-/Thumb-Pose nicht versehentlich aus jeder Animation herausgerechnet wird.`)
 }
 function clearMixamoReferenceFile(){
  mixamoReferencePose=null;mixamoReferenceName="";
@@ -3565,7 +3565,7 @@ async function convertMixamoFbxMotion(arrayBuffer,filename="Mixamo FBX"){
 
  const bindQ=new Map(),tmpQ=new THREE.Quaternion();
  for(const [k,b] of bones){
-  // v0.7.0: motion zero is the STATIC Axis16 bridge, not Mixamo's animated
+  // v0.7.1: motion zero is the STATIC Axis16 bridge, not Mixamo's animated
   // "T-Pose" clip. The latter contains deliberate pose offsets (especially
   // wrists/thumbs) and is part of Mixamo's actual animation pose space.
   // Subtracting it erased ~11.6° wrist and up to ~40.2° thumb world offsets.
@@ -3711,9 +3711,9 @@ Frames: ${conv.frames} · Joints/Bones: ${conv.rawJ} → ${poseJointCount} Publi
 ${conv.duration?`Clip: ${conv.clipName||"Mixamo"} · ${conv.duration.toFixed(2)} s · ${conv.animatedBoneCount||"?"} animierte Bones
 `:""}${conv.mixamoSkeletonKind==="mixamo-motion54"?`Mixamo Motion-Skeleton: 54/65 · 11 nicht animierte Terminal-Bones wurden von Mixamo entfernt und werden von Sammy geerbt
 `:""}${conv.referenceUsed?`Referenzdatei: ${conv.referenceName||"geladen"} · Axis16-Vertrag geprüft
-Motion-Zero: STATISCHE Axis16-Bridge (v0.7.0)
+Motion-Zero: STATISCHE Axis16-Bridge (v0.7.1)
 T-Pose-Stabilität: ${Number(conv.referenceStabilityDeg||0).toFixed(3)}° · statischer Bridge-Match Animation↔Referenz: ${Number(conv.staticContractMaxDeg||0).toFixed(3)}°${conv.staticContractBone?` (${conv.staticContractBone})`:""}
-`:""}Playback: ${userAnimFps} fps · Root Translation: ${conv.hasRootTranslation?"vorhanden, v0.7.0 spielt bewusst in-place":"keine"}
+`:""}Playback: ${userAnimFps} fps · Root Translation: ${conv.hasRootTranslation?"vorhanden, v0.7.1 spielt bewusst in-place":"keine"}
 Die Animation läuft durch denselben 78→122 Procedural-Twist/LBS-Pfad wie die eingebaute NVIDIA-Animation.`);
   return true
  }catch(e){
@@ -4076,7 +4076,7 @@ Die App bleibt bedienbar. „Automatik erneut starten“ versucht nur die fehlen
 
 
 /* ================================================================
-   SAMMY v0.7.0 production shell
+   SAMMY v0.7.1 production shell
    ================================================================ */
 let sammyBootHideTimer=0;
 let sammyIntroActive=false,sammyIntroRel=null,sammyIntroFrames=0,sammyIntroFps=30,sammyIntroStart=0,sammyIntroPhase="idle",sammyIntroBlendStart=0,sammyIntroBlendFrom=null,sammyEditPoseRel=null;
@@ -4099,41 +4099,94 @@ const SAMMY_BUBBLE_DETACH=52;
 let sammyBubbleRegistry={};
 let sammyBubbleGroupSeq=1;
 
-const SAMMY_MEASURE_KEY="sammy-measure-calibration-v1";
+const SAMMY_MEASURE_KEY="sammy-measure-calibration-v2";
+const SAMMY_MEASURE_LEGACY_KEY="sammy-measure-calibration-v1";
+const SAMMY_MEASURE_FACTORY_V1={"schema":"sammy-measure-calibration-v1","male":{"stature":{"offsetCm":0,"comment":"","status":"bestätigt"},"biacromial_breadth":{"offsetCm":2.2,"comment":"Strecke zwischen den beiden in T Pose sichtbaren Tiefpunkten auf den Schultern","status":"prüfen"},"chest_circumference":{"offsetCm":12,"comment":"","status":"prüfen"},"chest_breadth":{"offsetCm":11.2,"comment":"Gleiche Höhe wie Brustumfang","status":"prüfen"},"chest_depth":{"offsetCm":12,"comment":"Gleiche Höhe wie Brustumfang ","status":"prüfen"},"waist_circumference":{"offsetCm":0,"comment":"","status":"bestätigt"},"waist_breadth":{"offsetCm":0,"comment":"","status":"bestätigt"},"waist_depth":{"offsetCm":0,"comment":"","status":"bestätigt"},"buttock_circumference":{"offsetCm":-3.3,"comment":"","status":"prüfen"},"hip_breadth":{"offsetCm":-3.3,"comment":"","status":"prüfen"},"crotch_height":{"offsetCm":-2.9,"comment":"","status":"prüfen"}},"female":{"stature":{"offsetCm":0,"comment":"","status":"bestätigt"},"biacromial_breadth":{"offsetCm":4.1,"comment":"Siehe männliche Definition ","status":"prüfen"},"chest_circumference":{"offsetCm":11.2,"comment":"","status":"prüfen"},"chest_breadth":{"offsetCm":10.1,"comment":"Auf Höhe Brüste","status":"prüfen"},"chest_depth":{"offsetCm":11.2,"comment":"Bis vorderkante Brüste - nur bei Frauen","status":"prüfen"},"waist_circumference":{"offsetCm":0,"comment":"","status":"bestätigt"},"waist_breadth":{"offsetCm":0,"comment":"","status":"bestätigt"},"waist_depth":{"offsetCm":0,"comment":"","status":"bestätigt"},"buttock_circumference":{"offsetCm":-3.3,"comment":"","status":"prüfen"},"hip_breadth":{"offsetCm":-3.3,"comment":"","status":"prüfen"},"crotch_height":{"offsetCm":-5.5,"comment":"","status":"prüfen"}}};
 const SAMMY_MEASURE_DEFS=[
- {id:"stature",label:"Körperhöhe",ansur:"stature",kind:"stature",adjustable:false,range:0,
+ {id:"stature",label:"Körperhöhe",ansur:"stature",kind:"stature",adjustable:false,range:0,group:"Basis",
   ansurInfo:"Stature: standardisierte stehende Körperhöhe vom Boden bis zum höchsten Punkt des Kopfes bei aufrechter Messhaltung.",
-  implementation:"Sammy verwendet die vertikale Ausdehnung des T-Posen-Meshes. Keine verschiebbare Messebene."},
- {id:"biacromial_breadth",label:"Schulterbreite",ansur:"biacromialbreadth",kind:"shoulder",adjustable:true,range:8,
-  ansurInfo:"Biacromial Breadth: geradliniger Abstand zwischen dem linken und rechten Acromion-Landmark.",
-  implementation:"Sammy nutzt zunächst die beiden SOMA-Schultergelenke als Kalibrier-Proxy. Der Slider verschiebt die Linie nur vertikal; die endgültigen Acromion-Landmarks werden nach deiner Kalibrierung festgeschrieben."},
- {id:"chest_circumference",label:"Brustumfang",ansur:"chestcircumference",kind:"sliceCirc",section:"chest",adjustable:true,range:12,
-  ansurInfo:"Chest Circumference: horizontal geführter Umfang des Brustkorbs auf der standardisierten Brust-Messebene.",
-  implementation:"Exakter planarer Meshschnitt, rechtwinklig zur vertikalen Torsoachse. Für den Umfang wird die konvexe Hülle der Schnittkontur verwendet: enge Einschnitte wie Brustspalt werden wie von einem gespannten Maßband überspannt."},
- {id:"chest_breadth",label:"Brustbreite",ansur:"chestbreadth",kind:"sliceWidth",section:"chest",adjustable:true,range:12,
-  ansurInfo:"Chest Breadth: geradlinige transversale Breite des Brustkorbs auf der standardisierten Brusthöhe.",
-  implementation:"Breite der planaren Brust-Schnittkontur in X-Richtung. Die Messebene bleibt rechtwinklig zur Torsoachse."},
- {id:"chest_depth",label:"Brusttiefe",ansur:"chestdepth",kind:"sliceDepth",section:"chest",adjustable:true,range:12,
+  implementation:"Vertikale Ausdehnung des T-Posen-Meshes."},
+ {id:"biacromial_breadth",label:"Schulterbreite",ansur:"biacromialbreadth",kind:"shoulder",adjustable:true,range:8,spanAdjust:true,spanRange:16,group:"Rumpf",
+  ansurInfo:"Biacromial Breadth: gerade Distanz zwischen dem rechten und linken Acromion-Landmark.",
+  implementation:"Proxy über die beiden SOMA-Oberarmköpfe (LeftArm/RightArm). Höhe und symmetrische Gesamtbreite sind kalibrierbar."},
+ {id:"chest_circumference",label:"Brustumfang",ansur:"chestcircumference",kind:"sliceCirc",section:"chest",adjustable:true,range:16,group:"Rumpf",
+  ansurInfo:"Chest Circumference: horizontaler Umfang um den Brustkorb auf der standardisierten Brusthöhe; das Band liegt an, ohne einzuschnüren.",
+  implementation:"Planarer horizontaler Meshschnitt; die konvexe Hülle überspannt enge Einschnitte wie ein straffes Maßband."},
+ {id:"chest_breadth",label:"Brustbreite",ansur:"chestbreadth",kind:"sliceWidth",section:"chest",adjustable:true,range:16,spanAdjust:true,spanRange:20,group:"Rumpf",
+  ansurInfo:"Chest Breadth: geradlinige transversale Brustkorbbereite auf der standardisierten Brusthöhe.",
+  implementation:"X-Breite des Brustschnitts. Der zweite Slider korrigiert die Gesamtbreite symmetrisch: beide Endpunkte bewegen sich um den halben Betrag."},
+ {id:"chest_depth",label:"Brusttiefe",ansur:"chestdepth",kind:"sliceDepth",section:"chest",adjustable:true,range:16,spanAdjust:true,spanRange:20,spanLabel:"Tiefenkorrektur gesamt",group:"Rumpf",
   ansurInfo:"Chest Depth: anteroposteriore Tiefe des Brustkorbs auf der standardisierten Brusthöhe.",
-  implementation:"Tiefe der planaren Brust-Schnittkontur in Z-Richtung. Der Positionsslider verschiebt nur die Ebene, nicht ihre Neigung."},
- {id:"waist_circumference",label:"Taillenumfang",ansur:"waistcircumference",kind:"sliceCirc",section:"waist",adjustable:true,range:12,
-  ansurInfo:"Waist Circumference (Omphalion): horizontaler Umfang auf Höhe des Omphalion-Landmarks (Nabelniveau in der ANSUR-II-Definition).",
-  implementation:"Planarer horizontaler Meshschnitt. Die konvexe Hülle verhält sich wie ein straff angelegtes Maßband und überspannt kleine konkave Einzüge."},
- {id:"waist_breadth",label:"Taillenbreite",ansur:"waistbreadth",kind:"sliceWidth",section:"waist",adjustable:true,range:12,
-  ansurInfo:"Waist Breadth: geradlinige transversale Breite am standardisierten Taillen-/Omphalionniveau.",
-  implementation:"X-Ausdehnung der planaren Taillen-Schnittkontur."},
- {id:"waist_depth",label:"Taillentiefe",ansur:"waistdepth",kind:"sliceDepth",section:"waist",adjustable:true,range:12,
-  ansurInfo:"Waist Depth: anteroposteriore Tiefe am standardisierten Taillen-/Omphalionniveau.",
-  implementation:"Z-Ausdehnung der planaren Taillen-Schnittkontur."},
- {id:"buttock_circumference",label:"Gesäß-/Hüftumfang",ansur:"buttockcircumference",kind:"sliceCirc",section:"hip",adjustable:true,range:14,
-  ansurInfo:"Buttock Circumference: horizontal geführter Umfang über die ausgeprägteste Gesäß-/Hüftregion.",
-  implementation:"Planarer Schnitt der Gesäß-/Hüftregion. Die konvexe Hülle überspannt die Gesäßfurche und andere enge Einschnitte wie ein Maßband."},
- {id:"hip_breadth",label:"Hüftbreite",ansur:"hipbreadth",kind:"sliceWidth",section:"hip",adjustable:true,range:14,
-  ansurInfo:"Hip Breadth: maximale bzw. standardisiert erfasste horizontale Breite über die Hüftregion im Stand.",
-  implementation:"X-Ausdehnung des planaren Hüftschnitts. Keine unbestätigte 'Hip Depth' wird hinzugefügt."},
- {id:"crotch_height",label:"Innenbein / Crotch Height",ansur:"crotchheight",kind:"crotchHeight",adjustable:true,range:10,
+  implementation:"Z-Tiefe des planaren Brustschnitts. Die optionale Tiefenkorrektur verschiebt Vorder- und Rückpunkt symmetrisch."},
+ {id:"waist_circumference",label:"Taillenumfang",ansur:"waistcircumference",kind:"sliceCirc",section:"waist",adjustable:true,range:14,group:"Rumpf",
+  ansurInfo:"Waist Circumference (Omphalion): horizontaler Umfang auf Höhe des Omphalion, also des Bauchnabelniveaus.",
+  implementation:"Planarer horizontaler Meshschnitt mit konvexer Maßbandhülle."},
+ {id:"waist_breadth",label:"Taillenbreite",ansur:"waistbreadth",kind:"sliceWidth",section:"waist",adjustable:true,range:14,spanAdjust:true,spanRange:18,group:"Rumpf",
+  ansurInfo:"Waist Breadth: gerade Links-Rechts-Breite auf Omphalion-Höhe.",
+  implementation:"X-Breite des Taillenschnitts; Gesamtbreite symmetrisch kalibrierbar."},
+ {id:"waist_depth",label:"Taillentiefe",ansur:"waistdepth",kind:"sliceDepth",section:"waist",adjustable:true,range:14,spanAdjust:true,spanRange:18,spanLabel:"Tiefenkorrektur gesamt",group:"Rumpf",
+  ansurInfo:"Waist Depth: anteroposteriore Tiefe des Rumpfes auf standardisierter Taillenhöhe.",
+  implementation:"Z-Tiefe des Taillenschnitts; optional symmetrisch korrigierbar."},
+ {id:"buttock_circumference",label:"Gesäß-/Hüftumfang",ansur:"buttockcircumference",kind:"sliceCirc",section:"hip",adjustable:true,range:16,group:"Becken",
+  ansurInfo:"Buttock Circumference: horizontaler Umfang auf Höhe der maximalen hinteren Gesäßausladung.",
+  implementation:"Planarer Hüftschnitt; die konvexe Hülle überspannt Gesäßfurche und andere enge Konkavitäten."},
+ {id:"hip_breadth",label:"Hüftbreite",ansur:"hipbreadth",kind:"sliceWidth",section:"hip",adjustable:true,range:16,spanAdjust:true,spanRange:20,group:"Becken",
+  ansurInfo:"Hip Breadth: direkte horizontale Breitenmessung über den Hüft-/Beckenbereich.",
+  implementation:"X-Breite des Hüftschnitts; Gesamtbreite symmetrisch kalibrierbar. Keine unbestätigte Hip Depth."},
+ {id:"crotch_height",label:"Crotch Height / Innenbein",ansur:"crotchheight",kind:"crotchHeight",adjustable:true,range:12,group:"Beine",
   ansurInfo:"Crotch Height: vertikale Höhe vom Boden bis zum standardisierten Schritt-/Crotch-Niveau.",
-  implementation:"Vertikale Strecke vom tiefsten Bodenpunkt des T-Posen-Meshes bis zur kalibrierbaren Crotch-Ebene. Dies ist bewusst ANSUR Crotch Height und nicht einfach ein Bekleidungs-Inseam."}
+  implementation:"Boden bis kalibrierbare Crotch-Ebene; bewusst kein Bekleidungs-Inseam."},
+ {id:"torso_height",label:"Schulter → Schritt",ansur:"derived: acromialheight - crotchheight",kind:"torsoHeight",adjustable:true,range:10,group:"Abgeleitet",
+  ansurInfo:"Abgeleitetes Body-Lab-Maß aus Schulter-/Acromialhöhe minus Crotch Height; kein einzelnes direkt erhobenes ANSUR-Maß.",
+  implementation:"Vertikale Distanz zwischen mittlerer Oberarmkopf-/Acromion-Proxyhöhe und Crotch-Ebene."},
+ {id:"neck_circumference",label:"Halsumfang",ansur:"neckcircumference",kind:"sliceCirc",section:"neck",adjustable:true,range:7,group:"Hals",
+  ansurInfo:"Neck Circumference: Umfang um den Hals an der standardisierten ANSUR-Messhöhe; getrennt von Neck Circumference, Base.",
+  implementation:"Horizontaler planarer Hals-Schnitt mit Maßbandhülle."},
+ {id:"neck_base_circumference",label:"Halsumfang Basis",ansur:"neckcircumferencebase",kind:"sliceCirc",section:"neckBase",adjustable:true,range:8,group:"Hals",
+  ansurInfo:"Neck Circumference, Base: eigener Umfang am unteren Halsansatz, wo der Hals in Schulter/Trapez übergeht.",
+  implementation:"Horizontaler planarer Schnitt an der kalibrierbaren Halsbasis."},
+ {id:"wrist_circumference",label:"Handgelenkumfang",ansur:"wristcircumference",kind:"limbCircX",section:"wrist",adjustable:true,range:7,group:"Arme",
+  ansurInfo:"Wrist Circumference: Umfang um das Handgelenk am standardisierten Landmark-Niveau.",
+  implementation:"In T-Pose Schnitt senkrecht zur Armachse (X-Ebene) am rechten Handgelenk."},
+ {id:"thigh_circumference",label:"Oberschenkelumfang",ansur:"thighcircumference",kind:"limbCircY",section:"thigh",adjustable:true,range:12,group:"Beine",
+  ansurInfo:"Thigh Circumference: Umfang am rechten Oberschenkel auf der standardisierten ANSUR-Messhöhe.",
+  implementation:"Horizontaler Schnitt durch das rechte Bein; auf die rechte Beinkomponente isoliert."},
+ {id:"calf_circumference",label:"Wadenumfang",ansur:"calfcircumference",kind:"limbCircY",section:"calf",adjustable:true,range:10,group:"Beine",
+  ansurInfo:"Calf Circumference: Umfang an der größten Wadenausprägung.",
+  implementation:"Horizontaler Schnitt durch die rechte Wade; auf die rechte Beinkomponente isoliert."},
+ {id:"ankle_circumference",label:"Knöchelumfang",ansur:"anklecircumference",kind:"limbCircY",section:"ankle",adjustable:true,range:7,group:"Beine",
+  ansurInfo:"Ankle Circumference: standardisierter Umfang im Knöchelbereich; nicht Heel-Ankle Circumference.",
+  implementation:"Horizontaler Schnitt durch den rechten Knöchelbereich."},
+ {id:"waist_back_length",label:"Rückenlänge bis Taille",ansur:"waistbacklength",kind:"waistBackLength",adjustable:true,range:10,group:"Längen",
+  ansurInfo:"Waist Back Length (Omphalion): Rückenlänge vom definierten oberen Rücken-/Nacken-Landmark zur Omphalion-Taillenebene.",
+  implementation:"V1-Proxy als vertikale Rückenstrecke Neck1 → kalibrierbare Taillenebene; deshalb weiter als prüfbedürftig behandeln."},
+ {id:"upperarm_circumference",label:"Oberarmumfang",ansur:"bicepscircumferenceflexed",kind:"limbCircX",section:"upperarm",adjustable:true,range:10,group:"Arme",
+  ansurInfo:"ANSUR erfasst Biceps Circumference, Flexed in vorgeschriebener Flexions-/Anspannungsposition.",
+  implementation:"T-Posen-Proxy senkrecht zur rechten Oberarmachse. Nicht als bereits identisch mit dem ANSUR-Flexed-Maß betrachten."},
+ {id:"upperarm_length",label:"Oberarmlänge",ansur:"acromionradialelength",kind:"jointSegment",joints:["RightArm","RightForeArm"],adjustable:true,range:6,group:"Arme",
+  ansurInfo:"Acromion-Radiale Length: Strecke vom Acromion an der Schulter zur Radiale-Landmark am Ellenbogen.",
+  implementation:"SOMA-Proxy RightArm → RightForeArm; Positionsoffset verschiebt die sichtbare Linie orthogonal nur zur Kalibrierung."},
+ {id:"lowerarm_length",label:"Unterarmlänge",ansur:"radialestylionlength",kind:"jointSegment",joints:["RightForeArm","RightHand"],adjustable:true,range:6,group:"Arme",
+  ansurInfo:"Radiale-Stylion Length: standardisierte Strecke vom Radiale-Landmark zum Stylion am Handgelenk.",
+  implementation:"SOMA-Proxy RightForeArm → RightHand."},
+ {id:"tibiale_height",label:"Unterschenkelhöhe / Tibiale Height",ansur:"tibialheight",kind:"tibialeHeight",adjustable:true,range:10,group:"Beine",
+  ansurInfo:"Tibiale Height: stehende Bodenhöhe des definierten Tibiale-Landmarks im Kniebereich.",
+  implementation:"Boden → RightShin-Joint als kalibrierbarer Proxy."},
+ {id:"upperleg_height",label:"Oberschenkelhöhe",ansur:"derived: trochanterionheight - tibialheight",kind:"upperlegHeight",adjustable:true,range:10,group:"Abgeleitet",
+  ansurInfo:"Abgeleitet aus Trochanterion Height minus Tibiale Height; kein einzelnes direkt erhobenes ANSUR-Maß.",
+  implementation:"Vertikale SOMA-Proxykomponente RightLeg → RightShin."},
+ {id:"front_chest_length",label:"Vordere Bruststrecke",ansur:"MakeHuman internal",kind:"frontChest",adjustable:true,range:10,group:"MakeHuman Zusatz",internal:true,
+  ansurInfo:"Kein direkt zugeordnetes ANSUR-II-Ziel im früheren Body-Lab-Kalibrationssatz.",
+  implementation:"Interner Kontrollwert: vordere vertikale Rumpfstrecke von Neck1 zur Taillenebene; für Harness-/Morphdiagnose sichtbar."},
+ {id:"neck_height",label:"Halshöhe",ansur:"MakeHuman internal",kind:"neckHeight",adjustable:true,range:6,group:"MakeHuman Zusatz",internal:true,
+  ansurInfo:"Kein direkt zugeordnetes ANSUR-II-Ziel im früheren Body-Lab-Kalibrationssatz.",
+  implementation:"Interner Proxy Neck1 → Neck2/Head-Bereich; dient nur der Morph-/Harnessdiagnose."},
+ {id:"shoulder_length",label:"Schulterstrecke",ansur:"shoulderlength",kind:"shoulderLength",adjustable:true,range:6,group:"MakeHuman Zusatz",
+  ansurInfo:"ANSUR führt Shoulder Length als eigenes Maß; es ist nicht identisch mit Biacromial Breadth.",
+  implementation:"SOMA-Proxy RightShoulder → RightArm; separat von der geraden Gesamt-Schulterbreite."},
+ {id:"waist_to_hip",label:"Taille → Hüfte",ansur:"MakeHuman internal",kind:"waistToHip",adjustable:true,range:10,group:"MakeHuman Zusatz",internal:true,
+  ansurInfo:"Kein direktes ANSUR-II-Ziel; im früheren Body Lab als zusätzlicher Harness-relevanter Kontrollwert geführt.",
+  implementation:"Vertikale Distanz zwischen kalibrierter Taillen- und Hüftebene."}
 ];
 let sammyMeasureSession=null;
 let sammyMeasureOverlayGroup=null;
@@ -4271,6 +4324,33 @@ function sammyResolveBubbleLayout(){
  }
  sammyPersistBubbles()
 }
+
+const SAMMY_BUBBLE_EDGE_MAGNET=48;
+function sammyBubbleEdgeDistance(edge,x,y){const cross=sammyBubbleCrossValue(edge);return (edge==="left"||edge==="right")?Math.abs(x-cross):Math.abs(y-cross)}
+function sammyBubbleCandidateEdge(x,y){
+ const edges=["left","right","top","bottom"].map(edge=>[edge,sammyBubbleEdgeDistance(edge,x,y)]).sort((a,b)=>a[1]-b[1]);return edges[0][1]<=SAMMY_BUBBLE_EDGE_MAGNET?edges[0][0]:null
+}
+function sammyBubbleRestoreSnapshot(snapshot,exceptId=null){
+ if(!snapshot)return;for(const [id,s] of Object.entries(snapshot)){if(id===exceptId||!sammyBubbleRegistry[id])continue;Object.assign(sammyBubbleRegistry[id],{x:s.x,y:s.y,edge:s.edge,groupId:s.groupId||null});sammyBubbleApply(id)}
+}
+function sammyPreviewBubbleInsertion(id,edge,desiredAxis,snapshot){
+ const axis=(edge==="left"||edge==="right")?"y":"x",cross=sammyBubbleCrossValue(edge),span=sammyBubbleSpan(edge),step=SAMMY_BUBBLE_SIZE+SAMMY_BUBBLE_GAP;
+ // Start every preview from the pointer-down arrangement so leaving/re-entering an edge never accumulates drift.
+ sammyBubbleRestoreSnapshot(snapshot,id);
+ const others=Object.keys(sammyBubbleRegistry).filter(k=>k!==id&&sammyBubbleVisible(k)&&((sammyBubbleRegistry[k].edge||sammyNearestEdgeFromPos(sammyBubbleRegistry[k].x,sammyBubbleRegistry[k].y))===edge));
+ const entries=others.map(k=>({id:k,pos:sammyBubbleRegistry[k][axis]}));entries.push({id,pos:Math.max(span.min,Math.min(span.max,desiredAxis)),drag:true});entries.sort((a,b)=>a.pos-b.pos);
+ const di=entries.findIndex(e=>e.id===id),pos=entries.map(e=>e.pos);pos[di]=entries[di].pos;
+ // Collision propagation: insertion from either direction pushes neighbors away rather than refusing the snap.
+ for(let i=di-1;i>=0;i--)if(pos[i]>pos[i+1]-step)pos[i]=pos[i+1]-step;
+ for(let i=di+1;i<pos.length;i++)if(pos[i]<pos[i-1]+step)pos[i]=pos[i-1]+step;
+ if(pos[0]<span.min){const sh=span.min-pos[0];for(let i=0;i<pos.length;i++)pos[i]+=sh}
+ if(pos[pos.length-1]>span.max){const sh=span.max-pos[pos.length-1];for(let i=0;i<pos.length;i++)pos[i]+=sh}
+ // Re-run constraints after boundary shift so insertion between two bubbles remains exact.
+ for(let i=1;i<pos.length;i++)if(pos[i]<pos[i-1]+step)pos[i]=pos[i-1]+step;
+ if(pos[pos.length-1]>span.max){const sh=span.max-pos[pos.length-1];for(let i=0;i<pos.length;i++)pos[i]+=sh}
+ entries.forEach((e,i)=>{const m=sammyBubbleRegistry[e.id];m.edge=edge;m.groupId=null;if(axis==="y"){m.x=cross;m.y=pos[i]}else{m.y=cross;m.x=pos[i]}sammyBubbleApply(e.id)});
+ return true
+}
 function sammyFlingBubble(id,vx=0,vy=0){
  sammyCancelBubbleMotion(id);
  const meta=sammyBubbleRegistry[id];if(!meta)return;
@@ -4321,241 +4401,262 @@ function sammyFlingBubbleGroup(ids,edge,axisVelocity=0){
  const raf=requestAnimationFrame(tick);ids.forEach(id=>sammyBubbleMotionRaf[id]=raf)
 }
 
+
+let sammyMeasureScope="common";
+let sammyMeasureInfoOpenFor=null;
 function sammyMeasureSexKey(){return annyParams?.gender>=.5?"female":"male"}
 function sammyMeasureSexLabel(){return sammyMeasureSexKey()==="female"?"♀ weiblich":"♂ männlich"}
 function sammyMeasureOtherSexSymbol(){return sammyMeasureSexKey()==="female"?"♂":"♀"}
+function sammyMeasureScopeLabel(){return sammyMeasureScope==="common"?"UNISEX":(sammyMeasureScope==="female"?"♀ spezifisch":"♂ spezifisch")}
+function sammyMeasureBlankState(){return {offsetCm:0,spanOffsetCm:0,comment:"",status:"ungeprüft"}}
+function sammyMeasureSameV1(a,b){
+ if(!a||!b)return false;return Number(a.offsetCm||0)===Number(b.offsetCm||0)&&String(a.comment||"")===String(b.comment||"")&&String(a.status||"ungeprüft")===String(b.status||"ungeprüft")
+}
+function sammyMeasureMigrateV1(v1){
+ const out={schema:"sammy-measure-calibration-v2",common:{},male:{},female:{}};
+ for(const d of SAMMY_MEASURE_DEFS){
+  const m=v1?.male?.[d.id],f=v1?.female?.[d.id],blank=sammyMeasureBlankState();
+  if(m&&f&&sammyMeasureSameV1(m,f)){
+   out.common[d.id]={...blank,...m,spanOffsetCm:0};out.male[d.id]={override:false};out.female[d.id]={override:false}
+  }else{
+   out.common[d.id]={...blank};
+   out.male[d.id]=m?{override:true,...blank,...m,spanOffsetCm:0}:{override:false};
+   out.female[d.id]=f?{override:true,...blank,...f,spanOffsetCm:0}:{override:false}
+  }
+ }
+ return out
+}
 function sammyMeasureDefaultCalibration(){
- const make=()=>Object.fromEntries(SAMMY_MEASURE_DEFS.map(d=>[d.id,{offsetCm:0,comment:"",status:"ungeprüft"}]));
- return {schema:"sammy-measure-calibration-v1",male:make(),female:make()}
+ const base=sammyMeasureMigrateV1(SAMMY_MEASURE_FACTORY_V1);
+ for(const d of SAMMY_MEASURE_DEFS){
+  if(!base.common[d.id])base.common[d.id]=sammyMeasureBlankState();
+  if(!base.male[d.id])base.male[d.id]={override:false};
+  if(!base.female[d.id])base.female[d.id]={override:false}
+ }
+ return base
 }
 function sammyMeasureLoadCalibration(){
  if(sammyMeasureCalibration)return sammyMeasureCalibration;
- const base=sammyMeasureDefaultCalibration();
+ let base=sammyMeasureDefaultCalibration();
  try{
-  const saved=JSON.parse(localStorage.getItem(SAMMY_MEASURE_KEY)||"null");
-  if(saved){for(const sex of ["male","female"])for(const d of SAMMY_MEASURE_DEFS){const s=saved?.[sex]?.[d.id];if(s)base[sex][d.id]={...base[sex][d.id],...s}}}
- }catch(e){console.warn("Measure calibration load",e)}
- sammyMeasureCalibration=base;return base
+  const v2=JSON.parse(localStorage.getItem(SAMMY_MEASURE_KEY)||"null");
+  const v1=JSON.parse(localStorage.getItem(SAMMY_MEASURE_LEGACY_KEY)||"null");
+  const saved=v2?.schema==="sammy-measure-calibration-v2"?v2:(v1?sammyMeasureMigrateV1(v1):null);
+  if(saved){
+   for(const d of SAMMY_MEASURE_DEFS){
+    if(saved.common?.[d.id])base.common[d.id]={...base.common[d.id],...saved.common[d.id]};
+    for(const sex of ["male","female"])if(saved?.[sex]?.[d.id])base[sex][d.id]={...base[sex][d.id],...saved[sex][d.id]}
+   }
+  }
+ }catch(e){console.warn("Measure calibration load/migrate",e)}
+ sammyMeasureCalibration=base;sammyMeasureSaveCalibration();return base
 }
-function sammyMeasureSaveCalibration(){
- try{localStorage.setItem(SAMMY_MEASURE_KEY,JSON.stringify(sammyMeasureLoadCalibration()))}catch(e){console.warn("Measure calibration save",e)}
+function sammyMeasureSaveCalibration(){try{if(sammyMeasureCalibration)localStorage.setItem(SAMMY_MEASURE_KEY,JSON.stringify(sammyMeasureCalibration))}catch(e){console.warn("Measure calibration save",e)}}
+function sammyMeasureCommonCal(id){const all=sammyMeasureLoadCalibration();if(!all.common[id])all.common[id]=sammyMeasureBlankState();return all.common[id]}
+function sammyMeasureSpecificCal(id,sex){const all=sammyMeasureLoadCalibration();if(!all[sex][id])all[sex][id]={override:false};return all[sex][id]}
+function sammyMeasureResolvedCal(id,scope=sammyMeasureScope){
+ const common=sammyMeasureCommonCal(id);
+ if(scope==="common")return common;
+ const spec=sammyMeasureSpecificCal(id,scope);return spec.override?{...common,...spec}:common
 }
-function sammyMeasureCal(id,sex=sammyMeasureSexKey()){
- const all=sammyMeasureLoadCalibration();
- if(!all[sex][id])all[sex][id]={offsetCm:0,comment:"",status:"ungeprüft"};
- return all[sex][id]
+function sammyMeasureEditableCal(id){
+ if(sammyMeasureScope==="common")return sammyMeasureCommonCal(id);
+ const spec=sammyMeasureSpecificCal(id,sammyMeasureScope);
+ if(!spec.override){Object.assign(spec,{...sammyMeasureCommonCal(id),override:true})}
+ return spec
 }
+function sammyMeasureClearSpecific(id){if(sammyMeasureScope==="common")return;const all=sammyMeasureLoadCalibration();all[sammyMeasureScope][id]={override:false};sammyMeasureSaveCalibration()}
 function sammyMeasurementPositions(){return geometry?.attributes?.position?.array||currentDisplayRest()}
 function sammyMeasurementIndex(){return geometry?.index?.array||currentDisplayTriangles()?.data}
 function sammyMeasureBBox(){
- const p=sammyMeasurementPositions();if(!p)return null;
- let minX=Infinity,minY=Infinity,minZ=Infinity,maxX=-Infinity,maxY=-Infinity,maxZ=-Infinity;
+ const p=sammyMeasurementPositions();if(!p)return null;let minX=Infinity,minY=Infinity,minZ=Infinity,maxX=-Infinity,maxY=-Infinity,maxZ=-Infinity;
  for(let i=0;i<p.length;i+=3){const x=p[i],y=p[i+1],z=p[i+2];minX=Math.min(minX,x);minY=Math.min(minY,y);minZ=Math.min(minZ,z);maxX=Math.max(maxX,x);maxY=Math.max(maxY,y);maxZ=Math.max(maxZ,z)}
  return {minX,minY,minZ,maxX,maxY,maxZ,width:maxX-minX,height:maxY-minY,depth:maxZ-minZ,cx:(minX+maxX)/2,cy:(minY+maxY)/2,cz:(minZ+maxZ)/2}
 }
 function sammyMeasureJoint(name){
  const j=PUBLIC_JOINT_NAMES.indexOf(name),w=currentPoseWorld||poseBindWorldActive||poseBindWorld;if(j<0||!w)return null;
- const o=j*16,dy=(morphSammyTargetActive&&shapeEngine==="anny")?annyGroundOffsetY:0;
- return [w[o+3],w[o+7]+dy,w[o+11]]
+ const o=j*16,dy=(morphSammyTargetActive&&shapeEngine==="anny")?annyGroundOffsetY:0;return [w[o+3],w[o+7]+dy,w[o+11]]
 }
+function sammyMeasureLerp(a,b,t){return a&&b?[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t]:null}
 function sammyMeasureBaseY(section){
  const box=sammyMeasureBBox();if(!box)return 0;
- const hips=sammyMeasureJoint("Hips"),sp1=sammyMeasureJoint("Spine1"),sp2=sammyMeasureJoint("Spine2"),ch=sammyMeasureJoint("Chest"),ll=sammyMeasureJoint("LeftLeg"),rl=sammyMeasureJoint("RightLeg");
+ const hips=sammyMeasureJoint("Hips"),sp1=sammyMeasureJoint("Spine1"),sp2=sammyMeasureJoint("Spine2"),ch=sammyMeasureJoint("Chest"),n1=sammyMeasureJoint("Neck1"),n2=sammyMeasureJoint("Neck2"),leg=sammyMeasureJoint("RightLeg"),shin=sammyMeasureJoint("RightShin"),foot=sammyMeasureJoint("RightFoot");
  if(section==="chest"&&sp2&&ch)return sp2[1]*.58+ch[1]*.42;
  if(section==="waist"&&hips&&sp1)return hips[1]*.42+sp1[1]*.58;
- if(section==="hip"&&hips&&ll&&rl){const legY=(ll[1]+rl[1])*.5;return hips[1]*.36+legY*.64}
- if(section==="crotch"&&ll&&rl)return (ll[1]+rl[1])*.5;
- if(section==="chest")return box.minY+box.height*.70;
- if(section==="waist")return box.minY+box.height*.57;
- if(section==="hip")return box.minY+box.height*.48;
- return box.minY+box.height*.49
+ if(section==="hip"&&hips&&leg)return hips[1]*.36+leg[1]*.64;
+ if(section==="crotch"&&leg)return leg[1];
+ if(section==="neck"&&n1&&n2)return n1[1]*.45+n2[1]*.55;
+ if(section==="neckBase"&&n1)return n1[1]-.012;
+ if(section==="thigh"&&leg&&shin)return leg[1]*.66+shin[1]*.34;
+ if(section==="calf"&&shin&&foot)return shin[1]*.55+foot[1]*.45;
+ if(section==="ankle"&&foot)return foot[1]+.025;
+ const frac={chest:.70,waist:.57,hip:.48,neck:.86,neckBase:.82,thigh:.37,calf:.20,ankle:.07}[section]??.49;return box.minY+box.height*frac
 }
-function sammyPlaneSliceY(y,maxAbsX=Infinity,xCenter=0){
- const p=sammyMeasurementPositions(),idx=sammyMeasurementIndex();if(!p||!idx)return null;
- const pts=[];const eps=1e-7;
- const add=(ia,ib)=>{
-  const ao=ia*3,bo=ib*3,ya=p[ao+1],yb=p[bo+1],da=ya-y,db=yb-y;
-  if(Math.abs(da)<eps&&Math.abs(db)<eps)return;
-  if((da>eps&&db>eps)||(da<-eps&&db<-eps))return;
-  const den=yb-ya;if(Math.abs(den)<eps)return;
-  const t=(y-ya)/den;if(t<-eps||t>1+eps)return;
-  const x=p[ao]+(p[bo]-p[ao])*t,z=p[ao+2]+(p[bo+2]-p[ao+2])*t;
-  if(Math.abs(x-xCenter)<=maxAbsX)pts.push([x,z])
- };
- for(let k=0;k<idx.length;k+=3){const a=idx[k],b=idx[k+1],c=idx[k+2];add(a,b);add(b,c);add(c,a)}
- if(pts.length<6)return {y,points:pts,hull:[],circ:NaN,width:NaN,depth:NaN,minX:NaN,maxX:NaN,minZ:NaN,maxZ:NaN};
- // Quantize only for duplicate suppression; retain true coordinates for the hull.
- const uniq=[],seen=new Set();
- for(const q of pts){const key=`${Math.round(q[0]*100000)},${Math.round(q[1]*100000)}`;if(!seen.has(key)){seen.add(key);uniq.push(q)}}
- const hull=convexHull2D(uniq);let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity;
- for(const q of hull){minX=Math.min(minX,q[0]);maxX=Math.max(maxX,q[0]);minZ=Math.min(minZ,q[1]);maxZ=Math.max(maxZ,q[1])}
- return {y,points:uniq,hull,circ:hullPerimeter(hull)*100,width:(maxX-minX)*100,depth:(maxZ-minZ)*100,minX,maxX,minZ,maxZ}
+function sammyPlaneSliceY(y,maxAbsX=Infinity,xCenter=0,maxAbsZ=Infinity,zCenter=0){
+ const p=sammyMeasurementPositions(),idx=sammyMeasurementIndex();if(!p||!idx)return null;const pts=[],eps=1e-7;
+ const add=(ia,ib)=>{const ao=ia*3,bo=ib*3,ya=p[ao+1],yb=p[bo+1],da=ya-y,db=yb-y;if(Math.abs(da)<eps&&Math.abs(db)<eps)return;if((da>eps&&db>eps)||(da<-eps&&db<-eps))return;const den=yb-ya;if(Math.abs(den)<eps)return;const t=(y-ya)/den;if(t<-eps||t>1+eps)return;const x=p[ao]+(p[bo]-p[ao])*t,z=p[ao+2]+(p[bo+2]-p[ao+2])*t;if(Math.abs(x-xCenter)<=maxAbsX&&Math.abs(z-zCenter)<=maxAbsZ)pts.push([x,z])};
+ for(let k=0;k<idx.length;k+=3){const a=idx[k],b=idx[k+1],c=idx[k+2];add(a,b);add(b,c);add(c,a)}return sammySliceStats(y,pts,"Y")
+}
+function sammyPlaneSliceX(x,yCenter=0,maxAbsY=Infinity,zCenter=0,maxAbsZ=Infinity){
+ const p=sammyMeasurementPositions(),idx=sammyMeasurementIndex();if(!p||!idx)return null;const pts=[],eps=1e-7;
+ const add=(ia,ib)=>{const ao=ia*3,bo=ib*3,xa=p[ao],xb=p[bo],da=xa-x,db=xb-x;if(Math.abs(da)<eps&&Math.abs(db)<eps)return;if((da>eps&&db>eps)||(da<-eps&&db<-eps))return;const den=xb-xa;if(Math.abs(den)<eps)return;const t=(x-xa)/den;if(t<-eps||t>1+eps)return;const y=p[ao+1]+(p[bo+1]-p[ao+1])*t,z=p[ao+2]+(p[bo+2]-p[ao+2])*t;if(Math.abs(y-yCenter)<=maxAbsY&&Math.abs(z-zCenter)<=maxAbsZ)pts.push([y,z])};
+ for(let k=0;k<idx.length;k+=3){const a=idx[k],b=idx[k+1],c=idx[k+2];add(a,b);add(b,c);add(c,a)}return sammySliceStats(x,pts,"X")
+}
+function sammySliceStats(plane,pts,axis){
+ if(pts.length<6)return {axis,plane,points:pts,hull:[],circ:NaN,width:NaN,depth:NaN,minA:NaN,maxA:NaN,minB:NaN,maxB:NaN};
+ const uniq=[],seen=new Set();for(const q of pts){const key=`${Math.round(q[0]*100000)},${Math.round(q[1]*100000)}`;if(!seen.has(key)){seen.add(key);uniq.push(q)}}
+ const hull=convexHull2D(uniq);let minA=Infinity,maxA=-Infinity,minB=Infinity,maxB=-Infinity;for(const q of hull){minA=Math.min(minA,q[0]);maxA=Math.max(maxA,q[0]);minB=Math.min(minB,q[1]);maxB=Math.max(maxB,q[1])}
+ return {axis,plane,points:uniq,hull,circ:hullPerimeter(hull)*100,width:(maxA-minA)*100,depth:(maxB-minB)*100,minA,maxA,minB,maxB}
 }
 function sammyMeasureSection(section,offsetCm=0){
- const hips=sammyMeasureJoint("Hips"),ls=sammyMeasureJoint("LeftShoulder"),rs=sammyMeasureJoint("RightShoulder"),box=sammyMeasureBBox();
- const centerX=hips?.[0]??box?.cx??0,shoulderSpan=(ls&&rs)?Math.abs(ls[0]-rs[0]):(box?.width||.6);
- const y=sammyMeasureBaseY(section)+offsetCm/100;
- return sammyPlaneSliceY(y,section==="chest"?Math.max(.16,shoulderSpan*.68):Infinity,centerX)
+ const hips=sammyMeasureJoint("Hips"),la=sammyMeasureJoint("LeftArm"),ra=sammyMeasureJoint("RightArm"),box=sammyMeasureBBox();const centerX=hips?.[0]??box?.cx??0,shoulderSpan=(la&&ra)?Math.abs(la[0]-ra[0]):(box?.width||.6),y=sammyMeasureBaseY(section)+offsetCm/100;
+ if(section==="thigh"||section==="calf"||section==="ankle"){
+  const center=section==="thigh"?sammyMeasureJoint("RightLeg"):(section==="calf"?sammyMeasureLerp(sammyMeasureJoint("RightShin"),sammyMeasureJoint("RightFoot"),.45):sammyMeasureJoint("RightFoot"));
+  return sammyPlaneSliceY(y,.16,center?.[0]??centerX,.20,center?.[2]??box.cz)
+ }
+ const maxX=section==="chest"?Math.max(.20,shoulderSpan*.62):(section==="neck"||section==="neckBase"?Math.max(.10,shoulderSpan*.25):Infinity);
+ return sammyPlaneSliceY(y,maxX,centerX)
 }
+function sammyMeasureArmSlice(section,offsetCm=0){
+ const arm=sammyMeasureJoint("RightArm"),fore=sammyMeasureJoint("RightForeArm"),hand=sammyMeasureJoint("RightHand"),box=sammyMeasureBBox();if(!arm||!fore||!hand)return null;
+ let base,dir;
+ if(section==="upperarm"){base=sammyMeasureLerp(arm,fore,.52);dir=Math.sign(fore[0]-arm[0])||1}
+ else{base=sammyMeasureLerp(fore,hand,.88);dir=Math.sign(hand[0]-fore[0])||1}
+ const x=base[0]+dir*offsetCm/100;return sammyPlaneSliceX(x,base[1],.15,base[2],.18)
+}
+function sammyMeasureApplySpan(baseCm,spanCm){return Math.max(.1,Number(baseCm||0)+Number(spanCm||0))}
 function sammyComputeMeasure(def,sectionCache=null){
- const cal=sammyMeasureCal(def.id),off=Number(cal.offsetCm)||0,box=sammyMeasureBBox();if(!box)return {valueCm:NaN};
+ const cal=sammyMeasureResolvedCal(def.id),off=Number(cal.offsetCm)||0,span=Number(cal.spanOffsetCm)||0,box=sammyMeasureBBox();if(!box)return {valueCm:NaN};
  if(def.kind==="stature")return {valueCm:box.height*100,line:{kind:"stature",box}};
  if(def.kind==="shoulder"){
-  const l=sammyMeasureJoint("LeftShoulder"),r=sammyMeasureJoint("RightShoulder");if(!l||!r)return {valueCm:NaN};
-  const y=(l[1]+r[1])*.5+off/100,z=(l[2]+r[2])*.5;
-  return {valueCm:Math.abs(l[0]-r[0])*100,line:{kind:"segment",a:[l[0],y,z],b:[r[0],y,z]}}
+  const l=sammyMeasureJoint("LeftArm"),r=sammyMeasureJoint("RightArm");if(!l||!r)return {valueCm:NaN};const y=(l[1]+r[1])*.5+off/100,z=(l[2]+r[2])*.5,cx=(l[0]+r[0])*.5,total=sammyMeasureApplySpan(Math.abs(l[0]-r[0])*100,span)/100;
+  return {valueCm:total*100,line:{kind:"segment",a:[cx-total/2,y,z],b:[cx+total/2,y,z]}}
  }
- if(def.kind==="crotchHeight"){
-  const y=sammyMeasureBaseY("crotch")+off/100;
-  return {valueCm:(y-box.minY)*100,line:{kind:"crotch",y,box}}
+ if(def.kind==="crotchHeight"){const y=sammyMeasureBaseY("crotch")+off/100;return {valueCm:(y-box.minY)*100,line:{kind:"crotch",y,box}}}
+ if(def.kind==="torsoHeight"){
+  const l=sammyMeasureJoint("LeftArm"),r=sammyMeasureJoint("RightArm"),top=(l&&r)?(l[1]+r[1])*.5:sammyMeasureBaseY("chest"),bottom=sammyMeasureBaseY("crotch")+off/100,z=box.maxZ+box.depth*.03;return {valueCm:Math.abs(top-bottom)*100,line:{kind:"segment",a:[box.cx,bottom,z],b:[box.cx,top,z]}}
  }
- const key=`${def.section}:${off.toFixed(3)}`;
- let slice=sectionCache?.get(key);if(!slice){slice=sammyMeasureSection(def.section,off);if(sectionCache&&slice)sectionCache.set(key,slice)}
+ if(def.kind==="tibialeHeight"){
+  const sh=sammyMeasureJoint("RightShin");if(!sh)return {valueCm:NaN};const y=sh[1]+off/100;return {valueCm:(y-box.minY)*100,line:{kind:"segment",a:[sh[0],box.minY,sh[2]],b:[sh[0],y,sh[2]]}}
+ }
+ if(def.kind==="upperlegHeight"){
+  const leg=sammyMeasureJoint("RightLeg"),sh=sammyMeasureJoint("RightShin");if(!leg||!sh)return {valueCm:NaN};const y2=sh[1]+off/100;return {valueCm:Math.abs(leg[1]-y2)*100,line:{kind:"segment",a:[leg[0],leg[1],leg[2]],b:[sh[0],y2,sh[2]]}}
+ }
+ if(def.kind==="jointSegment"){
+  const a=sammyMeasureJoint(def.joints[0]),b=sammyMeasureJoint(def.joints[1]);if(!a||!b)return {valueCm:NaN};const aa=[a[0],a[1]+off/100,a[2]],bb=[b[0],b[1]+off/100,b[2]],val=Math.hypot(bb[0]-aa[0],bb[1]-aa[1],bb[2]-aa[2])*100;return {valueCm:val,line:{kind:"segment",a:aa,b:bb}}
+ }
+ if(def.kind==="shoulderLength"){
+  const a=sammyMeasureJoint("RightShoulder"),b=sammyMeasureJoint("RightArm");if(!a||!b)return {valueCm:NaN};const aa=[a[0],a[1]+off/100,a[2]],bb=[b[0],b[1]+off/100,b[2]];return {valueCm:Math.hypot(bb[0]-aa[0],bb[1]-aa[1],bb[2]-aa[2])*100,line:{kind:"segment",a:aa,b:bb}}
+ }
+ if(def.kind==="neckHeight"){
+  const a=sammyMeasureJoint("Neck1"),b=sammyMeasureJoint("Neck2")||sammyMeasureJoint("Head");if(!a||!b)return {valueCm:NaN};const bb=[b[0],b[1]+off/100,b[2]];return {valueCm:Math.abs(bb[1]-a[1])*100,line:{kind:"segment",a,b:bb}}
+ }
+ if(def.kind==="waistBackLength"||def.kind==="frontChest"){
+  const n=sammyMeasureJoint("Neck1")||sammyMeasureJoint("Chest"),wy=sammyMeasureBaseY("waist")+off/100;if(!n)return {valueCm:NaN};const z=def.kind==="frontChest"?box.maxZ+box.depth*.03:box.minZ-box.depth*.03;return {valueCm:Math.abs(n[1]-wy)*100,line:{kind:"segment",a:[box.cx,wy,z],b:[box.cx,n[1],z]}}
+ }
+ if(def.kind==="waistToHip"){
+  const wy=sammyMeasureBaseY("waist")+off/100,hy=sammyMeasureBaseY("hip"),z=box.maxZ+box.depth*.03;return {valueCm:Math.abs(wy-hy)*100,line:{kind:"segment",a:[box.cx,hy,z],b:[box.cx,wy,z]}}
+ }
+ let slice=null;
+ if(def.kind==="limbCircX")slice=sammyMeasureArmSlice(def.section,off);
+ else{
+  const key=`${def.section}:${off.toFixed(3)}`;slice=sectionCache?.get(key);if(!slice){slice=sammyMeasureSection(def.section,off);if(sectionCache&&slice)sectionCache.set(key,slice)}
+ }
  if(!slice)return {valueCm:NaN};
- if(def.kind==="sliceCirc")return {valueCm:slice.circ,line:{kind:"loop",slice}};
- if(def.kind==="sliceWidth")return {valueCm:slice.width,line:{kind:"width",slice}};
- if(def.kind==="sliceDepth")return {valueCm:slice.depth,line:{kind:"depth",slice}};
+ if(def.kind==="sliceCirc"||def.kind==="limbCircY"||def.kind==="limbCircX")return {valueCm:slice.circ,line:{kind:slice.axis==="X"?"loopX":"loop",slice}};
+ if(def.kind==="sliceWidth"){
+  const total=sammyMeasureApplySpan(slice.width,span)/100,c=(slice.minA+slice.maxA)/2;return {valueCm:total*100,line:{kind:"width",slice,minX:c-total/2,maxX:c+total/2}}
+ }
+ if(def.kind==="sliceDepth"){
+  const total=sammyMeasureApplySpan(slice.depth,span)/100,c=(slice.minB+slice.maxB)/2;return {valueCm:total*100,line:{kind:"depth",slice,minZ:c-total/2,maxZ:c+total/2}}
+ }
  return {valueCm:NaN}
 }
 function sammyComputeAllMeasures(){
- const out={},sections=new Map();for(const d of SAMMY_MEASURE_DEFS)out[d.id]=sammyComputeMeasure(d,sections);
- sammyMeasureResultsCache=out;
- const sex=sammyMeasureSexKey();sammyMeasureLastSnapshots[sex]={time:new Date().toISOString(),values:Object.fromEntries(SAMMY_MEASURE_DEFS.map(d=>[d.id,Number.isFinite(out[d.id].valueCm)?Number(out[d.id].valueCm.toFixed(4)):null]))};
- return out
+ const out={},sections=new Map();for(const d of SAMMY_MEASURE_DEFS)out[d.id]=sammyComputeMeasure(d,sections);sammyMeasureResultsCache=out;
+ const sex=sammyMeasureSexKey();sammyMeasureLastSnapshots[sex]={time:new Date().toISOString(),scope:sammyMeasureScope,values:Object.fromEntries(SAMMY_MEASURE_DEFS.map(d=>[d.id,Number.isFinite(out[d.id].valueCm)?Number(out[d.id].valueCm.toFixed(4)):null]))};return out
 }
-function sammyClearMeasureOverlay(){
- if(!sammyMeasureOverlayGroup)return;scene.remove(sammyMeasureOverlayGroup);sammyMeasureOverlayGroup.traverse(o=>{o.geometry?.dispose?.();o.material?.dispose?.()});sammyMeasureOverlayGroup=null
-}
-function sammyAddMeasureLine(points,selected=false,closed=false){
- if(!points?.length)return;const arr=new Float32Array(points.length*3);for(let i=0;i<points.length;i++){arr[i*3]=points[i][0];arr[i*3+1]=points[i][1];arr[i*3+2]=points[i][2]}
- const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(arr,3));
- const mat=new THREE.LineBasicMaterial({color:selected?0xffdf72:0xb9bcc5,transparent:true,opacity:selected?.98:.38,depthTest:false,depthWrite:false});
- const line=closed?new THREE.LineLoop(g,mat):new THREE.Line(g,mat);line.renderOrder=40;sammyMeasureOverlayGroup.add(line)
-}
+function sammyClearMeasureOverlay(){if(!sammyMeasureOverlayGroup)return;scene.remove(sammyMeasureOverlayGroup);sammyMeasureOverlayGroup.traverse(o=>{o.geometry?.dispose?.();o.material?.dispose?.()});sammyMeasureOverlayGroup=null}
+function sammyAddMeasureLine(points,selected=false,closed=false){if(!points?.length)return;const arr=new Float32Array(points.length*3);for(let i=0;i<points.length;i++){arr[i*3]=points[i][0];arr[i*3+1]=points[i][1];arr[i*3+2]=points[i][2]}const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(arr,3));const mat=new THREE.LineBasicMaterial({color:selected?0xffdf72:0xb9bcc5,transparent:true,opacity:selected?.98:.38,depthTest:false,depthWrite:false});const line=closed?new THREE.LineLoop(g,mat):new THREE.Line(g,mat);line.renderOrder=40;sammyMeasureOverlayGroup.add(line)}
 function sammyMeasureLinePoints(result){
  const line=result?.line;if(!line)return null;
- if(line.kind==="loop")return {points:line.slice.hull.map(q=>[q[0],line.slice.y,q[1]]),closed:true};
- if(line.kind==="width"){
-  const s=line.slice,z=(s.minZ+s.maxZ)/2;return {points:[[s.minX,s.y,z],[s.maxX,s.y,z]],closed:false}
- }
- if(line.kind==="depth"){
-  const s=line.slice,x=(s.minX+s.maxX)/2;return {points:[[x,s.y,s.minZ],[x,s.y,s.maxZ]],closed:false}
- }
+ if(line.kind==="loop")return {points:line.slice.hull.map(q=>[q[0],line.slice.plane,q[1]]),closed:true};
+ if(line.kind==="loopX")return {points:line.slice.hull.map(q=>[line.slice.plane,q[0],q[1]]),closed:true};
+ if(line.kind==="width"){const s=line.slice,z=(s.minB+s.maxB)/2;return {points:[[line.minX,s.plane,z],[line.maxX,s.plane,z]],closed:false}}
+ if(line.kind==="depth"){const s=line.slice,x=(s.minA+s.maxA)/2;return {points:[[x,s.plane,line.minZ],[x,s.plane,line.maxZ]],closed:false}}
  if(line.kind==="segment")return {points:[line.a,line.b],closed:false};
- if(line.kind==="stature"){
-  const b=line.box,x=b.minX-b.width*.06,z=b.maxZ+b.depth*.025;return {points:[[x,b.minY,z],[x,b.maxY,z]],closed:false}
- }
- if(line.kind==="crotch"){
-  const b=line.box,z=b.maxZ+b.depth*.025;return {points:[[b.cx,b.minY,z],[b.cx,line.y,z]],closed:false}
- }
- return null
+ if(line.kind==="stature"){const b=line.box,x=b.minX-b.width*.06,z=b.maxZ+b.depth*.025;return {points:[[x,b.minY,z],[x,b.maxY,z]],closed:false}}
+ if(line.kind==="crotch"){const b=line.box,z=b.maxZ+b.depth*.025;return {points:[[b.cx,b.minY,z],[b.cx,line.y,z]],closed:false}}return null
 }
 function sammyUpdateMeasureOverlay(results){
- sammyClearMeasureOverlay();if(!sammyMeasureSession||sammyMeasureOverlayMode==="none")return;
- sammyMeasureOverlayGroup=new THREE.Group();sammyMeasureOverlayGroup.name="SammyMeasurementOverlay";scene.add(sammyMeasureOverlayGroup);
- const defs=sammyMeasureOverlayMode==="all"?SAMMY_MEASURE_DEFS:SAMMY_MEASURE_DEFS.filter(d=>d.id===sammyMeasureSelected);
- for(const d of defs){const lp=sammyMeasureLinePoints(results[d.id]);if(lp)sammyAddMeasureLine(lp.points,d.id===sammyMeasureSelected,lp.closed)}
+ sammyClearMeasureOverlay();if(!sammyMeasureSession||sammyMeasureOverlayMode==="none")return;sammyMeasureOverlayGroup=new THREE.Group();sammyMeasureOverlayGroup.name="SammyMeasurementOverlay";scene.add(sammyMeasureOverlayGroup);
+ const defs=sammyMeasureOverlayMode==="all"?SAMMY_MEASURE_DEFS:SAMMY_MEASURE_DEFS.filter(d=>d.id===sammyMeasureSelected);for(const d of defs){const lp=sammyMeasureLinePoints(results[d.id]);if(lp)sammyAddMeasureLine(lp.points,d.id===sammyMeasureSelected,lp.closed)}
 }
 function sammyMeasureFormat(v){return Number.isFinite(v)?`${v.toFixed(1)} cm`:"—"}
+function sammyMeasureStateBadge(id){
+ if(sammyMeasureScope==="common")return sammyMeasureCommonCal(id).status||"ungeprüft";
+ const spec=sammyMeasureSpecificCal(id,sammyMeasureScope);return spec.override?(spec.status||"ungeprüft"):"erbt Unisex"
+}
+function sammyMeasureInlineEditor(d,c){
+ const off=Number(c.offsetCm)||0,span=Number(c.spanOffsetCm)||0,range=d.range||0,spanRange=d.spanRange||20,scopeSpecific=sammyMeasureScope!=="common",isOverride=scopeSpecific&&sammyMeasureSpecificCal(d.id,sammyMeasureScope).override;
+ const position=d.adjustable?`<div class="sammyMeasureInlineField"><div class="sammyMeasureOffsetHead"><label>Position / Messebene</label><span data-inline-off>${off>=0?"+":""}${off.toFixed(1)} cm</span></div><input data-measure-offset type="range" min="${-range}" max="${range}" step="0.1" value="${off}"></div>`:"";
+ const spanCtl=d.spanAdjust?`<div class="sammyMeasureInlineField"><div class="sammyMeasureOffsetHead"><label>${escapeHtml(d.spanLabel||"Breitenkorrektur gesamt")}</label><span data-inline-span>${span>=0?"+":""}${span.toFixed(1)} cm</span></div><input data-measure-span type="range" min="${-spanRange}" max="${spanRange}" step="0.1" value="${span}"><small class="sammyMeasureMirrorHint">symmetrisch · links/rechts je ½</small></div>`:"";
+ const status=c.status||"ungeprüft";
+ return `<div class="sammyMeasureInlineEditor">${position}${spanCtl}<div class="sammyMeasureStatusButtons" role="group" aria-label="Prüfstatus"><button data-status="ungeprüft" class="${status==="ungeprüft"?"active":""}" type="button">ungeprüft</button><button data-status="prüfen" class="${status==="prüfen"?"active":""}" type="button">prüfen</button><button data-status="bestätigt" class="${status==="bestätigt"?"active":""}" type="button">bestätigt</button></div><textarea data-measure-comment placeholder="Kommentar · ${escapeHtml(sammyMeasureScopeLabel())}">${escapeHtml(c.comment||"")}</textarea><div class="sammyMeasureInlineActions"><button data-measure-reset type="button">Werte zurücksetzen</button>${scopeSpecific?`<button data-measure-inherit type="button" ${isOverride?"":"disabled"}>Unisex übernehmen</button>`:""}</div>${sammyMeasureInfoOpenFor===d.id?`<div class="sammyMeasureInfoBox"><b>ANSUR-II / Referenz</b><p>${escapeHtml(d.ansurInfo)}</p><b>Sammy-Implementierung v2</b><p>${escapeHtml(d.implementation)}</p><b>Quelle</b><p>ANSUR II · Measurer's Handbook NATICK/TR-11/017. Interne/abgeleitete Maße sind ausdrücklich als solche markiert.</p></div>`:""}</div>`
+}
 function sammyMeasureRenderList(results){
- const list=$("#sammyMeasureList");if(!list)return;const sex=sammyMeasureSexKey(),other=sammyMeasureOtherSexSymbol();
+ const list=$("#sammyMeasureList");if(!list)return;const other=sammyMeasureOtherSexSymbol(),scroll=list.closest(".sammyPanelScroll"),keep=scroll?.scrollTop||0;
  list.innerHTML=SAMMY_MEASURE_DEFS.map(d=>{
-  const c=sammyMeasureCal(d.id,sex),v=results[d.id]?.valueCm;
-  return `<div class="sammyMeasureRow ${d.id===sammyMeasureSelected?"selected":""}" data-id="${d.id}"><button class="sammyMeasureMain" type="button"><b>${escapeHtml(d.label)}</b><small><strong data-measure-value="${d.id}">${sammyMeasureFormat(v)}</strong><span class="sammyMeasureState">${escapeHtml(c.status||"ungeprüft")}</span></small></button><button class="sammyMeasureIconBtn sammyMeasureInfoBtn" type="button" aria-label="ANSUR Info">i</button><button class="sammyMeasureIconBtn sammyMeasureSexBtn" type="button" aria-label="Geschlecht wechseln">${other}</button></div>`
+  const c=sammyMeasureResolvedCal(d.id),v=results[d.id]?.valueCm,selected=d.id===sammyMeasureSelected;
+  return `<div class="sammyMeasureRow ${selected?"selected":""}" data-id="${d.id}"><div class="sammyMeasureRowHead"><button class="sammyMeasureMain" type="button"><b>${escapeHtml(d.label)}</b><small><strong data-measure-value="${d.id}">${sammyMeasureFormat(v)}</strong><span class="sammyMeasureState">${escapeHtml(sammyMeasureStateBadge(d.id))}</span></small></button><button class="sammyMeasureIconBtn sammyMeasureInfoBtn ${sammyMeasureInfoOpenFor===d.id?"active":""}" type="button" aria-label="ANSUR Info">i</button><button class="sammyMeasureIconBtn sammyMeasureSexBtn" type="button" aria-label="Zum anderen Geschlecht wechseln"><span>${other}</span></button></div>${selected?sammyMeasureInlineEditor(d,c):""}</div>`
  }).join("");
  list.querySelectorAll(".sammyMeasureRow").forEach(row=>{
-  const id=row.dataset.id;
-  row.querySelector(".sammyMeasureMain").onclick=()=>{sammyMeasureSelected=id;sammyMeasureInfoOpen=false;sammyMeasureRefresh(true)};
-  row.querySelector(".sammyMeasureInfoBtn").onclick=()=>{sammyMeasureSelected=id;sammyMeasureInfoOpen=true;sammyMeasureRefresh(true)};
-  row.querySelector(".sammyMeasureSexBtn").onclick=()=>{sammyMeasureSelected=id;sammyMeasureSwitchSex()}
- })
-}
-function sammyMeasureRenderEditor(results){
- const box=$("#sammyMeasureEditor"),d=SAMMY_MEASURE_DEFS.find(x=>x.id===sammyMeasureSelected);if(!box||!d){if(box)box.classList.add("hidden");return}
- box.classList.remove("hidden");const c=sammyMeasureCal(d.id),v=results[d.id]?.valueCm,off=Number(c.offsetCm)||0,range=d.range||0;
- box.innerHTML=`<div class="sammyMeasureEditorHead"><div><b>${escapeHtml(d.label)}</b><div style="font-size:8px;color:#777a82;margin-top:2px">ANSUR: ${escapeHtml(d.ansur)}</div></div><strong id="sammyMeasureEditorValue">${sammyMeasureFormat(v)}</strong></div>
- <div class="sammyMeasureOffsetHead"><label for="sammyMeasureOffset">Messebene / Landmark-Offset</label><span id="sammyMeasureOffsetOut" class="sammyMeasureOffsetOut">${off>=0?"+":""}${off.toFixed(1)} cm</span></div>
- <input id="sammyMeasureOffset" type="range" min="${-range}" max="${range}" step="0.1" value="${off}" ${d.adjustable?"":"disabled"}>
- <label for="sammyMeasureStatus">Prüfstatus</label><select id="sammyMeasureStatus"><option value="ungeprüft">ungeprüft</option><option value="prüfen">prüfen</option><option value="bestätigt">bestätigt</option></select>
- <label for="sammyMeasureComment">Kommentar · ${sammyMeasureSexLabel()}</label><textarea id="sammyMeasureComment" placeholder="Hinweise zu Position, Landmark oder Messlinie …">${escapeHtml(c.comment||"")}</textarea>
- <div class="sammyMeasureEditorActions"><button id="sammyMeasureReset" type="button">Offset zurücksetzen</button><button id="sammyMeasureInfoToggle" type="button">${sammyMeasureInfoOpen?"Info schließen":"ANSUR Info"}</button></div>
- ${sammyMeasureInfoOpen?`<div class="sammyMeasureInfoBox"><b>ANSUR-II-Kurzfassung</b><p>${escapeHtml(d.ansurInfo)}</p><b>Sammy-Implementierung v1</b><p>${escapeHtml(d.implementation)}</p><b>Quelle</b><p>Measurer's Handbook: US Army and Marine Corps Anthropometric Surveys, 2010-2011 · NATICK/TR-11/017. Die Texte hier sind kurze Paraphrasen; die Kalibrierung bleibt bis zur Bestätigung als prüfbar markiert.</p></div>`:""}`;
- const status=$("#sammyMeasureStatus");status.value=c.status||"ungeprüft";
- const offset=$("#sammyMeasureOffset");offset.oninput=e=>{c.offsetCm=Number(e.target.value)||0;sammyMeasureSaveCalibration();$("#sammyMeasureOffsetOut").textContent=`${c.offsetCm>=0?"+":""}${c.offsetCm.toFixed(1)} cm`;sammyMeasureScheduleRefresh(false)};
- offset.onchange=()=>sammyMeasureRefresh(true);
- status.onchange=e=>{c.status=e.target.value;sammyMeasureSaveCalibration();sammyMeasureRefresh(true)};
- $("#sammyMeasureComment").oninput=e=>{c.comment=e.target.value;sammyMeasureSaveCalibration()};
- $("#sammyMeasureReset").onclick=()=>{c.offsetCm=0;sammyMeasureSaveCalibration();sammyMeasureRefresh(true)};
- $("#sammyMeasureInfoToggle").onclick=()=>{sammyMeasureInfoOpen=!sammyMeasureInfoOpen;sammyMeasureRefresh(true)}
+  const id=row.dataset.id,d=SAMMY_MEASURE_DEFS.find(x=>x.id===id);
+  row.querySelector(".sammyMeasureMain").onclick=()=>{sammyMeasureSelected=id;sammyMeasureInfoOpenFor=null;sammyMeasureRefresh(true)};
+  row.querySelector(".sammyMeasureInfoBtn").onclick=()=>{sammyMeasureSelected=id;sammyMeasureInfoOpenFor=sammyMeasureInfoOpenFor===id?null:id;sammyMeasureRefresh(true)};
+  row.querySelector(".sammyMeasureSexBtn").onclick=()=>{sammyMeasureSelected=id;sammyMeasureSwitchSex()};
+  if(!row.classList.contains("selected"))return;
+  const edit=()=>sammyMeasureEditableCal(id);
+  const off=row.querySelector("[data-measure-offset]");if(off)off.oninput=e=>{const c=edit();c.offsetCm=Number(e.target.value)||0;sammyMeasureSaveCalibration();row.querySelector("[data-inline-off]").textContent=`${c.offsetCm>=0?"+":""}${c.offsetCm.toFixed(1)} cm`;sammyMeasureScheduleRefresh(false)};
+  const sp=row.querySelector("[data-measure-span]");if(sp)sp.oninput=e=>{const c=edit();c.spanOffsetCm=Number(e.target.value)||0;sammyMeasureSaveCalibration();row.querySelector("[data-inline-span]").textContent=`${c.spanOffsetCm>=0?"+":""}${c.spanOffsetCm.toFixed(1)} cm`;sammyMeasureScheduleRefresh(false)};
+  row.querySelectorAll("[data-status]").forEach(b=>b.onclick=()=>{const c=edit();c.status=b.dataset.status;sammyMeasureSaveCalibration();sammyMeasureRefresh(true)});
+  const ta=row.querySelector("[data-measure-comment]");if(ta)ta.oninput=e=>{const c=edit();c.comment=e.target.value;sammyMeasureSaveCalibration()};
+  const reset=row.querySelector("[data-measure-reset]");if(reset)reset.onclick=()=>{const c=edit();c.offsetCm=0;c.spanOffsetCm=0;sammyMeasureSaveCalibration();sammyMeasureRefresh(true)};
+  const inherit=row.querySelector("[data-measure-inherit]");if(inherit)inherit.onclick=()=>{sammyMeasureClearSpecific(id);sammyMeasureRefresh(true)}
+ });
+ requestAnimationFrame(()=>{if(scroll)scroll.scrollTop=keep})
 }
 function sammyMeasureRefresh(full=true){
- if(!sammyMeasureSession)return;
- let results;
- if(full||!Object.keys(sammyMeasureResultsCache).length)results=sammyComputeAllMeasures();
- else{
-  results={...sammyMeasureResultsCache};
-  const def=SAMMY_MEASURE_DEFS.find(d=>d.id===sammyMeasureSelected);if(def)results[def.id]=sammyComputeMeasure(def,new Map());
-  sammyMeasureResultsCache=results
- }
- const sex=$("#sammyMeasureSexLabel");if(sex)sex.textContent=sammyMeasureSexLabel();
- if(full){sammyMeasureRenderList(results);sammyMeasureRenderEditor(results)}
- else{
-  const n=document.querySelector(`[data-measure-value="${sammyMeasureSelected}"]`);if(n)n.textContent=sammyMeasureFormat(results[sammyMeasureSelected]?.valueCm);
-  const ev=$("#sammyMeasureEditorValue");if(ev)ev.textContent=sammyMeasureFormat(results[sammyMeasureSelected]?.valueCm)
- }
+ if(!sammyMeasureSession)return;let results;
+ if(full||!Object.keys(sammyMeasureResultsCache).length)results=sammyComputeAllMeasures();else{results={...sammyMeasureResultsCache};const def=SAMMY_MEASURE_DEFS.find(d=>d.id===sammyMeasureSelected);if(def)results[def.id]=sammyComputeMeasure(def,new Map());sammyMeasureResultsCache=results}
+ const sex=$("#sammyMeasureSexLabel");if(sex)sex.textContent=`${sammyMeasureSexLabel()} · ${sammyMeasureScopeLabel()}`;
+ const uni=$("#sammyMeasureUnisex");if(uni)uni.classList.toggle("active",sammyMeasureScope==="common");
+ if(full)sammyMeasureRenderList(results);else{const n=document.querySelector(`[data-measure-value="${sammyMeasureSelected}"]`);if(n)n.textContent=sammyMeasureFormat(results[sammyMeasureSelected]?.valueCm)}
  sammyUpdateMeasureOverlay(results)
 }
 function sammyMeasureScheduleRefresh(full=false){cancelAnimationFrame(sammyMeasureRefreshRaf);sammyMeasureRefreshRaf=requestAnimationFrame(()=>sammyMeasureRefresh(full))}
-function sammyMeasureSetOverlayMode(mode){
- sammyMeasureOverlayMode=mode;
- for(const [id,m] of [["#sammyMeasureShowSelected","selected"],["#sammyMeasureShowAll","all"],["#sammyMeasureShowNone","none"]])$(id)?.classList.toggle("active",mode===m);
- sammyMeasureRefresh(false)
-}
+function sammyMeasureSetOverlayMode(mode){sammyMeasureOverlayMode=mode;for(const [id,m] of [["#sammyMeasureShowSelected","selected"],["#sammyMeasureShowAll","all"],["#sammyMeasureShowNone","none"]])$(id)?.classList.toggle("active",mode===m);sammyMeasureRefresh(false)}
 function sammyMeasurementIdentityPose(){const rel=new Float32Array(poseJointCount*9);for(let j=0;j<poseJointCount;j++)mat3Identity(rel,j*9);return rel}
-function sammyApplyMeasurementRelative(rel,label){
- if(morphSammyTargetActive&&shapeEngine==="anny")return applyAnnyAxis16RetargetPose(currentDisplayRest(),rel,false,false,label);
- return applyRelativePoseMatrices(currentDisplayRest(),rel,false,false,label)
-}
+function sammyApplyMeasurementRelative(rel,label){if(morphSammyTargetActive&&shapeEngine==="anny")return applyAnnyAxis16RetargetPose(currentDisplayRest(),rel,false,false,label);return applyRelativePoseMatrices(currentDisplayRest(),rel,false,false,label)}
 function sammyEnterMeasureMode(){
- if(sammyMeasureSession)return;
- sammyMeasureLoadCalibration();
+ if(sammyMeasureSession)return;sammyMeasureLoadCalibration();sammyMeasureScope="common";sammyMeasureInfoOpenFor=null;
  sammyMeasureSession={camera:sammyCaptureCameraState(),relative:lastAppliedRelative3?new Float32Array(lastAppliedRelative3):null,running:poseAnimRunning,mode:poseAnimMode,frame:userAnimCurrentFrame,skeleton:rigDebugVisible,originalGender:annyParams.gender};
- stopPoseAnimation(false);if(rigDebugVisible)sammyToggleSkeleton();
- // Calibration is deliberately done on the two exact Anny sex endpoints.
- const endpoint=annyParams.gender>=.5?1:0;if(Math.abs(annyParams.gender-endpoint)>1e-6){annyParams.gender=endpoint;applyAnnyParams()}
- sammyApplyMeasurementRelative(sammyMeasurementIdentityPose(),"Sammy Measurement T-Pose");
- sammyCameraTo("measure",900,false);sammyMeasureInfoOpen=false;sammyMeasureRefresh(true)
+ stopPoseAnimation(false);if(rigDebugVisible)sammyToggleSkeleton();const endpoint=annyParams.gender>=.5?1:0;if(Math.abs(annyParams.gender-endpoint)>1e-6){annyParams.gender=endpoint;applyAnnyParams()}
+ sammyApplyMeasurementRelative(sammyMeasurementIdentityPose(),"Sammy Measurement T-Pose");sammyCameraTo("measure",900,false);sammyMeasureRefresh(true)
 }
 function sammyExitMeasureMode(instantCamera=false){
- const s=sammyMeasureSession;if(!s)return null;sammyMeasureSession=null;sammyClearMeasureOverlay();
- if(Number.isFinite(s.originalGender)&&Math.abs(annyParams.gender-s.originalGender)>1e-6){annyParams.gender=s.originalGender;applyAnnyParams()}
- if(s.relative)sammyApplyMeasurementRelative(s.relative,"Sammy Measurement → vorherige Pose");
- if(s.camera)sammyCameraTweenToState(s.camera,instantCamera?0:850,!!instantCamera);
- if(s.skeleton&&!rigDebugVisible)sammyToggleSkeleton();
- if(s.running&&s.mode==="user"&&userAnimLoaded)startPoseAnimation("user",Math.max(0,Math.min(userAnimFrames-1,s.frame||0)));
- return s.camera||null
+ const s=sammyMeasureSession;if(!s)return null;sammyMeasureSession=null;sammyClearMeasureOverlay();if(Number.isFinite(s.originalGender)&&Math.abs(annyParams.gender-s.originalGender)>1e-6){annyParams.gender=s.originalGender;applyAnnyParams()}if(s.relative)sammyApplyMeasurementRelative(s.relative,"Sammy Measurement → vorherige Pose");if(s.camera)sammyCameraTweenToState(s.camera,instantCamera?0:850,!!instantCamera);if(s.skeleton&&!rigDebugVisible)sammyToggleSkeleton();if(s.running&&s.mode==="user"&&userAnimLoaded)startPoseAnimation("user",Math.max(0,Math.min(userAnimFrames-1,s.frame||0)));return s.camera||null
 }
 function sammyMeasureSwitchSex(){
- if(!sammyMeasureSession)return;const target=sammyMeasureSexKey()==="female"?0:1;
- annyParams.gender=target;applyAnnyParams();
- // applyAnnyParams reapplies lastAppliedRelative3, which is the measurement T-pose.
- requestAnimationFrame(()=>sammyMeasureRefresh(true))
+ if(!sammyMeasureSession)return;const target=sammyMeasureSexKey()==="female"?"male":"female";sammyMeasureScope=target;annyParams.gender=target==="female"?1:0;applyAnnyParams();requestAnimationFrame(()=>sammyMeasureRefresh(true))
 }
+function sammyMeasureUseUnisex(){if(!sammyMeasureSession)return;sammyMeasureScope="common";sammyMeasureRefresh(true)}
 function sammyMeasureExport(){
- const current=sammyComputeAllMeasures(),sex=sammyMeasureSexKey();
- sammyMeasureLastSnapshots[sex]={time:new Date().toISOString(),values:Object.fromEntries(SAMMY_MEASURE_DEFS.map(d=>[d.id,Number.isFinite(current[d.id].valueCm)?Number(current[d.id].valueCm.toFixed(4)):null]))};
- const payload={
-  schema:"sammy-measure-calibration-v1",app:"Sammy",version:"0.7.0",generated:new Date().toISOString(),
-  ansur:{database:"ANSUR II",handbook:"NATICK/TR-11/017",note:"Definitionstexte in Sammy sind kurze Paraphrasen; Kommentare/Offsets sind die maßgebliche Nutzerkalibrierung."},
-  currentSex:sex,
-  definitions:SAMMY_MEASURE_DEFS.map(({id,label,ansur,kind,section,adjustable,range,ansurInfo,implementation})=>({id,label,ansur,kind,section:section||null,adjustable,rangeCm:range,ansurInfo,implementation})),
-  calibration:JSON.parse(JSON.stringify(sammyMeasureLoadCalibration())),
-  lastSnapshots:sammyMeasureLastSnapshots,
-  currentShape:{gender:annyParams.gender,age:annyParams.age,muscle:annyParams.muscle,weight:annyParams.weight,height:annyParams.height,proportions:annyParams.proportions,cupsize:annyParams.cupsize,firmness:annyParams.firmness,activeLocal:Object.entries(annyLocalValues||{}).filter(([,v])=>Math.abs(Number(v))>1e-6)},
-  geometry:{lod:displayLOD,vertices:geometry?.attributes?.position?.count||0,triangles:(geometry?.index?.count||0)/3,tapeBridge:"convex planar section hull"}
- };
- const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Sammy_Measure_Calibration_v1_${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200)
+ const current=sammyComputeAllMeasures(),sex=sammyMeasureSexKey();sammyMeasureLastSnapshots[sex]={time:new Date().toISOString(),scope:sammyMeasureScope,values:Object.fromEntries(SAMMY_MEASURE_DEFS.map(d=>[d.id,Number.isFinite(current[d.id].valueCm)?Number(current[d.id].valueCm.toFixed(4)):null]))};
+ const payload={schema:"sammy-measure-calibration-v2",app:"Sammy",version:"0.7.1",generated:new Date().toISOString(),ansur:{database:"ANSUR II",handbook:"NATICK/TR-11/017",note:"ANSUR II public database contains many more direct measures; Sammy v0.7.1 exposes the prior Body-Lab calibration set plus stature/crotch and marks derived/internal measures explicitly."},currentModelSex:sex,currentCalibrationScope:sammyMeasureScope,definitions:SAMMY_MEASURE_DEFS.map(({id,label,ansur,kind,section,adjustable,range,spanAdjust,spanRange,group,internal,ansurInfo,implementation})=>({id,label,ansur,kind,section:section||null,adjustable,rangeCm:range||0,spanAdjust:!!spanAdjust,spanRangeCm:spanRange||0,group:group||null,internal:!!internal,ansurInfo,implementation})),calibration:JSON.parse(JSON.stringify(sammyMeasureLoadCalibration())),lastSnapshots:sammyMeasureLastSnapshots,currentShape:{gender:annyParams.gender,age:annyParams.age,muscle:annyParams.muscle,weight:annyParams.weight,height:annyParams.height,proportions:annyParams.proportions,cupsize:annyParams.cupsize,firmness:annyParams.firmness,activeLocal:Object.entries(annyLocalValues||{}).filter(([,v])=>Math.abs(Number(v))>1e-6)},geometry:{lod:displayLOD,vertices:geometry?.attributes?.position?.count||0,triangles:(geometry?.index?.count||0)/3,tapeBridge:"convex planar section hull"}};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Sammy_Measure_Calibration_v2_${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200)
 }
+
 function sammyOpenPanel(id){
  const before=document.querySelector(".sammyPanel.open")?.id||null;
  if(before===id)return;
@@ -4590,11 +4691,12 @@ function sammyInstallBubbleDrag(el,defaultX,defaultY){
  sammyBubbleRegistry[el.id]={x:initial.x,y:initial.y,edge:saved?.edge||sammyNearestEdgeFromPos(initial.x,initial.y),groupId:null};
  sammyResolveBubbleLayout();
  let pid=null,sx=0,sy=0,ox=0,oy=0,moved=false,groupIds=[],groupStart=[],groupEdge=null,draggingGroup=false,detached=false;
- let lastPX=0,lastPY=0,lastPT=0,velX=0,velY=0;
+ let lastPX=0,lastPY=0,lastPT=0,velX=0,velY=0,layoutSnapshot=null,snapPreviewEdge=null;
  el.addEventListener("pointerdown",e=>{
   pid=e.pointerId;el.setPointerCapture(pid);sx=e.clientX;sy=e.clientY;moved=false;detached=false;
   lastPX=e.clientX;lastPY=e.clientY;lastPT=performance.now();velX=0;velY=0;
-  const meta=sammyBubbleRegistry[el.id];ox=meta.x;oy=meta.y;
+  const meta=sammyBubbleRegistry[el.id];ox=meta.x;oy=meta.y;snapPreviewEdge=null;
+  layoutSnapshot=Object.fromEntries(Object.entries(sammyBubbleRegistry).map(([id,m])=>[id,{x:m.x,y:m.y,edge:m.edge,groupId:m.groupId}]));
   groupIds=sammyBubbleGroupMembers(el.id);sammyCancelBubbleMotions(groupIds);
   draggingGroup=groupIds.length>1;
   groupStart=groupIds.map(id=>({id,x:sammyBubbleRegistry[id].x,y:sammyBubbleRegistry[id].y}));
@@ -4632,7 +4734,14 @@ function sammyInstallBubbleDrag(el,defaultX,defaultY){
     return
    }
   }
-  const cl=sammyBubbleClampPos(ox+(e.clientX-sx),oy+(e.clientY-sy));meta.x=cl.x;meta.y=cl.y;meta.edge=null;meta.groupId=null;sammyBubbleApply(el.id)
+  const cl=sammyBubbleClampPos(ox+(e.clientX-sx),oy+(e.clientY-sy)),edge=sammyBubbleCandidateEdge(cl.x,cl.y);
+  if(edge){
+   const axis=(edge==="left"||edge==="right")?"y":"x",desired=axis==="y"?cl.y:cl.x;
+   sammyPreviewBubbleInsertion(el.id,edge,desired,layoutSnapshot);snapPreviewEdge=edge
+  }else{
+   if(snapPreviewEdge)sammyBubbleRestoreSnapshot(layoutSnapshot,el.id);
+   snapPreviewEdge=null;meta.x=cl.x;meta.y=cl.y;meta.edge=null;meta.groupId=null;sammyBubbleApply(el.id)
+  }
  });
  el.addEventListener("pointerup",e=>{
   if(pid!==e.pointerId)return;pid=null;
@@ -4644,10 +4753,11 @@ function sammyInstallBubbleDrag(el,defaultX,defaultY){
    if(panel?.classList.contains("open"))sammyClosePanels();else sammyOpenPanel(el.dataset.panel);
    return
   }
-  if(draggingGroup&&!detached){
-   const axisV=(groupEdge==="left"||groupEdge==="right")?velY:velX;
-   sammyFlingBubbleGroup(groupIds,groupEdge,axisV)
-  }else sammyFlingBubble(el.id,velX,velY)
+  if(snapPreviewEdge){
+   const edge=snapPreviewEdge;snapPreviewEdge=null;sammyResolveBubbleLayout();const ids=sammyBubbleGroupMembers(el.id),axisV=(edge==="left"||edge==="right")?velY:velX;
+   if(Math.abs(axisV)>220)sammyFlingBubbleGroup(ids,edge,axisV);else sammyPersistBubbles();return
+  }
+  if(draggingGroup&&!detached){const axisV=(groupEdge==="left"||groupEdge==="right")?velY:velX;sammyFlingBubbleGroup(groupIds,groupEdge,axisV)}else sammyFlingBubble(el.id,velX,velY)
  });
  el.addEventListener("pointercancel",()=>{pid=null;sammyResolveBubbleLayout()});
  window.addEventListener("resize",()=>{sammyCancelBubbleMotions(Object.keys(sammyBubbleRegistry));sammyResolveBubbleLayout()})
@@ -4932,7 +5042,7 @@ async function sammyLoadAndPlay(file){
 }
 function sammyRuntimeSnapshot(){
  return {
-  app:"Sammy",version:"0.7.0",time:new Date().toISOString(),
+  app:"Sammy",version:"0.7.1",time:new Date().toISOString(),
   url:location.href,userAgent:navigator.userAgent,
   runtime:{
    autoBootDone,shapePass,shapeEngine,displayLOD,annyPackLoaded,annyMidLoaded,
@@ -5063,7 +5173,8 @@ function sammyCameraTargets(mode="edit"){
   const b=sammyMeasureBBox();if(!b)return sammyCameraTargets("edit");
   const vfov=THREE.MathUtils.degToRad(32),aspect=Math.max(.45,cam.aspect||innerWidth/innerHeight),hfov=2*Math.atan(Math.tan(vfov/2)*aspect);
   const distV=b.height/(2*Math.tan(vfov/2))*1.12,distH=b.width/(2*Math.tan(hfov/2))*1.12,dist=Math.max(distV,distH,b.height*1.55);
-  const target=new THREE.Vector3(b.cx,b.cy,b.cz),pos=new THREE.Vector3(b.cx,b.cy,b.cz+dist);
+  // The bottom calibration sheet occupies a large part of the viewport. Looking lower on the body moves the complete T-pose upward into the free upper area.
+  const targetY=b.minY+b.height*.34,target=new THREE.Vector3(b.cx,targetY,b.cz),pos=new THREE.Vector3(b.cx,targetY,b.cz+dist);
   return {target,pos,zoom:1,fov:32}
  }
  const ref=SAMMY_CAMERA_REFERENCE[mode]||SAMMY_CAMERA_REFERENCE.edit,sy=sammyCameraHeightScale();
@@ -5118,7 +5229,7 @@ function sammyApplySoftSmile(){
 }
 
 async function sammyLoadGreeting(){
- const res=await fetch("./standing-greeting.fbx?v=0.7.0",{cache:"force-cache"});
+ const res=await fetch("./standing-greeting.fbx?v=0.7.1",{cache:"force-cache"});
  if(!res.ok)throw new Error(`Standing Greeting konnte nicht geladen werden: HTTP ${res.status}`);
  const conv=await convertMixamoFbxMotion(await res.arrayBuffer(),"Standing Greeting.fbx");
  sammyIntroRel=conv.data;sammyIntroFrames=conv.frames;sammyIntroFps=conv.fps||30;
@@ -5199,6 +5310,7 @@ function sammyInitUi(){
  $("#sammyMeasureShowAll").onclick=()=>sammyMeasureSetOverlayMode("all");
  $("#sammyMeasureShowNone").onclick=()=>sammyMeasureSetOverlayMode("none");
  $("#sammyMeasureExport").onclick=sammyMeasureExport;
+ $("#sammyMeasureUnisex").onclick=sammyMeasureUseUnisex;
  let frameRaf=0;
  const frameHandler=e=>{
   const f=Number(e.target.value)||0;
@@ -5293,11 +5405,11 @@ function updateDecision(){
   const expanded=currentRigMode==="current-expanded";
   if(expanded&&shapeEngine==="anny"&&annyPackLoaded){
    setState("#decision","ANNY → SOMA → 122 LBS AKTIV","ok");
-   info("#decisionInfo",`✓ v0.7.0: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
+   info("#decisionInfo",`✓ v0.7.1: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
 
 Aktuell im Browser steuerbar: ALLE nativen Anny-Phänotypen (Gender, Age, Height, Weight, Muscle, Proportions, Cupsize, Firmness sowie die drei Legacy-Phenotype-Anteile) plus sämtliche lokalen Anny-Changes aus dem offiziellen Asset. Male/Female bleiben als schnelle Presets; der native Gender-Blend ist im Advanced-Bereich ebenfalls sichtbar.
 
-Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.7.0 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
+Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.7.1 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
 
 Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zentimetermaße. Das ist erst der nächste, separate Measurement-Fit.`);
   }else if(expanded&&shapeAnalysis.ready){
@@ -5313,6 +5425,6 @@ Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zen
  else if(shapePass)setState("#decision","SHAPE BESTANDEN","ok")
 }
 
-// Sammy v0.7.0: production shell + automatic runtime.
+// Sammy v0.7.1: production shell + automatic runtime.
 sammyInitUi();
 setTimeout(()=>autoStartRuntime(),0);
