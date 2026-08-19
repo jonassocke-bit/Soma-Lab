@@ -254,3 +254,66 @@ button.selected{outline:2px solid rgba(255,255,255,.72);outline-offset:-2px;back
 #sammyUi{transition:opacity .45s ease}
 body:not(.sammy-ready) #sammyUi{opacity:0;pointer-events:none}
 body.sammy-ready #sammyUi{opacity:1}
+
+
+/* Sammy v0.6.2 animation library / mini player */
+.sammyAnimPanel{min-height:82px}
+.sammyMiniTransport{
+ display:none;flex:1;align-items:center;justify-content:center;gap:14px;
+ padding:0 14px 8px;min-height:48px
+}
+.sammyMiniTransport button{
+ width:42px!important;min-height:42px!important;height:42px!important;padding:0!important;
+ border-radius:50%!important;font-size:26px!important;font-weight:500!important;line-height:1!important
+}
+.sammyMiniTransport .sammyMiniMain{
+ width:50px!important;height:50px!important;min-height:50px!important;
+ background:#ededf0!important;color:#141519!important;font-size:18px!important
+}
+.sammyAnimPanel.compact{
+ --sammy-panel-h:86px!important;height:86px!important;min-height:86px!important
+}
+.sammyAnimPanel.compact .sammyMiniTransport{display:flex}
+.sammyAnimPanel.compact .sammyPanelHead,
+.sammyAnimPanel.compact .sammyPanelScroll{display:none!important}
+.sammyAnimPanel.compact .sammyResizeGrip{flex-basis:18px}
+.sammyLibraryHead{
+ display:flex;align-items:center;justify-content:space-between;
+ margin:20px 0 8px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)
+}
+.sammyLibraryHead b{font-size:12px}
+.sammyLibraryHead span{
+ min-width:24px;height:22px;padding:0 7px;border-radius:11px;display:grid;place-items:center;
+ background:rgba(255,255,255,.08);font-size:10px;color:#b8bac1
+}
+.sammyAnimLibrary{display:flex;flex-direction:column;gap:7px;padding-bottom:8px}
+.sammyLibraryEmpty{
+ padding:12px;border-radius:12px;background:rgba(255,255,255,.04);
+ color:#777a83;font-size:10px;text-align:center
+}
+.sammyAnimItem{
+ display:grid;grid-template-columns:28px minmax(0,1fr) 34px;align-items:center;
+ min-height:46px;border-radius:13px;border:1px solid rgba(255,255,255,.08);
+ background:rgba(255,255,255,.05);overflow:hidden;touch-action:pan-y
+}
+.sammyAnimItem.active{
+ border-color:rgba(255,255,255,.24);background:rgba(255,255,255,.10)
+}
+.sammyAnimItem.dragging{
+ opacity:.92;transform:scale(1.015);box-shadow:0 12px 30px rgba(0,0,0,.30);
+ z-index:5;touch-action:none
+}
+.sammyAnimGrab{
+ display:grid;place-items:center;height:100%;font-size:16px;color:#737680;user-select:none
+}
+.sammyAnimMeta{min-width:0;padding:7px 5px}
+.sammyAnimMeta b{
+ display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:11px;font-weight:650;color:#eeeef2
+}
+.sammyAnimMeta small{display:block;margin-top:2px;font-size:8px;color:#7f828b}
+.sammyAnimDelete{
+ width:28px!important;height:28px!important;min-height:28px!important;padding:0!important;
+ margin-right:5px;border-radius:50%!important;font-size:15px!important;color:#aeb0b7!important;
+ background:rgba(255,255,255,.055)!important
+}

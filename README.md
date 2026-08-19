@@ -1,48 +1,70 @@
-# Sammy v0.6.1
+# Sammy v0.6.2
 
-Polish release on top of the iPhone-proven Sammy v0.6.0 animation/retarget path.
+UI/polish release on top of the iPhone-tested v0.6.1 start/animation path.
 
-## Bundled start greeting
+## Start presentation
 
-The supplied `Standing Greeting.fbx` is included as `standing-greeting.fbx`.
-It uses the current Mixamo/XBotContract65 skeleton and is parsed by Sammy with
-the same proven Axis16 import path as user animations.
+The Standing Greeting remains bundled.
 
-Startup flow:
+Changes:
 
-1. full-screen Sammy splash hides asset loading;
-2. Anny/SOMA Mid + morphable Sammy initialize;
-3. the greeting clip is prepared locally;
-4. splash fades out;
-5. greeting plays exactly once;
-6. the clip blends with quaternion slerp into frame 0, used for the initial
-   editing stance for now;
-7. camera glides from upper-body greeting framing to the editing view.
+- the splash stays in front until the **first greeting frame has already been
+  applied**;
+- the greeting camera is farther out and intentionally shows head + torso +
+  enough body to read the pose, rather than the previous extreme close-up;
+- the compact "BEGRÜSSUNG" loading toast is closed once the greeting finishes.
 
-The greeting does not occupy the user's animation slot.
+### Subtle smile
 
-## Skeleton view
+Sammy now tries to apply a small smile using **semantic Anny local modifiers**.
+It searches the loaded Anny pack for modifiers containing `smile` or explicit
+mouth/lip-corner-up semantics and uses only a low value.
 
-- exact-Anny pose now refreshes the debug skeleton every animation frame;
-- skeleton gets the same Anny display/ground Y offset as the surface;
-- skeleton lines and joints render through the body;
-- body automatically switches to about 18% opacity;
-- normal material is restored when skeleton view is closed;
-- transparent mode uses FrontSide rendering;
-- an additional stable-topology head-shell filter suppresses strongly
-  inward-facing triangles inside the head region, intended to remove the
-  distracting inner mouth/head cavity from the transparent view.
+If the installed Anny pack contains no semantic smile modifier, Sammy leaves the
+face neutral. There is deliberately no arbitrary vertex-warp hack.
 
-## Camera infrastructure
+## Skeleton mode
 
-v0.6.1 adds smooth camera tween presets:
-- greeting: upper body;
-- edit: full body.
+The body is now replaced temporarily by a flat, unlit, FrontSide-only ghost
+material (~16% opacity). This reduces the layered/dark transparent interior
+look.
 
-The same infrastructure can later be reused for torso/waist/leg/head
-measurement editing.
+The stable-topology head-shell filter is also more aggressive about suppressing
+inward-facing head triangles. The goal is to keep the live skeleton readable
+without showing the internal mouth/head cavity.
 
-## Frozen infrastructure
+The normal body material and original mesh index are restored when the skeleton
+view is disabled.
 
-The successful Axis16 → transported native-Anny frame → exact Anny FK/LBS
-retarget path is otherwise unchanged.
+## Animation mini player
+
+The Animation panel can now be dragged down to about one control row.
+
+Below ~138 px it snaps to an 86 px **mini player** containing:
+
+- previous animation;
+- play/pause;
+- next animation.
+
+Dragging the top grip upward expands the full panel again. The chosen height is
+persisted.
+
+## Animation library
+
+The file picker now supports multiple `.fbx`, `.npy` and `.npz` files.
+
+- the first successfully imported animation starts immediately;
+- all imported animations appear in a list lower in the panel;
+- tapping a row activates and plays it;
+- `×` removes an animation;
+- long-press a row and drag it vertically to reorder the list;
+- previous/next in the mini player follows this order.
+
+The library is intentionally in-memory for v0.6.2. Persisting large FBX-derived
+motion arrays to IndexedDB is a separate next step so storage quotas and cache
+eviction can be handled explicitly.
+
+## Frozen technical path
+
+The proven Axis16 → transported native-Anny bone basis → exact Anny FK/LBS
+retarget path is unchanged.
