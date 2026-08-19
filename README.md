@@ -1,49 +1,74 @@
-# Sammy v0.6.5
+# Sammy v0.7.0
 
-Camera/bubble behavior correction built on v0.6.4.
+Quality/UI correction built on v0.6.5.
 
-## Exact calibrated cameras
+## Multi-animation import fixed
 
-The three user-supplied camera setups are now used **directly** as reference
-values instead of being re-derived from guessed bounding-box percentages:
+The diagnostic JSON identified the concrete failure: `sammyRenderAnimationLibrary()`
+called an undefined `escapeHtml`, so imported entries existed (the count could rise)
+but rendering the rows threw a ReferenceError. v0.7.0 adds the missing escaping helper
+and makes batch import robust per file. All selected FBX/NPY/NPZ files are parsed first;
+the first successful entry is then activated and played. One failed file no longer aborts
+the rest of the batch.
 
-- Standing Greeting
-- normal editing view
-- Animation panel view
+The diagnostics version field was also stale (`0.6.3`) and now reports `0.7.0`.
 
-Both camera position and `OrbitControls.target` are preserved, so the supplied
-pan / camera height is part of the preset. FOV is fixed to 32° and camera zoom
-to 1.0 for these presets.
+## Animation controls
 
-For different mannequin sizes, only the **vertical Y coordinates** of camera
-position and orbit target are scaled with current rest-body height relative to
-the canonical default body. X/Z remain the calibrated offsets, matching the
-requested behavior.
+The previous/Play-Pause/next transport row is now visible at all animation-panel
+heights, not only in compact mode. The duplicate Stop/Resume button was removed.
+Skeleton remains a separate full-width action.
 
-The CAM panel now also reports current body height, the captured camera reference
-height, and the resulting Y scale.
+When the panel is collapsed to its minimum height, the panel becomes significantly
+more transparent while the transport controls stay readable.
 
-## Animation camera return
+## Bubble physics
 
-Opening Animation stores the *actual current camera state* immediately before
-the panel opens. Leaving Animation (closing it or switching directly to another
-menu) smoothly restores exactly that saved camera position/target/zoom/FOV.
-It no longer forces the generic editing-start preset.
+Bubbles retain the repeatable edge/group snap logic from v0.6.5 and add inertial
+release behavior:
 
-## Bubble grouping
+- release in the middle: a spring-like pull visibly accelerates the bubble to an edge;
+- flick/throw: the measured release velocity influences direction and travel;
+- positions are clamped every animation frame to viewport + iPhone safe areas;
+- landing runs the normal edge/group resolver, so bubbles can snap together again;
+- an already grouped chain can be flicked/slid along its current edge;
+- grabbing a moving bubble immediately cancels its inertia.
 
-Bubble grouping is now inferred geometrically every time from edge + proximity,
-rather than relying on a one-time group state. Therefore bubbles can:
+## Frozen infrastructure
 
-- snap together;
-- be dragged together along an edge;
-- detach by pulling one away / to another edge;
-- later be brought back and snap together again repeatedly.
+The transported native-Anny retarget path, exact Anny FK/LBS, calibrated camera
+behavior and greeting path are unchanged.
 
-Viewport and iPhone safe-area clamping from v0.6.4 remains active for single
-bubbles and groups.
 
-## UI
+## v0.7.0 - Measurement Calibration v1
 
-Only one panel can be open at a time. The normal greeting/start status box stays
-hidden; only actual startup errors may surface as a toast above the app.
+The new `MEAS` bubble opens a dedicated anthropometric calibration workspace.
+Opening it stores the current pose and camera, switches the body to the internal
+Axis16/SOMA T-pose, and frames the complete body from the front. Closing the
+panel restores the exact previous pose and camera; a previously running user
+animation is resumed.
+
+The first calibration set contains the ANSUR-II variables/targets used in the
+previous body-engine planning: stature, biacromial breadth, chest circumference,
+chest breadth/depth, waist circumference/breadth/depth, buttock circumference,
+hip breadth and crotch height. No unverified hip-depth variable is added.
+
+Circumferences are generated from exact triangle/plane intersections. Sammy then
+uses the convex hull of the planar section as a tape-measure path, so narrow
+concavities such as breast cleavage or the gluteal cleft are bridged instead of
+being followed by the tape.
+
+Every adjustable measure has a single position slider. Lines are deliberately
+not draggable in 3D. Calibration is stored separately for male and female Anny
+endpoints, with independent offsets, review status and comments. Each row shows
+an info button plus the *other* sex symbol for direct A/B switching while the
+selected measurement and camera remain unchanged.
+
+The Export button writes `sammy-measure-calibration-v1` JSON containing both sex
+calibrations, measure definitions, comments/status, last measured snapshots,
+current shape state and geometry/debug metadata. This is intended to be sent
+back and baked into the next Sammy version.
+
+ANSUR naming is aligned with the public ANSUR-II database. The in-app explanatory
+texts are concise paraphrases linked to the Measurer's Handbook
+NATICK/TR-11/017 and remain explicitly reviewable during calibration.
