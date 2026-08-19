@@ -317,3 +317,51 @@ body.sammy-ready #sammyUi{opacity:1}
  margin-right:5px;border-radius:50%!important;font-size:15px!important;color:#aeb0b7!important;
  background:rgba(255,255,255,.055)!important
 }
+
+
+/* Sammy v0.6.3 camera diagnostics + softer splash transition */
+.sammySplash{
+ transition:opacity 1.05s cubic-bezier(.22,.61,.36,1),visibility 1.05s step-end!important;
+}
+.sammySplash.gone{
+ opacity:0!important;visibility:hidden;pointer-events:none;
+}
+.sammySplashVersion{
+ margin-top:5px;font-size:10px;font-weight:650;letter-spacing:.14em;
+ color:rgba(255,255,255,.44)
+}
+.sammyCameraDebugBtn{
+ position:fixed;z-index:31;top:max(10px,env(safe-area-inset-top));
+ right:max(10px,env(safe-area-inset-right));width:42px;height:28px;padding:0!important;
+ border-radius:14px!important;border:1px solid rgba(255,255,255,.14)!important;
+ background:rgba(25,26,30,.62)!important;color:rgba(255,255,255,.78)!important;
+ backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+ font-size:9px!important;font-weight:800!important;letter-spacing:.08em;
+ box-shadow:none!important
+}
+.sammyCameraDebugPanel{
+ position:fixed;z-index:36;top:calc(max(10px,env(safe-area-inset-top)) + 36px);
+ right:max(10px,env(safe-area-inset-right));width:min(84vw,310px);
+ border-radius:16px;padding:10px;
+ border:1px solid rgba(255,255,255,.14);
+ background:rgba(17,18,21,.88);
+ backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+ box-shadow:0 12px 38px rgba(0,0,0,.30)
+}
+.sammyCameraDebugPanel.hidden{display:none}
+.sammyCameraDebugHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.sammyCameraDebugHead b{font-size:12px}
+.sammyCameraDebugHead button{
+ width:28px!important;height:28px!important;min-height:28px!important;padding:0!important;
+ border-radius:50%!important;font-size:18px!important
+}
+.sammyCameraDebugPanel pre{
+ margin:0 0 8px;padding:9px;border-radius:11px;background:rgba(255,255,255,.045);
+ white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+ font-size:9px;line-height:1.45;color:#d5d6dc
+}
+.sammyCameraDebugPanel>button{
+ width:100%;min-height:34px!important;border-radius:11px!important;font-size:10px!important
+}
+body:not(.sammy-ready) #sammyCameraDebugBtn{opacity:0;pointer-events:none}
+body.sammy-ready #sammyCameraDebugBtn{opacity:1;transition:opacity .4s ease}
