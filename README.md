@@ -973,7 +973,7 @@ blindly before a visible failure is demonstrated.
 The exact Axis16 comparator remains available as the source-side A/B reference.
 
 
-## v0.5.22 – exact identity-dependent Anny/SOMA rest rig
+## v0.5.23 – exact identity-dependent Anny/SOMA rest rig
 
 The v0.5.20 visual test exposed the real remaining bug. The proven Mixamo
 motion was being applied to a morph target whose joint POSITIONS were adapted
@@ -989,7 +989,7 @@ blendshape identity it constructs a shape-dependent SOMA rest rig from:
 - canonical `reference_bone_orientations` for `local-ref`,
 - Anny's own SOMA skinning indices/weights.
 
-v0.5.22 mirrors that exact model in the browser.
+v0.5.23 mirrors that exact model in the browser.
 
 ### New motion path
 
@@ -1011,7 +1011,7 @@ been exporting/using an incomplete subset of that model.
 
 ### One-time GitHub Action
 
-v0.5.22 changes the Anny pack schema to
+v0.5.23 changes the Anny pack schema to
 `anny-soma-browser-exact-engine-v3`.
 
 Run once:
@@ -1040,7 +1040,7 @@ If the rest-rig parity passes but the visible pose is still different, only then
 export another exact target/source pair for a frame-by-frame comparison.
 
 
-## v0.5.22 – NPY int16 parser fix
+## v0.5.23 – NPY int16 parser fix
 
 The v3 Anny/SOMA pack was generated successfully, but iPhone loading stopped at:
 
@@ -1054,9 +1054,34 @@ stores several compact rig arrays as signed int16:
 The browser NPY reader previously supported int32/int64 and uint8/uint16/uint32
 but accidentally omitted signed int16.
 
-v0.5.22 adds:
+v0.5.23 adds:
 - `<i2` / `Int16Array`
 - `<i1` / `Int8Array` for completeness
 
 No GitHub Action rerun is required. The already-generated
 `anny_soma_engine_*_rigv3.npz` files remain valid and are reused.
+
+
+## v0.5.23 – canonical Axis16 rest-pose retarget before motion
+
+The v0.5.22 iPhone screenshots showed that the exact Anny rest-rig reconstruction itself was not enough. The target retained a different neutral/rest posture (arm angle, knee bend, trunk posture and thumb basis), and those offsets remained visible in every imported animation.
+
+The correct retarget order is now explicit:
+1. reconstruct the exact identity-dependent Anny/SOMA rest rig,
+2. pose that rig into the proven Axis16/Mixamo static reference orientation contract while preserving the target body's own bone lengths,
+3. reconstruct the already-proven Public78 WORLD motion deltas from the Mixamo converter,
+4. apply those deltas on top of the Axis16-compatible target reference orientations,
+5. run absolute-orientation FK on the target's exact Anny rest skeleton,
+6. skin the original Anny rest mesh once with Anny's own weights.
+
+This is deliberately different from simply feeding the Mixamo relative matrices into Anny `local-ref`: local-ref preserves the target model's own reference/rest posture, which is exactly the offset the iPhone screenshots exposed.
+
+The 65-bone Axis16 rest orientations are mapped to Public78 with the same semantics already proven by the Mixamo converter:
+- Neck2 interpolates Neck→Head geometrically,
+- SOMA non-thumb Finger1 follows Hand (metacarpal),
+- Mixamo Finger1/2/3/4 map to SOMA Finger2/3/4/End,
+- thumbs retain the proven Axis16 chain,
+- Jaw/Eyes inherit Head,
+- terminal bones inherit when Mixamo does not provide an explicit end bone.
+
+No new GitHub Action is required. The existing v3 Anny packs are reused.
