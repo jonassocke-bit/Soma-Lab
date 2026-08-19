@@ -1,7 +1,7 @@
 {
   "schema": "sammy-pose-probe-v1",
   "sammy_version": "0.5.24",
-  "probe_id": "Idle_fbx-f458-1787133495160",
+  "probe_id": "Idle_fbx-f458-1787136005734",
   "source": {
     "animation": "Idle.fbx",
     "frame": 458,
