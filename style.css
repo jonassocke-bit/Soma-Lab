@@ -96,3 +96,132 @@ button.selected{outline:2px solid rgba(255,255,255,.72);outline-offset:-2px;back
 .oracleHelpLink{display:block;margin-top:9px;color:#9bc9ff;text-decoration:none;font-size:12px}
 .oracleFilePick{flex:1}
 .oracleExit{margin-top:10px;background:#292b31!important}
+
+
+/* ================================================================
+   SAMMY v0.6.0 – production UI
+   The old PoC controls remain in #legacyUi only as a hidden runtime
+   backend so the now-proven rig/shape code does not need a risky rewrite.
+   ================================================================ */
+#legacyHeader,#legacyUi{display:none!important}
+#sammyVersion{
+ position:fixed;z-index:20;left:max(12px,env(safe-area-inset-left));
+ top:max(10px,env(safe-area-inset-top));pointer-events:none;
+ font-size:10px;font-weight:650;letter-spacing:.12em;color:rgba(255,255,255,.58);
+ text-transform:none
+}
+.sammyBootToast{
+ position:fixed;z-index:40;top:calc(max(10px,env(safe-area-inset-top)) + 24px);
+ left:50%;transform:translateX(-50%);width:min(86vw,390px);
+ display:flex;flex-direction:column;gap:3px;padding:10px 13px;border-radius:14px;
+ background:rgba(18,19,23,.68);border:1px solid rgba(255,255,255,.12);
+ backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+ box-shadow:0 10px 35px rgba(0,0,0,.18);opacity:0;pointer-events:none;
+ transition:opacity .28s ease,transform .28s ease
+}
+.sammyBootToast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+.sammyBootToast.done{opacity:0;transform:translateX(-50%) translateY(-8px)}
+.sammyBootToast.error{opacity:1;border-color:rgba(255,105,105,.55);background:rgba(44,15,18,.82)}
+.sammyBootToast b{font-size:10px;letter-spacing:.12em}
+.sammyBootToast span{font-size:11px;color:#d6d6da;line-height:1.35}
+
+#sammyUi{position:fixed;z-index:25;inset:0;pointer-events:none}
+.sammyBubble{
+ position:fixed;z-index:30;width:54px;height:54px;border-radius:50%;padding:0;
+ display:grid;place-items:center;pointer-events:auto;touch-action:none;user-select:none;
+ border:1px solid rgba(255,255,255,.20);
+ background:rgba(25,26,30,.76);color:#fff;
+ backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+ box-shadow:0 8px 28px rgba(0,0,0,.27);
+ font-size:9px;font-weight:800;letter-spacing:.06em
+}
+.sammyBubble.active{background:rgba(240,240,244,.92);color:#17181b}
+.sammyBubble.errorBubble{background:rgba(96,18,24,.88);border-color:rgba(255,125,125,.65)}
+.sammyBubble.errorBubble span{font-size:20px;line-height:1}
+.sammyBubble.errorBubble em{
+ position:absolute;right:-3px;top:-3px;min-width:19px;height:19px;padding:0 4px;border-radius:10px;
+ display:grid;place-items:center;background:#f1f1f3;color:#19191c;font-size:9px;font-style:normal;font-weight:800
+}
+.sammyBubble.hidden{display:none!important}
+
+.sammyPanel{
+ --sammy-panel-h:48vh;
+ position:fixed;z-index:28;pointer-events:auto;display:none;
+ left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);
+ width:min(92vw,430px);height:var(--sammy-panel-h);min-height:190px;max-height:82vh;
+ border:1px solid rgba(255,255,255,.15);border-radius:22px;overflow:hidden;
+ background:rgba(17,18,21,.90);
+ backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+ box-shadow:0 18px 60px rgba(0,0,0,.38)
+}
+.sammyPanel.open{display:flex;flex-direction:column}
+.sammyResizeGrip{
+ flex:0 0 22px;display:grid;place-items:center;cursor:ns-resize;touch-action:none
+}
+.sammyResizeGrip span{display:block;width:42px;height:4px;border-radius:3px;background:rgba(255,255,255,.25)}
+.sammyPanelHead{
+ flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;
+ padding:0 12px 8px 15px;border-bottom:1px solid rgba(255,255,255,.08)
+}
+.sammyPanelHead b{font-size:15px}
+.sammyPanelClose{
+ width:34px;height:34px;padding:0;border:0;border-radius:50%;
+ background:rgba(255,255,255,.08);font-size:22px;line-height:1;color:#ddd
+}
+.sammyPanelScroll{
+ flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+ padding:12px 14px calc(16px + env(safe-area-inset-bottom))
+}
+.sammyFilePick{
+ display:block;border-radius:15px;padding:13px 15px;margin-bottom:10px;
+ background:#eeeef1;color:#17181b;text-align:center;font-weight:750;font-size:13px
+}
+.sammyFilePick input{display:none}
+.sammyStatus{
+ margin:8px 0 12px;padding:10px 11px;border-radius:12px;
+ background:rgba(255,255,255,.055);color:#c7c8ce;font-size:11px;line-height:1.4
+}
+.sammyStatus.ok{color:#bff5d3;background:rgba(64,169,105,.11)}
+.sammyStatus.error{color:#ffc0c0;background:rgba(193,62,69,.12)}
+.sammyButtonRow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px}
+#sammyUi button:not(.sammyBubble):not(.sammyPanelClose){
+ min-height:42px;border-radius:13px;border:1px solid rgba(255,255,255,.10);
+ background:rgba(255,255,255,.09);color:#f4f4f6;font-weight:650
+}
+#sammyUi button:disabled{opacity:.42}
+#sammyUi button.active{background:#ededf0;color:#141519}
+.sammySecondary{width:100%;margin-top:12px}
+.sammyField{margin:13px 0}
+.sammyField label{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#c9cad0;margin-bottom:7px}
+.sammyField output{font-variant-numeric:tabular-nums;color:#fff}
+.sammyField input[type="range"]{width:100%}
+.sammyField input[type="number"],.sammySearch{
+ width:100%;box-sizing:border-box;margin-top:8px;padding:11px 12px;border-radius:12px;
+ border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);
+ color:#fff;font-size:13px
+}
+.sammySearch{margin:0 0 12px}
+.sammyShapeGroup{margin:8px 0 18px}
+.sammyShapeGroup h3{
+ position:sticky;top:-12px;z-index:2;margin:0 -14px 8px;padding:10px 14px 8px;
+ font-size:10px;letter-spacing:.10em;text-transform:uppercase;color:#9698a1;
+ background:rgba(17,18,21,.95)
+}
+#sammyShapePanel .slider{grid-template-columns:minmax(120px,1fr) minmax(110px,1.3fr) 45px}
+#sammyShapePanel .annySlider label{font-size:10px;line-height:1.25}
+#sammyShapePanel .annySlider label small{display:block;font-size:8px;color:#777b84;margin-top:2px}
+#sammyShapePanel .annyLocalCategory{border-top:1px solid rgba(255,255,255,.07);padding-top:7px}
+#sammyShapePanel .annyLocalCategory summary{font-size:11px}
+.sammyErrorList{display:flex;flex-direction:column;gap:8px}
+.sammyErrorItem{
+ padding:10px 11px;border-radius:12px;background:rgba(255,255,255,.055);
+ border-left:3px solid rgba(255,105,105,.72);font-size:10px;line-height:1.4;overflow-wrap:anywhere
+}
+.sammyErrorItem b{display:block;margin-bottom:4px;color:#ffd0d0}
+.sammyErrorItem pre{
+ white-space:pre-wrap;word-break:break-word;margin:6px 0 0;font-size:9px;color:#9ea0a8;
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace
+}
+@media(min-width:700px){
+ .sammyPanel{width:420px;left:auto;right:18px;transform:none}
+}
