@@ -1,0 +1,69 @@
+name: Build Anny SOMA Engine v3
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - name: Checkout Soma-Lab
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Fetch pinned NVIDIA SOMA-X assets
+        run: |
+          git lfs install
+          rm -rf .soma-upstream
+          GIT_LFS_SKIP_SMUDGE=1 git clone --no-checkout https://github.com/NVlabs/SOMA-X.git .soma-upstream
+          git -C .soma-upstream checkout 86632764684281dc98f31ab9c4aac36a4cdbc428
+          git -C .soma-upstream lfs pull --include="assets/SOMA_template_rig.usda,assets/SOMA_neutral.npz"
+
+      - name: Install SOMA rig extractor dependencies
+        run: python -m pip install --upgrade numpy scipy usd-core
+
+      - name: Regenerate SOMA rig pack with Low + Mid skinning
+        run: python extract_current_rig_pack.py .soma-upstream soma_current_rig_pack_v0026.npz
+
+      - name: Fetch pinned official Anny v0.6 source
+        run: |
+          rm -rf .anny-upstream
+          git clone https://github.com/naver/anny.git .anny-upstream
+          git -C .anny-upstream checkout 72104cac8242d1735ec06433b65bec5e26953ce7
+          echo "Anny commit: $(git -C .anny-upstream rev-parse HEAD)"
+
+      - name: Install Anny
+        run: |
+          python -m pip install -e ./.anny-upstream
+
+      - name: Build exact Anny browser shape + rig engines (Low + Mid)
+        env:
+          ANNY_CACHE_DIR: ${{ github.workspace }}/.anny-cache
+        run: |
+          python extract_anny_soma_pack.py \
+            soma_current_rig_pack_v0026.npz \
+            anny_soma_engine_low_v060_rigv3.npz \
+            anny_soma_engine_mid_v060_rigv3.npz
+
+      - name: Commit generated packs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            soma_current_rig_pack_v0026.npz soma_current_rig_pack_v0026.json \
+            anny_soma_engine_low_v060_rigv3.npz anny_soma_engine_low_v060_rigv3.json \
+            anny_soma_engine_mid_v060_rigv3.npz anny_soma_engine_mid_v060_rigv3.json
+          if git diff --cached --quiet; then
+            echo "All engine packs already current."
+          else
+            git commit -m "Add Anny exact shape + SOMA rest-rig engine v3"
+            git push
+          fi
