@@ -1,4 +1,4 @@
-# Sammy v0.6.3
+# Sammy v0.6.4
 
 Small calibration/polish release on top of v0.6.2.
 
@@ -34,7 +34,7 @@ The user identified the correct Anny modifier:
 
 `mouth angles up = 0.8`
 
-v0.6.3 uses exactly that semantic modifier (case/spacing tolerant) and no longer
+v0.6.4 uses exactly that semantic modifier (case/spacing tolerant) and no longer
 tries to guess among several smile/corner candidates. If the modifier is absent,
 the face remains neutral and a warning is logged.
 
