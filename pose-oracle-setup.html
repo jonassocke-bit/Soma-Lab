@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="de">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sammy Pose Oracle</title>
+<style>body{margin:0;background:#101114;color:#eee;font:15px -apple-system,BlinkMacSystemFont,system-ui;line-height:1.5;padding:24px 16px}main{max-width:760px;margin:auto}.step{background:#191b20;border:1px solid #343741;border-radius:15px;padding:14px;margin:12px 0}.n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#eee;color:#111;font-weight:800;margin-right:8px}code{background:#24262b;padding:2px 5px;border-radius:5px}b{color:#fff}a{color:#9bc9ff}</style></head>
+<body><main>
+<h1>Pose Oracle – nur wenn Schritt 2 in Sammy fertig ist</h1>
+<p>Diese Seite ist absichtlich linear. Keine anderen Tests dazwischen.</p>
+<div class="step"><span class="n">1</span><b>Pose-Probe aus Sammy exportieren.</b><br>Die Datei heißt ungefähr <code>Sammy_PoseProbe_Idle_Frame0048.json</code>.</div>
+<div class="step"><span class="n">2</span><b>Die Probe im Repo-Root hochladen und exakt umbenennen:</b><br><code>pose_probe_input.json</code></div>
+<div class="step"><span class="n">3</span><b>Einmalig Workflow anlegen:</b><br><code>POSE_ORACLE_WORKFLOW.yml</code> aus dem v0.5.24-Paket als<br><code>.github/workflows/sammy-pose-oracle.yml</code> speichern.</div>
+<div class="step"><span class="n">4</span><b>GitHub → Actions → Sammy Pose Oracle → Run workflow.</b><br>Der Workflow benutzt den gepinnten offiziellen Anny-Code und erzeugt <code>pose_probe_oracle.json</code>.</div>
+<div class="step"><span class="n">5</span><b><code>pose_probe_oracle.json</code> herunterladen</b> und in Sammy bei Schritt 3 auswählen.</div>
+<p>Danach zeigt Sammy zwei dicke, durch den Körper sichtbare Skelette: <b style="color:#ffe07a">Gelb = Browser</b>, <b style="color:#55d9ff">Cyan = offizielles Anny</b>. Rot/Orange markiert problematische Browser-Bones. Zusätzlich bekommst du automatisch eine numerische Diagnose.</p>
+</main></body></html>

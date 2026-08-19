@@ -973,7 +973,7 @@ blindly before a visible failure is demonstrated.
 The exact Axis16 comparator remains available as the source-side A/B reference.
 
 
-## v0.5.23 – exact identity-dependent Anny/SOMA rest rig
+## v0.5.24 – exact identity-dependent Anny/SOMA rest rig
 
 The v0.5.20 visual test exposed the real remaining bug. The proven Mixamo
 motion was being applied to a morph target whose joint POSITIONS were adapted
@@ -989,7 +989,7 @@ blendshape identity it constructs a shape-dependent SOMA rest rig from:
 - canonical `reference_bone_orientations` for `local-ref`,
 - Anny's own SOMA skinning indices/weights.
 
-v0.5.23 mirrors that exact model in the browser.
+v0.5.24 mirrors that exact model in the browser.
 
 ### New motion path
 
@@ -1011,7 +1011,7 @@ been exporting/using an incomplete subset of that model.
 
 ### One-time GitHub Action
 
-v0.5.23 changes the Anny pack schema to
+v0.5.24 changes the Anny pack schema to
 `anny-soma-browser-exact-engine-v3`.
 
 Run once:
@@ -1040,7 +1040,7 @@ If the rest-rig parity passes but the visible pose is still different, only then
 export another exact target/source pair for a frame-by-frame comparison.
 
 
-## v0.5.23 – NPY int16 parser fix
+## v0.5.24 – NPY int16 parser fix
 
 The v3 Anny/SOMA pack was generated successfully, but iPhone loading stopped at:
 
@@ -1054,7 +1054,7 @@ stores several compact rig arrays as signed int16:
 The browser NPY reader previously supported int32/int64 and uint8/uint16/uint32
 but accidentally omitted signed int16.
 
-v0.5.23 adds:
+v0.5.24 adds:
 - `<i2` / `Int16Array`
 - `<i1` / `Int8Array` for completeness
 
@@ -1062,7 +1062,7 @@ No GitHub Action rerun is required. The already-generated
 `anny_soma_engine_*_rigv3.npz` files remain valid and are reused.
 
 
-## v0.5.23 – canonical Axis16 rest-pose retarget before motion
+## v0.5.24 – canonical Axis16 rest-pose retarget before motion
 
 The v0.5.22 iPhone screenshots showed that the exact Anny rest-rig reconstruction itself was not enough. The target retained a different neutral/rest posture (arm angle, knee bend, trunk posture and thumb basis), and those offsets remained visible in every imported animation.
 
@@ -1085,3 +1085,44 @@ The 65-bone Axis16 rest orientations are mapped to Public78 with the same semant
 - terminal bones inherit when Mixamo does not provide an explicit end bone.
 
 No new GitHub Action is required. The existing v3 Anny packs are reused.
+
+
+## v0.5.24 – Rig Oracle / Pose Probe wizard
+
+This version intentionally does **not** introduce another retargeting heuristic.
+
+Instead it adds a staged visual/numeric oracle workflow:
+
+1. Freeze exactly one imported Mixamo frame.
+2. Make the Anny body translucent and render a thick yellow Browser skeleton
+   with `depthTest=false`, so it is visible through the body from every camera angle.
+3. Export a `sammy-pose-probe-v1` JSON containing:
+   - exact Anny blendshape coefficients,
+   - Public78 source relative/world motion deltas,
+   - intended target absolute orientations,
+   - exact Anny rest bone poses,
+   - Browser bone poses / skin transforms / posed vertices.
+4. Run the separate `Sammy Pose Oracle` GitHub Action. It uses pinned official
+   Anny and its own `parallel_forward_kinematic_absolute_orientations` + LBS.
+5. Load the returned `sammy-pose-oracle-v1` JSON in the browser.
+6. Overlay:
+   - yellow = Browser,
+   - cyan = official Anny,
+   - orange/red = Browser bones with meaningful error.
+7. The UI reports bone rotation error, bone position error, full-vertex RMS/max
+   and the worst joints in plain language.
+
+Interpretation is deliberately binary:
+- If Browser ≈ official Anny, then FK/skinning is exonerated and the error is
+  upstream in the Axis16→Public78/absolute-orientation mapping.
+- If Browser differs from official Anny, repair only Browser FK/skinning.
+
+The body opacity is user-adjustable and the optional official Anny posed mesh
+can be shown as a cyan wireframe.
+
+Files added:
+- `pose_oracle.py`
+- `POSE_ORACLE_WORKFLOW.yml`
+- `pose-oracle-setup.html`
+
+No new Anny v3 engine-pack build is required.

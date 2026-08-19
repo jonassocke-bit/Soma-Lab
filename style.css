@@ -75,3 +75,24 @@ button.selected{outline:2px solid rgba(255,255,255,.72);outline-offset:-2px;back
 
 #mixamoBridgeSection{border:1px solid rgba(255,255,255,.11)}
 #mixamoBridgeSection .primary{width:100%}
+
+
+/* v0.5.24 Rig Oracle wizard */
+.oracleWizard{margin-top:18px;padding:14px;border:1px solid #3b3e46;border-radius:18px;background:rgba(10,11,14,.72)}
+.oracleIntro{margin:8px 0 14px;padding:11px 12px;border-radius:12px;background:#1d1f24;color:#cfd1d7;line-height:1.45}
+.oracleStep{margin:10px 0;padding:12px;border:1px solid #2f3239;border-radius:14px;background:#15171b;opacity:.55}
+.oracleStep.active{opacity:1;border-color:#7a7f8d;background:#1b1d22}
+.oracleStep.done{opacity:1;border-color:#2d6e50;background:#16221c}
+.oracleStep.error{opacity:1;border-color:#8a3e45;background:#241719}
+.oracleStepHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.oracleStepHead strong{font-size:14px;line-height:1.3}
+.oracleBadge{flex:0 0 auto;font-size:10px;letter-spacing:.12em;padding:4px 7px;border-radius:999px;background:#2b2d33;color:#aeb1ba}
+.oracleBadge.active{background:#454956;color:#fff}.oracleBadge.done{background:#1f5a3d;color:#aaf0c8}.oracleBadge.error{background:#6e2d34;color:#ffd1d5}
+.oracleStepInfo{color:#b9bcc4;font-size:12px;line-height:1.45;margin-bottom:10px}
+.oracleOpacityRow{margin-top:10px}
+.oracleLegend{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.oracleLegend .leg{font-size:11px;padding:5px 8px;border-radius:999px;background:#24262b}
+.oracleLegend .browser{color:#ffe07a}.oracleLegend .official{color:#55d9ff}.oracleLegend .bad{color:#ff6b72}
+.oracleHelpLink{display:block;margin-top:9px;color:#9bc9ff;text-decoration:none;font-size:12px}
+.oracleFilePick{flex:1}
+.oracleExit{margin-top:10px;background:#292b31!important}
