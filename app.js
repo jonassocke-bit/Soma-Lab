@@ -14,7 +14,7 @@ const CURRENT_RIG_PACK_URL="./soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_SOURCE_SHA="86632764684281dc98f31ab9c4aac36a4cdbc428";
 
-// v0.5.12: exact browser-side Anny blendshape engine on canonical SOMA topology.
+// v0.5.14: exact browser-side Anny blendshape engine on canonical SOMA topology.
 // Low is loaded first; Mid (18,056 verts) is an optional persistent on-demand pack.
 const ANNY_SOURCE_SHA="72104cac8242d1735ec06433b65bec5e26953ce7";
 const ANNY_LOW_PACK_URL="./anny_soma_engine_low_v060.npz";
@@ -224,7 +224,7 @@ let targetMidBoneIndices=null,targetMidBoneWeights=null,targetMidTopK=0;
 let poseMidBoneIndices=null,poseMidBoneWeights=null,poseMidTopK=0;
 let rigGroup=null,rigBoneLines=null,rigJointPoints=null,rigAxesX=null,rigAxesY=null,rigAxesZ=null;
 
-// v0.5.12 Shape-Space Analyzer.
+// v0.5.14 Shape-Space Analyzer.
 // The first semantic layer is deliberately measurement-driven: raw PCA stays the
 // engine underneath, while the UI exposes locally calibrated measurements in cm.
 const ANALYSIS_METRICS=[
@@ -442,7 +442,7 @@ async function loadCurrentRigPack(){
    }});
    currentRigPack=await decodeShapeNPZ(asset.u8)
   }
-  // v0.5.12: the fresh v2 rig-pack stores REAL newlines, while the very first
+  // v0.5.14: the fresh v2 rig-pack stores REAL newlines, while the very first
   // generated v1 pack accidentally stored the two literal characters "\\n".
   // Use the already existing compatibility decoder for both formats.
   const targetNames=decodePackedJointNames("target_joint_names_utf8",122);
@@ -464,7 +464,7 @@ async function loadCurrentRigPack(){
   if(missing.length)throw new Error("Rig-Pack unvollständig. Fehlt: "+missing.join(", "));
   const midRequired=["target_skinning_mid_data","target_skinning_mid_indices","target_skinning_mid_indptr","target_skinning_mid_shape","public_skinning_mid_data","public_skinning_mid_indices","public_skinning_mid_indptr","public_skinning_mid_shape"];
   const midMissing=midRequired.filter(k=>!packArray(k));
-  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.5.12 bitte den neuen ‘Build Anny SOMA Engine v2’-Workflow einmal ausführen; danach erneut laden.")}
+  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.5.14 bitte den neuen ‘Build Anny SOMA Engine v2’-Workflow einmal ausführen; danach erneut laden.")}
   if(targetNames.length<100)throw new Error(`Expanded Rig unerwartet klein: ${targetNames.length} Joints`);
   if(publicNames.length!==78)throw new Error(`Public Rig: ${publicNames.length} statt 78 Joints`);
   if(publicShape[0]!==4505||publicShape[1]!==78)throw new Error(`Public Low-Skinning unerwartet: ${JSON.stringify(publicShape)}`);
@@ -486,14 +486,14 @@ Mid-Skinning 18.056×122: ${packOptional("target_skinning_mid_shape")?"JA · ber
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
 Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":`${asset.source||"Repo"} · persistent gespeichert`}
 
-Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.5.12 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.5.14 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
   rigPass=true;updateDecision();return true
  }catch(e){
   console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
   info("#currentRigInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}
 
-v0.5.12 versucht den Rig-Pack in dieser Reihenfolge:
+v0.5.14 versucht den Rig-Pack in dieser Reihenfolge:
 1) persistenter iPhone-Cache
 2) GitHub Pages mit Cache-Busting
 3) raw.githubusercontent.com als Fallback
@@ -532,11 +532,13 @@ async function getMixamoFbxExporter(){
  return mixamoFbxExporterPromise
 }
 
-// v0.5.12: exact structural/orientation contract extracted from the uploaded
+// v0.5.14: exact structural/orientation contract extracted from the uploaded
 // standard Mixamo X Bot FBX. No X Bot mesh/animation is bundled.
 // The body stays canonical SOMA; only the 65-bone hierarchy, names and bind-axis
 // orientations mirror Mixamo's own standard character.
 const MIXAMO_XBOT_CONTRACT=[{"name":"mixamorig:Hips","parent":null,"source":"Hips","r":[1.0,-5.01e-07,6e-09,5.01e-07,0.999916579,-0.012916455,0.0,0.012916455,0.999916579]},{"name":"mixamorig:Spine","parent":"mixamorig:Hips","source":"Spine1","r":[1.0,-1e-09,-3.4e-08,6e-09,0.989131765,0.147031807,3.3e-08,-0.147031807,0.989131765]},{"name":"mixamorig:Spine1","parent":"mixamorig:Spine","source":"Spine2","r":[1.0,-1e-09,-3.4e-08,6e-09,0.989131765,0.147031807,3.3e-08,-0.147031807,0.989131765]},{"name":"mixamorig:Spine2","parent":"mixamorig:Spine1","source":"Chest","r":[1.0,7.2e-08,-3.6e-08,-6.7e-08,0.992592173,0.121493946,4.4e-08,-0.121493946,0.992592173]},{"name":"mixamorig:Neck","parent":"mixamorig:Spine2","source":"Neck1","r":[1.0,7.2e-08,-3.6e-08,-6.7e-08,0.992592173,0.121493946,4.4e-08,-0.121493946,0.992592173]},{"name":"mixamorig:Head","parent":"mixamorig:Neck","source":"Head","r":[1.0,7.2e-08,-3.6e-08,-6.7e-08,0.992592173,0.121493946,4.4e-08,-0.121493946,0.992592173]},{"name":"mixamorig:HeadTop_End","parent":"mixamorig:Head","source":"HeadEnd","r":[1.0,7.2e-08,-3.6e-08,-6.7e-08,0.992592173,0.121493946,4.4e-08,-0.121493946,0.992592173]},{"name":"mixamorig:RightShoulder","parent":"mixamorig:Spine2","source":"RightShoulder","r":[-0.20569543,-0.97736421,0.049483232,-0.010190959,-0.04842246,-0.998774955,0.978562995,-0.205947725,-0.0]},{"name":"mixamorig:RightArm","parent":"mixamorig:RightShoulder","source":"RightArm","r":[-1.46e-07,-1.0,-7.9e-08,-7e-09,7.9e-08,-1.0,1.0,-1.46e-07,-7e-09]},{"name":"mixamorig:RightForeArm","parent":"mixamorig:RightArm","source":"RightForeArm","r":[-1.46e-07,-1.0,-7.9e-08,-7e-09,7.9e-08,-1.0,1.0,-1.46e-07,-7e-09]},{"name":"mixamorig:RightHand","parent":"mixamorig:RightForeArm","source":"RightHand","r":[-1.46e-07,-1.0,-7.9e-08,-7e-09,7.9e-08,-1.0,1.0,-1.46e-07,-7e-09]},{"name":"mixamorig:RightHandThumb1","parent":"mixamorig:RightHand","source":"RightHandThumb1","r":[0.396939136,-0.767534191,0.503319569,0.231208372,-0.447071892,-0.864100348,0.888246594,0.459366944,-0.0]},{"name":"mixamorig:RightHandThumb2","parent":"mixamorig:RightHandThumb1","source":"RightHandThumb2","r":[0.383746069,-0.77711582,0.498828585,0.220864615,-0.447268129,-0.866700665,0.896636926,0.442766556,-0.0]},{"name":"mixamorig:RightHandThumb3","parent":"mixamorig:RightHandThumb2","source":"RightHandThumb3","r":[0.373746489,-0.784013147,0.495617743,0.213271961,-0.447383525,-0.86854076,0.902678588,0.430315427,0.0]},{"name":"mixamorig:RightHandThumb4","parent":"mixamorig:RightHandThumb3","source":"RightHandThumbEnd","r":[0.553773862,-0.733248364,0.394564755,0.048262834,-0.444794598,-0.894331295,0.83126723,0.514300108,-0.210926978]},{"name":"mixamorig:RightHandIndex1","parent":"mixamorig:RightHand","source":"RightHandIndex1","r":[0.000328389,-0.999999946,-1.29e-06,-7e-09,1.29e-06,-1.0,0.999999946,0.000328389,-7e-09]},{"name":"mixamorig:RightHandIndex2","parent":"mixamorig:RightHandIndex1","source":"RightHandIndex2","r":[-0.000182899,-0.999999983,-1.29e-06,-7e-09,1.29e-06,-1.0,0.999999983,-0.000182899,-7e-09]},{"name":"mixamorig:RightHandIndex3","parent":"mixamorig:RightHandIndex2","source":"RightHandIndex3","r":[-7.055e-06,-1.0,-1.29e-06,-7e-09,1.29e-06,-1.0,1.0,-7.055e-06,-7e-09]},{"name":"mixamorig:RightHandIndex4","parent":"mixamorig:RightHandIndex3","source":"RightHandIndex4","r":[-0.000181169,-0.999999984,-1.306e-06,0.002005376,9.43e-07,-0.999997989,0.999997973,-0.000181172,0.002005376]},{"name":"mixamorig:RightHandMiddle1","parent":"mixamorig:RightHand","source":"RightHandMiddle1","r":[0.001003466,-0.999999497,-2.035e-06,-7e-09,2.035e-06,-1.0,0.999999497,0.001003466,-5e-09]},{"name":"mixamorig:RightHandMiddle2","parent":"mixamorig:RightHandMiddle1","source":"RightHandMiddle2","r":[-0.000696277,-0.999999758,-2.035e-06,-4e-09,2.035e-06,-1.0,0.999999758,-0.000696277,-5e-09]},{"name":"mixamorig:RightHandMiddle3","parent":"mixamorig:RightHandMiddle2","source":"RightHandMiddle3","r":[-5.2593e-05,-0.999999999,-2.035e-06,-5e-09,2.035e-06,-1.0,0.999999999,-5.2593e-05,-5e-09]},{"name":"mixamorig:RightHandMiddle4","parent":"mixamorig:RightHandMiddle3","source":"RightHandMiddle4","r":[-0.000385378,-0.999999926,-2.132e-06,0.001857623,1.416e-06,-0.999998275,0.9999982,-0.000385382,0.001857622]},{"name":"mixamorig:RightHandRing1","parent":"mixamorig:RightHand","source":"RightHandRing1","r":[-0.000311804,-0.999999951,6.1e-08,-7e-09,-6.1e-08,-1.0,0.999999951,-0.000311804,-7e-09]},{"name":"mixamorig:RightHandRing2","parent":"mixamorig:RightHandRing1","source":"RightHandRing2","r":[0.000131226,-0.999999991,6.1e-08,-7e-09,-6.1e-08,-1.0,0.999999991,0.000131226,-7e-09]},{"name":"mixamorig:RightHandRing3","parent":"mixamorig:RightHandRing2","source":"RightHandRing3","r":[0.000356836,-0.999999936,6.1e-08,-7e-09,-6.1e-08,-1.0,0.999999936,0.000356836,-7e-09]},{"name":"mixamorig:RightHandRing4","parent":"mixamorig:RightHandRing3","source":"RightHandRing4","r":[0.001955407,-0.999998088,1.3e-07,0.000292143,4.41e-07,-0.999999957,0.999998046,0.001955407,0.000292143]},{"name":"mixamorig:RightHandPinky1","parent":"mixamorig:RightHand","source":"RightHandPinky1","r":[-0.001040872,-0.999999458,9.263e-06,-7e-09,-9.263e-06,-1.0,0.999999458,-0.001040872,2e-09]},{"name":"mixamorig:RightHandPinky2","parent":"mixamorig:RightHandPinky1","source":"RightHandPinky2","r":[-0.002733332,-0.999996264,9.263e-06,-2.3e-08,-9.263e-06,-1.0,0.999996264,-0.002733332,2e-09]},{"name":"mixamorig:RightHandPinky3","parent":"mixamorig:RightHandPinky2","source":"RightHandPinky3","r":[-0.001739779,-0.999998487,9.263e-06,-1.4e-08,-9.263e-06,-1.0,0.999998487,-0.001739779,2e-09]},{"name":"mixamorig:RightHandPinky4","parent":"mixamorig:RightHandPinky3","source":"RightHandPinky4","r":[-0.001657229,-0.999998627,3.803e-06,0.003138946,-9.005e-06,-0.999995073,0.9999937,-0.001657209,0.003138956]},{"name":"mixamorig:LeftShoulder","parent":"mixamorig:Spine2","source":"LeftShoulder","r":[-0.205706635,0.977362793,-0.049464652,0.010187678,-0.048404163,-0.998775875,-0.978560673,-0.205958754,-0.0]},{"name":"mixamorig:LeftArm","parent":"mixamorig:LeftShoulder","source":"LeftArm","r":[8.24e-07,1.0,-1.169e-06,-0.0,-1.169e-06,-1.0,-1.0,8.24e-07,-0.0]},{"name":"mixamorig:LeftForeArm","parent":"mixamorig:LeftArm","source":"LeftForeArm","r":[8.24e-07,1.0,-1.169e-06,-0.0,-1.169e-06,-1.0,-1.0,8.24e-07,-0.0]},{"name":"mixamorig:LeftHand","parent":"mixamorig:LeftForeArm","source":"LeftHand","r":[8.24e-07,1.0,-1.169e-06,-0.0,-1.169e-06,-1.0,-1.0,8.24e-07,-0.0]},{"name":"mixamorig:LeftHandThumb1","parent":"mixamorig:LeftHand","source":"LeftHandThumb1","r":[0.395629978,0.768504924,-0.502868872,-0.230169579,-0.447100735,-0.864362712,-0.889100042,0.457712917,0.0]},{"name":"mixamorig:LeftHandThumb2","parent":"mixamorig:LeftHandThumb1","source":"LeftHandThumb2","r":[0.383980398,0.776979098,-0.498861237,-0.221018742,-0.447228409,-0.866681871,-0.896498616,0.443046533,-0.0]},{"name":"mixamorig:LeftHandThumb3","parent":"mixamorig:LeftHandThumb2","source":"LeftHandThumb3","r":[0.375246952,0.783113445,-0.495906299,-0.214293485,-0.447215116,-0.868376038,-0.901813743,0.43212495,0.0]},{"name":"mixamorig:LeftHandThumb4","parent":"mixamorig:LeftHandThumb3","source":"LeftHandThumbEnd","r":[0.548762734,0.739697677,-0.389495582,-0.033706567,-0.445959329,-0.894418328,-0.835298347,0.503952006,-0.219793191]},{"name":"mixamorig:LeftHandIndex1","parent":"mixamorig:LeftHand","source":"LeftHandIndex1","r":[-8.7329e-05,0.999999996,-2.502e-06,0.0,-2.502e-06,-1.0,-0.999999996,-8.7329e-05,0.0]},{"name":"mixamorig:LeftHandIndex2","parent":"mixamorig:LeftHandIndex1","source":"LeftHandIndex2","r":[0.000122867,0.999999992,-3.183e-06,-0.0,-3.183e-06,-1.0,-0.999999992,0.000122867,0.0]},{"name":"mixamorig:LeftHandIndex3","parent":"mixamorig:LeftHandIndex2","source":"LeftHandIndex3","r":[-9.631e-06,1.0,-3.853e-06,-0.0,-3.853e-06,-1.0,-1.0,-9.631e-06,0.0]},{"name":"mixamorig:LeftHandIndex4","parent":"mixamorig:LeftHandIndex3","source":"LeftHandIndex4","r":[-3.5773e-05,0.999999999,-3.857e-06,-0.000755126,-3.884e-06,-0.999999715,-0.999999714,-3.577e-05,0.000755127]},{"name":"mixamorig:LeftHandMiddle1","parent":"mixamorig:LeftHand","source":"LeftHandMiddle1","r":[-6.2469e-05,0.999999998,-1.986e-06,0.0,-1.986e-06,-1.0,-0.999999998,-6.2469e-05,0.0]},{"name":"mixamorig:LeftHandMiddle2","parent":"mixamorig:LeftHandMiddle1","source":"LeftHandMiddle2","r":[-2.0077e-05,1.0,-1.659e-06,-0.0,-1.659e-06,-1.0,-1.0,-2.0077e-05,0.0]},{"name":"mixamorig:LeftHandMiddle3","parent":"mixamorig:LeftHandMiddle2","source":"LeftHandMiddle3","r":[2.1302e-05,1.0,-8.03e-07,-0.0,-8.03e-07,-1.0,-1.0,2.1302e-05,0.0]},{"name":"mixamorig:LeftHandMiddle4","parent":"mixamorig:LeftHandMiddle3","source":"LeftHandMiddle4","r":[7.727e-05,0.999999997,-8.51e-07,-0.00204828,-6.93e-07,-0.999997902,-0.999997899,7.7272e-05,0.00204828]},{"name":"mixamorig:LeftHandRing1","parent":"mixamorig:LeftHand","source":"LeftHandRing1","r":[1.345e-05,1.0,-2.419e-06,-0.0,-2.419e-06,-1.0,-1.0,1.345e-05,-0.0]},{"name":"mixamorig:LeftHandRing2","parent":"mixamorig:LeftHandRing1","source":"LeftHandRing2","r":[1.345e-05,1.0,-2.419e-06,-0.0,-2.419e-06,-1.0,-1.0,1.345e-05,-0.0]},{"name":"mixamorig:LeftHandRing3","parent":"mixamorig:LeftHandRing2","source":"LeftHandRing3","r":[1.345e-05,1.0,-2.419e-06,-0.0,-2.419e-06,-1.0,-1.0,1.345e-05,-0.0]},{"name":"mixamorig:LeftHandRing4","parent":"mixamorig:LeftHandRing3","source":"LeftHandRing4","r":[4.5546e-05,0.999999999,-1.843e-06,0.000986874,-1.888e-06,-0.999999513,-0.999999512,4.5545e-05,-0.000986875]},{"name":"mixamorig:LeftHandPinky1","parent":"mixamorig:LeftHand","source":"LeftHandPinky1","r":[0.00409042,0.999991634,8.782e-06,3.6e-08,8.782e-06,-1.0,-0.999991634,0.00409042,-0.0]},{"name":"mixamorig:LeftHandPinky2","parent":"mixamorig:LeftHandPinky1","source":"LeftHandPinky2","r":[0.003669103,0.999993269,7.525e-06,3.2e-08,7.525e-06,-1.0,-0.999993269,0.003669103,-5e-09]},{"name":"mixamorig:LeftHandPinky3","parent":"mixamorig:LeftHandPinky2","source":"LeftHandPinky3","r":[0.00353494,0.999993752,7.314e-06,3.1e-08,7.314e-06,-1.0,-0.999993752,0.00353494,-5e-09]},{"name":"mixamorig:LeftHandPinky4","parent":"mixamorig:LeftHandPinky3","source":"LeftHandPinky4","r":[0.002944179,0.999995666,1.797e-06,-0.00156677,6.41e-06,-0.999998773,-0.999994439,0.002944172,0.001566782]},{"name":"mixamorig:RightUpLeg","parent":"mixamorig:Hips","source":"RightLeg","r":[-1.0,-2.1e-08,7e-09,2.1e-08,-0.999969607,0.007796428,7e-09,0.007796428,0.999969607]},{"name":"mixamorig:RightLeg","parent":"mixamorig:RightUpLeg","source":"RightShin","r":[-1.0,2.1e-08,9e-09,-2.2e-08,-0.997661312,-0.068351349,7e-09,-0.068351349,0.997661312]},{"name":"mixamorig:RightFoot","parent":"mixamorig:RightLeg","source":"RightFoot","r":[-1.0,-2.02e-07,1.02e-07,2.07e-07,-0.631740205,0.775180181,-9.2e-08,0.775180181,0.631740205]},{"name":"mixamorig:RightToeBase","parent":"mixamorig:RightFoot","source":"RightToeBase","r":[-1.0,-3.02e-07,2.81e-07,2.81e-07,-7.2928e-05,0.999999997,-3.02e-07,0.999999997,7.2928e-05]},{"name":"mixamorig:RightToe_End","parent":"mixamorig:RightToeBase","source":"RightToeEnd","r":[-0.999730512,-3.02e-07,-0.02321429,-0.02321429,-7.2928e-05,0.999730509,-1.995e-06,0.999999997,7.2902e-05]},{"name":"mixamorig:LeftUpLeg","parent":"mixamorig:Hips","source":"LeftLeg","r":[-1.0,-4.3e-08,7e-09,4.3e-08,-0.999969428,0.007819397,7e-09,0.007819397,0.999969428]},{"name":"mixamorig:LeftLeg","parent":"mixamorig:LeftUpLeg","source":"LeftShin","r":[-1.0,-0.0,7e-09,-0.0,-0.997659999,-0.068370512,7e-09,-0.068370512,0.997659999]},{"name":"mixamorig:LeftFoot","parent":"mixamorig:LeftLeg","source":"LeftFoot","r":[-1.0,-2.01e-07,1.12e-07,2.14e-07,-0.631740177,0.775180204,-8.6e-08,0.775180204,0.631740177]},{"name":"mixamorig:LeftToeBase","parent":"mixamorig:LeftFoot","source":"LeftToeBase","r":[-1.0,-3.01e-07,2.91e-07,2.91e-07,-7.2932e-05,0.999999997,-3.01e-07,0.999999997,7.2932e-05]},{"name":"mixamorig:LeftToe_End","parent":"mixamorig:LeftToeBase","source":"LeftToeEnd","r":[-0.999718239,-3.01e-07,0.02373695,0.02373695,-7.2932e-05,0.999718236,1.43e-06,0.999999997,7.2918e-05]}];
+const MIXAMO_XBOT_BIND_POS={"mixamorig:Head":[-1.1167740467540036e-05,159.92947388295272,-1.519544836013904],"mixamorig:HeadTop_End":[-9.032325006838463e-06,181.96684254533193,5.981550311246772],"mixamorig:Hips":[-7.727290721959434e-06,104.27487182617188,1.5543158054351807],"mixamorig:LeftArm":[15.16280398737345,144.0613169434197,-5.548493116334514],"mixamorig:LeftFoot":[8.207781787278632,8.729486465454109,-2.74267363548298],"mixamorig:LeftForeArm":[43.00432564154204,144.0612843998952,-5.548470182817228],"mixamorig:LeftHand":[71.3331601752272,144.06125184318304,-5.548452286627384],"mixamorig:LeftHandIndex1":[80.44246662018536,143.54320687400264,-3.2885818548270533],"mixamorig:LeftHandIndex2":[84.1424666060649,143.54319761646747,-3.2889049733068427],"mixamorig:LeftHandIndex3":[86.9924665845382,143.54318854355162,-3.288554802246191],"mixamorig:LeftHandIndex4":[89.76733221262572,143.54317785204873,-3.288581527452206],"mixamorig:LeftHandMiddle1":[80.86656166454125,144.06127324020878,-5.548407829448358],"mixamorig:LeftHandMiddle2":[84.56656165731454,144.0612658926314,-5.548638965109337],"mixamorig:LeftHandMiddle3":[87.51656165734059,144.0612609995725,-5.548698191712874],"mixamorig:LeftHandMiddle4":[90.46942511611348,144.06125862699358,-5.548635289249731],"mixamorig:LeftHandPinky1":[79.4109415601394,143.5743653862144,-9.354708848005295],"mixamorig:LeftHandPinky2":[83.01091144311097,143.57439700191372,-9.339983336174745],"mixamorig:LeftHandPinky3":[85.11089736117005,143.5744128045394,-9.33227821942831],"mixamorig:LeftHandPinky4":[87.23641541005766,143.5744283503633,-9.324764594210082],"mixamorig:LeftHandRing1":[80.43769038202059,144.0182129663205,-7.413525827475825],"mixamorig:LeftHandRing2":[83.58769038195831,144.01820534746685,-7.413483459122235],"mixamorig:LeftHandRing3":[86.53769038190077,144.01819769136398,-7.413446424112027],"mixamorig:LeftHandRing4":[89.18200681682134,144.01819275635648,-7.413387583008608],"mixamorig:LeftHandThumb1":[73.79930097583673,142.48505615797941,-2.866718806843708],"mixamorig:LeftHandThumb2":[77.0171036834158,140.6130031455518,-0.9502315862892832],"mixamorig:LeftHandThumb3":[79.67311994929713,139.08420278085717,0.5642735030615138],"mixamorig:LeftHandThumb4":[81.6940079710372,137.9301277541478,1.6794071285865717],"mixamorig:LeftLeg":[8.20778179815179,53.15313720703123,0.30171799659729054],"mixamorig:LeftShoulder":[4.570434058827984,144.58590699501536,-3.3163728307836102],"mixamorig:LeftToeBase":[8.207779003812599,0.0008178479620539747,7.967886447906329],"mixamorig:LeftToe_End":[8.20777620817337,0.00014117703546079026,17.246023178100437],"mixamorig:LeftUpLeg":[8.207783699035648,97.52317047119146,-0.04523950815200806],"mixamorig:Neck":[-1.1632276864212932e-05,150.31158448448357,-3.204552560661874],"mixamorig:RightArm":[-15.162827141868377,144.06129423041162,-5.548499729823593],"mixamorig:RightFoot":[-8.207794193704466,8.729410171508846,-2.7428412437438388],"mixamorig:RightForeArm":[-43.00434516530863,144.06129641894498,-5.548503799133087],"mixamorig:RightHand":[-71.33318351367814,144.06129417324604,-5.548485070931586],"mixamorig:RightHandIndex1":[-80.44146740224393,143.5434327591923,-3.2886513313660655],"mixamorig:RightHandIndex2":[-84.14146720273779,143.54343753394087,-3.287436291149135],"mixamorig:RightHandIndex3":[-86.99146715506613,143.54344121268713,-3.2879575539852555],"mixamorig:RightHandIndex4":[-89.76365776784786,143.5434447896182,-3.2879771126055055],"mixamorig:RightHandMiddle1":[-80.86568473440799,144.0612550668732,-5.54851014811217],"mixamorig:RightHandMiddle2":[-84.56568287155386,144.06126259618017,-5.5447973243161],"mixamorig:RightHandMiddle3":[-87.51568215646527,144.06126861471554,-5.546851341368094],"mixamorig:RightHandMiddle4":[-90.46231088610809,144.0612746037648,-5.547006313378017],"mixamorig:RightHandPinky1":[-79.40985922265244,143.57459114056766,-9.354763679952702],"mixamorig:RightHandPinky2":[-83.00985727235272,143.57455779439576,-9.358510817893936],"mixamorig:RightHandPinky3":[-85.10984942758924,143.57453836367927,-9.364250815067884],"mixamorig:RightHandPinky4":[-87.22562730145525,143.57451875117627,-9.367931806157314],"mixamorig:RightHandRing1":[-80.43677556056942,144.01822525225458,-7.413619620513897],"mixamorig:RightHandRing2":[-83.81604840261204,144.01822504728736,-7.414673292681834],"mixamorig:RightHandRing3":[-86.70573305638166,144.01822487118628,-7.414294091534568],"mixamorig:RightHandRing4":[-89.34454856358145,144.01822471055002,-7.413352467132266],"mixamorig:RightHandThumb1":[-73.79798906754483,142.48731038443736,-2.8666334881430924],"mixamorig:RightHandThumb2":[-77.01317864323842,140.61453272160477,-0.9423520350092622],"mixamorig:RightHandThumb3":[-79.66801700056696,139.08654351500144,0.5702585782550695],"mixamorig:RightHandThumb4":[-81.68683313113226,137.93454105229316,1.6783110764053042],"mixamorig:RightLeg":[-8.207795136924904,53.153087615966854,0.3006949126720426],"mixamorig:RightShoulder":[-4.569982086496929,144.58610535851452,-3.31640209752816],"mixamorig:RightToeBase":[-8.207796980437466,0.0007403186173498,7.967719554901234],"mixamorig:RightToe_End":[-8.207799778823729,6.367982137992477e-05,17.245840072631964],"mixamorig:RightUpLeg":[-8.207794189453123,97.52320098876964,-0.04524400085210689],"mixamorig:Spine":[-1.2828927538068554e-05,114.45645904541018,1.6858367919921884],"mixamorig:Spine1":[-1.283931199672004e-05,124.35042239221895,0.2151254439192094],"mixamorig:Spine2":[-1.2848989892782088e-05,133.57119840012686,-1.1555181104463788]};
+const MIXAMO_XBOT_PRIMARY_CHILD={"mixamorig:Hips":"mixamorig:Spine","mixamorig:Spine":"mixamorig:Spine1","mixamorig:Spine1":"mixamorig:Spine2","mixamorig:Spine2":"mixamorig:Neck","mixamorig:Neck":"mixamorig:Head","mixamorig:Head":"mixamorig:HeadTop_End","mixamorig:RightShoulder":"mixamorig:RightArm","mixamorig:RightArm":"mixamorig:RightForeArm","mixamorig:RightForeArm":"mixamorig:RightHand","mixamorig:RightHand":"mixamorig:RightHandMiddle1","mixamorig:RightHandThumb1":"mixamorig:RightHandThumb2","mixamorig:RightHandThumb2":"mixamorig:RightHandThumb3","mixamorig:RightHandThumb3":"mixamorig:RightHandThumb4","mixamorig:RightHandIndex1":"mixamorig:RightHandIndex2","mixamorig:RightHandIndex2":"mixamorig:RightHandIndex3","mixamorig:RightHandIndex3":"mixamorig:RightHandIndex4","mixamorig:RightHandMiddle1":"mixamorig:RightHandMiddle2","mixamorig:RightHandMiddle2":"mixamorig:RightHandMiddle3","mixamorig:RightHandMiddle3":"mixamorig:RightHandMiddle4","mixamorig:RightHandRing1":"mixamorig:RightHandRing2","mixamorig:RightHandRing2":"mixamorig:RightHandRing3","mixamorig:RightHandRing3":"mixamorig:RightHandRing4","mixamorig:RightHandPinky1":"mixamorig:RightHandPinky2","mixamorig:RightHandPinky2":"mixamorig:RightHandPinky3","mixamorig:RightHandPinky3":"mixamorig:RightHandPinky4","mixamorig:LeftShoulder":"mixamorig:LeftArm","mixamorig:LeftArm":"mixamorig:LeftForeArm","mixamorig:LeftForeArm":"mixamorig:LeftHand","mixamorig:LeftHand":"mixamorig:LeftHandMiddle1","mixamorig:LeftHandThumb1":"mixamorig:LeftHandThumb2","mixamorig:LeftHandThumb2":"mixamorig:LeftHandThumb3","mixamorig:LeftHandThumb3":"mixamorig:LeftHandThumb4","mixamorig:LeftHandIndex1":"mixamorig:LeftHandIndex2","mixamorig:LeftHandIndex2":"mixamorig:LeftHandIndex3","mixamorig:LeftHandIndex3":"mixamorig:LeftHandIndex4","mixamorig:LeftHandMiddle1":"mixamorig:LeftHandMiddle2","mixamorig:LeftHandMiddle2":"mixamorig:LeftHandMiddle3","mixamorig:LeftHandMiddle3":"mixamorig:LeftHandMiddle4","mixamorig:LeftHandRing1":"mixamorig:LeftHandRing2","mixamorig:LeftHandRing2":"mixamorig:LeftHandRing3","mixamorig:LeftHandRing3":"mixamorig:LeftHandRing4","mixamorig:LeftHandPinky1":"mixamorig:LeftHandPinky2","mixamorig:LeftHandPinky2":"mixamorig:LeftHandPinky3","mixamorig:LeftHandPinky3":"mixamorig:LeftHandPinky4","mixamorig:RightUpLeg":"mixamorig:RightLeg","mixamorig:RightLeg":"mixamorig:RightFoot","mixamorig:RightFoot":"mixamorig:RightToeBase","mixamorig:RightToeBase":"mixamorig:RightToe_End","mixamorig:LeftUpLeg":"mixamorig:LeftLeg","mixamorig:LeftLeg":"mixamorig:LeftFoot","mixamorig:LeftFoot":"mixamorig:LeftToeBase","mixamorig:LeftToeBase":"mixamorig:LeftToe_End"};
 
 function mixamoXBotSourceToTargetMap(publicNames){
  const direct=new Map(MIXAMO_XBOT_CONTRACT.map((b,i)=>[b.source,i]));
@@ -564,16 +566,35 @@ function mixamoXBotSourceToTargetMap(publicNames){
  return out
 }
 
-function buildMixamoXBotSkinning(vertexCount,publicNames){
+function buildMixamoXBotSkinning(vertexCount,publicNames,bridgePos,tPoseWorld,publicByName,shift){
  const data=packArray("public_skinning_data")?.data,indices=packArray("public_skinning_indices")?.data,indptr=packArray("public_skinning_indptr")?.data;
  const shape=Array.from(packArray("public_skinning_shape")?.data||[],Number);
  if(!data||!indices||!indptr||shape[0]!==vertexCount||shape[1]!==publicNames.length)throw new Error(`Public-Skinning für X-Bot-Bridge fehlt/unerwartet: ${JSON.stringify(shape)}`);
  const srcToProxy=mixamoXBotSourceToTargetMap(publicNames),temp=Array.from({length:vertexCount},()=>new Map());
+ const neckProxy=MIXAMO_XBOT_CONTRACT.findIndex(b=>b.name==="mixamorig:Neck");
+ const headProxy=MIXAMO_XBOT_CONTRACT.findIndex(b=>b.name==="mixamorig:Head");
+ const n1j=publicByName.get("Neck1"),hj=publicByName.get("Head");
+ const n1o=n1j*16,ho=hj*16;
+ const neckStart=new THREE.Vector3(tPoseWorld[n1o+3]+shift.x,tPoseWorld[n1o+7]+shift.y,tPoseWorld[n1o+11]+shift.z);
+ const neckEnd=new THREE.Vector3(tPoseWorld[ho+3]+shift.x,tPoseWorld[ho+7]+shift.y,tPoseWorld[ho+11]+shift.z);
+ const neckAxis=neckEnd.clone().sub(neckStart),neckLen2=Math.max(1e-12,neckAxis.lengthSq());
+ const vp=new THREE.Vector3();
  for(let sj=0;sj<publicNames.length;sj++){
   const pj=Number(srcToProxy[sj]);if(pj<0)continue;
+  const isUpperNeck=publicNames[sj]==="Neck2";
   for(let p=Number(indptr[sj]);p<Number(indptr[sj+1]);p++){
    const v=Number(indices[p]),w=Number(data[p]);if(v<0||v>=vertexCount||w<=1e-10)continue;
-   temp[v].set(pj,(temp[v].get(pj)||0)+w)
+   if(isUpperNeck&&neckProxy>=0&&headProxy>=0){
+    // Split each SOMA Neck2 contribution according to the actual vertex
+    // position along the Neck1→Head axis; no fixed percentage guess.
+    vp.set(bridgePos[v*3],bridgePos[v*3+1],bridgePos[v*3+2]);
+    const alpha=THREE.MathUtils.clamp(vp.sub(neckStart).dot(neckAxis)/neckLen2,0,1);
+    const wn=w*(1-alpha),wh=w*alpha;
+    temp[v].set(neckProxy,(temp[v].get(neckProxy)||0)+wn);
+    temp[v].set(headProxy,(temp[v].get(headProxy)||0)+wh)
+   }else{
+    temp[v].set(pj,(temp[v].get(pj)||0)+w)
+   }
   }
  }
  const si=new Uint16Array(vertexCount*4),sw=new Float32Array(vertexCount*4);
@@ -596,6 +617,26 @@ function xbotWorldMatrix(rotation9,position){
   0,0,0,1
  );
  return m
+}
+
+function transportXBotFrameToSomaSegment(baseMatrix,xbotStartArr,xbotEndArr,somaStart,somaEnd){
+ const xd=new THREE.Vector3(
+  xbotEndArr[0]-xbotStartArr[0],
+  xbotEndArr[1]-xbotStartArr[1],
+  xbotEndArr[2]-xbotStartArr[2]
+ );
+ const sd=somaEnd.clone().sub(somaStart);
+ if(xd.lengthSq()<1e-12||sd.lengthSq()<1e-12)return baseMatrix.clone();
+ xd.normalize();sd.normalize();
+
+ // Transport the entire canonical X Bot world frame with the shortest rotation
+ // from the X Bot segment direction to the matching SOMA segment direction.
+ // This preserves X Bot roll/twist instead of forcing a single axis.
+ const qTransport=new THREE.Quaternion().setFromUnitVectors(xd,sd);
+ const p=new THREE.Vector3(),qBase=new THREE.Quaternion(),s=new THREE.Vector3();
+ baseMatrix.decompose(p,qBase,s);
+ const qNew=qTransport.multiply(qBase).normalize();
+ return new THREE.Matrix4().compose(somaStart.clone(),qNew,s)
 }
 
 function posePublicBindShapeToOfficialTPose(bindShape,bindWorld,tPoseWorld,vertexCount){
@@ -637,7 +678,7 @@ function buildSammyMixamoBridgeScene(){
  // IMPORTANT: previous bridges exported the neutral bind-shape while Mixamo's
  // animation convention is referenced to a canonical T-pose. That mismatch
  // survived mostly unnoticed in torso/legs but baked a constant offset into
- // shoulders, arms and hands. v0.5.12 bakes the official SOMA T-pose into the
+ // shoulders, arms and hands. v0.5.14 bakes the official SOMA T-pose into the
  // mesh BEFORE binding the Mixamo-compatible skeleton.
  const pos=posePublicBindShapeToOfficialTPose(bindShape,bindWorld,tPoseWorld,V);
  let minX=Infinity,maxX=-Infinity,minY=Infinity,minZ=Infinity,maxZ=-Infinity;
@@ -652,7 +693,7 @@ function buildSammyMixamoBridgeScene(){
  const triData=trianglesLow.data,idx=triData instanceof Uint32Array?triData.slice():new Uint32Array(Array.from(triData,Number));
  g.setIndex(new THREE.BufferAttribute(idx,1));g.computeVertexNormals();
 
- const skin=buildMixamoXBotSkinning(V,publicNames);
+ const skin=buildMixamoXBotSkinning(V,publicNames,pos,tPoseWorld,publicByName,shift);
  g.setAttribute("skinIndex",new THREE.Uint16BufferAttribute(skin.skinIndex,4));
  g.setAttribute("skinWeight",new THREE.Float32BufferAttribute(skin.skinWeight,4));
 
@@ -671,6 +712,27 @@ function buildSammyMixamoBridgeScene(){
   return xbotWorldMatrix(spec.r,p)
  });
 
+ // Complete orientation audit/transport for all 52 non-terminal bones.
+ // Hips uses Spine as its primary child, Spine2 uses Neck, each Hand uses
+ // Middle1, and every chain bone uses its anatomical next joint.
+ const wmByName=new Map(MIXAMO_XBOT_CONTRACT.map((b,i)=>[b.name,i]));
+ let transported=0,maxTransportDeg=0,maxTransportBone="";
+ for(const [name,child] of Object.entries(MIXAMO_XBOT_PRIMARY_CHILD)){
+  const i=wmByName.get(name),ci=wmByName.get(child);
+  const xp0=MIXAMO_XBOT_BIND_POS[name],xp1=MIXAMO_XBOT_BIND_POS[child];
+  if(i==null||ci==null||!xp0||!xp1)continue;
+  const sp0=new THREE.Vector3().setFromMatrixPosition(worldMats[i]);
+  const sp1=new THREE.Vector3().setFromMatrixPosition(worldMats[ci]);
+  const xd=new THREE.Vector3(xp1[0]-xp0[0],xp1[1]-xp0[1],xp1[2]-xp0[2]).normalize();
+  const sd=sp1.clone().sub(sp0).normalize();
+  const deg=THREE.MathUtils.radToDeg(Math.acos(THREE.MathUtils.clamp(xd.dot(sd),-1,1)));
+  worldMats[i]=transportXBotFrameToSomaSegment(worldMats[i],xp0,xp1,sp0,sp1);
+  transported++;
+  if(deg>maxTransportDeg){maxTransportDeg=deg;maxTransportBone=name}
+ }
+ if(transported!==52)throw new Error(`Mixamo Frame-Transport unvollständig: ${transported}/52`);
+ console.info(`Mixamo XBot→SOMA Frame-Transport: ${transported}/52 · max ${maxTransportDeg.toFixed(1)}° bei ${maxTransportBone}`);
+
  for(let i=0;i<bones.length;i++){
   const spec=MIXAMO_XBOT_CONTRACT[i],wm=worldMats[i],lm=spec.parent==null?wm.clone():worldMats[proxyByName.get(spec.parent)].clone().invert().multiply(wm);
   lm.decompose(bones[i].position,bones[i].quaternion,bones[i].scale);bones[i].updateMatrix()
@@ -679,9 +741,9 @@ function buildSammyMixamoBridgeScene(){
   const p=MIXAMO_XBOT_CONTRACT[i].parent;if(p!=null)bones[proxyByName.get(p)].add(bones[i])
  }
 
- const bridge=new THREE.Group();bridge.name="Sammy_Mixamo_XBotContract65_TPose";bridge.add(bones[0]);bridge.add(body);bridge.updateMatrixWorld(true);
+ const bridge=new THREE.Group();bridge.name="Sammy_Mixamo_XBotContract65_TPose_Axis14";bridge.add(bones[0]);bridge.add(body);bridge.updateMatrixWorld(true);
  const skeleton=new THREE.Skeleton(bones);body.bind(skeleton,new THREE.Matrix4());body.normalizeSkinWeights();bridge.updateMatrixWorld(true);
- const exportScene=new THREE.Scene();exportScene.name="Sammy_Mixamo_XBotContract65_TPose_Scene";exportScene.add(bridge);exportScene.updateMatrixWorld(true);
+ const exportScene=new THREE.Scene();exportScene.name="Sammy_Mixamo_XBotContract65_TPose_Axis14_Scene";exportScene.add(bridge);exportScene.updateMatrixWorld(true);
  return {scene:exportScene,body,bones,vertexCount:V,triangleCount:idx.length/3,skin,shift}
 }
 
@@ -700,16 +762,16 @@ async function exportSammyMixamoBridge(){
   const mod=await getMixamoFbxExporter();if(!mod?.FBXExporter)throw new Error("FBXExporter-Modul wurde geladen, exportiert aber keine FBXExporter-Klasse.");
   const bytes=new mod.FBXExporter().parseSync(bridge.scene,{
    axisUp:"Y",axisForward:"-Z",unitScale:100,bakeSpaceTransform:false,includeAnimations:false,customProperties:true,
-   creator:"Sammy Mixamo XBotContract65 T-Pose v0.5.12"
+   creator:"Sammy Mixamo XBotContract65 T-Pose Axis14 v0.5.14"
   });
   if(!(bytes instanceof Uint8Array)||bytes.byteLength<100000)throw new Error(`FBX-Ausgabe unerwartet klein/ungültig: ${bytes?.byteLength||0} Bytes`);
   const magic=new TextDecoder("latin1").decode(bytes.subarray(0,21));if(!magic.startsWith("Kaydara FBX Binary"))throw new Error("FBX-Datei hat keinen erwarteten Binary-FBX-Header.");
 
-  const filename="Sammy_Mixamo_XBotContract65_TPose.fbx";downloadBinaryFile(bytes,filename,"application/octet-stream");
+  const filename="Sammy_Mixamo_XBotContract65_TPose_Axis14.fbx";downloadBinaryFile(bytes,filename,"application/octet-stream");
   setState("#mixamoBridgeState","X-BOT BRIDGE EXPORTIERT","ok");
   info("#mixamoBridgeInfo",`✓ ${filename}
 65 Bones – exakt dieselbe Hierarchie und Bone-Namen wie das analysierte Mixamo X Bot.
-NEU: Mesh und Skeleton sind vor dem Export in die offizielle SOMA T-Pose gebacken.
+Mesh und Skeleton sind in die offizielle SOMA T-Pose gebacken. v0.5.14: kompletter 52-Bone-Frame-Transport XBot→SOMA; geometrischer Neck1/Neck2/Head-Übergang.
 Hals: genau 1 Neck + Head + HeadTop_End.
 Finger: exakt 4 Bones pro Finger/Daumen wie beim X Bot – keine 3-Segment-Vereinfachung mehr.
 Bone-Achsen: X-Bot-Bindorientierungen; Joint-Positionen/Body/Skinning bleiben SOMA.
@@ -1048,7 +1110,7 @@ async function loadAnnyPack(){
   buildAnnyControls();setAnnyUiFromParams();$("#useAnny").disabled=false;setState("#annyState","LOW PACK OK","ok");
   info("#annyInfo",`✓ EXAKTE ANNY-BLENDSHAPE-ENGINE IM BROWSER\nQuelle: ${asset.cacheHit?"persistenter iPhone-Cache":asset.source}\nAnny v${annyMeta.anny_version} · Commit ${annyMeta.source_git_sha.slice(0,12)}\nLow: 4.505 Vertices · ${annyMeta.blendshape_count} Blendshapes\nPhänotyp-Blendshapes: ${annyMeta.phenotype_blendshape_count}\nLokale Modifikatoren: ${annyMeta.local_change_labels.length}\nAlle Phänotyp-Parameter + lokale Changes werden aus den offiziellen Anny-Blendshapes rekonstruiert – kein 216-Shape-Grid mehr.`);
   return true
- }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.5.12 den neuen Workflow „Build Anny SOMA Engine v2“ einmal ausführen.`);return false}
+ }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.5.14 den neuen Workflow „Build Anny SOMA Engine v2“ einmal ausführen.`);return false}
 }
 async function loadAnnyMidPack(){
  if(annyMidLoaded)return true;
@@ -1145,9 +1207,9 @@ function applyAnnyParams(){if(shapeEngine!=="anny")setShapeEngine("anny");else u
 function updateLodButtons(){$("#lodLow").classList.toggle("selected",displayLOD==="low");$("#lodMid").classList.toggle("selected",displayLOD==="mid");$("#lodBadge").textContent=displayLOD==="mid"?"18.056 V":"4.505 V"}
 async function setDisplayLOD(lod){
  if(lod===displayLOD)return true;if(lod==="mid"){
-  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.5.12 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return false}
+  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.5.14 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return false}
   if(!await loadAnnyMidPack())return false;
-  if(poseReady&&currentRigMode==="current-expanded"&&!packOptional("target_skinning_mid_shape")){info("#lodInfo","Mid-Shape ist vorhanden, aber der aktuelle Rig-Pack enthält noch keine 18k×122 Skinweights. Bitte den v0.5.12 Engine-v2-Workflow einmal ausführen; er erneuert Rig + Anny-Packs gemeinsam.");return false}
+  if(poseReady&&currentRigMode==="current-expanded"&&!packOptional("target_skinning_mid_shape")){info("#lodInfo","Mid-Shape ist vorhanden, aber der aktuelle Rig-Pack enthält noch keine 18k×122 Skinweights. Bitte den v0.5.14 Engine-v2-Workflow einmal ausführen; er erneuert Rig + Anny-Packs gemeinsam.");return false}
  }
  displayLOD=lod;updateLodButtons();updateShape(true);return true
 }
@@ -1518,7 +1580,7 @@ async function resetSemanticModifiers(){
 async function startFullShapeAnalysis(){
  if(shapeAnalysis.running)return;
  try{
-  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.5.12 Anny direkt über die nativen Parameter testen.");
+  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.5.14 Anny direkt über die nativen Parameter testen.");
   if(currentRigMode!=="current-expanded"||!poseReady)throw new Error("Zuerst Current Expanded 122-Joint LBS in Punkt 5 aktivieren.");
   stopPoseAnimation(false);shapeAnalysis.running=true;shapeAnalysis.ready=false;shapeAnalysis.stale=false;shapeAnalysis.internal=true;
   const token=++shapeAnalysis.cancelToken,btn=$("#startShapeAnalysis"),cancel=$("#cancelShapeAnalysis");btn.disabled=true;cancel.disabled=false;
@@ -1546,7 +1608,7 @@ async function startFullShapeAnalysis(){
   info("#analysisInfo",`✓ Lokale 7×128-Mess-Jacobian am aktuellen Körper erzeugt.
 ${qualities}
 
-Wichtig: Umfang/Tiefe sind in v0.5.12 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
+Wichtig: Umfang/Tiefe sind in v0.5.14 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
   updateDecision()
  }catch(e){
   console.error(e);
@@ -2223,7 +2285,7 @@ async function loadMixamoReferenceFile(file){
  const missing=MIXAMO_REQUIRED_BONES.filter(k=>!bones.has(k));
  if(missing.length)throw new Error(`Keine kompatible Mixamo-T-Pose. Fehlende Bones: ${missing.join(", ")}`);
 
- // CRITICAL v0.5.12 FIX:
+ // CRITICAL v0.5.14 FIX:
  // A Mixamo-returned T-pose FBX preserves our original static bind skeleton and
  // stores Mixamo's actual T-pose as ANIMATION CURVES. v0.5.8 incorrectly read
  // the untouched static skeleton as the reference. That makes a T-pose clip
@@ -2260,7 +2322,7 @@ Diese animierten Weltorientierungen sind jetzt der Nullpunkt für nachfolgende M
 function clearMixamoReferenceFile(){
  mixamoReferencePose=null;mixamoReferenceName="";
  setState("#userAnimRefState","OPTIONAL","warn");
- info("#userAnimRefInfo","Für sauberes Mixamo-Retargeting bitte den MIXAMO-RÜCKEXPORT der T-Pose laden – nicht den direkten Sammy-App-Export. v0.5.12 wertet zuerst den T-Pose-Animationsclip aus und benutzt dessen Weltorientierungen als Nullreferenz.")
+ info("#userAnimRefInfo","Für sauberes Mixamo-Retargeting bitte den MIXAMO-RÜCKEXPORT der T-Pose laden – nicht den direkten Sammy-App-Export. v0.5.14 wertet zuerst den T-Pose-Animationsclip aus und benutzt dessen Weltorientierungen als Nullreferenz.")
 }
 function mixamoBoneKey(name){
  return String(name||"").toLowerCase().replace(/^.*?mixamorig[:_]?/,"").replace(/[^a-z0-9]/g,"")
@@ -2344,11 +2406,21 @@ async function convertMixamoFbxMotion(arrayBuffer,filename="Mixamo FBX"){
   setWorld("Spine2",delta("spine1"));
   setWorld("Chest",delta("spine2"));
 
-  const qChest=worldDelta[publicByName.get("Chest")].clone();
   const qNeck=delta("neck");
-  setWorld("Neck1",qChest.clone().slerp(qNeck,.5).normalize());
-  setWorld("Neck2",qNeck);
-  setWorld("Head",delta("head"));
+  const qHead=delta("head");
+  // Mixamo Neck is placed at SOMA Neck1 and Mixamo Head at SOMA Head.
+  // SOMA Neck2 lies physically between them. Use its actual T-pose location
+  // to interpolate world motion instead of fixed 50/35% heuristics.
+  const n1i=publicByName.get("Neck1"),n2i=publicByName.get("Neck2"),hi=publicByName.get("Head");
+  const n1o=n1i*16,n2o=n2i*16,ho=hi*16;
+  const n1p=new THREE.Vector3(poseTWorld[n1o+3],poseTWorld[n1o+7],poseTWorld[n1o+11]);
+  const n2p=new THREE.Vector3(poseTWorld[n2o+3],poseTWorld[n2o+7],poseTWorld[n2o+11]);
+  const hp=new THREE.Vector3(poseTWorld[ho+3],poseTWorld[ho+7],poseTWorld[ho+11]);
+  const full=Math.max(1e-8,n1p.distanceTo(hp));
+  const neckT=THREE.MathUtils.clamp(n1p.distanceTo(n2p)/full,0,1);
+  setWorld("Neck1",qNeck);
+  setWorld("Neck2",qNeck.clone().slerp(qHead,neckT).normalize());
+  setWorld("Head",qHead);
   if(bones.has("headtopend"))setWorld("HeadEnd",delta("headtopend"));else inherit("HeadEnd","Head");
   inherit("Jaw","Head");inherit("LeftEye","Head");inherit("RightEye","Head");
 
@@ -2426,7 +2498,7 @@ Frames: ${conv.frames} · Joints/Bones: ${conv.rawJ} → ${poseJointCount} Publi
 ${conv.duration?`Clip: ${conv.clipName||"Mixamo"} · ${conv.duration.toFixed(2)} s · ${conv.animatedBoneCount||"?"} animierte Bones
 `:""}${conv.mixamoSkeletonKind==="mixamo-motion54"?`Mixamo Motion-Skeleton: 54/65 · 11 nicht animierte Terminal-Bones wurden von Mixamo entfernt und werden von Sammy geerbt
 `:""}${conv.referenceUsed?`Referenzpose: ${conv.referenceName||"geladen"} · explizite T-Pose-Kalibrierung aktiv
-`:""}Playback: ${userAnimFps} fps · Root Translation: ${conv.hasRootTranslation?"vorhanden, v0.5.12 spielt bewusst in-place":"keine"}
+`:""}Playback: ${userAnimFps} fps · Root Translation: ${conv.hasRootTranslation?"vorhanden, v0.5.14 spielt bewusst in-place":"keine"}
 Die Animation läuft durch denselben 78→122 Procedural-Twist/LBS-Pfad wie die eingebaute NVIDIA-Animation.`);
   return true
  }catch(e){
@@ -2812,11 +2884,11 @@ function updateDecision(){
   const expanded=currentRigMode==="current-expanded";
   if(expanded&&shapeEngine==="anny"&&annyPackLoaded){
    setState("#decision","ANNY → SOMA → 122 LBS AKTIV","ok");
-   info("#decisionInfo",`✓ v0.5.12: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
+   info("#decisionInfo",`✓ v0.5.14: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
 
 Aktuell im Browser steuerbar: ALLE nativen Anny-Phänotypen (Gender, Age, Height, Weight, Muscle, Proportions, Cupsize, Firmness sowie die drei Legacy-Phenotype-Anteile) plus sämtliche lokalen Anny-Changes aus dem offiziellen Asset. Male/Female bleiben als schnelle Presets; der native Gender-Blend ist im Advanced-Bereich ebenfalls sichtbar.
 
-Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.5.12 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
+Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.5.14 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
 
 Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zentimetermaße. Das ist erst der nächste, separate Measurement-Fit.`);
   }else if(expanded&&shapeAnalysis.ready){
@@ -2832,5 +2904,5 @@ Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zen
  else if(shapePass)setState("#decision","SHAPE BESTANDEN","ok")
 }
 
-// v0.5.12: no manual boot ritual.
+// v0.5.14: no manual boot ritual.
 setTimeout(()=>autoStartRuntime(),0);

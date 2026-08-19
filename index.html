@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>SOMA Browser PoC v0.5.12</title>
+<title>SOMA Browser PoC v0.5.14</title>
 <link rel="stylesheet" href="style.css?v=0.5.7">
 <script type="importmap">
 {"imports":{
@@ -16,7 +16,7 @@
 <body>
 <div id="viewport"></div>
 <header>
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.5.12</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.5.14</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main>
@@ -71,14 +71,14 @@
    <div class="info">Alle offiziellen lokalen Anny-Changes werden dynamisch aus dem Pack gelesen, nach den MakeHuman/Anny-Asset-Kategorien gruppiert und mit ihrem Roh-Namen angezeigt. Werte laufen nativ von −1 bis +1.</div>
    <div id="annyLocalGroups"></div>
   </details>
-  <div id="annyInfo" class="info">v0.5.12 verwendet nicht mehr das 216-Shape-Grid, sondern exportiert die echte Anny-Template-/Blendshape-Engine auf SOMA-Topologie. Dadurch sind alle nativen Parameter und alle lokalen Changes verfügbar.</div>
+  <div id="annyInfo" class="info">v0.5.14 verwendet nicht mehr das 216-Shape-Grid, sondern exportiert die echte Anny-Template-/Blendshape-Engine auf SOMA-Topologie. Dadurch sind alle nativen Parameter und alle lokalen Changes verfügbar.</div>
   <div id="annyLiveInfo" class="info">Noch nicht aktiv.</div>
   <a class="setupLink" href="anny-pack-setup.html">Einmalige Engine-v2-Pack-Erstellung öffnen</a>
  </section>
  <section id="mixamoBridgeSection">
-  <div class="step"><i>3B</i><div><b>Mixamo Bridge · FBX direkt exportieren</b><small>X-Bot-Vertrag · 65 Bones · echte T-Pose gebacken</small></div><em id="mixamoBridgeState">BEREIT</em></div>
+  <div class="step"><i>3B</i><div><b>Mixamo Bridge · FBX direkt exportieren</b><small>X-Bot 65 · T-Pose · Full Axis Audit</small></div><em id="mixamoBridgeState">BEREIT</em></div>
   <button id="exportMixamoBridge" class="primary">X-Bot-Mixamo-FBX in echter T-Pose exportieren</button>
-  <div id="mixamoBridgeInfo" class="info">Erzeugt direkt auf dem iPhone ein 65-Bone-X-Bot-kompatibles FBX. Neu in v0.5.12: Der SOMA-Körper wird vor dem Binding per LBS in die offizielle SOMA T-Pose gebracht und auch die Skeleton-Jointpositionen stammen aus dieser T-Pose. Damit bekommt Mixamo nicht mehr die frühere Neutral-/Bindpose mit abweichender Arm-/Hand-Referenz.</div>
+  <div id="mixamoBridgeInfo" class="info">Erzeugt direkt auf dem iPhone ein 65-Bone-X-Bot-kompatibles FBX. Neu in v0.5.14: Der SOMA-Körper wird vor dem Binding per LBS in die offizielle SOMA T-Pose gebracht und auch die Skeleton-Jointpositionen stammen aus dieser T-Pose. Damit bekommt Mixamo nicht mehr die frühere Neutral-/Bindpose mit abweichender Arm-/Hand-Referenz.</div>
  </section>
 
  <section>
@@ -137,7 +137,7 @@
       <label class="filePick">Mixamo-T-Pose wählen<input id="animRefFile" type="file" accept=".fbx"></label>
       <button id="animRefClear" type="button">Referenz löschen</button>
      </div>
-     <div id="userAnimRefInfo" class="info">Optional, aber empfohlen für Mixamo-FBX: dieselbe AKTUELLE 65-Bone-XBotContract-Figur einmal als neutrale T-Pose laden. Alte Proxy54-Dateien werden ab v0.5.12 absichtlich abgelehnt, weil das Mischen der 54- und 65-Bone-Bridges extreme Fehlposen erzeugt.</div>
+     <div id="userAnimRefInfo" class="info">Optional, aber empfohlen für Mixamo-FBX: dieselbe AKTUELLE 65-Bone-XBotContract-Figur einmal als neutrale T-Pose laden. Alte Proxy54-Dateien werden ab v0.5.14 absichtlich abgelehnt, weil das Mischen der 54- und 65-Bone-Bridges extreme Fehlposen erzeugt.</div>
      <label class="fieldLabel">Import-FPS
       <input id="animImportFps" type="number" min="1" max="120" step="1" value="30">
      </label>
@@ -162,7 +162,7 @@
      <button id="toggleAdaptiveRig">Adaptive Rig AUS</button>
      <button id="rebindAdaptiveRig">Rebind neu berechnen</button>
     </div>
-    <div id="adaptiveRigInfo" class="info">v0.5.12 nutzt im Current-Pfad die vorberechneten Public-RBF-Jointpositionen und expandiert daraus bei jeder Shape-Änderung die aktive 122-Joint-Target-Bindpose.</div>
+    <div id="adaptiveRigInfo" class="info">v0.5.14 nutzt im Current-Pfad die vorberechneten Public-RBF-Jointpositionen und expandiert daraus bei jeder Shape-Änderung die aktive 122-Joint-Target-Bindpose.</div>
    </div>
 
    <div class="animBox">
@@ -210,7 +210,7 @@
 
  <section>
   <div class="step"><i>8</i><div><b>Entscheidung</b><small>kein „wird schon gehen“</small></div><em id="decision">OFFEN</em></div>
-  <div id="decisionInfo" class="info">v0.5.12 prüft jetzt den kleinsten Integrationsnachweis: Anny erzeugt die Körperform, SOMA bleibt Topologie/Rig/Pose-System. Erst wenn dieser Pfad visuell stabil ist, kommt der Measurement-Fit.</div>
+  <div id="decisionInfo" class="info">v0.5.14 prüft jetzt den kleinsten Integrationsnachweis: Anny erzeugt die Körperform, SOMA bleibt Topologie/Rig/Pose-System. Erst wenn dieser Pfad visuell stabil ist, kommt der Measurement-Fit.</div>
  </section>
 </main>
 <script type="module" src="app.js?v=0.5.7"></script>

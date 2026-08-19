@@ -1,0 +1,449 @@
+{
+  "audit_version": "sammy-mixamo-rig-audit-v0.5.14",
+  "files": {
+    "mixamo_standard": "X Bot.fbx",
+    "sammy_app_export": "Sammy-T-Pose-Neu.fbx",
+    "sammy_mixamo_return": "Sammy-T-Pose-Mixamo-Neu.fbx"
+  },
+  "skeleton": {
+    "bone_count": 65,
+    "parent_hierarchy_matches_standard_xbot": true,
+    "parent_hierarchy_unchanged_by_mixamo": true,
+    "primary_chain_bones_audited": 52,
+    "terminal_bones_without_child_direction": 13
+  },
+  "mesh_skin_roundtrip": {
+    "vertices": 4505,
+    "mesh_vertices_exact_pre_post_mixamo": true,
+    "polygon_indices_exact_pre_post_mixamo": true,
+    "skin_cluster_count": 65,
+    "skin_weight_values_exact_pre_post_mixamo": true,
+    "max_cluster_transform_numeric_diff": 7.181785247623029e-05,
+    "note": "small transform differences are FBX serialization precision; weights and mesh are exact"
+  },
+  "axis_geometry_audit": {
+    "method": "angle required to transport standard X Bot primary bone-segment direction onto Sammy SOMA T-pose segment direction",
+    "counts_over_deg": {
+      "1": 29,
+      "3": 27,
+      "5": 24,
+      "10": 15,
+      "20": 7
+    },
+    "largest": [
+      {
+        "bone": "mixamorig:LeftHandThumb2",
+        "primary_child": "mixamorig:LeftHandThumb3",
+        "segment_direction_correction_deg": 39.0152
+      },
+      {
+        "bone": "mixamorig:RightHandThumb2",
+        "primary_child": "mixamorig:RightHandThumb3",
+        "segment_direction_correction_deg": 39.0027
+      },
+      {
+        "bone": "mixamorig:LeftHandThumb3",
+        "primary_child": "mixamorig:LeftHandThumb4",
+        "segment_direction_correction_deg": 38.4535
+      },
+      {
+        "bone": "mixamorig:RightHandThumb3",
+        "primary_child": "mixamorig:RightHandThumb4",
+        "segment_direction_correction_deg": 38.3705
+      },
+      {
+        "bone": "mixamorig:Head",
+        "primary_child": "mixamorig:HeadTop_End",
+        "segment_direction_correction_deg": 25.5461
+      },
+      {
+        "bone": "mixamorig:LeftHandPinky1",
+        "primary_child": "mixamorig:LeftHandPinky2",
+        "segment_direction_correction_deg": 23.6923
+      },
+      {
+        "bone": "mixamorig:RightHandPinky1",
+        "primary_child": "mixamorig:RightHandPinky2",
+        "segment_direction_correction_deg": 23.4557
+      },
+      {
+        "bone": "mixamorig:RightFoot",
+        "primary_child": "mixamorig:RightToeBase",
+        "segment_direction_correction_deg": 18.2533
+      },
+      {
+        "bone": "mixamorig:LeftFoot",
+        "primary_child": "mixamorig:LeftToeBase",
+        "segment_direction_correction_deg": 18.2533
+      },
+      {
+        "bone": "mixamorig:LeftHand",
+        "primary_child": "mixamorig:LeftHandMiddle1",
+        "segment_direction_correction_deg": 17.8228
+      },
+      {
+        "bone": "mixamorig:RightHand",
+        "primary_child": "mixamorig:RightHandMiddle1",
+        "segment_direction_correction_deg": 17.822
+      },
+      {
+        "bone": "mixamorig:RightToeBase",
+        "primary_child": "mixamorig:RightToe_End",
+        "segment_direction_correction_deg": 15.1922
+      },
+      {
+        "bone": "mixamorig:LeftToeBase",
+        "primary_child": "mixamorig:LeftToe_End",
+        "segment_direction_correction_deg": 15.192
+      },
+      {
+        "bone": "mixamorig:LeftHandRing1",
+        "primary_child": "mixamorig:LeftHandRing2",
+        "segment_direction_correction_deg": 13.9489
+      },
+      {
+        "bone": "mixamorig:RightHandRing1",
+        "primary_child": "mixamorig:RightHandRing2",
+        "segment_direction_correction_deg": 13.931
+      },
+      {
+        "bone": "mixamorig:RightHandMiddle1",
+        "primary_child": "mixamorig:RightHandMiddle2",
+        "segment_direction_correction_deg": 9.5212
+      },
+      {
+        "bone": "mixamorig:LeftHandMiddle1",
+        "primary_child": "mixamorig:LeftHandMiddle2",
+        "segment_direction_correction_deg": 9.4625
+      },
+      {
+        "bone": "mixamorig:RightShoulder",
+        "primary_child": "mixamorig:RightArm",
+        "segment_direction_correction_deg": 8.7908
+      },
+      {
+        "bone": "mixamorig:LeftShoulder",
+        "primary_child": "mixamorig:LeftArm",
+        "segment_direction_correction_deg": 8.7899
+      },
+      {
+        "bone": "mixamorig:RightHandThumb1",
+        "primary_child": "mixamorig:RightHandThumb2",
+        "segment_direction_correction_deg": 8.6629
+      },
+      {
+        "bone": "mixamorig:LeftHandThumb1",
+        "primary_child": "mixamorig:LeftHandThumb2",
+        "segment_direction_correction_deg": 8.5613
+      },
+      {
+        "bone": "mixamorig:Spine",
+        "primary_child": "mixamorig:Spine1",
+        "segment_direction_correction_deg": 7.2011
+      },
+      {
+        "bone": "mixamorig:Neck",
+        "primary_child": "mixamorig:Head",
+        "segment_direction_correction_deg": 7.1741
+      },
+      {
+        "bone": "mixamorig:Spine2",
+        "primary_child": "mixamorig:Neck",
+        "segment_direction_correction_deg": 6.7757
+      },
+      {
+        "bone": "mixamorig:LeftLeg",
+        "primary_child": "mixamorig:LeftFoot",
+        "segment_direction_correction_deg": 3.9204
+      },
+      {
+        "bone": "mixamorig:RightLeg",
+        "primary_child": "mixamorig:RightFoot",
+        "segment_direction_correction_deg": 3.9193
+      },
+      {
+        "bone": "mixamorig:Spine1",
+        "primary_child": "mixamorig:Spine2",
+        "segment_direction_correction_deg": 3.2911
+      },
+      {
+        "bone": "mixamorig:LeftHandIndex1",
+        "primary_child": "mixamorig:LeftHandIndex2",
+        "segment_direction_correction_deg": 1.6454
+      },
+      {
+        "bone": "mixamorig:RightHandIndex1",
+        "primary_child": "mixamorig:RightHandIndex2",
+        "segment_direction_correction_deg": 1.6247
+      },
+      {
+        "bone": "mixamorig:Hips",
+        "primary_child": "mixamorig:Spine",
+        "segment_direction_correction_deg": 0.8612
+      }
+    ],
+    "all_primary_bones": [
+      {
+        "bone": "mixamorig:LeftHandThumb2",
+        "primary_child": "mixamorig:LeftHandThumb3",
+        "segment_direction_correction_deg": 39.0152
+      },
+      {
+        "bone": "mixamorig:RightHandThumb2",
+        "primary_child": "mixamorig:RightHandThumb3",
+        "segment_direction_correction_deg": 39.0027
+      },
+      {
+        "bone": "mixamorig:LeftHandThumb3",
+        "primary_child": "mixamorig:LeftHandThumb4",
+        "segment_direction_correction_deg": 38.4535
+      },
+      {
+        "bone": "mixamorig:RightHandThumb3",
+        "primary_child": "mixamorig:RightHandThumb4",
+        "segment_direction_correction_deg": 38.3705
+      },
+      {
+        "bone": "mixamorig:Head",
+        "primary_child": "mixamorig:HeadTop_End",
+        "segment_direction_correction_deg": 25.5461
+      },
+      {
+        "bone": "mixamorig:LeftHandPinky1",
+        "primary_child": "mixamorig:LeftHandPinky2",
+        "segment_direction_correction_deg": 23.6923
+      },
+      {
+        "bone": "mixamorig:RightHandPinky1",
+        "primary_child": "mixamorig:RightHandPinky2",
+        "segment_direction_correction_deg": 23.4557
+      },
+      {
+        "bone": "mixamorig:RightFoot",
+        "primary_child": "mixamorig:RightToeBase",
+        "segment_direction_correction_deg": 18.2533
+      },
+      {
+        "bone": "mixamorig:LeftFoot",
+        "primary_child": "mixamorig:LeftToeBase",
+        "segment_direction_correction_deg": 18.2533
+      },
+      {
+        "bone": "mixamorig:LeftHand",
+        "primary_child": "mixamorig:LeftHandMiddle1",
+        "segment_direction_correction_deg": 17.8228
+      },
+      {
+        "bone": "mixamorig:RightHand",
+        "primary_child": "mixamorig:RightHandMiddle1",
+        "segment_direction_correction_deg": 17.822
+      },
+      {
+        "bone": "mixamorig:RightToeBase",
+        "primary_child": "mixamorig:RightToe_End",
+        "segment_direction_correction_deg": 15.1922
+      },
+      {
+        "bone": "mixamorig:LeftToeBase",
+        "primary_child": "mixamorig:LeftToe_End",
+        "segment_direction_correction_deg": 15.192
+      },
+      {
+        "bone": "mixamorig:LeftHandRing1",
+        "primary_child": "mixamorig:LeftHandRing2",
+        "segment_direction_correction_deg": 13.9489
+      },
+      {
+        "bone": "mixamorig:RightHandRing1",
+        "primary_child": "mixamorig:RightHandRing2",
+        "segment_direction_correction_deg": 13.931
+      },
+      {
+        "bone": "mixamorig:RightHandMiddle1",
+        "primary_child": "mixamorig:RightHandMiddle2",
+        "segment_direction_correction_deg": 9.5212
+      },
+      {
+        "bone": "mixamorig:LeftHandMiddle1",
+        "primary_child": "mixamorig:LeftHandMiddle2",
+        "segment_direction_correction_deg": 9.4625
+      },
+      {
+        "bone": "mixamorig:RightShoulder",
+        "primary_child": "mixamorig:RightArm",
+        "segment_direction_correction_deg": 8.7908
+      },
+      {
+        "bone": "mixamorig:LeftShoulder",
+        "primary_child": "mixamorig:LeftArm",
+        "segment_direction_correction_deg": 8.7899
+      },
+      {
+        "bone": "mixamorig:RightHandThumb1",
+        "primary_child": "mixamorig:RightHandThumb2",
+        "segment_direction_correction_deg": 8.6629
+      },
+      {
+        "bone": "mixamorig:LeftHandThumb1",
+        "primary_child": "mixamorig:LeftHandThumb2",
+        "segment_direction_correction_deg": 8.5613
+      },
+      {
+        "bone": "mixamorig:Spine",
+        "primary_child": "mixamorig:Spine1",
+        "segment_direction_correction_deg": 7.2011
+      },
+      {
+        "bone": "mixamorig:Neck",
+        "primary_child": "mixamorig:Head",
+        "segment_direction_correction_deg": 7.1741
+      },
+      {
+        "bone": "mixamorig:Spine2",
+        "primary_child": "mixamorig:Neck",
+        "segment_direction_correction_deg": 6.7757
+      },
+      {
+        "bone": "mixamorig:LeftLeg",
+        "primary_child": "mixamorig:LeftFoot",
+        "segment_direction_correction_deg": 3.9204
+      },
+      {
+        "bone": "mixamorig:RightLeg",
+        "primary_child": "mixamorig:RightFoot",
+        "segment_direction_correction_deg": 3.9193
+      },
+      {
+        "bone": "mixamorig:Spine1",
+        "primary_child": "mixamorig:Spine2",
+        "segment_direction_correction_deg": 3.2911
+      },
+      {
+        "bone": "mixamorig:LeftHandIndex1",
+        "primary_child": "mixamorig:LeftHandIndex2",
+        "segment_direction_correction_deg": 1.6454
+      },
+      {
+        "bone": "mixamorig:RightHandIndex1",
+        "primary_child": "mixamorig:RightHandIndex2",
+        "segment_direction_correction_deg": 1.6247
+      },
+      {
+        "bone": "mixamorig:Hips",
+        "primary_child": "mixamorig:Spine",
+        "segment_direction_correction_deg": 0.8612
+      },
+      {
+        "bone": "mixamorig:LeftUpLeg",
+        "primary_child": "mixamorig:LeftLeg",
+        "segment_direction_correction_deg": 0.448
+      },
+      {
+        "bone": "mixamorig:RightUpLeg",
+        "primary_child": "mixamorig:RightLeg",
+        "segment_direction_correction_deg": 0.4467
+      },
+      {
+        "bone": "mixamorig:LeftHandPinky2",
+        "primary_child": "mixamorig:LeftHandPinky3",
+        "segment_direction_correction_deg": 0.2102
+      },
+      {
+        "bone": "mixamorig:LeftHandPinky3",
+        "primary_child": "mixamorig:LeftHandPinky4",
+        "segment_direction_correction_deg": 0.2025
+      },
+      {
+        "bone": "mixamorig:RightHandPinky2",
+        "primary_child": "mixamorig:RightHandPinky3",
+        "segment_direction_correction_deg": 0.1566
+      },
+      {
+        "bone": "mixamorig:RightHandPinky3",
+        "primary_child": "mixamorig:RightHandPinky4",
+        "segment_direction_correction_deg": 0.0997
+      },
+      {
+        "bone": "mixamorig:RightHandMiddle2",
+        "primary_child": "mixamorig:RightHandMiddle3",
+        "segment_direction_correction_deg": 0.0399
+      },
+      {
+        "bone": "mixamorig:RightHandRing3",
+        "primary_child": "mixamorig:RightHandRing4",
+        "segment_direction_correction_deg": 0.0204
+      },
+      {
+        "bone": "mixamorig:RightHandIndex2",
+        "primary_child": "mixamorig:RightHandIndex3",
+        "segment_direction_correction_deg": 0.0105
+      },
+      {
+        "bone": "mixamorig:RightHandRing2",
+        "primary_child": "mixamorig:RightHandRing3",
+        "segment_direction_correction_deg": 0.0075
+      },
+      {
+        "bone": "mixamorig:LeftHandIndex2",
+        "primary_child": "mixamorig:LeftHandIndex3",
+        "segment_direction_correction_deg": 0.007
+      },
+      {
+        "bone": "mixamorig:RightHandMiddle3",
+        "primary_child": "mixamorig:RightHandMiddle4",
+        "segment_direction_correction_deg": 0.003
+      },
+      {
+        "bone": "mixamorig:LeftHandRing3",
+        "primary_child": "mixamorig:LeftHandRing4",
+        "segment_direction_correction_deg": 0.0013
+      },
+      {
+        "bone": "mixamorig:LeftHandMiddle3",
+        "primary_child": "mixamorig:LeftHandMiddle4",
+        "segment_direction_correction_deg": 0.0012
+      },
+      {
+        "bone": "mixamorig:LeftHandMiddle2",
+        "primary_child": "mixamorig:LeftHandMiddle3",
+        "segment_direction_correction_deg": 0.0012
+      },
+      {
+        "bone": "mixamorig:LeftHandRing2",
+        "primary_child": "mixamorig:LeftHandRing3",
+        "segment_direction_correction_deg": 0.0007
+      },
+      {
+        "bone": "mixamorig:LeftHandIndex3",
+        "primary_child": "mixamorig:LeftHandIndex4",
+        "segment_direction_correction_deg": 0.0006
+      },
+      {
+        "bone": "mixamorig:RightHandIndex3",
+        "primary_child": "mixamorig:RightHandIndex4",
+        "segment_direction_correction_deg": 0.0004
+      },
+      {
+        "bone": "mixamorig:LeftArm",
+        "primary_child": "mixamorig:LeftForeArm",
+        "segment_direction_correction_deg": 0.0001
+      },
+      {
+        "bone": "mixamorig:LeftForeArm",
+        "primary_child": "mixamorig:LeftHand",
+        "segment_direction_correction_deg": 0.0001
+      },
+      {
+        "bone": "mixamorig:RightForeArm",
+        "primary_child": "mixamorig:RightHand",
+        "segment_direction_correction_deg": 0.0
+      },
+      {
+        "bone": "mixamorig:RightArm",
+        "primary_child": "mixamorig:RightForeArm",
+        "segment_direction_correction_deg": 0.0
+      }
+    ]
+  },
+  "conclusion": "Copying X Bot world orientations unchanged onto SOMA joint positions is not sufficient. v0.5.14 should transport each nonterminal X Bot frame from the X Bot segment direction to the corresponding SOMA segment direction while preserving roll/relative frame."
+}
