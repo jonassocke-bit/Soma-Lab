@@ -973,7 +973,7 @@ blindly before a visible failure is demonstrated.
 The exact Axis16 comparator remains available as the source-side A/B reference.
 
 
-## v0.5.21 – exact identity-dependent Anny/SOMA rest rig
+## v0.5.22 – exact identity-dependent Anny/SOMA rest rig
 
 The v0.5.20 visual test exposed the real remaining bug. The proven Mixamo
 motion was being applied to a morph target whose joint POSITIONS were adapted
@@ -989,7 +989,7 @@ blendshape identity it constructs a shape-dependent SOMA rest rig from:
 - canonical `reference_bone_orientations` for `local-ref`,
 - Anny's own SOMA skinning indices/weights.
 
-v0.5.21 mirrors that exact model in the browser.
+v0.5.22 mirrors that exact model in the browser.
 
 ### New motion path
 
@@ -1011,7 +1011,7 @@ been exporting/using an incomplete subset of that model.
 
 ### One-time GitHub Action
 
-v0.5.21 changes the Anny pack schema to
+v0.5.22 changes the Anny pack schema to
 `anny-soma-browser-exact-engine-v3`.
 
 Run once:
@@ -1038,3 +1038,25 @@ path if the error exceeds the safety threshold.
 
 If the rest-rig parity passes but the visible pose is still different, only then
 export another exact target/source pair for a frame-by-frame comparison.
+
+
+## v0.5.22 – NPY int16 parser fix
+
+The v3 Anny/SOMA pack was generated successfully, but iPhone loading stopped at:
+
+`bone_children_indices.npy: NPY dtype <i2 noch nicht unterstützt`
+
+This is a browser parser issue, not a bad v3 pack. The v3 extractor intentionally
+stores several compact rig arrays as signed int16:
+- `bone_children_indices`
+- `vertex_bone_indices`
+
+The browser NPY reader previously supported int32/int64 and uint8/uint16/uint32
+but accidentally omitted signed int16.
+
+v0.5.22 adds:
+- `<i2` / `Int16Array`
+- `<i1` / `Int8Array` for completeness
+
+No GitHub Action rerun is required. The already-generated
+`anny_soma_engine_*_rigv3.npz` files remain valid and are reused.
