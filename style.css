@@ -407,3 +407,12 @@ body.sammy-ready #sammyCameraDebugBtn{opacity:1;transition:opacity .4s ease}
 .sammyMeasureInfoBox{margin-top:9px;padding:9px;border-radius:11px;background:rgba(255,255,255,.055);font-size:8.5px;line-height:1.45;color:#c2c4ca}
 .sammyMeasureInfoBox b{display:block;margin:0 0 3px;color:#efeff2;font-size:8.5px}.sammyMeasureInfoBox p{margin:0 0 8px}.sammyMeasureInfoBox p:last-child{margin-bottom:0}
 .sammyMeasureExport{width:100%;margin-top:11px;background:#ececef!important;color:#17181b!important}.sammyMeasureSource{padding:8px 3px 0;text-align:center;font-size:7.5px;line-height:1.35;color:#676a72}
+
+
+/* Sammy v0.7.2 semantic measurement / random-body test controls */
+.sammyMeasureTestControls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:-2px 0 7px}
+.sammyMeasureTestControls button{min-height:34px!important;padding:0 5px!important;border-radius:10px!important;font-size:8.5px!important;line-height:1.05!important}
+.sammyMeasureTestControls button.active{background:#ececef!important;color:#17181b!important}
+.sammyMeasureRandomStatus{margin:0 0 10px;padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.035);font-size:8px;line-height:1.35;color:#888b94;font-variant-numeric:tabular-nums}
+.sammyMeasureAutoRule{margin:0 0 9px;padding:8px 9px;border-radius:10px;background:rgba(255,223,114,.08);border:1px solid rgba(255,223,114,.13)}
+.sammyMeasureAutoRule b{display:block;font-size:8.5px;color:#f3e4aa}.sammyMeasureAutoRule small{display:block;margin-top:3px;font-size:7.5px;line-height:1.35;color:#9699a2}
