@@ -973,7 +973,7 @@ blindly before a visible failure is demonstrated.
 The exact Axis16 comparator remains available as the source-side A/B reference.
 
 
-## v0.5.26 – exact identity-dependent Anny/SOMA rest rig
+## v0.5.27 – exact identity-dependent Anny/SOMA rest rig
 
 The v0.5.20 visual test exposed the real remaining bug. The proven Mixamo
 motion was being applied to a morph target whose joint POSITIONS were adapted
@@ -989,7 +989,7 @@ blendshape identity it constructs a shape-dependent SOMA rest rig from:
 - canonical `reference_bone_orientations` for `local-ref`,
 - Anny's own SOMA skinning indices/weights.
 
-v0.5.26 mirrors that exact model in the browser.
+v0.5.27 mirrors that exact model in the browser.
 
 ### New motion path
 
@@ -1011,7 +1011,7 @@ been exporting/using an incomplete subset of that model.
 
 ### One-time GitHub Action
 
-v0.5.26 changes the Anny pack schema to
+v0.5.27 changes the Anny pack schema to
 `anny-soma-browser-exact-engine-v3`.
 
 Run once:
@@ -1040,7 +1040,7 @@ If the rest-rig parity passes but the visible pose is still different, only then
 export another exact target/source pair for a frame-by-frame comparison.
 
 
-## v0.5.26 – NPY int16 parser fix
+## v0.5.27 – NPY int16 parser fix
 
 The v3 Anny/SOMA pack was generated successfully, but iPhone loading stopped at:
 
@@ -1054,7 +1054,7 @@ stores several compact rig arrays as signed int16:
 The browser NPY reader previously supported int32/int64 and uint8/uint16/uint32
 but accidentally omitted signed int16.
 
-v0.5.26 adds:
+v0.5.27 adds:
 - `<i2` / `Int16Array`
 - `<i1` / `Int8Array` for completeness
 
@@ -1062,7 +1062,7 @@ No GitHub Action rerun is required. The already-generated
 `anny_soma_engine_*_rigv3.npz` files remain valid and are reused.
 
 
-## v0.5.26 – canonical Axis16 rest-pose retarget before motion
+## v0.5.27 – canonical Axis16 rest-pose retarget before motion
 
 The v0.5.22 iPhone screenshots showed that the exact Anny rest-rig reconstruction itself was not enough. The target retained a different neutral/rest posture (arm angle, knee bend, trunk posture and thumb basis), and those offsets remained visible in every imported animation.
 
@@ -1087,7 +1087,7 @@ The 65-bone Axis16 rest orientations are mapped to Public78 with the same semant
 No new GitHub Action is required. The existing v3 Anny packs are reused.
 
 
-## v0.5.26 – Rig Oracle / Pose Probe wizard
+## v0.5.27 – Rig Oracle / Pose Probe wizard
 
 This version intentionally does **not** introduce another retargeting heuristic.
 
@@ -1128,7 +1128,7 @@ Files added:
 No new Anny v3 engine-pack build is required.
 
 
-## v0.5.26 – iOS Oracle file picker fix
+## v0.5.27 – iOS Oracle file picker fix
 
 On iOS Safari, `pose_probe_oracle.json` was shown disabled/greyed out in the
 Files picker even though the file was valid.
@@ -1149,14 +1149,14 @@ So the picker is permissive, while the actual import remains strict.
 No GitHub Action rerun is required.
 
 
-## v0.5.26 – Oracle workflow survives page resets
+## v0.5.27 – Oracle workflow survives page resets
 
 The previous Oracle workflow had a fundamental UX bug on iPhone: the probe only
 existed in JavaScript memory. During the time needed to run the GitHub Action,
 Safari/GitHub Pages could reload or discard the page, losing `oracleProbe`.
 The returned Oracle JSON was then rejected even though it was correct.
 
-v0.5.26 fixes the workflow itself instead of asking the user to race the page:
+v0.5.27 fixes the workflow itself instead of asking the user to race the page:
 
 1. Every exported pose probe is saved to the existing persistent IndexedDB cache
    before the JSON download begins.
@@ -1173,4 +1173,39 @@ v0.5.26 fixes the workflow itself instead of asking the user to race the page:
 7. Manual Oracle-file selection remains only as a fallback.
 
 For the pair already present in the repository, no new Pose Oracle workflow run
-is required after deploying v0.5.26.
+is required after deploying v0.5.27.
+
+
+## v0.5.27 – first substantive Axis16→Anny reference-geometry fix
+
+The Oracle result from v0.5.26 ruled out browser-vs-official-Anny FK/LBS as the
+cause of the catastrophic pose: both produced the same result from the same
+absolute orientations.
+
+Reviewing the actual runtime then exposed a more specific frame-contract error:
+
+Previous path:
+- absolute bone orientations were expressed in the proven Axis16/Mixamo world
+  reference;
+- BUT child translations were still propagated through Anny's native rest-rig
+  matrices (`rig.restWorld` / `rig.restInv`).
+
+That mixes two different rest coordinate systems. Setting a bone's absolute
+orientation to an Axis16 frame does not make Anny's native parent→child offset
+become the matching Axis16/SOMA T-pose segment.
+
+v0.5.27 separates the two roles:
+
+1. Native exact Anny rig remains the *skin bind* contract.
+2. A shape-dependent Axis16-compatible reference skeleton is built:
+   - segment direction = official Public78/SOMA T-pose direction;
+   - segment length = current exact Anny bone length;
+   - bone orientation = proven Axis16 public reference orientation.
+3. FK translation propagation uses this Axis16-compatible reference skeleton.
+4. Final skin transforms are still `final_pose * inverse(native_anny_rest)`, so
+   the native Anny mesh/weights remain the actual bind mesh.
+5. The existing repo `pose_probe_input.json` can be tested with one button.
+   No FBX reload, no frame selection, and no GitHub Action is required.
+
+The one-click test also audits the constructed reference skeleton numerically
+(direction and length preservation) before showing the candidate pose.
