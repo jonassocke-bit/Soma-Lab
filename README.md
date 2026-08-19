@@ -1,44 +1,49 @@
-# Sammy v0.6.4
+# Sammy v0.6.5
 
-Small calibration/polish release on top of v0.6.2.
+Camera/bubble behavior correction built on v0.6.4.
 
-## Camera calibration button
+## Exact calibrated cameras
 
-A small `CAM` button is shown in the top-right corner after startup.
+The three user-supplied camera setups are now used **directly** as reference
+values instead of being re-derived from guessed bounding-box percentages:
 
-It opens a live camera readout containing:
+- Standing Greeting
+- normal editing view
+- Animation panel view
 
-- camera position X/Y/Z;
-- camera Euler rotation X/Y/Z in degrees;
-- OrbitControls target X/Y/Z;
-- orbit distance (the practically relevant "zoom" value for the current
-  perspective-camera setup);
-- `camera.zoom`;
-- field of view.
+Both camera position and `OrbitControls.target` are preserved, so the supplied
+pan / camera height is part of the preset. FOV is fixed to 32° and camera zoom
+to 1.0 for these presets.
 
-The values update live while the panel is open and can be copied with one tap.
-This is intended to make future start/edit camera calibration exact rather than
-iterative screenshot guessing.
+For different mannequin sizes, only the **vertical Y coordinates** of camera
+position and orbit target are scaled with current rest-body height relative to
+the canonical default body. X/Z remain the calibrated offsets, matching the
+requested behavior.
 
-## Splash
+The CAM panel now also reports current body height, the captured camera reference
+height, and the resulting Y scale.
 
-- Splash now displays the Sammy version.
-- Fade-out is longer and eased (~1.05 s).
-- The old compact startup toast is suppressed while the splash is active; the
-  splash itself carries the loading-stage text.
-- Error toasts can still appear immediately.
+## Animation camera return
 
-## Smile
+Opening Animation stores the *actual current camera state* immediately before
+the panel opens. Leaving Animation (closing it or switching directly to another
+menu) smoothly restores exactly that saved camera position/target/zoom/FOV.
+It no longer forces the generic editing-start preset.
 
-The user identified the correct Anny modifier:
+## Bubble grouping
 
-`mouth angles up = 0.8`
+Bubble grouping is now inferred geometrically every time from edge + proximity,
+rather than relying on a one-time group state. Therefore bubbles can:
 
-v0.6.4 uses exactly that semantic modifier (case/spacing tolerant) and no longer
-tries to guess among several smile/corner candidates. If the modifier is absent,
-the face remains neutral and a warning is logged.
+- snap together;
+- be dragged together along an edge;
+- detach by pulling one away / to another edge;
+- later be brought back and snap together again repeatedly.
 
-## Frozen infrastructure
+Viewport and iPhone safe-area clamping from v0.6.4 remains active for single
+bubbles and groups.
 
-Animation retarget, transported native-Anny bone basis, exact Anny FK/LBS,
-greeting import, animation library and skeleton mode remain unchanged.
+## UI
+
+Only one panel can be open at a time. The normal greeting/start status box stays
+hidden; only actual startup errors may surface as a toast above the app.
