@@ -225,3 +225,32 @@ button.selected{outline:2px solid rgba(255,255,255,.72);outline-offset:-2px;back
 @media(min-width:700px){
  .sammyPanel{width:420px;left:auto;right:18px;transform:none}
 }
+
+
+/* Sammy v0.6.1 polish */
+.sammySplash{
+ position:fixed;z-index:100;inset:0;display:grid;place-items:center;
+ background:radial-gradient(circle at 50% 42%,rgba(34,35,40,.98),rgba(10,11,13,.995) 70%);
+ color:#f5f5f7;transition:opacity .55s ease,visibility .55s ease;
+ pointer-events:auto
+}
+.sammySplash.gone{opacity:0;visibility:hidden;pointer-events:none}
+.sammySplashInner{width:min(76vw,330px);text-align:center}
+.sammySplashMark{
+ width:66px;height:66px;margin:0 auto 16px;border-radius:22px;
+ display:grid;place-items:center;font-size:29px;font-weight:800;
+ border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);
+ box-shadow:0 15px 55px rgba(0,0,0,.32);
+ backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)
+}
+.sammySplash h1{margin:0;font-size:28px;letter-spacing:.02em}
+.sammySplash p{min-height:32px;margin:10px 0 18px;color:#aeb0b7;font-size:11px;line-height:1.4}
+.sammySplashLine{height:2px;overflow:hidden;border-radius:2px;background:rgba(255,255,255,.08)}
+.sammySplashLine i{
+ display:block;width:38%;height:100%;border-radius:2px;background:rgba(255,255,255,.78);
+ animation:sammySplashMove 1.25s ease-in-out infinite alternate
+}
+@keyframes sammySplashMove{from{transform:translateX(-5%)}to{transform:translateX(175%)}}
+#sammyUi{transition:opacity .45s ease}
+body:not(.sammy-ready) #sammyUi{opacity:0;pointer-events:none}
+body.sammy-ready #sammyUi{opacity:1}

@@ -14,7 +14,7 @@ const CURRENT_RIG_PACK_URL="./soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_RAW_URL="https://raw.githubusercontent.com/jonassocke-bit/Soma-Lab/main/soma_current_rig_pack_v0026.npz";
 const CURRENT_RIG_PACK_SOURCE_SHA="86632764684281dc98f31ab9c4aac36a4cdbc428";
 
-// v0.6.0: exact browser-side Anny blendshape engine on canonical SOMA topology.
+// v0.6.1: exact browser-side Anny blendshape engine on canonical SOMA topology.
 // Low is loaded first; Mid (18,056 verts) is an optional persistent on-demand pack.
 const ANNY_SOURCE_SHA="72104cac8242d1735ec06433b65bec5e26953ce7";
 const ANNY_LOW_PACK_URL="./anny_soma_engine_low_v060_rigv3.npz";
@@ -247,7 +247,7 @@ let targetMidBoneIndices=null,targetMidBoneWeights=null,targetMidTopK=0;
 let poseMidBoneIndices=null,poseMidBoneWeights=null,poseMidTopK=0;
 let rigGroup=null,rigBoneLines=null,rigJointPoints=null,rigAxesX=null,rigAxesY=null,rigAxesZ=null;
 
-// v0.6.0 Shape-Space Analyzer.
+// v0.6.1 Shape-Space Analyzer.
 // The first semantic layer is deliberately measurement-driven: raw PCA stays the
 // engine underneath, while the UI exposes locally calibrated measurements in cm.
 const ANALYSIS_METRICS=[
@@ -277,7 +277,9 @@ cam.position.set(0,1,4);orbit.target.set(0,1,0);
 let frames=0,last=performance.now();
 renderer.setAnimationLoop(()=>{
  const n=performance.now();
- if(poseAnimRunning)updatePoseAnimation(n);
+ if(sammyIntroActive)sammyUpdateIntro(n);
+ else if(poseAnimRunning)updatePoseAnimation(n);
+ sammyUpdateCameraTween(n);
  orbit.update();renderer.render(scene,cam);
  frames++;
  if(n-last>1000){
@@ -349,7 +351,7 @@ function parseNPY(u8){
     }
    }
    return {shape,descr,fortran,data:strings}
- } else throw new Error("NPY dtype "+descr+" noch nicht unterstützt (v0.6.0 unterstützt f4/f8, i1/i2/i4/i8, u1/u2/u4 sowie U/S-Strings)");
+ } else throw new Error("NPY dtype "+descr+" noch nicht unterstützt (v0.6.1 unterstützt f4/f8, i1/i2/i4/i8, u1/u2/u4 sowie U/S-Strings)");
  const bytes=Ctor.BYTES_PER_ELEMENT*count;
  if(dataOff+bytes>u8.byteLength)throw new Error(`NPY-Payload abgeschnitten: brauche ${bytes} Bytes ab Offset ${dataOff}, habe ${u8.byteLength-dataOff}`);
  // Safari/iOS-sicher: Payload in einen eigenen, bei ByteOffset 0 beginnenden Buffer kopieren.
@@ -467,7 +469,7 @@ async function loadCurrentRigPack(){
    }});
    currentRigPack=await decodeShapeNPZ(asset.u8)
   }
-  // v0.6.0: the fresh v2 rig-pack stores REAL newlines, while the very first
+  // v0.6.1: the fresh v2 rig-pack stores REAL newlines, while the very first
   // generated v1 pack accidentally stored the two literal characters "\\n".
   // Use the already existing compatibility decoder for both formats.
   const targetNames=decodePackedJointNames("target_joint_names_utf8",122);
@@ -489,7 +491,7 @@ async function loadCurrentRigPack(){
   if(missing.length)throw new Error("Rig-Pack unvollständig. Fehlt: "+missing.join(", "));
   const midRequired=["target_skinning_mid_data","target_skinning_mid_indices","target_skinning_mid_indptr","target_skinning_mid_shape","public_skinning_mid_data","public_skinning_mid_indices","public_skinning_mid_indptr","public_skinning_mid_shape"];
   const midMissing=midRequired.filter(k=>!packArray(k));
-  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.6.0 bitte den neuen ‘Build Anny SOMA Engine v3’-Workflow einmal ausführen; danach erneut laden.")}
+  if(midMissing.length){if(asset.cacheHit)await assetCacheDelete(ASSET_KEY.currentRig);throw new Error("Rig-Pack ist noch v1/Low-only. Für v0.6.1 bitte den neuen ‘Build Anny SOMA Engine v3’-Workflow einmal ausführen; danach erneut laden.")}
   if(targetNames.length<100)throw new Error(`Expanded Rig unerwartet klein: ${targetNames.length} Joints`);
   if(publicNames.length!==78)throw new Error(`Public Rig: ${publicNames.length} statt 78 Joints`);
   if(publicShape[0]!==4505||publicShape[1]!==78)throw new Error(`Public Low-Skinning unerwartet: ${JSON.stringify(publicShape)}`);
@@ -511,14 +513,14 @@ Mid-Skinning 18.056×122: ${packOptional("target_skinning_mid_shape")?"JA · ber
 Procedural-Sidecar: ${packArray("procedural_json_utf8").data.length} Bytes
 Asset-Quelle: ${asset.cacheHit?"persistenter Cache · kein Download":`${asset.source||"Repo"} · persistent gespeichert`}
 
-Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.6.0 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
+Der aktuelle v0.2.x-Rig-Datenstand ist als kleiner Browser-Pack vorhanden. v0.6.1 kann daraus jetzt direkt den internen Expanded-/Twist-Pfad mit ${targetNames.length} Skinning-Joints aktivieren; die Bedienung bleibt bei den 77 öffentlichen Pose-Joints.`);
   rigPass=true;updateDecision();return true
  }catch(e){
   console.error(e);currentRigPackLoaded=false;$("#activateCurrentRig").disabled=true;$("#activateExpandedRig").disabled=true;
   setState("#currentRigState","PACK FEHLT","bad");
   info("#currentRigInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}
 
-v0.6.0 versucht den Rig-Pack in dieser Reihenfolge:
+v0.6.1 versucht den Rig-Pack in dieser Reihenfolge:
 1) persistenter iPhone-Cache
 2) GitHub Pages mit Cache-Busting
 3) raw.githubusercontent.com als Fallback
@@ -561,7 +563,7 @@ async function getMixamoFbxExporter(){
  return mixamoFbxExporterPromise
 }
 
-// v0.6.0: exact structural/orientation contract extracted from the uploaded
+// v0.6.1: exact structural/orientation contract extracted from the uploaded
 // standard Mixamo X Bot FBX. No X Bot mesh/animation is bundled.
 // The body stays canonical SOMA; only the 65-bone hierarchy, names and bind-axis
 // orientations mirror Mixamo's own standard character.
@@ -569,7 +571,7 @@ const MIXAMO_XBOT_CONTRACT=[{"name":"mixamorig:Hips","parent":null,"source":"Hip
 const MIXAMO_XBOT_BIND_POS={"mixamorig:Head":[-1.1167740467540036e-05,159.92947388295272,-1.519544836013904],"mixamorig:HeadTop_End":[-9.032325006838463e-06,181.96684254533193,5.981550311246772],"mixamorig:Hips":[-7.727290721959434e-06,104.27487182617188,1.5543158054351807],"mixamorig:LeftArm":[15.16280398737345,144.0613169434197,-5.548493116334514],"mixamorig:LeftFoot":[8.207781787278632,8.729486465454109,-2.74267363548298],"mixamorig:LeftForeArm":[43.00432564154204,144.0612843998952,-5.548470182817228],"mixamorig:LeftHand":[71.3331601752272,144.06125184318304,-5.548452286627384],"mixamorig:LeftHandIndex1":[80.44246662018536,143.54320687400264,-3.2885818548270533],"mixamorig:LeftHandIndex2":[84.1424666060649,143.54319761646747,-3.2889049733068427],"mixamorig:LeftHandIndex3":[86.9924665845382,143.54318854355162,-3.288554802246191],"mixamorig:LeftHandIndex4":[89.76733221262572,143.54317785204873,-3.288581527452206],"mixamorig:LeftHandMiddle1":[80.86656166454125,144.06127324020878,-5.548407829448358],"mixamorig:LeftHandMiddle2":[84.56656165731454,144.0612658926314,-5.548638965109337],"mixamorig:LeftHandMiddle3":[87.51656165734059,144.0612609995725,-5.548698191712874],"mixamorig:LeftHandMiddle4":[90.46942511611348,144.06125862699358,-5.548635289249731],"mixamorig:LeftHandPinky1":[79.4109415601394,143.5743653862144,-9.354708848005295],"mixamorig:LeftHandPinky2":[83.01091144311097,143.57439700191372,-9.339983336174745],"mixamorig:LeftHandPinky3":[85.11089736117005,143.5744128045394,-9.33227821942831],"mixamorig:LeftHandPinky4":[87.23641541005766,143.5744283503633,-9.324764594210082],"mixamorig:LeftHandRing1":[80.43769038202059,144.0182129663205,-7.413525827475825],"mixamorig:LeftHandRing2":[83.58769038195831,144.01820534746685,-7.413483459122235],"mixamorig:LeftHandRing3":[86.53769038190077,144.01819769136398,-7.413446424112027],"mixamorig:LeftHandRing4":[89.18200681682134,144.01819275635648,-7.413387583008608],"mixamorig:LeftHandThumb1":[73.79930097583673,142.48505615797941,-2.866718806843708],"mixamorig:LeftHandThumb2":[77.0171036834158,140.6130031455518,-0.9502315862892832],"mixamorig:LeftHandThumb3":[79.67311994929713,139.08420278085717,0.5642735030615138],"mixamorig:LeftHandThumb4":[81.6940079710372,137.9301277541478,1.6794071285865717],"mixamorig:LeftLeg":[8.20778179815179,53.15313720703123,0.30171799659729054],"mixamorig:LeftShoulder":[4.570434058827984,144.58590699501536,-3.3163728307836102],"mixamorig:LeftToeBase":[8.207779003812599,0.0008178479620539747,7.967886447906329],"mixamorig:LeftToe_End":[8.20777620817337,0.00014117703546079026,17.246023178100437],"mixamorig:LeftUpLeg":[8.207783699035648,97.52317047119146,-0.04523950815200806],"mixamorig:Neck":[-1.1632276864212932e-05,150.31158448448357,-3.204552560661874],"mixamorig:RightArm":[-15.162827141868377,144.06129423041162,-5.548499729823593],"mixamorig:RightFoot":[-8.207794193704466,8.729410171508846,-2.7428412437438388],"mixamorig:RightForeArm":[-43.00434516530863,144.06129641894498,-5.548503799133087],"mixamorig:RightHand":[-71.33318351367814,144.06129417324604,-5.548485070931586],"mixamorig:RightHandIndex1":[-80.44146740224393,143.5434327591923,-3.2886513313660655],"mixamorig:RightHandIndex2":[-84.14146720273779,143.54343753394087,-3.287436291149135],"mixamorig:RightHandIndex3":[-86.99146715506613,143.54344121268713,-3.2879575539852555],"mixamorig:RightHandIndex4":[-89.76365776784786,143.5434447896182,-3.2879771126055055],"mixamorig:RightHandMiddle1":[-80.86568473440799,144.0612550668732,-5.54851014811217],"mixamorig:RightHandMiddle2":[-84.56568287155386,144.06126259618017,-5.5447973243161],"mixamorig:RightHandMiddle3":[-87.51568215646527,144.06126861471554,-5.546851341368094],"mixamorig:RightHandMiddle4":[-90.46231088610809,144.0612746037648,-5.547006313378017],"mixamorig:RightHandPinky1":[-79.40985922265244,143.57459114056766,-9.354763679952702],"mixamorig:RightHandPinky2":[-83.00985727235272,143.57455779439576,-9.358510817893936],"mixamorig:RightHandPinky3":[-85.10984942758924,143.57453836367927,-9.364250815067884],"mixamorig:RightHandPinky4":[-87.22562730145525,143.57451875117627,-9.367931806157314],"mixamorig:RightHandRing1":[-80.43677556056942,144.01822525225458,-7.413619620513897],"mixamorig:RightHandRing2":[-83.81604840261204,144.01822504728736,-7.414673292681834],"mixamorig:RightHandRing3":[-86.70573305638166,144.01822487118628,-7.414294091534568],"mixamorig:RightHandRing4":[-89.34454856358145,144.01822471055002,-7.413352467132266],"mixamorig:RightHandThumb1":[-73.79798906754483,142.48731038443736,-2.8666334881430924],"mixamorig:RightHandThumb2":[-77.01317864323842,140.61453272160477,-0.9423520350092622],"mixamorig:RightHandThumb3":[-79.66801700056696,139.08654351500144,0.5702585782550695],"mixamorig:RightHandThumb4":[-81.68683313113226,137.93454105229316,1.6783110764053042],"mixamorig:RightLeg":[-8.207795136924904,53.153087615966854,0.3006949126720426],"mixamorig:RightShoulder":[-4.569982086496929,144.58610535851452,-3.31640209752816],"mixamorig:RightToeBase":[-8.207796980437466,0.0007403186173498,7.967719554901234],"mixamorig:RightToe_End":[-8.207799778823729,6.367982137992477e-05,17.245840072631964],"mixamorig:RightUpLeg":[-8.207794189453123,97.52320098876964,-0.04524400085210689],"mixamorig:Spine":[-1.2828927538068554e-05,114.45645904541018,1.6858367919921884],"mixamorig:Spine1":[-1.283931199672004e-05,124.35042239221895,0.2151254439192094],"mixamorig:Spine2":[-1.2848989892782088e-05,133.57119840012686,-1.1555181104463788]};
 const MIXAMO_XBOT_PRIMARY_CHILD={"mixamorig:Hips":"mixamorig:Spine","mixamorig:Spine":"mixamorig:Spine1","mixamorig:Spine1":"mixamorig:Spine2","mixamorig:Spine2":"mixamorig:Neck","mixamorig:Neck":"mixamorig:Head","mixamorig:Head":"mixamorig:HeadTop_End","mixamorig:RightShoulder":"mixamorig:RightArm","mixamorig:RightArm":"mixamorig:RightForeArm","mixamorig:RightForeArm":"mixamorig:RightHand","mixamorig:RightHand":"mixamorig:RightHandMiddle1","mixamorig:RightHandThumb1":"mixamorig:RightHandThumb2","mixamorig:RightHandThumb2":"mixamorig:RightHandThumb3","mixamorig:RightHandThumb3":"mixamorig:RightHandThumb4","mixamorig:RightHandIndex1":"mixamorig:RightHandIndex2","mixamorig:RightHandIndex2":"mixamorig:RightHandIndex3","mixamorig:RightHandIndex3":"mixamorig:RightHandIndex4","mixamorig:RightHandMiddle1":"mixamorig:RightHandMiddle2","mixamorig:RightHandMiddle2":"mixamorig:RightHandMiddle3","mixamorig:RightHandMiddle3":"mixamorig:RightHandMiddle4","mixamorig:RightHandRing1":"mixamorig:RightHandRing2","mixamorig:RightHandRing2":"mixamorig:RightHandRing3","mixamorig:RightHandRing3":"mixamorig:RightHandRing4","mixamorig:RightHandPinky1":"mixamorig:RightHandPinky2","mixamorig:RightHandPinky2":"mixamorig:RightHandPinky3","mixamorig:RightHandPinky3":"mixamorig:RightHandPinky4","mixamorig:LeftShoulder":"mixamorig:LeftArm","mixamorig:LeftArm":"mixamorig:LeftForeArm","mixamorig:LeftForeArm":"mixamorig:LeftHand","mixamorig:LeftHand":"mixamorig:LeftHandMiddle1","mixamorig:LeftHandThumb1":"mixamorig:LeftHandThumb2","mixamorig:LeftHandThumb2":"mixamorig:LeftHandThumb3","mixamorig:LeftHandThumb3":"mixamorig:LeftHandThumb4","mixamorig:LeftHandIndex1":"mixamorig:LeftHandIndex2","mixamorig:LeftHandIndex2":"mixamorig:LeftHandIndex3","mixamorig:LeftHandIndex3":"mixamorig:LeftHandIndex4","mixamorig:LeftHandMiddle1":"mixamorig:LeftHandMiddle2","mixamorig:LeftHandMiddle2":"mixamorig:LeftHandMiddle3","mixamorig:LeftHandMiddle3":"mixamorig:LeftHandMiddle4","mixamorig:LeftHandRing1":"mixamorig:LeftHandRing2","mixamorig:LeftHandRing2":"mixamorig:LeftHandRing3","mixamorig:LeftHandRing3":"mixamorig:LeftHandRing4","mixamorig:LeftHandPinky1":"mixamorig:LeftHandPinky2","mixamorig:LeftHandPinky2":"mixamorig:LeftHandPinky3","mixamorig:LeftHandPinky3":"mixamorig:LeftHandPinky4","mixamorig:RightUpLeg":"mixamorig:RightLeg","mixamorig:RightLeg":"mixamorig:RightFoot","mixamorig:RightFoot":"mixamorig:RightToeBase","mixamorig:RightToeBase":"mixamorig:RightToe_End","mixamorig:LeftUpLeg":"mixamorig:LeftLeg","mixamorig:LeftLeg":"mixamorig:LeftFoot","mixamorig:LeftFoot":"mixamorig:LeftToeBase","mixamorig:LeftToeBase":"mixamorig:LeftToe_End"};
 
-// v0.6.0 semantic hand-chain correction.
+// v0.6.1 semantic hand-chain correction.
 // SOMA non-thumb fingers contain one extra metacarpal articulation inside the
 // palm: Hand -> Finger1(metacarpal) -> Finger2(MCP) -> Finger3(PIP)
 // -> Finger4(DIP) -> FingerEnd(tip).
@@ -796,7 +798,7 @@ function buildSammyMixamoBridgeScene(){
  // IMPORTANT: previous bridges exported the neutral bind-shape while Mixamo's
  // animation convention is referenced to a canonical T-pose. That mismatch
  // survived mostly unnoticed in torso/legs but baked a constant offset into
- // shoulders, arms and hands. v0.6.0 bakes the official SOMA T-pose into the
+ // shoulders, arms and hands. v0.6.1 bakes the official SOMA T-pose into the
  // mesh BEFORE binding the Mixamo-compatible skeleton.
  const pos=posePublicBindShapeToOfficialTPose(bindShape,bindWorld,tPoseWorld,V);
  let minX=Infinity,maxX=-Infinity,minY=Infinity,minZ=Infinity,maxZ=-Infinity;
@@ -851,7 +853,7 @@ function buildSammyMixamoBridgeScene(){
  if(transported!==52)throw new Error(`Mixamo Frame-Transport unvollständig: ${transported}/52`);
  console.info(`Mixamo XBot→SOMA Frame-Transport: ${transported}/52 · max ${maxTransportDeg.toFixed(1)}° bei ${maxTransportBone}`);
 
- // v0.6.0: dedicated thumb-plane refinement. The general shortest-arc frame
+ // v0.6.1: dedicated thumb-plane refinement. The general shortest-arc frame
  // transport fixed the whole body substantially, but Mixamo still showed the
  // thumbs as the last visibly wrong chain. Thumbs need a stronger anatomical
  // guide than pure parent->child direction, so Thumb1 aligns to the palm
@@ -999,7 +1001,7 @@ async function exportMixamoComparisonFrame(){
   host.userData={...host.userData,SammyDiagnostic:"Exact Axis16 comparison body",SourceAnimation:userAnimName,SourceFrame:frame,SourceFPS:userAnimFps,VertexCount:4505};
   bridge.scene.updateMatrixWorld(true);
   const mod=await getMixamoFbxExporter();
-  const bytes=new mod.FBXExporter().parseSync(bridge.scene,{axisUp:"Y",axisForward:"-Z",unitScale:100,bakeSpaceTransform:false,includeAnimations:false,customProperties:true,creator:"Sammy Axis16 Retarget Comparison v0.6.0"});
+  const bytes=new mod.FBXExporter().parseSync(bridge.scene,{axisUp:"Y",axisForward:"-Z",unitScale:100,bakeSpaceTransform:false,includeAnimations:false,customProperties:true,creator:"Sammy Axis16 Retarget Comparison v0.6.1"});
   if(!(bytes instanceof Uint8Array)||bytes.byteLength<100000)throw new Error(`Vergleichs-FBX ungültig/zu klein: ${bytes?.byteLength||0} Bytes`);
   const safe=String(userAnimName||"Mixamo").replace(/\.[^.]+$/,'').replace(/[^a-z0-9_-]+/gi,'_').slice(0,60)||"Mixamo";
   const filename=`Sammy_Retarget_ExactAxis16_${safe}_Frame${String(frame).padStart(4,'0')}.fbx`;
@@ -1021,7 +1023,7 @@ async function exportSammyMixamoBridge(){
   const mod=await getMixamoFbxExporter();if(!mod?.FBXExporter)throw new Error("FBXExporter-Modul wurde geladen, exportiert aber keine FBXExporter-Klasse.");
   const bytes=new mod.FBXExporter().parseSync(bridge.scene,{
    axisUp:"Y",axisForward:"-Z",unitScale:100,bakeSpaceTransform:false,includeAnimations:false,customProperties:true,
-   creator:"Sammy Mixamo XBotContract65 T-Pose Axis16 v0.6.0"
+   creator:"Sammy Mixamo XBotContract65 T-Pose Axis16 v0.6.1"
   });
   if(!(bytes instanceof Uint8Array)||bytes.byteLength<100000)throw new Error(`FBX-Ausgabe unerwartet klein/ungültig: ${bytes?.byteLength||0} Bytes`);
   const magic=new TextDecoder("latin1").decode(bytes.subarray(0,21));if(!magic.startsWith("Kaydara FBX Binary"))throw new Error("FBX-Datei hat keinen erwarteten Binary-FBX-Header.");
@@ -1030,7 +1032,7 @@ async function exportSammyMixamoBridge(){
   setState("#mixamoBridgeState","X-BOT BRIDGE EXPORTIERT","ok");
   info("#mixamoBridgeInfo",`✓ ${filename}
 65 Bones – exakt dieselbe Hierarchie und Bone-Namen wie das analysierte Mixamo X Bot.
-Mesh und Skeleton sind in die offizielle SOMA T-Pose gebacken. v0.6.0: 52-Bone-Frame-Transport + Thumb-Plane-Fix + korrigierte SOMA→Mixamo-Fingersemantik (Metacarpal/MCP/Terminal).
+Mesh und Skeleton sind in die offizielle SOMA T-Pose gebacken. v0.6.1: 52-Bone-Frame-Transport + Thumb-Plane-Fix + korrigierte SOMA→Mixamo-Fingersemantik (Metacarpal/MCP/Terminal).
 Hals: genau 1 Neck + Head + HeadTop_End.
 Finger: exakt 4 Bones pro Finger/Daumen wie beim X Bot – keine 3-Segment-Vereinfachung mehr.
 Bone-Achsen: X-Bot-Bindorientierungen; Joint-Positionen/Body/Skinning bleiben SOMA.
@@ -1368,7 +1370,7 @@ Aktive Anny Local Changes: ${localCount}
 ${frame?`Aktuelle importierte Pose: ${userAnimName} · Frame ${frame.frame}/${userAnimFrames-1}`:"Noch keine importierte Animation geladen."}
 Browser↔offizielles-Anny Rest-Rig Fixture: ${annyRigParity?`max ${annyRigParity.maxAbs.toExponential(2)} ${annyRigParity.ok?"✓":"FEHLER"}`:"noch nicht geprüft"}
 
-v0.6.0 korrigiert genau den im iPhone-Test sichtbaren Grundhaltungsfehler:
+v0.6.1 korrigiert genau den im iPhone-Test sichtbaren Grundhaltungsfehler:
 1. aktuelles Anny-Shape + dessen echtes Rest-Rig rekonstruieren,
 2. dieses Rig über seine EIGENEN Bonelängen in die bewährte Axis16/Mixamo-Referenzhaltung bringen,
 3. erst darauf die bereits verifizierten Mixamo-Weltbewegungsdeltas anwenden,
@@ -1633,7 +1635,7 @@ function buildAxis16CompatibleAnnyReferenceRig(nativeRig){
   heads[j*3+2]=heads[p*3+2]+dz*targetLen
  }
 
- // 2) CRITICAL v0.6.0 change:
+ // 2) CRITICAL v0.6.1 change:
  //    Never copy Axis16/XBot bone coordinate frames onto Anny bones.
  //    Instead rotate each NATIVE Anny bone frame by the world-space transport
  //    that moves its native child directions into the target T-pose directions.
@@ -1756,7 +1758,7 @@ function applyAnnyAxis16RetargetPose(rest,relative3,markMoved=true,report=true,l
  lastAppliedRelative3=new Float32Array(relative3);
  const rig=reconstructExactAnnyRestRig(annyLastCoeffs),worldDelta=publicRelativeToWorldDelta3(relative3),absolute3=new Float32Array(78*9),tmp=new Float32Array(9);
  const axisRef=buildAxis16CompatibleAnnyReferenceRig(rig);
- // v0.6.0: world motion delta is applied to the TRANSPORTED NATIVE ANNY frame.
+ // v0.6.1: world motion delta is applied to the TRANSPORTED NATIVE ANNY frame.
  // Never multiply by an XBot/Axis16 bone basis before inverse(native Anny bind).
  for(let j=0;j<78;j++){mat3Mul(worldDelta,j*9,axisRef.ref3,j*9,tmp,0);absolute3.set(tmp,j*9)}
  const fk=absoluteFkOnAxis16Reference(rig,axisRef,absolute3),lod=displayLOD==="mid"?"mid":"low",pack=annyPackForLOD(lod),idx=pack.vertex_bone_indices.data,w=pack.vertex_bone_weights.data,K=annyMeta.skinning_topk,pos=geometry.attributes.position.array,n=rest.length/3,t0=performance.now(),gy=annyGroundOffsetY;let maxWeightErr=0;
@@ -1765,7 +1767,7 @@ function applyAnnyAxis16RetargetPose(rest,relative3,markMoved=true,report=true,l
   for(let k=0;k<K;k++){const bi=Number(idx[v*K+k]),ww=Number(w[v*K+k]);if(bi<0||ww<=0)continue;const bo=bi*16;ox+=ww*(fk.skin[bo]*x+fk.skin[bo+1]*y+fk.skin[bo+2]*z+fk.skin[bo+3]);oy+=ww*(fk.skin[bo+4]*x+fk.skin[bo+5]*y+fk.skin[bo+6]*z+fk.skin[bo+7]);oz+=ww*(fk.skin[bo+8]*x+fk.skin[bo+9]*y+fk.skin[bo+10]*z+fk.skin[bo+11]);ws+=ww}
   pos[v*3]=ox;pos[v*3+1]=oy+gy;pos[v*3+2]=oz;maxWeightErr=Math.max(maxWeightErr,Math.abs(1-ws))
  }
- geometry.attributes.position.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingSphere();currentPoseWorld=fk.posed.slice();const ms=performance.now()-t0;
+ geometry.attributes.position.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingSphere();currentPoseWorld=fk.posed.slice();refreshRigDebug();const ms=performance.now()-t0;
  if(markMoved){posePass=true;setState("#poseState","AXIS16 → EXACT ANNY","ok");updateDecision()}
  if(report)info("#posePerf",`${label}: ${ms.toFixed(1)} ms · ${n} Vertices · 78 shape-abhängige Anny/SOMA-Bones · Top-${K}
 Referenzgeometrie: SOMA/Axis16-T-Pose-Richtungen + aktuelle Anny-Bonelängen
@@ -1814,7 +1816,7 @@ Skinning: Top-${annyMeta.skinning_topk}
 Browser↔offizielles-Anny Rest-Rig Fixture max. Fehler: ${rigParity.maxAbs.toExponential(2)}
 Damit werden beim Morphing jetzt nicht nur Joint-Positionen, sondern Anny/SOMAs echte shape-abhängige Bone-Orientierungen rekonstruiert.`);
   return true
- }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.6.0 den neuen Workflow „Build Anny SOMA Engine v3“ einmal ausführen.`);return false}
+ }catch(e){console.error(e);annyPackLoaded=false;setState("#annyState","PACK FEHLT/FEHLER","bad");$("#useAnny").disabled=true;info("#annyInfo",`${e?.name||"Fehler"}: ${e?.message||String(e)}\n\nFür v0.6.1 den neuen Workflow „Build Anny SOMA Engine v3“ einmal ausführen.`);return false}
 }
 async function loadAnnyMidPack(){
  if(annyMidLoaded)return true;
@@ -1911,7 +1913,7 @@ function applyAnnyParams(){if(shapeEngine!=="anny")setShapeEngine("anny");else u
 function updateLodButtons(){$("#lodLow").classList.toggle("selected",displayLOD==="low");$("#lodMid").classList.toggle("selected",displayLOD==="mid");$("#lodBadge").textContent=displayLOD==="mid"?"18.056 V":"4.505 V"}
 async function setDisplayLOD(lod){
  if(lod===displayLOD)return true;if(lod==="mid"){
-  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.6.0 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return false}
+  if(shapeEngine!=="anny"){info("#lodInfo","Mid ist in v0.6.1 bewusst für den Anny-Pfad aktiviert. Zuerst Anny verwenden.");return false}
   if(!await loadAnnyMidPack())return false;
   if(poseReady&&currentRigMode==="current-expanded"&&!morphSammyTargetActive&&!packOptional("target_skinning_mid_shape")){info("#lodInfo","Mid-Shape ist vorhanden, aber der LEGACY-122-Pfad enthält noch keine 18k×122 Skinweights. Der Exact-Anny/SOMA-Morphpfad benötigt diese nicht.");return false}
  }
@@ -2290,7 +2292,7 @@ async function resetSemanticModifiers(){
 async function startFullShapeAnalysis(){
  if(shapeAnalysis.running)return;
  try{
-  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.6.0 Anny direkt über die nativen Parameter testen.");
+  if(shapeEngine!=="soma-pca")throw new Error("Der alte 128-PC-Analyzer gilt nur für SOMA-PCA. Für v0.6.1 Anny direkt über die nativen Parameter testen.");
   if(currentRigMode!=="current-expanded"||!poseReady)throw new Error("Zuerst Current Expanded 122-Joint LBS in Punkt 5 aktivieren.");
   stopPoseAnimation(false);shapeAnalysis.running=true;shapeAnalysis.ready=false;shapeAnalysis.stale=false;shapeAnalysis.internal=true;
   const token=++shapeAnalysis.cancelToken,btn=$("#startShapeAnalysis"),cancel=$("#cancelShapeAnalysis");btn.disabled=true;cancel.disabled=false;
@@ -2318,7 +2320,7 @@ async function startFullShapeAnalysis(){
   info("#analysisInfo",`✓ Lokale 7×128-Mess-Jacobian am aktuellen Körper erzeugt.
 ${qualities}
 
-Wichtig: Umfang/Tiefe sind in v0.6.0 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
+Wichtig: Umfang/Tiefe sind in v0.6.1 bewusst sichtbare Slice-Proxies. Die Mathematik des Modifiers wird damit real getestet; die endgültigen BODY-LAB-Messdefinitionen werden später gegen echte anthropometrische Landmarken/Messregeln validiert.`);
   updateDecision()
  }catch(e){
   console.error(e);
@@ -2426,14 +2428,15 @@ function rigDebugData(){
 }
 function ensureRigDebugObjects(){
  if(!poseReady)return;const d=rigDebugData();if(!d.world)return;if(rigGroup&&rigDebugJointCount===d.count)return;if(rigGroup)disposeRigDebugObjects();rigDebugJointCount=d.count;rigGroup=new THREE.Group();
- const boneGeo=new THREE.BufferGeometry();boneGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(Math.max(0,d.count-1)*2*3),3));rigBoneLines=new THREE.LineSegments(boneGeo,new THREE.LineBasicMaterial({color:0xffcf66,transparent:true,opacity:.95}));rigGroup.add(rigBoneLines);
- const pointGeo=new THREE.BufferGeometry();pointGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(d.count*3),3));rigJointPoints=new THREE.Points(pointGeo,new THREE.PointsMaterial({color:0x58f0a8,size:.04,sizeAttenuation:true}));rigGroup.add(rigJointPoints);
- const makeAxis=color=>{const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(new Float32Array(d.count*2*3),3));const l=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color,transparent:true,opacity:.92}));rigGroup.add(l);return l};rigAxesX=makeAxis(0xff5d5d);rigAxesY=makeAxis(0x5dff7d);rigAxesZ=makeAxis(0x58a6ff);rigGroup.visible=rigDebugVisible;scene.add(rigGroup)
+ const boneGeo=new THREE.BufferGeometry();boneGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(Math.max(0,d.count-1)*2*3),3));rigBoneLines=new THREE.LineSegments(boneGeo,new THREE.LineBasicMaterial({color:0xffcf66,transparent:true,opacity:.98,depthTest:false,depthWrite:false}));rigBoneLines.renderOrder=20;rigGroup.add(rigBoneLines);
+ const pointGeo=new THREE.BufferGeometry();pointGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(d.count*3),3));rigJointPoints=new THREE.Points(pointGeo,new THREE.PointsMaterial({color:0x58f0a8,size:.04,sizeAttenuation:true,depthTest:false,depthWrite:false}));rigJointPoints.renderOrder=21;rigGroup.add(rigJointPoints);
+ const makeAxis=color=>{const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(new Float32Array(d.count*2*3),3));const l=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color,transparent:true,opacity:.92,depthTest:false,depthWrite:false}));l.renderOrder=22;rigGroup.add(l);return l};rigAxesX=makeAxis(0xff5d5d);rigAxesY=makeAxis(0x5dff7d);rigAxesZ=makeAxis(0x58a6ff);rigGroup.visible=rigDebugVisible;scene.add(rigGroup)
 }
 function refreshRigDebug(){
  if(!poseReady)return;const d=rigDebugData();if(!d.world)return;ensureRigDebugObjects();if(!rigGroup)return;rigGroup.visible=rigDebugVisible;
  const jointPos=rigJointPoints.geometry.attributes.position.array,bonePos=rigBoneLines.geometry.attributes.position.array,axisX=rigAxesX.geometry.attributes.position.array,axisY=rigAxesY.geometry.attributes.position.array,axisZ=rigAxesZ.geometry.attributes.position.array,axisScale=.09;let bp=0,ax=0;
- for(let j=0;j<d.count;j++){const o=j*16,p=transformPoint(d.world,o,0,0,0);jointPos[j*3]=p[0];jointPos[j*3+1]=p[1];jointPos[j*3+2]=p[2];if(j>0){const pp=transformPoint(d.world,d.parents[j]*16,0,0,0);bonePos[bp++]=pp[0];bonePos[bp++]=pp[1];bonePos[bp++]=pp[2];bonePos[bp++]=p[0];bonePos[bp++]=p[1];bonePos[bp++]=p[2]}const px=transformPoint(d.world,o,axisScale,0,0),py=transformPoint(d.world,o,0,axisScale,0),pz=transformPoint(d.world,o,0,0,axisScale);axisX[ax]=p[0];axisX[ax+1]=p[1];axisX[ax+2]=p[2];axisX[ax+3]=px[0];axisX[ax+4]=px[1];axisX[ax+5]=px[2];axisY[ax]=p[0];axisY[ax+1]=p[1];axisY[ax+2]=p[2];axisY[ax+3]=py[0];axisY[ax+4]=py[1];axisY[ax+5]=py[2];axisZ[ax]=p[0];axisZ[ax+1]=p[1];axisZ[ax+2]=p[2];axisZ[ax+3]=pz[0];axisZ[ax+4]=pz[1];axisZ[ax+5]=pz[2];ax+=6}
+ const displayY=(morphSammyTargetActive&&shapeEngine==="anny")?annyGroundOffsetY:0;
+ for(let j=0;j<d.count;j++){const o=j*16,p=transformPoint(d.world,o,0,0,0);p[1]+=displayY;jointPos[j*3]=p[0];jointPos[j*3+1]=p[1];jointPos[j*3+2]=p[2];if(j>0){const pp=transformPoint(d.world,d.parents[j]*16,0,0,0);pp[1]+=displayY;bonePos[bp++]=pp[0];bonePos[bp++]=pp[1];bonePos[bp++]=pp[2];bonePos[bp++]=p[0];bonePos[bp++]=p[1];bonePos[bp++]=p[2]}const px=transformPoint(d.world,o,axisScale,0,0),py=transformPoint(d.world,o,0,axisScale,0),pz=transformPoint(d.world,o,0,0,axisScale);px[1]+=displayY;py[1]+=displayY;pz[1]+=displayY;axisX[ax]=p[0];axisX[ax+1]=p[1];axisX[ax+2]=p[2];axisX[ax+3]=px[0];axisX[ax+4]=px[1];axisX[ax+5]=px[2];axisY[ax]=p[0];axisY[ax+1]=p[1];axisY[ax+2]=p[2];axisY[ax+3]=py[0];axisY[ax+4]=py[1];axisY[ax+5]=py[2];axisZ[ax]=p[0];axisZ[ax+1]=p[1];axisZ[ax+2]=p[2];axisZ[ax+3]=pz[0];axisZ[ax+4]=pz[1];axisZ[ax+5]=pz[2];ax+=6}
  for(const obj of [rigJointPoints,rigBoneLines,rigAxesX,rigAxesY,rigAxesZ])obj.geometry.attributes.position.needsUpdate=true;rigAxesX.visible=rigAxesVisible;rigAxesY.visible=rigAxesVisible;rigAxesZ.visible=rigAxesVisible
 }
 function toggleDebugTopology(){
@@ -2702,7 +2705,7 @@ async function testAxisReferenceFixFromRepo(){
   if(rel.length!==78*9)throw new Error(`Probe-Pose hat ${rel.length} Werte statt ${78*9}.`);
   oracleModeActive=true;oracleProbe=probe;oracleDisplayFrame=Number(probe.source?.frame||0);
   stopPoseAnimation(false);
-  const result=applyAnnyAxis16RetargetPose(currentRestMid,rel,true,false,"v0.6.0 Axis16-Referenz-FK");
+  const result=applyAnnyAxis16RetargetPose(currentRestMid,rel,true,false,"v0.6.1 Axis16-Referenz-FK");
   if(mesh)mesh.visible=true;oracleSetBodyOpacity(.72);
   if(rigGroup)rigGroup.visible=false;rigDebugVisible=false;
   if(oracleOfficialSkeleton)oracleDisposeObject(oracleOfficialSkeleton);
@@ -2712,7 +2715,7 @@ async function testAxisReferenceFixFromRepo(){
   info("#morphFixInfo",`TEST AUS BEREITS VORHANDENER REPO-PROBE
 ${probe.source?.animation||"Animation"} · Frame ${probe.source?.frame??"?"}
 
-v0.6.0 ändert erstmals NICHT die Animation und NICHT Anny-FK selbst, sondern den dazwischenliegenden Referenzvertrag:
+v0.6.1 ändert erstmals NICHT die Animation und NICHT Anny-FK selbst, sondern den dazwischenliegenden Referenzvertrag:
 
 alt (kaputt):
 Axis16/XBot-BONE-ACHSEN wurden direkt auf Anny gesetzt
@@ -3424,7 +3427,7 @@ async function loadMixamoReferenceFile(file){
  const missing=MIXAMO_REQUIRED_BONES.filter(k=>!bones.has(k));
  if(missing.length)throw new Error(`Keine kompatible Mixamo-T-Pose. Fehlende Bones: ${missing.join(", ")}`);
 
- // CRITICAL v0.6.0 FIX:
+ // CRITICAL v0.6.1 FIX:
  // A Mixamo-returned T-pose FBX preserves our original static bind skeleton and
  // stores Mixamo's actual T-pose as ANIMATION CURVES. v0.5.8 incorrectly read
  // the untouched static skeleton as the reference. That makes a T-pose clip
@@ -3486,7 +3489,7 @@ Bones: ${bones.size}/65 ✓ · XBotContract65 / Axis16-Kalibrierung
 Referenzquelle: ANIMIERTE Mixamo-T-Pose (${clip.name||"Clip"}), nicht statische FBX-Bindpose
 T-Pose-Selbsttest: stabil · max ${stabilityDeg.toFixed(3)}° Drift
 Mixamo-T-Pose unterscheidet ${changed} Bones >0,01° von der statischen Bridge · max ${maxChangeDeg.toFixed(1)}° bei ${maxChangeBone||"?"}
-Die statische Axis16-Bridge ist ab v0.6.0 der Bewegungs-Nullpunkt. Der animierte Mixamo-T-Pose-Clip wird nur noch als Kalibrier-/Kompatibilitätsprüfung gespeichert, damit Mixamos eigene Wrist-/Thumb-Pose nicht versehentlich aus jeder Animation herausgerechnet wird.`)
+Die statische Axis16-Bridge ist ab v0.6.1 der Bewegungs-Nullpunkt. Der animierte Mixamo-T-Pose-Clip wird nur noch als Kalibrier-/Kompatibilitätsprüfung gespeichert, damit Mixamos eigene Wrist-/Thumb-Pose nicht versehentlich aus jeder Animation herausgerechnet wird.`)
 }
 function clearMixamoReferenceFile(){
  mixamoReferencePose=null;mixamoReferenceName="";
@@ -3562,7 +3565,7 @@ async function convertMixamoFbxMotion(arrayBuffer,filename="Mixamo FBX"){
 
  const bindQ=new Map(),tmpQ=new THREE.Quaternion();
  for(const [k,b] of bones){
-  // v0.6.0: motion zero is the STATIC Axis16 bridge, not Mixamo's animated
+  // v0.6.1: motion zero is the STATIC Axis16 bridge, not Mixamo's animated
   // "T-Pose" clip. The latter contains deliberate pose offsets (especially
   // wrists/thumbs) and is part of Mixamo's actual animation pose space.
   // Subtracting it erased ~11.6° wrist and up to ~40.2° thumb world offsets.
@@ -3708,9 +3711,9 @@ Frames: ${conv.frames} · Joints/Bones: ${conv.rawJ} → ${poseJointCount} Publi
 ${conv.duration?`Clip: ${conv.clipName||"Mixamo"} · ${conv.duration.toFixed(2)} s · ${conv.animatedBoneCount||"?"} animierte Bones
 `:""}${conv.mixamoSkeletonKind==="mixamo-motion54"?`Mixamo Motion-Skeleton: 54/65 · 11 nicht animierte Terminal-Bones wurden von Mixamo entfernt und werden von Sammy geerbt
 `:""}${conv.referenceUsed?`Referenzdatei: ${conv.referenceName||"geladen"} · Axis16-Vertrag geprüft
-Motion-Zero: STATISCHE Axis16-Bridge (v0.6.0)
+Motion-Zero: STATISCHE Axis16-Bridge (v0.6.1)
 T-Pose-Stabilität: ${Number(conv.referenceStabilityDeg||0).toFixed(3)}° · statischer Bridge-Match Animation↔Referenz: ${Number(conv.staticContractMaxDeg||0).toFixed(3)}°${conv.staticContractBone?` (${conv.staticContractBone})`:""}
-`:""}Playback: ${userAnimFps} fps · Root Translation: ${conv.hasRootTranslation?"vorhanden, v0.6.0 spielt bewusst in-place":"keine"}
+`:""}Playback: ${userAnimFps} fps · Root Translation: ${conv.hasRootTranslation?"vorhanden, v0.6.1 spielt bewusst in-place":"keine"}
 Die Animation läuft durch denselben 78→122 Procedural-Twist/LBS-Pfad wie die eingebaute NVIDIA-Animation.`);
   return true
  }catch(e){
@@ -4016,6 +4019,7 @@ function bootStatus(stage,detail="",cls="warn"){
  clearTimeout(sammyBootHideTimer);
  title.textContent=stage;
  body.textContent=String(detail||"").split("\n")[0];
+ const splashStage=$("#sammySplashStage");if(splashStage)splashStage.textContent=String(detail||stage).split("\n")[0];
  toast.classList.remove("done","error");toast.classList.add("visible");
  if(cls==="bad")toast.classList.add("error");
  if(cls==="ok"){
@@ -4048,7 +4052,7 @@ async function autoStartRuntime(){
   bootStatus("START 7/7","Sammy ist bereit. Kamera wird gesetzt …");
   frame();autoBootDone=true;
   bootStatus("SAMMY BEREIT",`Anny/SOMA Mid · morphbares Sammy · Axis16 intern · ${currentDisplayRest().length/3} Vertices`,"ok");
-  sammyOnRuntimeReady();
+  await sammyOnRuntimeReady();
   testRig().catch(e=>console.warn("Background rig contract check",e));
   restoreOracleProbeFromCache().then(p=>{
    if(!p)return;
@@ -4064,15 +4068,20 @@ async function autoStartRuntime(){
   bootStatus("START FEHLER",`${e?.name||"Fehler"}: ${e?.message||String(e)}
 
 Die App bleibt bedienbar. „Automatik erneut starten“ versucht nur die fehlenden Schritte; persistente Assets werden aus dem iPhone-Cache wiederverwendet.`,"bad");
+  setTimeout(()=>{sammyHideSplash();document.body.classList.add("sammy-ready")},1400);
   return false
  }finally{autoBootRunning=false;$("#retryStartup").disabled=false}
 }
 
 
 /* ================================================================
-   SAMMY v0.6.0 production shell
+   SAMMY v0.6.1 production shell
    ================================================================ */
 let sammyBootHideTimer=0;
+let sammyIntroActive=false,sammyIntroRel=null,sammyIntroFrames=0,sammyIntroFps=30,sammyIntroStart=0,sammyIntroPhase="idle",sammyIntroBlendStart=0,sammyIntroBlendFrom=null,sammyEditPoseRel=null;
+let sammyCameraTween=null;
+let sammySkeletonViewActive=false,sammySkeletonSavedMaterial=null,sammyOriginalIndex=null,sammySkeletonShellIndex=null,sammySkeletonIndexSignature="";
+
 let sammyErrors=[];
 let sammyUiReady=false;
 let sammyPanelResize=null;
@@ -4182,6 +4191,73 @@ async function sammyApplyUserFrame(frame){
  applyAnnyAxis16RetargetPose(currentDisplayRest(),rel,true,false,"Sammy Frame-Auswahl");
  refreshRigDebug();sammySyncAnimationUi()
 }
+
+function sammySetSkeletonBodyView(on){
+ if(!mesh?.material||!geometry)return;
+ if(on===sammySkeletonViewActive)return;
+ sammySkeletonViewActive=on;
+ const mat=mesh.material;
+ if(on){
+  sammySkeletonSavedMaterial={opacity:mat.opacity,transparent:mat.transparent,depthWrite:mat.depthWrite,side:mat.side};
+  mat.transparent=true;mat.opacity=.18;mat.depthWrite=false;mat.side=THREE.FrontSide;mat.needsUpdate=true;
+  sammyApplySkeletonShellIndex()
+ }else{
+  const s=sammySkeletonSavedMaterial;
+  if(s){mat.opacity=s.opacity;mat.transparent=s.transparent;mat.depthWrite=s.depthWrite;mat.side=s.side;mat.needsUpdate=true}
+  sammyRestoreOriginalMeshIndex()
+ }
+}
+function sammyRestoreOriginalMeshIndex(){
+ if(!geometry||!sammyOriginalIndex)return;
+ geometry.setIndex(new THREE.BufferAttribute(sammyOriginalIndex,1))
+}
+function sammyApplySkeletonShellIndex(){
+ if(!geometry?.index||!annyLastCoeffs)return;
+ const current=geometry.index.array,signature=`${geometry.attributes.position.count}:${current.length}`;
+ if(!sammyOriginalIndex||sammySkeletonIndexSignature!==signature){
+  sammyOriginalIndex=new current.constructor(current);
+  sammySkeletonShellIndex=null;sammySkeletonIndexSignature=signature
+ }
+ if(!sammySkeletonShellIndex)sammySkeletonShellIndex=sammyBuildSkeletonShellIndex();
+ if(sammySkeletonShellIndex)geometry.setIndex(new THREE.BufferAttribute(sammySkeletonShellIndex,1))
+}
+function sammyBuildSkeletonShellIndex(){
+ try{
+  const src=sammyOriginalIndex;if(!src)return null;
+  const rest=currentDisplayRest(),rig=reconstructExactAnnyRestRig(annyLastCoeffs);
+  const neck=PUBLIC_JOINT_NAMES.indexOf("Neck"),head=PUBLIC_JOINT_NAMES.indexOf("Head"),top=PUBLIC_JOINT_NAMES.indexOf("HeadTop_End");
+  if(neck<0||head<0||top<0)return new src.constructor(src);
+  const pos=j=>[rig.restWorld[j*16+3],rig.restWorld[j*16+7]+annyGroundOffsetY,rig.restWorld[j*16+11]];
+  const pn=pos(neck),ph=pos(head),pt=pos(top);
+  const hc=[(ph[0]+pt[0])*.5,(ph[1]+pt[1])*.5,(ph[2]+pt[2])*.5];
+  const headLen=Math.max(.12,Math.hypot(pt[0]-pn[0],pt[1]-pn[1],pt[2]-pn[2])),radius=headLen*1.05,kept=[];
+  let removed=0;
+  for(let k=0;k<src.length;k+=3){
+   const ia=src[k],ib=src[k+1],ic=src[k+2],a=ia*3,b=ib*3,c=ic*3;
+   const ax=rest[a],ay=rest[a+1],az=rest[a+2],bx=rest[b],by=rest[b+1],bz=rest[b+2],cx=rest[c],cy=rest[c+1],cz=rest[c+2];
+   const mx=(ax+bx+cx)/3,my=(ay+by+cy)/3,mz=(az+bz+cz)/3,rx=mx-hc[0],ry=my-hc[1],rz=mz-hc[2],dist=Math.hypot(rx,ry,rz);
+   let hide=false;
+   if(dist<radius){
+    const e1x=bx-ax,e1y=by-ay,e1z=bz-az,e2x=cx-ax,e2y=cy-ay,e2z=cz-az;
+    const nx=e1y*e2z-e1z*e2y,ny=e1z*e2x-e1x*e2z,nz=e1x*e2y-e1y*e2x,nl=Math.hypot(nx,ny,nz),rl=Math.max(1e-9,dist);
+    const radialDot=nl>1e-12?(nx*rx+ny*ry+nz*rz)/(nl*rl):1;
+    hide=radialDot<-.18
+   }
+   if(hide)removed++;else kept.push(ia,ib,ic)
+  }
+  const Out=src.constructor,out=new Out(kept.length);out.set(kept);
+  console.info(`Sammy skeleton shell: ${removed} inner-head triangles hidden`);
+  return out
+ }catch(e){
+  console.warn("Skeleton shell filter failed",e);
+  return sammyOriginalIndex?new sammyOriginalIndex.constructor(sammyOriginalIndex):null
+ }
+}
+function sammyToggleSkeleton(){
+ rigDebugUseExpanded=false;disposeRigDebugObjects();toggleRigDebug();
+ sammySetSkeletonBodyView(rigDebugVisible);sammySyncAnimationUi()
+}
+
 function sammySyncAnimationUi(){
  const status=$("#sammyAnimStatus"),range=$("#sammyFrameRange"),num=$("#sammyFrameNumber"),out=$("#sammyFrameOut"),pause=$("#sammyPauseResume");
  if(!status)return;
@@ -4203,6 +4279,7 @@ async function sammyLoadAndPlay(file){
  if(!file)return;
  const status=$("#sammyAnimStatus");
  try{
+  sammyIntroActive=false;sammyIntroPhase="interrupted";
   if(status){status.textContent="Animation wird geladen …";status.className="sammyStatus"}
   const ok=await loadUserAnimationFile(file);if(!ok)throw new Error("Animation konnte nicht geladen werden.");
   if(!morphSammyTargetActive){const morphOk=await activateMorphableSammyTarget();if(!morphOk)throw new Error("Morphbares Sammy konnte nicht aktiviert werden.")}
@@ -4211,7 +4288,7 @@ async function sammyLoadAndPlay(file){
 }
 function sammyRuntimeSnapshot(){
  return {
-  app:"Sammy",version:"0.6.0",time:new Date().toISOString(),
+  app:"Sammy",version:"0.6.1",time:new Date().toISOString(),
   url:location.href,userAgent:navigator.userAgent,
   runtime:{
    autoBootDone,shapePass,shapeEngine,displayLOD,annyPackLoaded,annyMidLoaded,
@@ -4264,9 +4341,76 @@ function sammyInstallErrorCapture(){
  },true);
  window.addEventListener("unhandledrejection",e=>sammyReportError(e.reason instanceof Error?e.reason:new Error(String(e.reason)),{source:"unhandledrejection"}))
 }
-function sammyOnRuntimeReady(){
+
+function sammyCameraTargets(mode="edit"){
+ if(!geometry)return null;geometry.computeBoundingBox();const b=geometry.boundingBox,c=new THREE.Vector3(),s=new THREE.Vector3();b.getCenter(c);b.getSize(s);
+ if(mode==="greeting"){
+  const target=new THREE.Vector3(c.x,b.min.y+s.y*.69,c.z),pos=new THREE.Vector3(c.x,target.y+s.y*.035,c.z+Math.max(.9,s.y*.72));
+  return {target,pos}
+ }
+ const target=new THREE.Vector3(c.x,b.min.y+s.y*.51,c.z),pos=new THREE.Vector3(c.x,target.y+s.y*.02,c.z+Math.max(1.6,s.y*1.18));
+ return {target,pos}
+}
+function sammyCameraTo(mode="edit",duration=850,instant=false){
+ const t=sammyCameraTargets(mode);if(!t)return;
+ if(instant){cam.position.copy(t.pos);orbit.target.copy(t.target);orbit.update();sammyCameraTween=null;return}
+ sammyCameraTween={start:performance.now(),duration,p0:cam.position.clone(),p1:t.pos.clone(),t0:orbit.target.clone(),t1:t.target.clone()}
+}
+function sammyUpdateCameraTween(now){
+ const tw=sammyCameraTween;if(!tw)return;let t=Math.min(1,(now-tw.start)/tw.duration);t=t*t*(3-2*t);
+ cam.position.lerpVectors(tw.p0,tw.p1,t);orbit.target.lerpVectors(tw.t0,tw.t1,t);if(t>=1)sammyCameraTween=null
+}
+function sammyBlendRelativePose(a,b,t,out){
+ const J=poseJointCount,q0=new THREE.Quaternion(),q1=new THREE.Quaternion(),q=new THREE.Quaternion();
+ for(let j=0;j<J;j++){const o=j*9;rowMat3ToQuat(a,o,q0);rowMat3ToQuat(b,o,q1);q.copy(q0).slerp(q1,t).normalize();quatToRowMat3(q,out,o)}
+ return out
+}
+async function sammyLoadGreeting(){
+ const res=await fetch("./standing-greeting.fbx?v=0.6.1",{cache:"force-cache"});
+ if(!res.ok)throw new Error(`Standing Greeting konnte nicht geladen werden: HTTP ${res.status}`);
+ const conv=await convertMixamoFbxMotion(await res.arrayBuffer(),"Standing Greeting.fbx");
+ sammyIntroRel=conv.data;sammyIntroFrames=conv.frames;sammyIntroFps=conv.fps||30;
+ if(!sammyIntroFrames)throw new Error("Standing Greeting enthält keine Frames.");
+ sammyEditPoseRel=new Float32Array(sammyIntroRel.subarray(0,poseJointCount*9));
+ return true
+}
+function sammyStartGreeting(){
+ if(!sammyIntroRel||!sammyIntroFrames)return sammyFinishIntro();
+ stopPoseAnimation(false);sammyIntroActive=true;sammyIntroPhase="clip";sammyIntroStart=performance.now();sammyCameraTo("greeting",0,true)
+}
+function sammyUpdateIntro(now){
+ if(!sammyIntroActive||!sammyIntroRel)return;
+ if(sammyIntroPhase==="clip"){
+  const raw=(now-sammyIntroStart)/1000*sammyIntroFps,f0=Math.min(sammyIntroFrames-1,Math.floor(raw)),f1=Math.min(sammyIntroFrames-1,f0+1),t=Math.min(1,raw-f0);
+  const a=sammyIntroRel.subarray(f0*poseJointCount*9,(f0+1)*poseJointCount*9),b=sammyIntroRel.subarray(f1*poseJointCount*9,(f1+1)*poseJointCount*9);
+  const blended=new Float32Array(poseJointCount*9);sammyBlendRelativePose(a,b,t,blended);applyAnnyAxis16RetargetPose(currentDisplayRest(),blended,false,false,"Sammy Begrüßung");
+  if(raw>=sammyIntroFrames-1){sammyIntroPhase="blend";sammyIntroBlendStart=now;sammyIntroBlendFrom=new Float32Array(blended)}
+ }else if(sammyIntroPhase==="blend"){
+  let t=Math.min(1,(now-sammyIntroBlendStart)/700);t=t*t*(3-2*t);
+  const blended=new Float32Array(poseJointCount*9);sammyBlendRelativePose(sammyIntroBlendFrom,sammyEditPoseRel,t,blended);applyAnnyAxis16RetargetPose(currentDisplayRest(),blended,false,false,"Sammy → Bearbeitungsposition");
+  if(t>=1)sammyFinishIntro()
+ }
+}
+function sammyFinishIntro(){
+ sammyIntroActive=false;sammyIntroPhase="done";
+ if(sammyEditPoseRel)applyAnnyAxis16RetargetPose(currentDisplayRest(),sammyEditPoseRel,false,false,"Sammy Bearbeitungsposition");
+ sammyCameraTo("edit",900,false);
  const input=$("#sammyAnimFile");if(input)input.disabled=false;
- sammyMountShapeControls();sammySyncAnimationUi()
+ document.body.classList.add("sammy-ready");sammySyncAnimationUi()
+}
+function sammyHideSplash(){$("#sammySplash")?.classList.add("gone")}
+async function sammyPrepareIntro(){
+ try{
+  bootStatus("BEGRÜSSUNG","Standing Greeting wird vorbereitet …","warn");await sammyLoadGreeting();
+  const s=$("#sammySplashStage");if(s)s.textContent="Sammy ist bereit.";
+  sammyCameraTo("greeting",0,true);sammyHideSplash();setTimeout(()=>sammyStartGreeting(),280)
+ }catch(e){sammyReportError(e,{source:"Start-Begrüßung"});sammyHideSplash();sammyFinishIntro()}
+}
+
+async function sammyOnRuntimeReady(){
+ sammyMountShapeControls();sammySyncAnimationUi();
+ const input=$("#sammyAnimFile");if(input)input.disabled=true;
+ await sammyPrepareIntro()
 }
 function sammyInitUi(){
  if(sammyUiReady)return;sammyUiReady=true;
@@ -4289,9 +4433,7 @@ function sammyInitUi(){
   else startPoseAnimation("user",userAnimCurrentFrame||0);
   sammySyncAnimationUi()
  };
- $("#sammySkeleton").onclick=()=>{
-  rigDebugUseExpanded=false;disposeRigDebugObjects();toggleRigDebug();sammySyncAnimationUi()
- };
+ $("#sammySkeleton").onclick=()=>sammyToggleSkeleton();
  let frameRaf=0;
  const frameHandler=e=>{
   const f=Number(e.target.value)||0;
@@ -4383,11 +4525,11 @@ function updateDecision(){
   const expanded=currentRigMode==="current-expanded";
   if(expanded&&shapeEngine==="anny"&&annyPackLoaded){
    setState("#decision","ANNY → SOMA → 122 LBS AKTIV","ok");
-   info("#decisionInfo",`✓ v0.6.0: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
+   info("#decisionInfo",`✓ v0.6.1: Anny ersetzt nur die Identity-/Rest-Shape-Quelle. Das gerenderte Low-LOD bleibt kanonische SOMA-Topologie und läuft danach durch denselben bereits getesteten shape-adaptiven 122-Joint-LBS-Pfad.
 
 Aktuell im Browser steuerbar: ALLE nativen Anny-Phänotypen (Gender, Age, Height, Weight, Muscle, Proportions, Cupsize, Firmness sowie die drei Legacy-Phenotype-Anteile) plus sämtliche lokalen Anny-Changes aus dem offiziellen Asset. Male/Female bleiben als schnelle Presets; der native Gender-Blend ist im Advanced-Bereich ebenfalls sichtbar.
 
-Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.6.0 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
+Der entscheidende Test ist jetzt visuell: einzelne Parameter und lokale Changes isoliert bewegen, Low↔Mid vergleichen und anschließend dieselben Posen/Animationen benutzen. Mid nutzt echte 18.056 SOMA-Vertices plus die v0.6.1 18k×122-Skinweights. Wenn Shape + Rebind + Pose stabil bleiben, ist die Architektur Anny-Identity → SOMA-Rig bestätigt.
 
 Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zentimetermaße. Das ist erst der nächste, separate Measurement-Fit.`);
   }else if(expanded&&shapeAnalysis.ready){
@@ -4403,6 +4545,6 @@ Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zen
  else if(shapePass)setState("#decision","SHAPE BESTANDEN","ok")
 }
 
-// Sammy v0.6.0: minimal production shell + automatic runtime.
+// Sammy v0.6.1: minimal production shell + automatic runtime.
 sammyInitUi();
 setTimeout(()=>autoStartRuntime(),0);

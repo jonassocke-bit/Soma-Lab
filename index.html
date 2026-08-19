@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.6.0</title>
-<link rel="stylesheet" href="style.css?v=0.6.0">
+<title>Sammy v0.6.1</title>
+<link rel="stylesheet" href="style.css?v=0.6.1">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -16,7 +16,17 @@
 <body>
 <div id="viewport"></div>
 
-<div id="sammyVersion">Sammy · v0.6.0</div>
+
+<div id="sammySplash" class="sammySplash">
+ <div class="sammySplashInner">
+  <div class="sammySplashMark">S</div>
+  <h1>Sammy</h1>
+  <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
+  <div class="sammySplashLine"><i></i></div>
+ </div>
+</div>
+
+<div id="sammyVersion">Sammy · v0.6.1</div>
 
 <div id="sammyBootToast" class="sammyBootToast visible" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -88,7 +98,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.6.0</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.6.1</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -143,14 +153,14 @@
    <div class="info">Alle offiziellen lokalen Anny-Changes werden dynamisch aus dem Pack gelesen, nach den MakeHuman/Anny-Asset-Kategorien gruppiert und mit ihrem Roh-Namen angezeigt. Werte laufen nativ von −1 bis +1.</div>
    <div id="annyLocalGroups"></div>
   </details>
-  <div id="annyInfo" class="info">v0.6.0 nutzt das exakte shape-abhängige Anny/SOMA-Rest-Rig: Bone-Heads, cached-Procrustes-Orientierungen, ChildOffset-Refinement, local-ref-Referenzorientierungen und Anny-Skinweights. Damit morpht jetzt nicht nur die Oberfläche, sondern auch das tatsächliche Rig.</div>
+  <div id="annyInfo" class="info">v0.6.1 nutzt das exakte shape-abhängige Anny/SOMA-Rest-Rig: Bone-Heads, cached-Procrustes-Orientierungen, ChildOffset-Refinement, local-ref-Referenzorientierungen und Anny-Skinweights. Damit morpht jetzt nicht nur die Oberfläche, sondern auch das tatsächliche Rig.</div>
   <div id="annyLiveInfo" class="info">Noch nicht aktiv.</div>
   <a class="setupLink" href="anny-pack-setup.html">Einmalige Engine-v3 Shape+Rig-Pack-Erstellung öffnen</a>
  </section>
  <section id="mixamoBridgeSection">
   <div class="step"><i>3B</i><div><b>Mixamo Bridge · FBX direkt exportieren</b><small>X-Bot 65 · Hand Chain Fix</small></div><em id="mixamoBridgeState">BEREIT</em></div>
   <button id="exportMixamoBridge" class="primary">X-Bot-Mixamo-FBX in echter T-Pose exportieren</button>
-  <div id="mixamoBridgeInfo" class="info">Erzeugt direkt auf dem iPhone ein 65-Bone-X-Bot-kompatibles FBX. Neu in v0.6.0: Der SOMA-Körper wird vor dem Binding per LBS in die offizielle SOMA T-Pose gebracht und auch die Skeleton-Jointpositionen stammen aus dieser T-Pose. Damit bekommt Mixamo nicht mehr die frühere Neutral-/Bindpose mit abweichender Arm-/Hand-Referenz.</div>
+  <div id="mixamoBridgeInfo" class="info">Erzeugt direkt auf dem iPhone ein 65-Bone-X-Bot-kompatibles FBX. Neu in v0.6.1: Der SOMA-Körper wird vor dem Binding per LBS in die offizielle SOMA T-Pose gebracht und auch die Skeleton-Jointpositionen stammen aus dieser T-Pose. Damit bekommt Mixamo nicht mehr die frühere Neutral-/Bindpose mit abweichender Arm-/Hand-Referenz.</div>
  </section>
 
  <section>
@@ -205,11 +215,11 @@
       <button id="animUser" disabled>Import abspielen</button>
      </div>
      <div class="animHead"><b>Mixamo-Referenzpose</b><em id="userAnimRefState" class="ok">FEST EINGEBAUT</em></div>
-     <div id="userAnimRefInfo" class="info">Axis16/XBotContract65 ist ab v0.6.0 fest in Sammy hinterlegt. Du lädst nur noch die Animation. Die App rekonstruiert intern exakt denselben statischen 65-Bone-Vertrag wie beim Sammy→Mixamo-Export und prüft die Animation automatisch dagegen.</div>
+     <div id="userAnimRefInfo" class="info">Axis16/XBotContract65 ist ab v0.6.1 fest in Sammy hinterlegt. Du lädst nur noch die Animation. Die App rekonstruiert intern exakt denselben statischen 65-Bone-Vertrag wie beim Sammy→Mixamo-Export und prüft die Animation automatisch dagegen.</div>
      <label class="fieldLabel">Import-FPS
       <input id="animImportFps" type="number" min="1" max="120" step="1" value="30">
      </label>
-     <div id="userAnimInfo" class="info">Direkt unterstützt: Mixamo-FBX aus unserer Axis16-X-Bot-Bridge, SOMA/NVIDIA Matrix-NPY [Frames,78/94,4,4] sowie SOMA-Konverter-NPZ mit poses [Frames,77/78,3]. Für Mixamo brauchst du ab v0.6.0 nur noch die Animations-FBX; die passende Axis16-Referenzpose ist fest eingebaut. Vollständige 65-Bone- und Mixamos übliche 54-Bone-Motion-Rückexporte werden akzeptiert; reine Terminal-Bones werden rekonstruiert. Danach läuft alles durch den morphbaren Anny/SOMA-Pfad. Root-Translation bleibt vorerst bewusst in-place.</div>
+     <div id="userAnimInfo" class="info">Direkt unterstützt: Mixamo-FBX aus unserer Axis16-X-Bot-Bridge, SOMA/NVIDIA Matrix-NPY [Frames,78/94,4,4] sowie SOMA-Konverter-NPZ mit poses [Frames,77/78,3]. Für Mixamo brauchst du ab v0.6.1 nur noch die Animations-FBX; die passende Axis16-Referenzpose ist fest eingebaut. Vollständige 65-Bone- und Mixamos übliche 54-Bone-Motion-Rückexporte werden akzeptiert; reine Terminal-Bones werden rekonstruiert. Danach läuft alles durch den morphbaren Anny/SOMA-Pfad. Root-Translation bleibt vorerst bewusst in-place.</div>
      <div class="animHead"><b>Mixamo ↔ Sammy 1:1 Vergleich</b><em id="mixamoCompareState" class="warn">AUS</em></div>
      <div class="row">
       <button id="toggleMixamoCompare" type="button">Exakten Axis16-Körper anzeigen</button>
@@ -218,7 +228,7 @@
      <label class="fieldLabel">Vergleichsframe
       <input id="animCompareFrame" type="number" min="0" step="1" value="0">
      </label>
-     <div id="mixamoCompareInfo" class="info">v0.6.0 baut für die Diagnose exakt denselben Axis16-Körper mit denselben 4.505 Vertices, derselben Topologie, denselben Skinweights und demselben 65-Bone-Rig wie beim Upload zu Mixamo. Dieser Referenzkörper wird mit Sammys retargeteter Pose deformiert. Der FBX-Export ist deshalb direkt mit dem heruntergeladenen Mixamo-FBX am selben Frame vergleichbar – ohne Anny-Shape oder andere Körpergeometrie als Störvariable.</div>
+     <div id="mixamoCompareInfo" class="info">v0.6.1 baut für die Diagnose exakt denselben Axis16-Körper mit denselben 4.505 Vertices, derselben Topologie, denselben Skinweights und demselben 65-Bone-Rig wie beim Upload zu Mixamo. Dieser Referenzkörper wird mit Sammys retargeteter Pose deformiert. Der FBX-Export ist deshalb direkt mit dem heruntergeladenen Mixamo-FBX am selben Frame vergleichbar – ohne Anny-Shape oder andere Körpergeometrie als Störvariable.</div>
      <div class="animHead"><b>Mixamo Axis16 → morphbares Sammy-Standardmodell</b><em id="morphSammyState" class="warn">BEREIT</em></div>
      <div class="row">
       <button id="activateMorphSammy" type="button">Morphbares Sammy aktivieren</button>
@@ -227,9 +237,9 @@
      <div class="row">
       <button id="refreshMorphAudit" type="button">Exact-Anny-Rig prüfen</button>
      </div>
-     <div id="morphSammyInfo" class="info">v0.6.0 korrigiert den entscheidenden Basisfehler aus v0.5.23–0.5.27: Axis16/XBot-Bone-Achsen dürfen nicht direkt mit <code>inverse(native Anny bind)</code> kombiniert werden. Die Ziel-T-Pose wird jetzt geometrisch aufgebaut, aber ihre Bone-Achsen stammen weiterhin aus Annys eigenem Rig und werden nur in die Zielrichtung transportiert.</div>
+     <div id="morphSammyInfo" class="info">v0.6.1 korrigiert den entscheidenden Basisfehler aus v0.5.23–0.5.27: Axis16/XBot-Bone-Achsen dürfen nicht direkt mit <code>inverse(native Anny bind)</code> kombiniert werden. Die Ziel-T-Pose wird jetzt geometrisch aufgebaut, aber ihre Bone-Achsen stammen weiterhin aus Annys eigenem Rig und werden nur in die Zielrichtung transportiert.</div>
      <div class="animBox">
-      <div class="animHead"><b>v0.6.0 · EIN-KLICK Bone-Basis-Fix</b><em id="morphFixState" class="warn">BEREIT</em></div>
+      <div class="animHead"><b>v0.6.1 · EIN-KLICK Bone-Basis-Fix</b><em id="morphFixState" class="warn">BEREIT</em></div>
       <button id="testAxisReferenceFix" type="button" class="primary">Bestehenden Frame 458 direkt aus Repo testen</button>
       <div id="morphFixInfo" class="info">Dafür musst du NICHTS neu laden und KEINEN Workflow starten. Die App nimmt die bereits vorhandene <code>pose_probe_input.json</code> aus dem Repo und testet darauf direkt die neue Referenzgeometrie.</div>
      </div>
@@ -253,7 +263,7 @@
 
       <div id="oracleStep3" class="oracleStep">
        <div class="oracleStepHead"><strong>3 · Offizielles Anny-Ergebnis laden</strong><span id="oracleStep3Badge" class="oracleBadge waiting">WARTET</span></div>
-       <div id="oracleStep3Info" class="oracleStepInfo">Ab v0.6.0 überlebt die Probe einen Seiten-Reset. Wenn Probe und Oracle bereits im Repo liegen, brauchst du Animation, Frame und Dateidownload NICHT erneut.</div>
+       <div id="oracleStep3Info" class="oracleStepInfo">Ab v0.6.1 überlebt die Probe einen Seiten-Reset. Wenn Probe und Oracle bereits im Repo liegen, brauchst du Animation, Frame und Dateidownload NICHT erneut.</div>
        <button id="oracleLoadRepoPair" type="button" class="primary">3 · Probe + Oracle direkt aus Repo laden</button>
        <div id="oracleRepoInfo" class="info">Lädt automatisch <code>pose_probe_input.json</code> und <code>pose_probe_oracle.json</code> aus demselben GitHub-Pages-Repo und prüft, ob die Probe-IDs exakt zusammenpassen.</div>
        <div class="row">
@@ -294,7 +304,7 @@
      <button id="toggleAdaptiveRig">Adaptive Rig AUS</button>
      <button id="rebindAdaptiveRig">Rebind neu berechnen</button>
     </div>
-    <div id="adaptiveRigInfo" class="info">LEGACY/A-B-PFAD: Der Current-Rig-Bereich darunter bleibt als SOMA-122-Debugvergleich erhalten. Für „Morphbares Sammy“ nutzt v0.6.0 diesen RBF-/Fixed-Rotation-Pfad bewusst nicht mehr; dort läuft Annys eigenes exaktes SOMA-Rest-Rig.</div>
+    <div id="adaptiveRigInfo" class="info">LEGACY/A-B-PFAD: Der Current-Rig-Bereich darunter bleibt als SOMA-122-Debugvergleich erhalten. Für „Morphbares Sammy“ nutzt v0.6.1 diesen RBF-/Fixed-Rotation-Pfad bewusst nicht mehr; dort läuft Annys eigenes exaktes SOMA-Rest-Rig.</div>
    </div>
 
    <div class="animBox">
@@ -342,9 +352,9 @@
 
  <section>
   <div class="step"><i>8</i><div><b>Entscheidung</b><small>kein „wird schon gehen“</small></div><em id="decision">OFFEN</em></div>
-  <div id="decisionInfo" class="info">v0.6.0 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
+  <div id="decisionInfo" class="info">v0.6.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.6.0"></script>
+<script type="module" src="app.js?v=0.6.1"></script>
 </body>
 </html>
