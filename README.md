@@ -39,3 +39,10 @@ The proven Axis16 -> transported native-Anny basis -> exact Anny FK/LBS path rem
 - Quick screent nur die stärksten Kandidaten, Deep screent alle Kandidaten auf mehr Referenzen/Kombinationen
 - Redundanzkandidaten werden anhand ähnlicher 30-dimensionaler Wirkungssignaturen markiert, aber noch nicht automatisch entfernt
 - getrennter Summary- und FULL-JSON-Export; FULL behält Solver-Rohdaten, Summary bleibt für schnelle Analyse kompakt
+
+## v0.8.2 Calibration Lab R3
+
+- Weiblicher Brustumfang: erster deutlicher lokaler Umfangs-Peak beim Scan von der natürlichen Taille nach oben; Achsel-/Schultermaximum kann nicht mehr gewinnen.
+- Neuer Sammy-Hüftumfang auf exakt derselben höheren Beckenebene wie Hip Breadth; Gesäßumfang bleibt getrennt am Buttock-Maximum.
+- Oberarm-/Bizepsumfang auf engen mittleren Oberarmbereich begrenzt (Schulteransatz und Ellenbogen ausgeschlossen).
+- Calibration Lab R2-Strategie (symmetrische L/R-Logik, Pair-Screening, Deep-only-if-needed) bleibt unverändert.
