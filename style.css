@@ -415,3 +415,13 @@ body.sammy-ready #sammyCameraDebugBtn{opacity:1;transition:opacity .4s ease}
 .sammyMeasureRandomStatus{margin:0 0 10px;padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.035);font-size:8px;line-height:1.35;color:#888b94;font-variant-numeric:tabular-nums}
 .sammyMeasureAutoRule{margin:0 0 9px;padding:8px 9px;border-radius:10px;background:rgba(255,223,114,.08);border:1px solid rgba(255,223,114,.13)}
 .sammyMeasureAutoRule b{display:block;font-size:8.5px;color:#f3e4aa}.sammyMeasureAutoRule small{display:block;margin-top:3px;font-size:7.5px;line-height:1.35;color:#9699a2}
+
+
+/* Sammy v0.8.0 Calibration Lab — scoped to MEAS only */
+.sammyCalibrationLab{margin:0 0 10px;border:1px solid rgba(255,223,114,.16);border-radius:13px;background:rgba(255,223,114,.035);overflow:hidden}
+.sammyCalibrationLab>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;cursor:pointer;list-style:none}.sammyCalibrationLab>summary::-webkit-details-marker{display:none}.sammyCalibrationLab>summary b{font-size:9px;letter-spacing:.07em;color:#f0e1a5}.sammyCalibrationLab>summary span{font-size:7.5px;color:#8f929a}
+.sammyCalibrationBody{padding:0 9px 9px}.sammyCalibrationModes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:6px}.sammyCalibrationModes button,.sammyCalibrationActions button{min-height:31px!important;padding:0 5px!important;border-radius:9px!important;font-size:8px!important}.sammyCalibrationModes button.active,#sammyCalibrationTurbo.active{background:#ececef!important;color:#17181b!important}
+.sammyCalibrationActions{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px}.sammyCalibrationStatus,.sammyCalibrationCurrent{padding:7px 8px;border-radius:9px;background:rgba(255,255,255,.04);font-size:7.8px;line-height:1.4;color:#9c9fa8;font-variant-numeric:tabular-nums}.sammyCalibrationCurrent{margin-top:6px}
+.sammyCalibrationProgress{height:5px;margin:6px 1px;border-radius:5px;background:rgba(255,255,255,.07);overflow:hidden}.sammyCalibrationProgress i{display:block;width:0;height:100%;border-radius:inherit;background:#e9d783;transition:width .12s linear}
+.sammyCalibrationLiveMeasures{display:grid;grid-template-columns:1fr;gap:2px;margin:6px 0;padding:7px 8px;border-radius:9px;background:rgba(0,0,0,.16);font-size:7.5px;color:#888b94}.sammyCalibrationLiveMeasures>b{margin-bottom:2px;color:#dadbe0;font-size:8px}.sammyCalibrationLiveMeasures span{display:flex;justify-content:space-between;gap:7px}.sammyCalibrationLiveMeasures strong{color:#efeff2;font-variant-numeric:tabular-nums}
+.sammyCalibrationExport{width:100%;min-height:32px!important;border-radius:9px!important;font-size:8px!important}

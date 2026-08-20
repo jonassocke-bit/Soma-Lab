@@ -19,3 +19,12 @@ The proven Axis16 -> transported native-Anny basis -> exact Anny FK/LBS path rem
 - separate Natural Waist minimum alongside ANSUR Omphalion waist
 - brighter/clickable measure overlays and optional landmark labels
 - Random Person / Random Extreme restricted to adult age shapes
+
+
+## v0.8.0 Calibration Lab
+- basiert direkt auf der funktionierenden v0.7.3; Startup/Loader/Anny/SOMA/Rig/FORM/ANIM bleiben unverändert
+- Oberarm-Maximum weiter distal; Halsumfang höher; Halsbasis dynamisch am Hals→Trapez-Übergang
+- mehrstufiger Live-Kalibrierungslauf: Referenzen → Einzelslider → Relevanz → Interaktionen → Global Sampling → Validierung
+- Quick / Standard / Deep in derselben App; LIVE ist Standard, Turbo optional
+- Fortschritt/Records werden nach jedem Test in IndexedDB gespeichert und sind fortsetzbar
+- strukturierter `sammy-calibration-lab-v1` JSON-Export mit stabilen Slider-/Maß-IDs, Rohwerten, cm-Maßen, Interaktionsresiduen und Validierungsdaten
