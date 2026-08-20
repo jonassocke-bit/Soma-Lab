@@ -4543,53 +4543,7 @@ function sammyMeasureArmSlice(section,offsetCm=0){
  const x=base[0]+dir*offsetCm/100;return sammyPlaneSliceX(x,base[1],.15,base[2],.18)
 }
 function sammyMeasureApplySpan(baseCm,spanCm){return Math.max(.1,Number(baseCm||0)+Number(spanCm||0))}
-function sammyComputeMeasure(def,sectionCache=null){
- const cal=sammyMeasureResolvedCal(def.id),off=Number(cal.offsetCm)||0,span=Number(cal.spanOffsetCm)||0,box=sammyMeasureBBox();if(!box)return {valueCm:NaN};
- if(def.kind==="stature")return {valueCm:box.height*100,line:{kind:"stature",box}};
- if(def.kind==="shoulder"){
-  const l=sammyMeasureJoint("LeftArm"),r=sammyMeasureJoint("RightArm");if(!l||!r)return {valueCm:NaN};const y=(l[1]+r[1])*.5+off/100,z=(l[2]+r[2])*.5,cx=(l[0]+r[0])*.5,total=sammyMeasureApplySpan(Math.abs(l[0]-r[0])*100,span)/100;
-  return {valueCm:total*100,line:{kind:"segment",a:[cx-total/2,y,z],b:[cx+total/2,y,z]}}
- }
- if(def.kind==="crotchHeight"){const y=sammyMeasureBaseY("crotch")+off/100;return {valueCm:(y-box.minY)*100,line:{kind:"crotch",y,box}}}
- if(def.kind==="torsoHeight"){
-  const l=sammyMeasureJoint("LeftArm"),r=sammyMeasureJoint("RightArm"),top=(l&&r)?(l[1]+r[1])*.5:sammyMeasureBaseY("chest"),bottom=sammyMeasureBaseY("crotch")+off/100,z=box.maxZ+box.depth*.03;return {valueCm:Math.abs(top-bottom)*100,line:{kind:"segment",a:[box.cx,bottom,z],b:[box.cx,top,z]}}
- }
- if(def.kind==="tibialeHeight"){
-  const sh=sammyMeasureJoint("RightShin");if(!sh)return {valueCm:NaN};const y=sh[1]+off/100;return {valueCm:(y-box.minY)*100,line:{kind:"segment",a:[sh[0],box.minY,sh[2]],b:[sh[0],y,sh[2]]}}
- }
- if(def.kind==="upperlegHeight"){
-  const leg=sammyMeasureJoint("RightLeg"),sh=sammyMeasureJoint("RightShin");if(!leg||!sh)return {valueCm:NaN};const y2=sh[1]+off/100;return {valueCm:Math.abs(leg[1]-y2)*100,line:{kind:"segment",a:[leg[0],leg[1],leg[2]],b:[sh[0],y2,sh[2]]}}
- }
- if(def.kind==="jointSegment"){
-  const a=sammyMeasureJoint(def.joints[0]),b=sammyMeasureJoint(def.joints[1]);if(!a||!b)return {valueCm:NaN};const aa=[a[0],a[1]+off/100,a[2]],bb=[b[0],b[1]+off/100,b[2]],val=Math.hypot(bb[0]-aa[0],bb[1]-aa[1],bb[2]-aa[2])*100;return {valueCm:val,line:{kind:"segment",a:aa,b:bb}}
- }
- if(def.kind==="shoulderLength"){
-  const a=sammyMeasureJoint("RightShoulder"),b=sammyMeasureJoint("RightArm");if(!a||!b)return {valueCm:NaN};const aa=[a[0],a[1]+off/100,a[2]],bb=[b[0],b[1]+off/100,b[2]];return {valueCm:Math.hypot(bb[0]-aa[0],bb[1]-aa[1],bb[2]-aa[2])*100,line:{kind:"segment",a:aa,b:bb}}
- }
- if(def.kind==="neckHeight"){
-  const a=sammyMeasureJoint("Neck1"),b=sammyMeasureJoint("Neck2")||sammyMeasureJoint("Head");if(!a||!b)return {valueCm:NaN};const bb=[b[0],b[1]+off/100,b[2]];return {valueCm:Math.abs(bb[1]-a[1])*100,line:{kind:"segment",a,b:bb}}
- }
- if(def.kind==="waistBackLength"||def.kind==="frontChest"){
-  const n=sammyMeasureJoint("Neck1")||sammyMeasureJoint("Chest"),wy=sammyMeasureBaseY("waist")+off/100;if(!n)return {valueCm:NaN};const z=def.kind==="frontChest"?box.maxZ+box.depth*.03:box.minZ-box.depth*.03;return {valueCm:Math.abs(n[1]-wy)*100,line:{kind:"segment",a:[box.cx,wy,z],b:[box.cx,n[1],z]}}
- }
- if(def.kind==="waistToHip"){
-  const wy=sammyMeasureBaseY("waist")+off/100,hy=sammyMeasureBaseY("hip"),z=box.maxZ+box.depth*.03;return {valueCm:Math.abs(wy-hy)*100,line:{kind:"segment",a:[box.cx,hy,z],b:[box.cx,wy,z]}}
- }
- let slice=null;
- if(def.kind==="limbCircX")slice=sammyMeasureArmSlice(def.section,off);
- else{
-  const key=`${def.section}:${off.toFixed(3)}`;slice=sectionCache?.get(key);if(!slice){slice=sammyMeasureSection(def.section,off);if(sectionCache&&slice)sectionCache.set(key,slice)}
- }
- if(!slice)return {valueCm:NaN};
- if(def.kind==="sliceCirc"||def.kind==="limbCircY"||def.kind==="limbCircX")return {valueCm:slice.circ,line:{kind:slice.axis==="X"?"loopX":"loop",slice}};
- if(def.kind==="sliceWidth"){
-  const total=sammyMeasureApplySpan(slice.width,span)/100,c=(slice.minA+slice.maxA)/2;return {valueCm:total*100,line:{kind:"width",slice,minX:c-total/2,maxX:c+total/2}}
- }
- if(def.kind==="sliceDepth"){
-  const total=sammyMeasureApplySpan(slice.depth,span)/100,c=(slice.minB+slice.maxB)/2;return {valueCm:total*100,line:{kind:"depth",slice,minZ:c-total/2,maxZ:c+total/2}}
- }
- return {valueCm:NaN}
-}
+
 function sammyComputeAllMeasures(){
  const out={},sections=new Map();for(const d of SAMMY_MEASURE_DEFS)out[d.id]=sammyComputeMeasure(d,sections);sammyMeasureResultsCache=out;
  const sex=sammyMeasureSexKey();sammyMeasureLastSnapshots[sex]={time:new Date().toISOString(),scope:sammyMeasureScope,values:Object.fromEntries(SAMMY_MEASURE_DEFS.map(d=>[d.id,Number.isFinite(out[d.id].valueCm)?Number(out[d.id].valueCm.toFixed(4)):null]))};return out
@@ -4757,7 +4711,13 @@ function sammyUpdateMeasureOverlay(results){
 }
 function sammyMeasureSetLandmarks(on=!sammyMeasureLandmarksVisible){sammyMeasureLandmarksVisible=!!on;const b=$("#sammyMeasureLandmarks");if(b){b.classList.toggle("active",sammyMeasureLandmarksVisible);b.textContent=sammyMeasureLandmarksVisible?"Landmarks AN":"Landmarks AUS"}sammyMeasureRefresh(false)}
 function sammyMeasureSyncLocalUiV3(){
- sammyMeasureSyncLocalUiV3()
+ setAnnyUiFromParams();
+ document.querySelectorAll("#annyLocalGroups .annySlider").forEach(row=>{
+  const raw=row.querySelector("label small")?.textContent||"";
+  if(!raw||!(raw in annyLocalValues))return;
+  const input=row.querySelector("input"),out=row.querySelector("output"),v=Number(annyLocalValues[raw])||0;
+  if(input)input.value=String(v);if(out)out.value=v.toFixed(2)
+ })
 }
 function sammyMeasureRandomLocalV3(extreme=false){
  if(!annyMeta?.local_change_labels)return;for(const k of Object.keys(annyLocalValues))annyLocalValues[k]=0;const cats=new Set(["torso","breast","stomach","buttocks","arms","legs","neck"]),pool=annyMeta.local_change_labels.filter(k=>cats.has(annyMeta.local_change_categories[k]));for(let n=0;n<(extreme?10:4)&&pool.length;n++){const i=Math.floor(Math.random()*pool.length),k=pool.splice(i,1)[0],amp=extreme?.85:.32;annyLocalValues[k]=(Math.random()*2-1)*amp}
@@ -4769,20 +4729,8 @@ function sammyMeasureRandomize(extreme=false){
 }
 function sammyClearMeasureOverlay(){if(!sammyMeasureOverlayGroup)return;scene.remove(sammyMeasureOverlayGroup);sammyMeasureOverlayGroup.traverse(o=>{o.geometry?.dispose?.();if(o.material?.map)o.material.map.dispose?.();o.material?.dispose?.()});sammyMeasureOverlayGroup=null}
 function sammyAddMeasureLine(points,selected=false,closed=false){if(!points?.length)return;const arr=new Float32Array(points.length*3);for(let i=0;i<points.length;i++){arr[i*3]=points[i][0];arr[i*3+1]=points[i][1];arr[i*3+2]=points[i][2]}const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(arr,3));const mat=new THREE.LineBasicMaterial({color:selected?0xffdf72:0xb9bcc5,transparent:true,opacity:selected?.98:.38,depthTest:false,depthWrite:false});const line=closed?new THREE.LineLoop(g,mat):new THREE.Line(g,mat);line.renderOrder=40;sammyMeasureOverlayGroup.add(line)}
-function sammyMeasureLinePoints(result){
- const line=result?.line;if(!line)return null;
- if(line.kind==="loop")return {points:line.slice.hull.map(q=>[q[0],line.slice.plane,q[1]]),closed:true};
- if(line.kind==="loopX")return {points:line.slice.hull.map(q=>[line.slice.plane,q[0],q[1]]),closed:true};
- if(line.kind==="width"){const s=line.slice,z=(s.minB+s.maxB)/2;return {points:[[line.minX,s.plane,z],[line.maxX,s.plane,z]],closed:false}}
- if(line.kind==="depth"){const s=line.slice,x=(s.minA+s.maxA)/2;return {points:[[x,s.plane,line.minZ],[x,s.plane,line.maxZ]],closed:false}}
- if(line.kind==="segment")return {points:[line.a,line.b],closed:false};
- if(line.kind==="stature"){const b=line.box,x=b.minX-b.width*.06,z=b.maxZ+b.depth*.025;return {points:[[x,b.minY,z],[x,b.maxY,z]],closed:false}}
- if(line.kind==="crotch"){const b=line.box,z=b.maxZ+b.depth*.025;return {points:[[b.cx,b.minY,z],[b.cx,line.y,z]],closed:false}}return null
-}
-function sammyUpdateMeasureOverlay(results){
- sammyClearMeasureOverlay();if(!sammyMeasureSession||sammyMeasureOverlayMode==="none")return;sammyMeasureOverlayGroup=new THREE.Group();sammyMeasureOverlayGroup.name="SammyMeasurementOverlay";scene.add(sammyMeasureOverlayGroup);
- const defs=sammyMeasureOverlayMode==="all"?SAMMY_MEASURE_DEFS:SAMMY_MEASURE_DEFS.filter(d=>d.id===sammyMeasureSelected);for(const d of defs){const lp=sammyMeasureLinePoints(results[d.id]);if(lp)sammyAddMeasureLine(lp.points,d.id===sammyMeasureSelected,lp.closed)}
-}
+
+
 function sammyMeasureFormat(v){return Number.isFinite(v)?`${v.toFixed(1)} cm`:"—"}
 function sammyMeasureStateBadge(id){
  if(sammyMeasureScope==="common")return sammyMeasureCommonCal(id).status||"ungeprüft";
