@@ -215,7 +215,7 @@ let shapeEngine="soma-pca";
 let annyLowPack=null,annyMidPack=null,annyPackLoaded=false,annyMidLoaded=false,annyMeta=null,annyLastMs=0,annyLastCoeffs=null,annyExactRigCache=null,annyRigParity=null,annyAxis16PublicReference3=null,annyAxis16ReferenceRigCache=null;
 let annyGroundOffsetY=0;
 let autoBootRunning=false,autoBootDone=false;
-let annyParams={gender:0,age:2/3,muscle:.5,weight:.5,height:.5,proportions:.5,cupsize:.5,firmness:.5,african:.5,asian:.5,caucasian:.5};
+let annyParams={gender:0,age:.70,muscle:.5,weight:.5,height:.5,proportions:.5,cupsize:.5,firmness:.5,african:.5,asian:.5,caucasian:.5};
 let annyLocalValues={};
 
 // Browser-LBS state. The currently cached Hugging-Face SOMA_neutral.npz is the
@@ -1880,9 +1880,18 @@ function makeAnnySlider(label,key,min,max,step,value,onInput,raw=""){
  const row=document.createElement("div");row.className="slider annySlider";row.dataset.search=(label+" "+raw).toLowerCase();row.innerHTML=`<label>${label}${raw?`<small>${raw}</small>`:""}</label><input type="range" min="${min}" max="${max}" step="${step}" value="${value}"><output>${Number(value).toFixed(2)}</output>`;
  const r=row.querySelector("input"),o=row.querySelector("output");r.oninput=()=>{o.value=Number(r.value).toFixed(2);onInput(Number(r.value))};return row
 }
+const SAMMY_ADULT_SHAPE_AGE_MIN=.70,SAMMY_ADULT_SHAPE_AGE_MAX=1.00,SAMMY_ADULT_MAX_YEARS=70;
+function sammyAdultMinYears(gender=annyParams?.gender??0){const g=Math.max(0,Math.min(1,Number(gender)||0));return 19+(16-19)*g}
+function sammyShapeAgeToYears(shapeAge=annyParams?.age??SAMMY_ADULT_SHAPE_AGE_MIN,gender=annyParams?.gender??0){const lo=sammyAdultMinYears(gender),t=Math.max(0,Math.min(1,(Number(shapeAge)-SAMMY_ADULT_SHAPE_AGE_MIN)/(SAMMY_ADULT_SHAPE_AGE_MAX-SAMMY_ADULT_SHAPE_AGE_MIN)));return lo+(SAMMY_ADULT_MAX_YEARS-lo)*t}
+function sammyClampAdultShapeAge(v){return Math.max(SAMMY_ADULT_SHAPE_AGE_MIN,Math.min(SAMMY_ADULT_SHAPE_AGE_MAX,Number(v)||SAMMY_ADULT_SHAPE_AGE_MIN))}
+function makeAnnyAgeSlider(){
+ const row=document.createElement("div");row.className="slider annySlider";row.dataset.search="anny alter age erwachsen";const v=sammyClampAdultShapeAge(annyParams.age);row.innerHTML=`<label>Anny Alter<small>Erwachsenenbereich · Form-Morph 0.70–1.00</small></label><input type="range" min="${SAMMY_ADULT_SHAPE_AGE_MIN}" max="${SAMMY_ADULT_SHAPE_AGE_MAX}" step="0.005" value="${v}"><output>${Math.round(sammyShapeAgeToYears(v))} J.</output>`;
+ const r=row.querySelector("input"),o=row.querySelector("output");r.oninput=()=>{annyParams.age=sammyClampAdultShapeAge(r.value);o.value=`${Math.round(sammyShapeAgeToYears(annyParams.age))} J.`;applyAnnyParams()};return row
+}
 function buildAnnyControls(){
  if(!annyMeta)return;const core=$("#annyCoreControls"),adv=$("#annyAdvancedPhenotypes"),groups=$("#annyLocalGroups");core.innerHTML="";adv.innerHTML="";groups.innerHTML="";
- const coreDefs=[["Age","age",annyMeta.anchors.age[0],annyMeta.anchors.age.at(-1),.01],["Height","height",0,1,.01],["Weight","weight",0,1,.01],["Muscle","muscle",0,1,.01],["Proportions","proportions",0,1,.01],["Cupsize","cupsize",0,1,.01],["Firmness","firmness",0,1,.01]];
+ core.appendChild(makeAnnyAgeSlider());
+ const coreDefs=[["Height","height",0,1,.01],["Weight","weight",0,1,.01],["Muscle","muscle",0,1,.01],["Proportions","proportions",0,1,.01],["Cupsize","cupsize",0,1,.01],["Firmness","firmness",0,1,.01]];
  for(const [label,key,min,max,step] of coreDefs)core.appendChild(makeAnnySlider(`Anny ${label}`,key,min,max,step,annyParams[key],v=>{annyParams[key]=v;applyAnnyParams()}));
  adv.appendChild(makeAnnySlider("Native Gender Blend","gender",0,1,.01,annyParams.gender,v=>{annyParams.gender=v;applyAnnyParams()},"0 = male · 1 = female"));
  for(const key of ["african","asian","caucasian"])adv.appendChild(makeAnnySlider(`Phenotype ${key[0].toUpperCase()+key.slice(1)}`,key,0,1,.01,annyParams[key],v=>{annyParams[key]=v;applyAnnyParams()},"artist-authored legacy phenotype"));
@@ -1895,11 +1904,11 @@ function buildAnnyControls(){
 function filterAnnyLocalControls(){const q=$("#annySearch").value.trim().toLowerCase();document.querySelectorAll("#annyLocalGroups .annySlider").forEach(r=>r.hidden=!!q&&!r.dataset.search.includes(q));document.querySelectorAll("#annyLocalGroups .annyLocalCategory").forEach(d=>{const shown=[...d.querySelectorAll(".annySlider")].some(r=>!r.hidden);d.hidden=!shown;if(q&&shown)d.open=true})}
 function setAnnyUiFromParams(){
  $("#annyMale").classList.toggle("selected",annyParams.gender<=.001);$("#annyFemale").classList.toggle("selected",annyParams.gender>=.999);
- const keys=["age","height","weight","muscle","proportions","cupsize","firmness","gender","african","asian","caucasian"];
- document.querySelectorAll("#annyCoreControls .annySlider,#annyAdvancedPhenotypes .annySlider").forEach(row=>{const raw=row.querySelector("label small")?.textContent||"",label=row.querySelector("label")?.childNodes[0]?.textContent||"";let key=keys.find(k=>label.toLowerCase().includes(k));if(label.includes("Gender"))key="gender";if(key&&key in annyParams){row.querySelector("input").value=annyParams[key];row.querySelector("output").value=Number(annyParams[key]).toFixed(2)}})
+ const keys=["height","weight","muscle","proportions","cupsize","firmness","gender","african","asian","caucasian"];
+ document.querySelectorAll("#annyCoreControls .annySlider,#annyAdvancedPhenotypes .annySlider").forEach(row=>{const raw=row.querySelector("label small")?.textContent||"",label=row.querySelector("label")?.childNodes[0]?.textContent||"";if(label.includes("Alter")){const input=row.querySelector("input"),out=row.querySelector("output");if(input)input.value=sammyClampAdultShapeAge(annyParams.age);if(out)out.value=`${Math.round(sammyShapeAgeToYears(annyParams.age))} J.`;return}let key=keys.find(k=>label.toLowerCase().includes(k));if(label.includes("Gender"))key="gender";if(key&&key in annyParams){row.querySelector("input").value=annyParams[key];row.querySelector("output").value=Number(annyParams[key]).toFixed(2)}})
 }
 function resetAnnyLocal(){for(const k of Object.keys(annyLocalValues))annyLocalValues[k]=0;document.querySelectorAll("#annyLocalGroups input").forEach(r=>{r.value=0;r.closest(".slider").querySelector("output").value="0.00"});applyAnnyParams()}
-function resetAnnyPreset(gender){annyParams={gender,age:2/3,muscle:.5,weight:.5,height:.5,proportions:.5,cupsize:.5,firmness:.5,african:.5,asian:.5,caucasian:.5};resetAnnyLocal();setAnnyUiFromParams()}
+function resetAnnyPreset(gender){annyParams={gender,age:SAMMY_ADULT_SHAPE_AGE_MIN,muscle:.5,weight:.5,height:.5,proportions:.5,cupsize:.5,firmness:.5,african:.5,asian:.5,caucasian:.5};resetAnnyLocal();setAnnyUiFromParams()}
 function setShapeEngine(engine){
  if(engine==="anny"&&!annyPackLoaded){info("#annyInfo","Anny Low-Pack zuerst laden.");return}
  if(engine==="soma-pca"&&displayLOD==="mid")displayLOD="low";shapeEngine=engine;updateLodButtons();
@@ -1907,8 +1916,8 @@ function setShapeEngine(engine){
  if(engine==="anny"){shapeAnalysis.ready=false;shapeAnalysis.stale=true;$("#startShapeAnalysis").disabled=true;setState("#pcaState","A/B REFERENZ","warn");setState("#annyState","ANNY AKTIV","ok")}else{setState("#pcaState","AKTIV","ok");setState("#annyState",annyPackLoaded?"PACK OK":"BEREIT",annyPackLoaded?"ok":"");$("#startShapeAnalysis").disabled=!(currentRigMode==="current-expanded")}
  updateShape();updateDecision();return true
 }
-function applyAnnyParams(){if(shapeEngine!=="anny")setShapeEngine("anny");else updateShape();setAnnyUiFromParams();
- try{const m=measureCurrentRestShape();info("#annyLiveInfo",`Anny exakt · Gender ${annyParams.gender.toFixed(2)} · Age ${annyParams.age.toFixed(2)} · H ${annyParams.height.toFixed(2)} · W ${annyParams.weight.toFixed(2)} · Muscle ${annyParams.muscle.toFixed(2)} · Proportions ${annyParams.proportions.toFixed(2)} · Cup ${annyParams.cupsize.toFixed(2)}\nAktive lokale Changes: ${Object.values(annyLocalValues).filter(v=>Math.abs(v)>1e-6).length} · Rekonstruktion ${annyLastMs.toFixed(1)} ms · Display ${displayLOD.toUpperCase()}\nMess-Proxies: Höhe ${m.height.toFixed(1)} cm · Brust ${m.chestCirc.toFixed(1)} · Taille ${m.waistCirc.toFixed(1)} · Hüfte ${m.hipCirc.toFixed(1)} cm`)}catch(e){info("#annyLiveInfo",`Anny exakt · ${displayLOD.toUpperCase()} · ${annyLastMs.toFixed(1)} ms`)}
+function applyAnnyParams(){annyParams.age=sammyClampAdultShapeAge(annyParams.age);if(shapeEngine!=="anny")setShapeEngine("anny");else updateShape();setAnnyUiFromParams();
+ try{const m=measureCurrentRestShape();info("#annyLiveInfo",`Anny exakt · Gender ${annyParams.gender.toFixed(2)} · Alter ${Math.round(sammyShapeAgeToYears())} J. (${annyParams.age.toFixed(3)}) · H ${annyParams.height.toFixed(2)} · W ${annyParams.weight.toFixed(2)} · Muscle ${annyParams.muscle.toFixed(2)} · Proportions ${annyParams.proportions.toFixed(2)} · Cup ${annyParams.cupsize.toFixed(2)}\nAktive lokale Changes: ${Object.values(annyLocalValues).filter(v=>Math.abs(v)>1e-6).length} · Rekonstruktion ${annyLastMs.toFixed(1)} ms · Display ${displayLOD.toUpperCase()}\nMess-Proxies: Höhe ${m.height.toFixed(1)} cm · Brust ${m.chestCirc.toFixed(1)} · Taille ${m.waistCirc.toFixed(1)} · Hüfte ${m.hipCirc.toFixed(1)} cm`)}catch(e){info("#annyLiveInfo",`Anny exakt · ${displayLOD.toUpperCase()} · ${annyLastMs.toFixed(1)} ms`)}
 }
 function updateLodButtons(){$("#lodLow").classList.toggle("selected",displayLOD==="low");$("#lodMid").classList.toggle("selected",displayLOD==="mid");$("#lodBadge").textContent=displayLOD==="mid"?"18.056 V":"4.505 V"}
 async function setDisplayLOD(lod){
@@ -4128,6 +4137,9 @@ const SAMMY_MEASURE_DEFS=[
  {id:"waist_depth",label:"Taillentiefe",ansur:"waistdepth",kind:"sliceDepth",section:"waist",adjustable:true,range:14,spanAdjust:true,spanRange:18,spanLabel:"Tiefenkorrektur gesamt",group:"Rumpf",
   ansurInfo:"Waist Depth: anteroposteriore Tiefe des Rumpfes auf standardisierter Taillenhöhe.",
   implementation:"Z-Tiefe des Taillenschnitts; optional symmetrisch korrigierbar."},
+ {id:"natural_waist_circumference",label:"Taille · Minimum",ansur:"Sammy natural waist",kind:"sliceCirc",section:"naturalWaist",adjustable:false,range:0,group:"Rumpf",internal:true,autoSearch:"min",
+  ansurInfo:"Sammy-Zusatzmaß, getrennt von ANSUR Waist Circumference (Omphalion): kleinster horizontaler Rumpfumfang innerhalb der natürlichen Taillenzone.",
+  implementation:"Automatische Minimum-Suche im Rumpfbereich zwischen Omphalion und unterem Brustkorb; ANSUR-Omphalion bleibt als eigenes Nabelmaß unverändert."},
  {id:"buttock_circumference",label:"Gesäß-/Hüftumfang",ansur:"buttockcircumference",kind:"sliceCirc",section:"hip",adjustable:true,range:16,group:"Becken",
   ansurInfo:"Buttock Circumference: horizontaler Umfang auf Höhe der maximalen hinteren Gesäßausladung.",
   implementation:"Planarer Hüftschnitt; die konvexe Hülle überspannt Gesäßfurche und andere enge Konkavitäten."},
@@ -4189,7 +4201,7 @@ const SAMMY_MEASURE_DEFS=[
   ansurInfo:"Kein direktes ANSUR-II-Ziel; im früheren Body Lab als zusätzlicher Harness-relevanter Kontrollwert geführt.",
   implementation:"Vertikale Distanz zwischen kalibrierter Taillen- und Hüftebene."}
  ];
-// v0.7.2 semantic measurement layer. Existing v2 calibration stays preserved as
+// v0.7.3 semantic measurement layer. Existing v2 calibration stays preserved as
 // the human-reviewed seed, while these flags define which values are now found
 // automatically on the current mesh instead of by a fixed slice position.
 for(const id of ["calf_circumference","ankle_circumference","upperarm_circumference"]){
@@ -4201,14 +4213,18 @@ for(const id of ["calf_circumference","ankle_circumference","upperarm_circumfere
  const i=SAMMY_MEASURE_DEFS.findIndex(x=>x.id==="upperarm_circumference");
  SAMMY_MEASURE_DEFS.splice(i+1,0,{id:"forearm_circumference",label:"Unterarmumfang · Maximum",ansur:"Sammy geometric maximum",kind:"limbCircPlane",section:"forearm",adjustable:false,range:0,group:"Arme",internal:true,autoSearch:"max",ansurInfo:"Sammy-internes Formmaß: größter Querschnitt des rechten Unterarms in T-Pose. Nicht mit einem posegebundenen ANSUR-Flexed-Maß gleichsetzen.",implementation:"Automatische Maximum-Suche entlang des rechten Unterarmsegments; Messebene senkrecht zur lokalen Unterarmachse."})
 }
-for(const id of ["torso_height","upperleg_height"]){const d=SAMMY_MEASURE_DEFS.find(x=>x.id===id);if(d){d.adjustable=false;d.range=0;d.implementation+=(id==="torso_height"?" v0.7.2: gemeinsam aus Acromion-/Schulterreferenz und Crotch-Landmark abgeleitet; kein separater Crotch-Offset.":" v0.7.2: aus Trochanter-/Beinproxy und demselben Tibiale-Landmark abgeleitet.")}}
-for(const [id,src] of [["chest_breadth","chest_circumference"],["chest_depth","chest_circumference"],["waist_breadth","waist_circumference"],["waist_depth","waist_circumference"]]){const d=SAMMY_MEASURE_DEFS.find(x=>x.id===id);if(d){d.anchorSource=src;d.adjustable=false;d.implementation+=` v0.7.2: Messebene wird gemeinsam von ${src} geführt.`}}
+for(const id of ["torso_height","upperleg_height"]){const d=SAMMY_MEASURE_DEFS.find(x=>x.id===id);if(d){d.adjustable=false;d.range=0;d.implementation+=(id==="torso_height"?" v0.7.3: gemeinsam aus Acromion-/Schulterreferenz und Crotch-Landmark abgeleitet; kein separater Crotch-Offset.":" v0.7.3: aus Trochanter-/Beinproxy und demselben Tibiale-Landmark abgeleitet.")}}
+for(const [id,src] of [["chest_breadth","chest_circumference"],["chest_depth","chest_circumference"],["waist_breadth","waist_circumference"],["waist_depth","waist_circumference"]]){const d=SAMMY_MEASURE_DEFS.find(x=>x.id===id);if(d){d.anchorSource=src;d.adjustable=false;d.implementation+=` v0.7.3: Messebene wird gemeinsam von ${src} geführt.`}}
 for(const id of ["buttock_circumference","hip_breadth"]){const d=SAMMY_MEASURE_DEFS.find(x=>x.id===id);if(d)d.autoSearch="max"}
 let sammyMeasureSession=null;
 let sammyMeasureOverlayGroup=null;
 let sammyMeasureSelected="chest_circumference";
 let sammyMeasureOverlayMode="selected";
 let sammyMeasureLandmarksVisible=true;
+let sammyMeasureLabelsVisible=false;
+let sammyMeasureTransientLabelId=null;
+let sammyMeasureTransientLabelTimer=0;
+let sammyMeasurePickStart=null;
 let sammyMeasureInfoOpen=false;
 let sammyMeasureCalibration=null;
 let sammyMeasureLastSnapshots={male:null,female:null};
@@ -4550,7 +4566,7 @@ function sammyComputeAllMeasures(){
 }
 
 // ---------------------------------------------------------------------------
-// v0.7.2 semantic / scalable measurement engine
+// v0.7.3 semantic / scalable measurement engine
 // ---------------------------------------------------------------------------
 const SAMMY_MEASURE_REFERENCE_STATURE_CM={male:192.4463,female:178.1307};
 function sammyMeasureModelCal(id){return sammyMeasureResolvedCal(id,sammyMeasureScope==="common"?"common":sammyMeasureSexKey())}
@@ -4595,8 +4611,15 @@ function sammySearchArmMaxV3(a,b,t0,t1,count=20){
 function sammyMeasureNeckSliceV3(base=false){
  const n1=sammyMeasureJoint("Neck1"),n2=sammyMeasureJoint("Neck2")||sammyMeasureJoint("Head"),la=sammyMeasureJoint("LeftArm"),ra=sammyMeasureJoint("RightArm");if(!n1||!n2)return null;const axis=sammyVecNorm(sammyVecSub(n2,n1)),id=base?"neck_base_circumference":"neck_circumference",off=sammyMeasureAnchorOffset(id)/100;let origin=base?sammyVecAdd(n1,axis,-.012):sammyMeasureLerp(n1,n2,.55);origin=sammyVecAdd(origin,axis,off);const shoulder=(la&&ra)?Math.abs(la[0]-ra[0]):.4;return sammyPlaneSliceArbitraryV3(origin,axis,Math.max(.085,shoulder*.27))
 }
+function sammyMeasureCrotchYV3(){return sammyMeasureBaseY("crotch")+sammyMeasureAnchorOffset("crotch_height")/100}
 function sammyMeasurePelvisExtremumV3(kind="circ"){
- const box=sammyMeasureBBox(),center=sammyMeasureSharedPlaneY("hip"),span=Math.max(.055,box.height*.045),y0=center-span,y1=center+span;return sammySearchYSlicesV3(y0,y1,25,kind,false)
+ const box=sammyMeasureBBox();if(!box)return null;const crotch=sammyMeasureCrotchYV3(),waist=sammyMeasureSharedPlaneY("waist"),span=Math.max(.08,waist-crotch);const lower=crotch+Math.max(.018,span*.10),upper=waist-Math.max(.014,span*.08);if(!(upper>lower))return null;
+ // Buttock/Hip extrema may move substantially with body shape, but never below
+ // the crotch/perineal landmark and never up into the Omphalion waist region.
+ return sammySearchYSlicesV3(lower,upper,36,kind,false)
+}
+function sammyMeasureNaturalWaistV3(){
+ const box=sammyMeasureBBox();if(!box)return null;const omphalion=sammyMeasureSharedPlaneY("waist"),chest=sammyMeasureSharedPlaneY("chest"),band=Math.max(.09,chest-omphalion),lower=omphalion-band*.14,upper=chest-band*.22;if(!(upper>lower))return null;return sammySearchYMinV3(lower,upper,32,false)
 }
 function sammyMeasureNearestVertexV3(target,filter=null){
  const p=sammyMeasurementPositions();if(!p)return target;let best=Infinity,out=target;for(let i=0;i<p.length;i+=3){const q=[p[i],p[i+1],p[i+2]];if(filter&&!filter(q))continue;const dx=q[0]-target[0],dy=q[1]-target[1],dz=q[2]-target[2],d=dx*dx+dy*dy+dz*dz;if(d<best){best=d;out=q}}return out
@@ -4637,19 +4660,20 @@ function sammyComputeMeasure(def,sectionCache=null){
  let slice=null;
  if(def.id==="neck_circumference")slice=sammyMeasureNeckSliceV3(false);
  else if(def.id==="neck_base_circumference")slice=sammyMeasureNeckSliceV3(true);
+ else if(def.id==="natural_waist_circumference")slice=sammyMeasureNaturalWaistV3();
  else if(def.id==="buttock_circumference")slice=sammyMeasurePelvisExtremumV3("circ");
  else if(def.id==="hip_breadth")slice=sammyMeasurePelvisExtremumV3("width");
  else if(def.id==="calf_circumference"){
-  const sh=sammyMeasureJoint("RightShin"),ft=sammyMeasureJoint("RightFoot");if(sh&&ft){const low=sammyMeasureLerp(ft,sh,.18)[1],high=sammyMeasureLerp(ft,sh,.80)[1];slice=sammySearchYSlicesV3(low,high,24,"circ",true)}
+  const sh=sammyMeasureJoint("RightShin"),ft=sammyMeasureJoint("RightFoot");if(sh&&ft){const low=sammyMeasureLerp(ft,sh,.20)[1],high=sammyMeasureLerp(ft,sh,.72)[1];slice=sammySearchYSlicesV3(low,high,26,"circ",true)}
  }
  else if(def.id==="ankle_circumference"){
-  const sh=sammyMeasureJoint("RightShin"),ft=sammyMeasureJoint("RightFoot");if(sh&&ft){const low=sammyMeasureLerp(ft,sh,.04)[1],high=sammyMeasureLerp(ft,sh,.34)[1];slice=sammySearchYMinV3(low,high,18,true)}
+  const sh=sammyMeasureJoint("RightShin"),ft=sammyMeasureJoint("RightFoot");if(sh&&ft){const low=sammyMeasureLerp(ft,sh,.02)[1],high=sammyMeasureLerp(ft,sh,.28)[1];slice=sammySearchYMinV3(low,high,20,true)}
  }
  else if(def.id==="thigh_circumference"){
   const y=sammyMeasureBaseY("thigh")+off/100;slice=sammyPlaneSliceYLimbV3(y)
  }
- else if(def.id==="upperarm_circumference")slice=sammySearchArmMaxV3(sammyMeasureJoint("RightArm"),sammyMeasureJoint("RightForeArm"),.22,.84,22);
- else if(def.id==="forearm_circumference")slice=sammySearchArmMaxV3(sammyMeasureJoint("RightForeArm"),sammyMeasureJoint("RightHand"),.12,.78,22);
+ else if(def.id==="upperarm_circumference")slice=sammySearchArmMaxV3(sammyMeasureJoint("RightArm"),sammyMeasureJoint("RightForeArm"),.30,.72,26);
+ else if(def.id==="forearm_circumference")slice=sammySearchArmMaxV3(sammyMeasureJoint("RightForeArm"),sammyMeasureJoint("RightHand"),.18,.72,26);
  else if(def.id==="wrist_circumference"){
   const a=sammyMeasureJoint("RightForeArm"),b=sammyMeasureJoint("RightHand");if(a&&b){const axis=sammyVecSub(b,a),len=Math.hypot(...axis),t=THREE.MathUtils.clamp(.88+(len?off/100/len:0),.70,.98),o=sammyMeasureLerp(a,b,t);slice=sammyPlaneSliceArbitraryV3(o,axis,Math.max(.055,len*.35))}
  }
@@ -4684,6 +4708,7 @@ function sammyMeasureLandmarksV3(results){
  const pointOnSlice=(id,which)=>{const s=results[id]?.line?.slice;if(!s?.hull?.length)return null;let q=s.hull[0];for(const x of s.hull){if(which==="front"&&x[1]>q[1])q=x;if(which==="back"&&x[1]<q[1])q=x}return sammySliceWorldPointV3(s,q)};
  add("Chest",pointOnSlice("chest_circumference","front"),"chest_circumference");
  add("Omphalion",pointOnSlice("waist_circumference","front"),"waist_circumference");
+ add("Natural Waist",pointOnSlice("natural_waist_circumference","front"),"natural_waist_circumference");
  add("Buttock",pointOnSlice("buttock_circumference","back"),"buttock_circumference");
  const cr=results.crotch_height?.line;if(cr?.y!=null){const b=cr.box;add("Crotch",sammyMeasureNearestVertexV3([b.cx,cr.y,b.cz],q=>Math.abs(q[0]-b.cx)<.08&&Math.abs(q[1]-cr.y)<.035),"crotch_height")}
  for(const [id,label] of [["neck_circumference","Neck"],["neck_base_circumference","Neck Base"],["wrist_circumference","Stylion/Wrist"],["thigh_circumference","Thigh level"],["calf_circumference","Calf max"],["ankle_circumference","Ankle min"],["upperarm_circumference","Upperarm max"],["forearm_circumference","Forearm max"]]){const s=results[id]?.line?.slice;if(s)add(label,sammySliceCenterWorldV3(s),id)}
@@ -4701,15 +4726,28 @@ function sammyMeasureLinePoints(result){
  if(line.kind==="crotch"){const b=line.box,z=b.maxZ+b.depth*.025;return {points:[[b.cx,b.minY,z],[b.cx,line.y,z]],closed:false}}return null
 }
 function sammyAddLandmarkV3(item,selected=false){
- const b=sammyMeasureBBox(),r=Math.max(.005,(b?.height||1.8)*.0045),g=new THREE.SphereGeometry(r,10,8),m=new THREE.MeshBasicMaterial({color:selected?0xffdf72:0xe7e9ee,transparent:true,opacity:selected?1:.82,depthTest:false,depthWrite:false}),dot=new THREE.Mesh(g,m);dot.position.set(...item.point);dot.renderOrder=44;sammyMeasureOverlayGroup.add(dot);
- const c=document.createElement("canvas");c.width=256;c.height=48;const x=c.getContext("2d");x.fillStyle="rgba(18,19,23,.82)";x.fillRect(0,3,256,42);x.font="600 20px system-ui, sans-serif";x.textAlign="center";x.textBaseline="middle";x.fillStyle=selected?"#ffdf72":"#f3f3f5";x.fillText(item.label,128,24);const tex=new THREE.CanvasTexture(c),mat=new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false,depthWrite:false}),s=new THREE.Sprite(mat);s.position.set(item.point[0],item.point[1]+r*2.2,item.point[2]);s.scale.set(.115,.022,1);s.renderOrder=45;sammyMeasureOverlayGroup.add(s)
+ const b=sammyMeasureBBox(),r=Math.max(.006,(b?.height||1.8)*.0052),g=new THREE.SphereGeometry(r,12,9),m=new THREE.MeshBasicMaterial({color:selected?0xffdf72:0xf2f3f6,transparent:true,opacity:selected?1:.94,depthTest:false,depthWrite:false}),dot=new THREE.Mesh(g,m);dot.position.set(...item.point);dot.renderOrder=44;dot.userData.sammyMeasureId=item.measure;dot.userData.sammyMeasureLandmark=true;sammyMeasureOverlayGroup.add(dot);
+ if(!(sammyMeasureLabelsVisible||sammyMeasureTransientLabelId===item.measure))return;
+ const c=document.createElement("canvas");c.width=256;c.height=48;const x=c.getContext("2d");x.fillStyle="rgba(18,19,23,.86)";x.fillRect(0,3,256,42);x.font="600 20px system-ui, sans-serif";x.textAlign="center";x.textBaseline="middle";x.fillStyle=selected?"#ffdf72":"#f3f3f5";x.fillText(item.label,128,24);const tex=new THREE.CanvasTexture(c),mat=new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false,depthWrite:false}),sp=new THREE.Sprite(mat);sp.position.set(item.point[0],item.point[1]+r*2.2,item.point[2]);sp.scale.set(.115,.022,1);sp.renderOrder=45;sp.userData.sammyMeasureId=item.measure;sammyMeasureOverlayGroup.add(sp)
 }
 function sammyUpdateMeasureOverlay(results){
- sammyClearMeasureOverlay();if(!sammyMeasureSession||(sammyMeasureOverlayMode==="none"&&!sammyMeasureLandmarksVisible))return;sammyMeasureOverlayGroup=new THREE.Group();sammyMeasureOverlayGroup.name="SammyMeasurementOverlayV072";scene.add(sammyMeasureOverlayGroup);
- if(sammyMeasureOverlayMode!=="none"){const defs=sammyMeasureOverlayMode==="all"?SAMMY_MEASURE_DEFS:SAMMY_MEASURE_DEFS.filter(d=>d.id===sammyMeasureSelected);for(const d of defs){const lp=sammyMeasureLinePoints(results[d.id]);if(lp)sammyAddMeasureLine(lp.points,d.id===sammyMeasureSelected,lp.closed)}}
+ sammyClearMeasureOverlay();if(!sammyMeasureSession||(sammyMeasureOverlayMode==="none"&&!sammyMeasureLandmarksVisible))return;sammyMeasureOverlayGroup=new THREE.Group();sammyMeasureOverlayGroup.name="SammyMeasurementOverlayV073";scene.add(sammyMeasureOverlayGroup);
+ if(sammyMeasureOverlayMode!=="none"){const defs=sammyMeasureOverlayMode==="all"?SAMMY_MEASURE_DEFS:SAMMY_MEASURE_DEFS.filter(d=>d.id===sammyMeasureSelected);for(const d of defs){const lp=sammyMeasureLinePoints(results[d.id]);if(lp)sammyAddMeasureLine(lp.points,d.id,d.id===sammyMeasureSelected,lp.closed)}}
  if(sammyMeasureLandmarksVisible)for(const lm of sammyMeasureLandmarksV3(results))sammyAddLandmarkV3(lm,lm.measure===sammyMeasureSelected)
 }
 function sammyMeasureSetLandmarks(on=!sammyMeasureLandmarksVisible){sammyMeasureLandmarksVisible=!!on;const b=$("#sammyMeasureLandmarks");if(b){b.classList.toggle("active",sammyMeasureLandmarksVisible);b.textContent=sammyMeasureLandmarksVisible?"Landmarks AN":"Landmarks AUS"}sammyMeasureRefresh(false)}
+function sammyMeasureSetLabels(on=!sammyMeasureLabelsVisible){sammyMeasureLabelsVisible=!!on;const b=$("#sammyMeasureLabels");if(b){b.classList.toggle("active",sammyMeasureLabelsVisible);b.textContent=sammyMeasureLabelsVisible?"Namen AN":"Namen AUS"}sammyMeasureRefresh(false)}
+function sammyMeasureShowTransientLabel(id){sammyMeasureTransientLabelId=id;clearTimeout(sammyMeasureTransientLabelTimer);sammyMeasureTransientLabelTimer=setTimeout(()=>{sammyMeasureTransientLabelId=null;if(sammyMeasureSession&&!sammyMeasureLabelsVisible)sammyMeasureRefresh(false)},1800)}
+function sammyMeasureSelectFromOverlay(id){if(!id||!SAMMY_MEASURE_DEFS.some(d=>d.id===id))return false;sammyMeasureSelected=id;sammyMeasureInfoOpenFor=null;sammyMeasureShowTransientLabel(id);sammyMeasureRefresh(true);requestAnimationFrame(()=>document.querySelector(`.sammyMeasureRow[data-id="${id}"]`)?.scrollIntoView({block:"nearest",behavior:"smooth"}));return true}
+function sammyMeasurePickAt(clientX,clientY){
+ if(!sammyMeasureSession||!sammyMeasureOverlayGroup)return false;const rect=renderer.domElement.getBoundingClientRect(),x=((clientX-rect.left)/rect.width)*2-1,y=-((clientY-rect.top)/rect.height)*2+1,ray=new THREE.Raycaster(),b=sammyMeasureBBox();ray.params.Line.threshold=Math.max(.012,(b?.height||1.8)*.008);ray.params.Points.threshold=ray.params.Line.threshold;ray.setFromCamera(new THREE.Vector2(x,y),cam);const hits=ray.intersectObjects(sammyMeasureOverlayGroup.children,true);for(const h of hits){const id=h.object?.userData?.sammyMeasureId;if(id)return sammyMeasureSelectFromOverlay(id)}return false
+}
+function sammyInstallMeasurePicking(){
+ if(renderer.domElement.dataset.sammyMeasurePicking)return;renderer.domElement.dataset.sammyMeasurePicking="1";
+ renderer.domElement.addEventListener("pointerdown",e=>{if(sammyMeasureSession)sammyMeasurePickStart={id:e.pointerId,x:e.clientX,y:e.clientY}});
+ renderer.domElement.addEventListener("pointerup",e=>{const a=sammyMeasurePickStart;sammyMeasurePickStart=null;if(!a||a.id!==e.pointerId||!sammyMeasureSession)return;if(Math.hypot(e.clientX-a.x,e.clientY-a.y)>9)return;sammyMeasurePickAt(e.clientX,e.clientY)});
+ renderer.domElement.addEventListener("pointercancel",()=>{sammyMeasurePickStart=null})
+}
 function sammyMeasureSyncLocalUiV3(){
  setAnnyUiFromParams();
  document.querySelectorAll("#annyLocalGroups .annySlider").forEach(row=>{
@@ -4724,11 +4762,11 @@ function sammyMeasureRandomLocalV3(extreme=false){
  document.querySelectorAll("#sammyLocalMount .annySlider").forEach(row=>{const raw=row.querySelector("label small")?.textContent||"";if(raw&&raw in annyLocalValues){const input=row.querySelector("input"),out=row.querySelector("output");if(input)input.value=annyLocalValues[raw];if(out)out.value=Number(annyLocalValues[raw]).toFixed(2)}})
 }
 function sammyMeasureRandomize(extreme=false){
- if(!annyPackLoaded){const st=$("#sammyMeasureRandomStatus");if(st)st.textContent="Anny-Pack noch nicht aktiv.";return}const sex=Math.random()<.5?0:1,edge=()=>Math.random()<.5?(Math.random()*.12):(.88+Math.random()*.12),mid=(lo=.12,hi=.88)=>lo+Math.random()*(hi-lo),ageMin=Number(annyMeta?.anchors?.age?.[0]??0),ageMax=Number(annyMeta?.anchors?.age?.at?.(-1)??1);
- annyParams.gender=sex;annyParams.age=extreme?(Math.random()<.5?ageMin:ageMax):ageMin+(ageMax-ageMin)*mid(.12,.88);annyParams.height=extreme?edge():mid(.08,.92);annyParams.weight=extreme?edge():mid(.08,.92);annyParams.muscle=extreme?edge():mid(.08,.92);annyParams.proportions=extreme?edge():mid(.08,.92);annyParams.cupsize=sex?(extreme?edge():mid(.08,.92)):.5;annyParams.firmness=sex?(extreme?edge():mid(.10,.95)):.5;annyParams.african=.5;annyParams.asian=.5;annyParams.caucasian=.5;sammyMeasureRandomLocalV3(extreme);sammyMeasureScope=sex?"female":"male";applyAnnyParams();sammyMeasureOverlayMode="all";sammyMeasureLandmarksVisible=true;for(const [id,m] of [["#sammyMeasureShowSelected","selected"],["#sammyMeasureShowAll","all"],["#sammyMeasureShowNone","none"]])$(id)?.classList.toggle("active",sammyMeasureOverlayMode===m);sammyMeasureSetLandmarks(true);requestAnimationFrame(()=>{sammyMeasureRefresh(true);const st=$("#sammyMeasureRandomStatus"),r=sammyMeasureResultsCache.stature?.valueCm;if(st)st.textContent=`${extreme?"EXTREME":"RANDOM"} · ${sex?"♀":"♂"} · ${Number.isFinite(r)?r.toFixed(1)+" cm":"—"} · H ${annyParams.height.toFixed(2)} · W ${annyParams.weight.toFixed(2)} · M ${annyParams.muscle.toFixed(2)} · P ${annyParams.proportions.toFixed(2)}`})
+ if(!annyPackLoaded){const st=$("#sammyMeasureRandomStatus");if(st)st.textContent="Anny-Pack noch nicht aktiv.";return}const sex=Math.random()<.5?0:1,edge=()=>Math.random()<.5?(Math.random()*.12):(.88+Math.random()*.12),mid=(lo=.12,hi=.88)=>lo+Math.random()*(hi-lo);
+ annyParams.gender=sex;annyParams.age=extreme?(Math.random()<.5?SAMMY_ADULT_SHAPE_AGE_MIN:SAMMY_ADULT_SHAPE_AGE_MAX):(SAMMY_ADULT_SHAPE_AGE_MIN+(SAMMY_ADULT_SHAPE_AGE_MAX-SAMMY_ADULT_SHAPE_AGE_MIN)*mid(.05,.95));annyParams.height=extreme?edge():mid(.08,.92);annyParams.weight=extreme?edge():mid(.08,.92);annyParams.muscle=extreme?edge():mid(.08,.92);annyParams.proportions=extreme?edge():mid(.08,.92);annyParams.cupsize=sex?(extreme?edge():mid(.08,.92)):.5;annyParams.firmness=sex?(extreme?edge():mid(.10,.95)):.5;annyParams.african=.5;annyParams.asian=.5;annyParams.caucasian=.5;sammyMeasureRandomLocalV3(extreme);sammyMeasureScope=sex?"female":"male";applyAnnyParams();sammyMeasureOverlayMode="all";sammyMeasureLandmarksVisible=true;for(const [id,m] of [["#sammyMeasureShowSelected","selected"],["#sammyMeasureShowAll","all"],["#sammyMeasureShowNone","none"]])$(id)?.classList.toggle("active",sammyMeasureOverlayMode===m);sammyMeasureSetLandmarks(true);requestAnimationFrame(()=>{sammyMeasureRefresh(true);const st=$("#sammyMeasureRandomStatus"),r=sammyMeasureResultsCache.stature?.valueCm;if(st)st.textContent=`${extreme?"EXTREME":"RANDOM"} · ${sex?"♀":"♂"} · ${Number.isFinite(r)?r.toFixed(1)+" cm":"—"} · ${Math.round(sammyShapeAgeToYears())} J. · H ${annyParams.height.toFixed(2)} · W ${annyParams.weight.toFixed(2)} · M ${annyParams.muscle.toFixed(2)} · P ${annyParams.proportions.toFixed(2)}`})
 }
 function sammyClearMeasureOverlay(){if(!sammyMeasureOverlayGroup)return;scene.remove(sammyMeasureOverlayGroup);sammyMeasureOverlayGroup.traverse(o=>{o.geometry?.dispose?.();if(o.material?.map)o.material.map.dispose?.();o.material?.dispose?.()});sammyMeasureOverlayGroup=null}
-function sammyAddMeasureLine(points,selected=false,closed=false){if(!points?.length)return;const arr=new Float32Array(points.length*3);for(let i=0;i<points.length;i++){arr[i*3]=points[i][0];arr[i*3+1]=points[i][1];arr[i*3+2]=points[i][2]}const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(arr,3));const mat=new THREE.LineBasicMaterial({color:selected?0xffdf72:0xb9bcc5,transparent:true,opacity:selected?.98:.38,depthTest:false,depthWrite:false});const line=closed?new THREE.LineLoop(g,mat):new THREE.Line(g,mat);line.renderOrder=40;sammyMeasureOverlayGroup.add(line)}
+function sammyAddMeasureLine(points,id,selected=false,closed=false){if(!points?.length)return;const arr=new Float32Array(points.length*3);for(let i=0;i<points.length;i++){arr[i*3]=points[i][0];arr[i*3+1]=points[i][1];arr[i*3+2]=points[i][2]}const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(arr,3));const mat=new THREE.LineBasicMaterial({color:selected?0xffdf72:0xe1e3e8,transparent:true,opacity:selected?1:.78,depthTest:false,depthWrite:false,linewidth:selected?3:2});const line=closed?new THREE.LineLoop(g,mat):new THREE.Line(g,mat);line.renderOrder=40;line.userData.sammyMeasureId=id;sammyMeasureOverlayGroup.add(line)}
 
 
 function sammyMeasureFormat(v){return Number.isFinite(v)?`${v.toFixed(1)} cm`:"—"}
@@ -4739,10 +4777,10 @@ function sammyMeasureStateBadge(id){
 function sammyMeasureInlineEditor(d,c){
  const off=Number(c.offsetCm)||0,span=Number(c.spanOffsetCm)||0,range=d.range||0,spanRange=d.spanRange||20,scopeSpecific=sammyMeasureScope!=="common",isOverride=scopeSpecific&&sammyMeasureSpecificCal(d.id,sammyMeasureScope).override;
  const auto=d.anchorSource?`<div class="sammyMeasureAutoRule"><b>Gemeinsamer Landmark</b><small>Diese Messebene wird automatisch von ${escapeHtml(SAMMY_MEASURE_DEFS.find(x=>x.id===d.anchorSource)?.label||d.anchorSource)} übernommen.</small></div>`:(d.autoSearch?`<div class="sammyMeasureAutoRule"><b>Automatische ${d.autoSearch==="min"?"Minimum":"Maximum"}-Suche</b><small>Die Position wird aus der aktuellen Körpergeometrie ermittelt und skaliert mit dem Mesh.</small></div>`:"");
- const position=d.adjustable&&!d.autoSearch?`<div class="sammyMeasureInlineField"><div class="sammyMeasureOffsetHead"><label>Landmark / Messebene feinjustieren</label><span data-inline-off>${off>=0?"+":""}${off.toFixed(1)} cm</span></div><input data-measure-offset type="range" min="${-range}" max="${range}" step="0.1" value="${off}"><small class="sammyMeasureMirrorHint">v0.7.2 skaliert diesen Kalibrierwert proportional zur aktuellen Körperhöhe.</small></div>`:"";
+ const position=d.adjustable&&!d.autoSearch?`<div class="sammyMeasureInlineField"><div class="sammyMeasureOffsetHead"><label>Landmark / Messebene feinjustieren</label><span data-inline-off>${off>=0?"+":""}${off.toFixed(1)} cm</span></div><input data-measure-offset type="range" min="${-range}" max="${range}" step="0.1" value="${off}"><small class="sammyMeasureMirrorHint">v0.7.3 skaliert diesen Kalibrierwert proportional zur aktuellen Körperhöhe.</small></div>`:"";
  const spanCtl=d.spanAdjust?`<div class="sammyMeasureInlineField"><div class="sammyMeasureOffsetHead"><label>${escapeHtml(d.spanLabel||"Breitenkorrektur gesamt")}</label><span data-inline-span>${span>=0?"+":""}${span.toFixed(1)} cm</span></div><input data-measure-span type="range" min="${-spanRange}" max="${spanRange}" step="0.1" value="${span}"><small class="sammyMeasureMirrorHint">symmetrisch · skaliert mit Körperhöhe</small></div>`:"";
  const status=c.status||"ungeprüft";
- return `<div class="sammyMeasureInlineEditor">${auto}${position}${spanCtl}<div class="sammyMeasureStatusButtons" role="group" aria-label="Prüfstatus"><button data-status="ungeprüft" class="${status==="ungeprüft"?"active":""}" type="button">ungeprüft</button><button data-status="prüfen" class="${status==="prüfen"?"active":""}" type="button">prüfen</button><button data-status="bestätigt" class="${status==="bestätigt"?"active":""}" type="button">bestätigt</button></div><textarea data-measure-comment placeholder="Kommentar · ${escapeHtml(sammyMeasureScopeLabel())}">${escapeHtml(c.comment||"")}</textarea><div class="sammyMeasureInlineActions"><button data-measure-reset type="button">Werte zurücksetzen</button>${scopeSpecific?`<button data-measure-inherit type="button" ${isOverride?"":"disabled"}>Unisex übernehmen</button>`:""}</div>${sammyMeasureInfoOpenFor===d.id?`<div class="sammyMeasureInfoBox"><b>ANSUR-II / Referenz</b><p>${escapeHtml(d.ansurInfo)}</p><b>Sammy-Implementierung v0.7.2</b><p>${escapeHtml(d.implementation)}</p><b>Quelle</b><p>ANSUR II · Measurer's Handbook NATICK/TR-11/017. Interne/abgeleitete Maße sind ausdrücklich als solche markiert.</p></div>`:""}</div>`
+ return `<div class="sammyMeasureInlineEditor">${auto}${position}${spanCtl}<div class="sammyMeasureStatusButtons" role="group" aria-label="Prüfstatus"><button data-status="ungeprüft" class="${status==="ungeprüft"?"active":""}" type="button">ungeprüft</button><button data-status="prüfen" class="${status==="prüfen"?"active":""}" type="button">prüfen</button><button data-status="bestätigt" class="${status==="bestätigt"?"active":""}" type="button">bestätigt</button></div><textarea data-measure-comment placeholder="Kommentar · ${escapeHtml(sammyMeasureScopeLabel())}">${escapeHtml(c.comment||"")}</textarea><div class="sammyMeasureInlineActions"><button data-measure-reset type="button">Werte zurücksetzen</button>${scopeSpecific?`<button data-measure-inherit type="button" ${isOverride?"":"disabled"}>Unisex übernehmen</button>`:""}</div>${sammyMeasureInfoOpenFor===d.id?`<div class="sammyMeasureInfoBox"><b>ANSUR-II / Referenz</b><p>${escapeHtml(d.ansurInfo)}</p><b>Sammy-Implementierung v0.7.3</b><p>${escapeHtml(d.implementation)}</p><b>Quelle</b><p>ANSUR II · Measurer's Handbook NATICK/TR-11/017. Interne/abgeleitete Maße sind ausdrücklich als solche markiert.</p></div>`:""}</div>`
 }
 function sammyMeasureRenderList(results){
  const list=$("#sammyMeasureList");if(!list)return;const other=sammyMeasureOtherSexSymbol(),scroll=list.closest(".sammyPanelScroll"),keep=scroll?.scrollTop||0;
@@ -4779,10 +4817,10 @@ function sammyMeasureSetOverlayMode(mode){sammyMeasureOverlayMode=mode;for(const
 function sammyMeasurementIdentityPose(){const rel=new Float32Array(poseJointCount*9);for(let j=0;j<poseJointCount;j++)mat3Identity(rel,j*9);return rel}
 function sammyApplyMeasurementRelative(rel,label){if(morphSammyTargetActive&&shapeEngine==="anny")return applyAnnyAxis16RetargetPose(currentDisplayRest(),rel,false,false,label);return applyRelativePoseMatrices(currentDisplayRest(),rel,false,false,label)}
 function sammyEnterMeasureMode(){
- if(sammyMeasureSession)return;sammyMeasureLoadCalibration();sammyMeasureScope=sammyMeasureSexKey();sammyMeasureInfoOpenFor=null;sammyMeasureLandmarksVisible=true;
+ if(sammyMeasureSession)return;sammyMeasureLoadCalibration();sammyMeasureScope=sammyMeasureSexKey();sammyMeasureInfoOpenFor=null;sammyMeasureLandmarksVisible=true;sammyMeasureLabelsVisible=false;sammyMeasureTransientLabelId=null;
  sammyMeasureSession={camera:sammyCaptureCameraState(),relative:lastAppliedRelative3?new Float32Array(lastAppliedRelative3):null,running:poseAnimRunning,mode:poseAnimMode,frame:userAnimCurrentFrame,skeleton:rigDebugVisible,originalGender:annyParams.gender,originalShape:{...annyParams},originalLocal:{...(annyLocalValues||{})}};
  stopPoseAnimation(false);if(rigDebugVisible)sammyToggleSkeleton();const endpoint=annyParams.gender>=.5?1:0;if(Math.abs(annyParams.gender-endpoint)>1e-6){annyParams.gender=endpoint;applyAnnyParams()}
- sammyApplyMeasurementRelative(sammyMeasurementIdentityPose(),"Sammy Measurement T-Pose");sammyCameraTo("measure",900,false);const lb=$("#sammyMeasureLandmarks");if(lb){lb.classList.add("active");lb.textContent="Landmarks AN"}sammyMeasureRefresh(true)
+ sammyApplyMeasurementRelative(sammyMeasurementIdentityPose(),"Sammy Measurement T-Pose");sammyCameraTo("measure",900,false);const lb=$("#sammyMeasureLandmarks"),nb=$("#sammyMeasureLabels");if(lb){lb.classList.add("active");lb.textContent="Landmarks AN"}if(nb){nb.classList.remove("active");nb.textContent="Namen AUS"}sammyMeasureRefresh(true)
 }
 function sammyExitMeasureMode(instantCamera=false){
  const s=sammyMeasureSession;if(!s)return null;sammyMeasureSession=null;sammyClearMeasureOverlay();
@@ -4796,7 +4834,7 @@ function sammyMeasureSwitchSex(){
 function sammyMeasureUseUnisex(){if(!sammyMeasureSession)return;sammyMeasureScope="common";sammyMeasureRefresh(true)}
 function sammyMeasureExport(){
  const current=sammyComputeAllMeasures(),sex=sammyMeasureSexKey();sammyMeasureLastSnapshots[sex]={time:new Date().toISOString(),scope:sammyMeasureScope,values:Object.fromEntries(SAMMY_MEASURE_DEFS.map(d=>[d.id,Number.isFinite(current[d.id].valueCm)?Number(current[d.id].valueCm.toFixed(4)):null]))};
- const payload={schema:"sammy-measure-calibration-v2",app:"Sammy",version:"0.7.2",generated:new Date().toISOString(),ansur:{database:"ANSUR II",handbook:"NATICK/TR-11/017",note:"ANSUR II public database contains many more direct measures; Sammy v0.7.2 adds scalable semantic landmarks, geometry-driven extrema, limb isolation, visible landmark debugging and random-body stress tests."},currentModelSex:sex,currentCalibrationScope:sammyMeasureScope,definitions:SAMMY_MEASURE_DEFS.map(({id,label,ansur,kind,section,adjustable,range,spanAdjust,spanRange,group,internal,autoSearch,ansurInfo,implementation})=>({id,label,ansur,kind,section:section||null,adjustable,rangeCm:range||0,spanAdjust:!!spanAdjust,spanRangeCm:spanRange||0,group:group||null,internal:!!internal,autoSearch:autoSearch||null,ansurInfo,implementation})),calibration:JSON.parse(JSON.stringify(sammyMeasureLoadCalibration())),lastSnapshots:sammyMeasureLastSnapshots,currentShape:{gender:annyParams.gender,age:annyParams.age,muscle:annyParams.muscle,weight:annyParams.weight,height:annyParams.height,proportions:annyParams.proportions,cupsize:annyParams.cupsize,firmness:annyParams.firmness,activeLocal:Object.entries(annyLocalValues||{}).filter(([,v])=>Math.abs(Number(v))>1e-6)},geometry:{lod:displayLOD,vertices:geometry?.attributes?.position?.count||0,triangles:(geometry?.index?.count||0)/3,tapeBridge:"semantic landmarks + planar/arbitrary section hull + extremum search"}};
+ const payload={schema:"sammy-measure-calibration-v2",app:"Sammy",version:"0.7.3",generated:new Date().toISOString(),ansur:{database:"ANSUR II",handbook:"NATICK/TR-11/017",note:"ANSUR II public database contains many more direct measures; Sammy v0.7.3 keeps Omphalion waist separate from natural-waist minimum and constrains geometry extrema to anatomical search regions."},currentModelSex:sex,currentCalibrationScope:sammyMeasureScope,definitions:SAMMY_MEASURE_DEFS.map(({id,label,ansur,kind,section,adjustable,range,spanAdjust,spanRange,group,internal,autoSearch,ansurInfo,implementation})=>({id,label,ansur,kind,section:section||null,adjustable,rangeCm:range||0,spanAdjust:!!spanAdjust,spanRangeCm:spanRange||0,group:group||null,internal:!!internal,autoSearch:autoSearch||null,ansurInfo,implementation})),calibration:JSON.parse(JSON.stringify(sammyMeasureLoadCalibration())),lastSnapshots:sammyMeasureLastSnapshots,currentShape:{gender:annyParams.gender,age:annyParams.age,ageYears:sammyShapeAgeToYears(),muscle:annyParams.muscle,weight:annyParams.weight,height:annyParams.height,proportions:annyParams.proportions,cupsize:annyParams.cupsize,firmness:annyParams.firmness,activeLocal:Object.entries(annyLocalValues||{}).filter(([,v])=>Math.abs(Number(v))>1e-6)},geometry:{lod:displayLOD,vertices:geometry?.attributes?.position?.count||0,triangles:(geometry?.index?.count||0)/3,tapeBridge:"semantic landmarks + planar/arbitrary section hull + extremum search"}};
  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Sammy_Measure_Calibration_v2_${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200)
 }
 
@@ -5453,6 +5491,8 @@ function sammyInitUi(){
  $("#sammyMeasureShowAll").onclick=()=>sammyMeasureSetOverlayMode("all");
  $("#sammyMeasureShowNone").onclick=()=>sammyMeasureSetOverlayMode("none");
  const measureLandmarksBtn=$("#sammyMeasureLandmarks");if(measureLandmarksBtn)measureLandmarksBtn.onclick=()=>sammyMeasureSetLandmarks();
+ const measureLabelsBtn=$("#sammyMeasureLabels");if(measureLabelsBtn)measureLabelsBtn.onclick=()=>sammyMeasureSetLabels();
+ sammyInstallMeasurePicking();
  const measureRandomBtn=$("#sammyMeasureRandom");if(measureRandomBtn)measureRandomBtn.onclick=()=>sammyMeasureRandomize(false);
  const measureRandomExtremeBtn=$("#sammyMeasureRandomExtreme");if(measureRandomExtremeBtn)measureRandomExtremeBtn.onclick=()=>sammyMeasureRandomize(true);
  $("#sammyMeasureExport").onclick=sammyMeasureExport;

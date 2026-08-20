@@ -385,7 +385,7 @@ body.sammy-ready #sammyCameraDebugBtn{opacity:1;transition:opacity .4s ease}
 .sammyMeasureOverlayModes button.active{background:#ececef!important;color:#17181b!important}
 .sammyMeasureList{display:flex;flex-direction:column;gap:6px}
 .sammyMeasureRow{border:1px solid rgba(255,255,255,.075);border-radius:13px;background:rgba(255,255,255,.042);overflow:hidden}
-.sammyMeasureRow.selected{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.085)}
+.sammyMeasureRow.selected{border-color:rgba(255,223,114,.48);background:rgba(255,223,114,.075);box-shadow:inset 0 0 0 1px rgba(255,223,114,.08)}
 .sammyMeasureRowHead{display:grid;grid-template-columns:minmax(0,1fr) 32px 34px;align-items:center;min-height:48px}
 .sammyMeasureMain{min-width:0!important;width:100%;height:100%;min-height:46px!important;padding:7px 9px!important;border:0!important;border-radius:0!important;background:transparent!important;text-align:left!important}
 .sammyMeasureMain b{display:block;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -408,8 +408,8 @@ body.sammy-ready #sammyCameraDebugBtn{opacity:1;transition:opacity .4s ease}
 .sammyMeasureInfoBox b{display:block;margin:0 0 3px;color:#efeff2;font-size:8.5px}.sammyMeasureInfoBox p{margin:0 0 8px}.sammyMeasureInfoBox p:last-child{margin-bottom:0}
 .sammyMeasureExport{width:100%;margin-top:11px;background:#ececef!important;color:#17181b!important}.sammyMeasureSource{padding:8px 3px 0;text-align:center;font-size:7.5px;line-height:1.35;color:#676a72}
 
-/* v0.7.2n — MEAS-only additions. No global/startup styling changed. */
-.sammyMeasureTestControls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:-2px 0 7px}
+/* v0.7.3 — MEAS-only additions. No global/startup styling changed. */
+.sammyMeasureTestControls{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:-2px 0 7px}
 .sammyMeasureTestControls button{min-height:34px!important;padding:0 5px!important;border-radius:10px!important;font-size:8.5px!important;line-height:1.05!important}
 .sammyMeasureTestControls button.active{background:#ececef!important;color:#17181b!important}
 .sammyMeasureRandomStatus{margin:0 0 10px;padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.035);font-size:8px;line-height:1.35;color:#888b94;font-variant-numeric:tabular-nums}

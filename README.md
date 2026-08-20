@@ -1,4 +1,4 @@
-# Sammy v0.7.1
+# Sammy v0.7.3
 
 Measurement Calibration v2.
 
@@ -11,3 +11,11 @@ Measurement Calibration v2.
 - Bubble edge insertion now previews while dragging and pushes neighboring bubbles apart, including insertion between two docked bubbles. Fling/velocity and safe-area clamping remain enabled.
 
 The proven Axis16 -> transported native-Anny basis -> exact Anny FK/LBS path remains frozen.
+
+
+## v0.7.3 – MEAS validation round 2
+- adult-only Anny age mapping (shape 0.70–1.00, displayed approximately 16/19–70 years)
+- anatomical search windows for upper arm, forearm, calf, ankle and buttock/hip extrema
+- separate Natural Waist minimum alongside ANSUR Omphalion waist
+- brighter/clickable measure overlays and optional landmark labels
+- Random Person / Random Extreme restricted to adult age shapes
