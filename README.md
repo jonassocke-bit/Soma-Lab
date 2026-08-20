@@ -1,3 +1,13 @@
+## v0.8.4 Solver-Whitelist Calibration
+
+- Calibration Lab scannt jetzt nur noch den aus Quick + Deep Schritt 1 abgeleiteten Body-Solver-Raum (mit aktuellem Anny-Pack ca. 61 statt 202 logische Slider).
+- Ausgeschlossen aus der automatischen Kalibrierung: kompletter Kopf/Gesicht, Hände, Füße, Unterschenkel/Knie sowie reine Manual-/Special-Parameter. Die Morphs bleiben in FORM vollständig verfügbar.
+- `stomach-pregnant` ist Special und wird nie als normaler Körpermaß-Solverparameter verwendet. Phenotype/Firmness bleiben manuell.
+- Sichere Redundanzen werden nicht erneut gescannt: `upperlegs-height` (Measure Upperleg Height bleibt), `lowerarm-scale-horiz` (Measure Lowerarm Length bleibt), `upperarm-scale-depth/vert` (semantische Armumfang-/Muscle-/Fat-Regler bleiben).
+- Global Sampling/Validation verwendet dieselbe Solver-Whitelist; ausgeschlossene Core-Parameter wie Firmness werden dort nicht mehr zufällig verändert.
+- Eigene IndexedDB `sammy-calibration-lab-v084`, damit alte 202-Slider-Läufe nicht versehentlich fortgesetzt werden.
+- Brust bleibt auf dem in v0.8.3 bestätigten Nipple-Morph-Landmark; Intro-Kamera bleibt 1 s vor Clipende.
+
 ## v0.8.3 Nipple Landmark + Early Intro Camera
 
 - Brustumfang/-breite/-tiefe nutzen für Männer und Frauen dieselbe semantische Messebene aus Annys `nipple-point-incr` / `nipple-size-incr` Morph-Vertices.

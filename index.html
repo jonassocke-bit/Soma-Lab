@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.3</title>
-<link rel="stylesheet" href="style.css?v=0.8.3">
+<title>Sammy v0.8.4</title>
+<link rel="stylesheet" href="style.css?v=0.8.4">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.3</div>
+  <div class="sammySplashVersion">v0.8.4</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.3</div>
+<div id="sammyVersion">Sammy · v0.8.4</div>
 
 <button id="sammyCameraDebugBtn" class="sammyCameraDebugBtn" type="button">CAM</button>
 <div id="sammyCameraDebugPanel" class="sammyCameraDebugPanel hidden">
@@ -138,7 +138,7 @@
      <div class="sammyCalibrationActions"><button id="sammyCalibrationTurbo" type="button">LIVE · Standard</button><button id="sammyCalibrationReset" type="button">Lauf löschen</button></div>
      <div id="sammyCalibrationStatus" class="sammyCalibrationStatus">Noch kein Calibration-Lauf.</div>
      <div class="sammyCalibrationProgress"><i id="sammyCalibrationProgressBar"></i></div>
-     <div id="sammyCalibrationCurrent" class="sammyCalibrationCurrent">Live-Test zeigt jeden erzeugten Körper. Standard screent alle plausiblen Sliderpaare einmal; nur auffällige Paare werden anschließend tief vermessen. Fortschritt wird nach jedem Test in IndexedDB gesichert.</div>
+     <div id="sammyCalibrationCurrent" class="sammyCalibrationCurrent">Live-Test zeigt jeden erzeugten Körper. v0.8.4 kalibriert nur noch die Solver-Whitelist (ca. 61 statt 202 logische Slider): Kopf/Gesicht, Hände, Füße, Unterschenkel/Knie sowie Manual/Special/Redundanz-Morphs werden übersprungen. Standard screent danach alle plausiblen verbleibenden Paare; nur auffällige Paare werden tief vermessen. Fortschritt wird nach jedem Test gesichert.</div>
      <div id="sammyCalibrationLiveMeasures" class="sammyCalibrationLiveMeasures"></div>
      <div class="sammyCalibrationActions"><button id="sammyCalibrationSummaryExport" type="button">Summary JSON</button><button id="sammyCalibrationExport" type="button">FULL JSON</button></div>
     </div>
@@ -165,7 +165,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.3</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.4</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -422,6 +422,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.3"></script>
+<script type="module" src="app.js?v=0.8.4"></script>
 </body>
 </html>
