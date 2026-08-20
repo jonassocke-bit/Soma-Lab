@@ -4089,6 +4089,8 @@ Die App bleibt bedienbar. „Automatik erneut starten“ versucht nur die fehlen
    ================================================================ */
 let sammyBootHideTimer=0;
 let sammyIntroActive=false,sammyIntroRel=null,sammyIntroFrames=0,sammyIntroFps=30,sammyIntroStart=0,sammyIntroPhase="idle",sammyIntroBlendStart=0,sammyIntroBlendFrom=null,sammyEditPoseRel=null;
+let sammyIntroEditCameraStarted=false;
+const SAMMY_INTRO_EDIT_CAMERA_LEAD_SECONDS=1.0;
 let sammyCameraTween=null;
 let sammyPreAnimationCamera=null;
 let sammyCameraReferenceHeightCm=0;
@@ -4221,7 +4223,7 @@ for(const [id,src] of [["chest_breadth","chest_circumference"],["chest_depth","c
 {const d=SAMMY_MEASURE_DEFS.find(x=>x.id==="buttock_circumference");if(d)d.autoSearch="max"}
 {const d=SAMMY_MEASURE_DEFS.find(x=>x.id==="hip_breadth");if(d){d.autoSearch="max";d.dynamicRule="upperPelvisLevel";d.implementation="Dynamische Hüftbreite in einer oberen Becken-/Hüftzone zwischen Crotch und Omphalion; bewusst von der tieferen Buttock-Maximum-Ebene entkoppelt. Hüftumfang nutzt exakt dieselbe Ebene."}}
 {const d=SAMMY_MEASURE_DEFS.find(x=>x.id==="hip_circumference");if(d){d.anchorSource="hip_breadth";d.dynamicRule="upperPelvisLevel"}}
-{const d=SAMMY_MEASURE_DEFS.find(x=>x.id==="chest_circumference");if(d){d.dynamicRule="femaleBustLocalPeak";d.implementation="Männlich: kalibrierte Brustebene. Weiblich: von der natürlichen Taille aufwärts wird das Umfangsprofil verfolgt und der erste deutliche lokale Brust-Peak gewählt, nach dem der Umfang wieder abnimmt; dadurch kann der spätere Achsel-/Schulteranstieg nicht gewinnen. Brustbreite und Brusttiefe übernehmen exakt dieselbe Ebene."}}
+{const d=SAMMY_MEASURE_DEFS.find(x=>x.id==="chest_circumference");if(d){d.dynamicRule="nippleMorphLandmark";d.adjustable=false;d.implementation="Brustebene für Männer und Frauen direkt aus Annys Nipple-Morph-Topologie: nipple-point-incr markiert den Kernbereich, nipple-size-incr stabilisiert den Patch. Die aktuell gemorphten Positionen dieser semantischen Vertices definieren die gemeinsame horizontale Messebene für Brustumfang, Brustbreite und Brusttiefe. Alte feste Chest-Höhenoffsets werden für diese Ebene nicht mehr verwendet."}}
 let sammyMeasureSession=null;
 let sammyMeasureOverlayGroup=null;
 let sammyMeasureSelected="chest_circumference";
@@ -4236,6 +4238,7 @@ let sammyMeasureCalibration=null;
 let sammyMeasureLastSnapshots={male:null,female:null};
 let sammyMeasureRefreshRaf=0;
 let sammyMeasureResultsCache={};
+let sammyNippleMorphPatchCache=null;
 
 
 function sammyUiLoadState(){
@@ -4599,8 +4602,45 @@ function sammyPlaneSliceYLimbV3(y,which="right",maxAbsZ=.22){
  const add=(ia,ib)=>{const ao=ia*3,bo=ib*3,ya=p[ao+1],yb=p[bo+1],da=ya-y,db=yb-y;if(Math.abs(da)<eps&&Math.abs(db)<eps)return;if((da>eps&&db>eps)||(da<-eps&&db<-eps))return;const den=yb-ya;if(Math.abs(den)<eps)return;const t=(y-ya)/den;if(t<-eps||t>1+eps)return;const x=p[ao]+(p[bo]-p[ao])*t,z=p[ao+2]+(p[bo+2]-p[ao+2])*t;if(Math.abs(x-r[0])<=Math.abs(x-l[0])+1e-8&&Math.abs(z-zc)<=maxAbsZ)pts.push([x,z])};
  for(let k=0;k<idx.length;k+=3){const a=idx[k],b=idx[k+1],c=idx[k+2];add(a,b);add(b,c);add(c,a)}return sammySliceStats(y,pts,"Y")
 }
+function sammyAnnyLocalBlendshapePairV7(label){
+ if(!annyMeta||!annyLowPack?.blendshapes?.data)return null;
+ const i=(annyMeta.local_change_labels||[]).indexOf(label);if(i<0)return null;
+ const first=Number(annyMeta.phenotype_blendshape_count)+i*2;return [first,first+1]
+}
+function sammyNippleMorphPatchV7(){
+ if(sammyNippleMorphPatchCache)return sammyNippleMorphPatchCache;
+ if(!annyMeta||!annyLowPack?.blendshapes?.data)return null;
+ const point=sammyAnnyLocalBlendshapePairV7("nipple-point-incr"),size=sammyAnnyLocalBlendshapePairV7("nipple-size-incr");
+ if(!point&&!size)return null;
+ const b=annyLowPack.blendshapes.data,N=Number(annyLowPack.template_vertices?.shape?.[0]||4505),stride=N*3;
+ const mag=(pair,v)=>{if(!pair)return 0;let sum=0;for(const a of pair){const o=a*stride+v*3,dx=Number(b[o]||0),dy=Number(b[o+1]||0),dz=Number(b[o+2]||0);sum+=Math.hypot(dx,dy,dz)}return sum};
+ const rows=new Array(N);let maxP=0,maxS=0;
+ for(let v=0;v<N;v++){const wp=mag(point,v),ws=mag(size,v);rows[v]=[v,wp,ws];maxP=Math.max(maxP,wp);maxS=Math.max(maxS,ws)}
+ if(maxP<1e-12&&maxS<1e-12)return null;
+ // Point morph is primary because it is concentrated on the nipple tip/centre.
+ // Size morph is a secondary atlas signal that stabilises the surrounding patch.
+ const scored=[];for(const [v,wp,ws] of rows){const pn=maxP>0?wp/maxP:0,sn=maxS>0?ws/maxS:0;if(pn<.075&&sn<.16)continue;const score=pn*.82+sn*.18;if(score>0)scored.push({v,score,pn,sn})}
+ scored.sort((a,b)=>b.score-a.score);
+ // Keep a compact semantic patch; diffuse tiny blendshape tails are intentionally discarded.
+ const keep=scored.slice(0,Math.min(180,Math.max(24,scored.length)));
+ sammyNippleMorphPatchCache={vertices:keep,pointLabel:!!point,sizeLabel:!!size,maxPoint:maxP,maxSize:maxS};return sammyNippleMorphPatchCache
+}
+function sammyNippleMorphAnchorsV7(){
+ const patch=sammyNippleMorphPatchV7(),p=sammyMeasurementPositions(),box=sammyMeasureBBox();if(!patch?.vertices?.length||!p||!box)return null;
+ const n=p.length/3,useMid=n>6000&&lowMap?.data?.length;let left=[0,0,0,0],right=[0,0,0,0],all=[0,0,0,0];
+ const add=(acc,x,y,z,w)=>{acc[0]+=x*w;acc[1]+=y*w;acc[2]+=z*w;acc[3]+=w};
+ for(const it of patch.vertices){let v=it.v;if(useMid){const mv=Number(lowMap.data[v]);if(Number.isFinite(mv))v=mv}const o=v*3;if(o+2>=p.length)continue;const x=Number(p[o]),y=Number(p[o+1]),z=Number(p[o+2]),w=Math.max(.001,it.score);if(![x,y,z].every(Number.isFinite))continue;add(all,x,y,z,w);add(x<box.cx?left:right,x,y,z,w)}
+ const fin=a=>a[3]>1e-8?[a[0]/a[3],a[1]/a[3],a[2]/a[3]]:null,L=fin(left),R=fin(right),A=fin(all);if(!A)return null;
+ // If one side is sparse, the combined patch still gives a stable chest level.
+ const y=(L&&R)?(L[1]+R[1])*.5:A[1];return {y,left:L,right:R,center:A,patchCount:patch.vertices.length}
+}
+function sammyMeasureChestSliceV7(){
+ const a=sammyNippleMorphAnchorsV7();if(a&&Number.isFinite(a.y)){const s=sammyMeasureTorsoSliceYV5(a.y);if(s&&Number.isFinite(s.circ)){s.semanticAnchor="nippleMorphLandmark";s.nippleAnchors=a;return s}}
+ // Safe fallback only if the expected Anny morph atlas is unavailable.
+ const y=sammyMeasureBaseY("chest");const s=sammyMeasureTorsoSliceYV5(y);if(s)s.semanticAnchor="chestFallback";return s
+}
 function sammyMeasureSharedPlaneY(section){
- if(section==="chest")return sammyMeasureBaseY("chest")+sammyMeasureAnchorOffset("chest_circumference")/100;
+ if(section==="chest"){const a=sammyNippleMorphAnchorsV7();return a&&Number.isFinite(a.y)?a.y:sammyMeasureBaseY("chest");}
  if(section==="waist")return sammyMeasureBaseY("waist")+sammyMeasureAnchorOffset("waist_circumference")/100;
  if(section==="hip")return sammyMeasureBaseY("hip")+sammyMeasureAnchorOffset("buttock_circumference")/100;
  return sammyMeasureBaseY(section)
@@ -4641,30 +4681,8 @@ function sammyMeasurePelvisExtremumV3(kind="circ"){
 function sammyMeasureTorsoSliceYV5(y){
  const hips=sammyMeasureJoint("Hips"),la=sammyMeasureJoint("LeftArm"),ra=sammyMeasureJoint("RightArm"),box=sammyMeasureBBox();if(!box)return null;const centerX=hips?.[0]??box.cx,shoulderSpan=(la&&ra)?Math.abs(la[0]-ra[0]):box.width,maxX=Math.max(.20,shoulderSpan*.62);return sammyPlaneSliceY(y,maxX,centerX)
 }
-function sammyMeasureChestSliceV6(){
- const fixedY=sammyMeasureBaseY("chest")+sammyMeasureAnchorOffset("chest_circumference")/100,g=THREE.MathUtils.clamp(Number(annyParams.gender)||0,0,1),fixed=sammyMeasureTorsoSliceYV5(fixedY);if(g<=.30)return fixed;
- const natural=sammyMeasureNaturalWaistV3(),waist=natural?.plane??sammyMeasureSharedPlaneY("waist"),neck=sammyMeasureJoint("Neck1")||sammyMeasureJoint("Chest");if(!neck||!(neck[1]>waist))return fixed;
- const span=neck[1]-waist,lower=waist+span*.12,upper=waist+span*.69;if(!(upper>lower))return fixed;
- const samples=[];for(let i=0;i<44;i++){const y=lower+(upper-lower)*(i/43),q=sammyMeasureTorsoSliceYV5(y);if(q&&Number.isFinite(q.circ))samples.push(q)}if(samples.length<7)return fixed;
- // Smooth the circumference profile. Starting at the natural waist, select the
- // first pronounced local maximum followed by a real decrease. This represents
- // the bust peak and intentionally stops before a later axilla/shoulder rise.
- const smooth=samples.map((q,i)=>{let sum=0,n=0;for(let k=Math.max(0,i-1);k<=Math.min(samples.length-1,i+1);k++){sum+=samples[k].circ;n++}return sum/n});
- let runningMin=smooth[0],peakIndex=-1;const minRise=Math.max(1.2,smooth[0]*.012),minFall=.55;
- for(let i=2;i<samples.length-3;i++){
-  runningMin=Math.min(runningMin,smooth[i-1]);
-  const localTop=smooth[i]>=smooth[i-1]&&smooth[i]>=smooth[i+1],rise=smooth[i]-runningMin;
-  const aheadMin=Math.min(smooth[i+1],smooth[i+2],smooth[i+3]),fall=smooth[i]-aheadMin;
-  if(localTop&&rise>=minRise&&fall>=minFall){peakIndex=i;break}
- }
- // Very small breasts/straight torsos may not form a mathematically sharp peak.
- // In that case use the best value only in the LOWER/MIDDLE bust sub-zone, never
- // the axilla end of the scan.
- if(peakIndex<0){const cap=Math.max(3,Math.floor(samples.length*.72));let best=-Infinity;for(let i=0;i<cap;i++)if(smooth[i]>best){best=smooth[i];peakIndex=i}}
- const bust=samples[Math.max(0,peakIndex)]||fixed;if(!bust)return fixed;
- // Smooth gender interpolation avoids a discontinuous plane jump on mixed shapes.
- if(g<.78){const t=THREE.MathUtils.clamp((g-.30)/.48,0,1),y=fixedY+(bust.plane-fixedY)*t;return sammyMeasureTorsoSliceYV5(y)}return bust
-}
+function sammyMeasureChestSliceV6(){return sammyMeasureChestSliceV7()}
+
 function sammyMeasureHipLevelV6(){
  const box=sammyMeasureBBox();if(!box)return null;const crotch=sammyMeasureCrotchYV3(),waist=sammyMeasureSharedPlaneY("waist"),span=waist-crotch;if(!(span>.08))return null;
  // The actual hip level sits in the upper pelvis, distinctly above the maximal
@@ -4733,7 +4751,7 @@ function sammyComputeMeasure(def,sectionCache=null){
   const a=sammyMeasureJoint("RightForeArm"),b=sammyMeasureJoint("RightHand");if(a&&b){const axis=sammyVecSub(b,a),len=Math.hypot(...axis),t=THREE.MathUtils.clamp(.88+(len?off/100/len:0),.70,.98),o=sammyMeasureLerp(a,b,t);slice=sammyPlaneSliceArbitraryV3(o,axis,Math.max(.055,len*.35))}
  }
  else if(def.section==="chest"){
-  const key="semantic:chest:v6";slice=sectionCache?.get(key);if(!slice){slice=sammyMeasureChestSliceV6();if(sectionCache&&slice)sectionCache.set(key,slice)}
+  const key="semantic:chest:v7:nippleMorph";slice=sectionCache?.get(key);if(!slice){slice=sammyMeasureChestSliceV7();if(sectionCache&&slice)sectionCache.set(key,slice)}
  }
  else if(def.section==="waist")slice=sammyPlaneSliceY(sammyMeasureSharedPlaneY("waist"));
  else if(def.kind==="limbCircPlane"){}
@@ -4761,7 +4779,7 @@ function sammyMeasureLandmarksV3(results){
  const out=[],add=(label,p,measure)=>{if(p&&p.every(Number.isFinite))out.push({label,point:p,measure})};
  const sh=results.biacromial_breadth?.line;if(sh?.a&&sh?.b){const box=sammyMeasureBBox(),cx=box?.cx||0,la=sammyMeasureJoint("LeftArm"),ra=sammyMeasureJoint("RightArm"),lp=la&&Math.abs(sh.b[0]-la[0])<Math.abs(sh.a[0]-la[0])?sh.b:sh.a,rp=ra&&Math.abs(sh.a[0]-ra[0])<Math.abs(sh.b[0]-ra[0])?sh.a:sh.b,sideFilter=t=>q=>Math.sign(q[0]-cx)===Math.sign(t[0]-cx)||Math.abs(q[0]-cx)<.005;add("Acromion L",sammyMeasureNearestVertexV3(lp,sideFilter(lp)),"biacromial_breadth");add("Acromion R",sammyMeasureNearestVertexV3(rp,sideFilter(rp)),"biacromial_breadth")}
  const pointOnSlice=(id,which)=>{const s=results[id]?.line?.slice;if(!s?.hull?.length)return null;let q=s.hull[0];for(const x of s.hull){if(which==="front"&&x[1]>q[1])q=x;if(which==="back"&&x[1]<q[1])q=x}return sammySliceWorldPointV3(s,q)};
- add("Chest",pointOnSlice("chest_circumference","front"),"chest_circumference");
+ const nip=sammyNippleMorphAnchorsV7();if(nip?.left)add("Nipple L",nip.left,"chest_circumference");if(nip?.right)add("Nipple R",nip.right,"chest_circumference");if(!nip?.left&&!nip?.right)add("Chest",pointOnSlice("chest_circumference","front"),"chest_circumference");
  add("Omphalion",pointOnSlice("waist_circumference","front"),"waist_circumference");
  add("Natural Waist",pointOnSlice("natural_waist_circumference","front"),"natural_waist_circumference");
  add("Buttock",pointOnSlice("buttock_circumference","back"),"buttock_circumference");const hs=results.hip_breadth?.line?.slice||results.hip_circumference?.line?.slice;if(hs)add("Hip level",sammySliceCenterWorldV3(hs),"hip_breadth");
@@ -4822,7 +4840,7 @@ function sammyMeasureRandomize(extreme=false){
 }
 
 // -----------------------------------------------------------------------------
-// Sammy v0.8.2 CALIBRATION LAB R3
+// Sammy v0.8.3 NIPPLE LANDMARK + EARLY INTRO CAMERA
 // Logical L/R slider grouping + cheap screening of all plausible interactions
 // + deep scans only for pairs that actually show non-additive behaviour.
 // -----------------------------------------------------------------------------
@@ -4874,7 +4892,7 @@ function sammyCalStageLabel(stage){return ({reference:"0 · Referenzkörper",sin
 function sammyCalStageTotal(run){const c=SAMMY_CAL_CONFIG[run.mode];if(run.stage==="reference")return run.references.length;if(run.stage==="single")return run.sliders.length*run.references.length*c.levels;if(run.stage==="analysis")return 1;if(run.stage==="screen")return (run.candidatePairs?.length||0)*Math.max(1,c.screenRefs)*Math.max(1,c.screenCombos);if(run.stage==="interaction")return (run.deepInteractionPairs?.length||0)*Math.min(c.interactionRefs,run.references.length)*4;if(run.stage==="global")return c.globalSamples;if(run.stage==="validation")return c.validationSamples;return 1}
 function sammyCalStatus(detail=""){const run=sammyCalibration.run||sammyCalibration.lastRun,stage=run?.stage||"—",total=run?sammyCalStageTotal(run):0,cursor=run?.cursor||0,p=total?Math.min(1,cursor/total):0;const st=$("#sammyCalibrationStatus"),bar=$("#sammyCalibrationProgressBar"),cur=$("#sammyCalibrationCurrent");if(st)st.textContent=run?`${sammyCalStageLabel(stage)} · ${Math.min(cursor,total)} / ${total}${sammyCalibration.paused?" · PAUSE":""}`:"Noch kein Calibration-Lauf.";if(bar)bar.style.width=`${(p*100).toFixed(1)}%`;if(cur&&detail)cur.textContent=detail;const start=$("#sammyCalibrationStart"),pause=$("#sammyCalibrationPause"),reset=$("#sammyCalibrationReset");if(start)start.textContent=sammyCalibration.running?"Läuft …":(run&&run.stage!=="complete"?"Fortsetzen":"Neue Kalibrierung");if(start)start.disabled=sammyCalibration.running;if(pause)pause.disabled=!sammyCalibration.running;if(reset)reset.disabled=sammyCalibration.running}
 function sammyCalLiveReadout(results,detail){const el=$("#sammyCalibrationLiveMeasures");if(!el)return;const ids=["stature","chest_circumference","waist_circumference","natural_waist_circumference","buttock_circumference","hip_breadth","hip_circumference","upperarm_circumference","calf_circumference"];el.innerHTML=`<b>${escapeHtml(detail||"LIVE")}</b>`+ids.map(id=>{const d=SAMMY_MEASURE_DEFS.find(x=>x.id===id),v=results?.[id]?.valueCm;return `<span>${escapeHtml(d?.label||id)} <strong>${Number.isFinite(v)?v.toFixed(1):"—"} cm</strong></span>`}).join("")}
-function sammyCalNewRun(mode=sammyCalibration.mode){const c=SAMMY_CAL_CONFIG[mode],refs=sammyCalReferences().slice(0,c.refs),sliders=sammyCalSliderDefs();return {schema:SAMMY_CAL_SCHEMA,runId:sammyCalRunId(),appVersion:"0.8.2",mode,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),stage:"reference",cursor:0,ordinal:0,references:refs,sliders,referenceMeasures:{},effects:{},relevantSliderIds:[],candidatePairs:[],deepInteractionPairs:[],screening:{thresholdCm:c.screenThresholdCm,byPair:{},screenedCount:0,strongCount:0},validation:{sumSq:{},count:{},overallSumSq:0,overallCount:0},notes:{measurementEngine:"v0.8.2 semantic MEAS; female local bust peak + shared upper hip width/circumference + mid-biceps level",rawMorphUnits:"core 0..1 except age 0.70..1.00; logical local sliders -1..1",symmetry:"matching l-/r- Anny morphs are calibrated as one logical L+R slider",interactionStrategy:"all plausible pairs cheap-screened in Standard/Deep; only non-additive pairs receive deep scan",liveDefault:true}}}
+function sammyCalNewRun(mode=sammyCalibration.mode){const c=SAMMY_CAL_CONFIG[mode],refs=sammyCalReferences().slice(0,c.refs),sliders=sammyCalSliderDefs();return {schema:SAMMY_CAL_SCHEMA,runId:sammyCalRunId(),appVersion:"0.8.3",mode,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),stage:"reference",cursor:0,ordinal:0,references:refs,sliders,referenceMeasures:{},effects:{},relevantSliderIds:[],candidatePairs:[],deepInteractionPairs:[],screening:{thresholdCm:c.screenThresholdCm,byPair:{},screenedCount:0,strongCount:0},validation:{sumSq:{},count:{},overallSumSq:0,overallCount:0},notes:{measurementEngine:"v0.8.3 semantic MEAS; Anny nipple-morph chest landmark + shared upper hip width/circumference + mid-biceps level",rawMorphUnits:"core 0..1 except age 0.70..1.00; logical local sliders -1..1",symmetry:"matching l-/r- Anny morphs are calibrated as one logical L+R slider",interactionStrategy:"all plausible pairs cheap-screened in Standard/Deep; only non-additive pairs receive deep scan",liveDefault:true}}}
 function sammyCalEffectSlot(run,d){return run.effects[d.id]??={id:d.id,label:d.label,kind:d.kind,category:d.category,members:d.keys||[d.key],maxAbs:{},regression:{}}}
 function sammyCalUpdateEffects(run,d,ref,shape,measureObj){const base=run.referenceMeasures[ref.id];if(!base)return;const x=sammyCalSliderValue(shape,d)-(sammyCalIsLocal(d)?0:Number(ref.core[d.key]??.5)),slot=sammyCalEffectSlot(run,d);for(const m of SAMMY_MEASURE_DEFS){const y=(measureObj[m.id]??NaN)-(base[m.id]??NaN);if(!Number.isFinite(y))continue;slot.maxAbs[m.id]=Math.max(Number(slot.maxAbs[m.id]||0),Math.abs(y));if(Math.abs(x)>1e-8){const r=slot.regression[m.id]??={n:0,sx:0,sy:0,sxx:0,sxy:0};r.n++;r.sx+=x;r.sy+=y;r.sxx+=x*x;r.sxy+=x*y}}}
 function sammyCalSlope(run,sliderId,measureId){const r=run.effects?.[sliderId]?.regression?.[measureId];if(!r||r.n<2)return 0;const den=r.n*r.sxx-r.sx*r.sx;return Math.abs(den)>1e-9?(r.n*r.sxy-r.sx*r.sy)/den:0}
@@ -4910,7 +4928,7 @@ function sammyCalSetMode(mode){if(!SAMMY_CAL_CONFIG[mode]||sammyCalibration.runn
 function sammyCalToggleTurbo(){sammyCalibration.turbo=!sammyCalibration.turbo;const b=$("#sammyCalibrationTurbo");if(b){b.classList.toggle("active",sammyCalibration.turbo);b.textContent=sammyCalibration.turbo?"Turbo AN":"LIVE · Standard"}}
 async function sammyCalLoadLatest(){try{const runs=(await sammyCalGetRuns()).sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt)));const active=runs.find(r=>r.stage!=="complete")||runs[0]||null;sammyCalibration.run=active;sammyCalibration.lastRun=active;if(active){sammyCalibration.mode=active.mode||"standard";document.querySelectorAll("[data-cal-mode]").forEach(b=>b.classList.toggle("active",b.dataset.calMode===sammyCalibration.mode));sammyCalStatus(active.stage==="complete"?"Letzter Lauf ist abgeschlossen.":"Gespeicherter Lauf kann fortgesetzt werden.")}else sammyCalStatus()}catch(e){console.warn("Calibration resume",e)}}
 function sammyCalSummary(run){return {schema:"sammy-calibration-summary-v2",runId:run.runId,appVersion:run.appVersion,mode:run.mode,createdAt:run.createdAt,completedAt:run.completedAt||null,totalRecords:run.ordinal,measureCount:SAMMY_MEASURE_DEFS.length,sliderCounts:{rawAnnyLocal:run.analysis?.rawAnnyLocalCount??null,logicalTotal:run.analysis?.logicalSliderCount??run.sliders?.length??null,logicalPairedLR:run.analysis?.pairedLogicalCount??null,relevant:run.analysis?.relevantCount??null},analysis:run.analysis||null,screening:run.screening?{thresholdCm:run.screening.thresholdCm,screenedCount:run.screening.screenedCount,strongCount:run.screening.strongCount,deepSelectedCount:run.screening.deepSelectedCount,maxResidualCm:run.screening.maxResidualCm,topStrong:Object.values(run.screening.byPair||{}).filter(x=>x.maxResidualCm>=run.screening.thresholdCm).sort((a,b)=>b.maxResidualCm-a.maxResidualCm).slice(0,120)}:null,deepInteractionPairs:run.deepInteractionPairs||[],validation:run.validation||null,notes:run.notes||{}}}
-async function sammyCalExport(summaryOnly=false){const run=sammyCalibration.run||sammyCalibration.lastRun;if(!run){sammyCalStatus("Kein Calibration-Lauf zum Exportieren.");return}sammyCalStatus(summaryOnly?"Summary JSON wird erstellt …":"FULL JSON wird zusammengestellt …");const summary=sammyCalSummary(run),base={schema:SAMMY_CAL_SCHEMA,app:"Sammy",version:"0.8.2",generated:new Date().toISOString(),interpretation:{purpose:"Morph/Slider → Körpermaß-Kalibrierung für den späteren inversen Sammy Body Solver",rawSliderUnits:{core:"0..1; age/shapeAge 0.70..1.00",logicalLocal:"-1..1; L/R-Paare werden gleichzeitig gesetzt",measurements:"cm"},stages:{reference:"Referenzkörper",single:"logische Einzelslider",analysis:"Relevanz, Redundanz und Paarselektion",screen:"günstiger Test aller plausiblen Paar-Kandidaten",interaction:"tiefer Rastertest nur für nicht-additive Paare",global:"mehrdimensionale Körperstichprobe",validation:"additives Basismodell gegen unbekannte Körper",complete:"Lauf abgeschlossen"},note:"ANSUR folgt erst nach dieser Morph-Kalibrierung. Weiblicher Bust nutzt den ersten lokalen Umfangs-Peak oberhalb der natürlichen Taille; Hip Breadth und Sammy Hip Circumference teilen eine höhere Hüftebene; Buttock Circumference bleibt separat; Oberarm liegt im mittleren Bizepsbereich."},summary,measureDefinitions:SAMMY_MEASURE_DEFS.map(d=>({id:d.id,label:d.label,ansur:d.ansur,kind:d.kind,section:d.section||null,group:d.group||null,internal:!!d.internal,autoSearch:d.autoSearch||null,dynamicRule:d.dynamicRule||null}))};let payload;if(summaryOnly)payload=base;else{const records=await sammyCalGetRecords(run.runId);payload={...base,run,measureCalibration:JSON.parse(JSON.stringify(sammyMeasureLoadCalibration())),records}}const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=summaryOnly?`Sammy_Calibration_Summary_${run.mode}_${run.runId}.json`:`Sammy_Calibration_FULL_${run.mode}_${run.runId}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);sammyCalStatus(summaryOnly?"Summary exportiert.":`FULL Export · ${payload.records.length} Records`)}
+async function sammyCalExport(summaryOnly=false){const run=sammyCalibration.run||sammyCalibration.lastRun;if(!run){sammyCalStatus("Kein Calibration-Lauf zum Exportieren.");return}sammyCalStatus(summaryOnly?"Summary JSON wird erstellt …":"FULL JSON wird zusammengestellt …");const summary=sammyCalSummary(run),base={schema:SAMMY_CAL_SCHEMA,app:"Sammy",version:"0.8.3",generated:new Date().toISOString(),interpretation:{purpose:"Morph/Slider → Körpermaß-Kalibrierung für den späteren inversen Sammy Body Solver",rawSliderUnits:{core:"0..1; age/shapeAge 0.70..1.00",logicalLocal:"-1..1; L/R-Paare werden gleichzeitig gesetzt",measurements:"cm"},stages:{reference:"Referenzkörper",single:"logische Einzelslider",analysis:"Relevanz, Redundanz und Paarselektion",screen:"günstiger Test aller plausiblen Paar-Kandidaten",interaction:"tiefer Rastertest nur für nicht-additive Paare",global:"mehrdimensionale Körperstichprobe",validation:"additives Basismodell gegen unbekannte Körper",complete:"Lauf abgeschlossen"},note:"ANSUR folgt erst nach dieser Morph-Kalibrierung. Brusthöhe nutzt bei Männern und Frauen Annys nipple-point/nipple-size Morph-Topologie als semantischen Landmark; Hip Breadth und Sammy Hip Circumference teilen eine höhere Hüftebene; Buttock Circumference bleibt separat; Oberarm liegt im mittleren Bizepsbereich."},summary,measureDefinitions:SAMMY_MEASURE_DEFS.map(d=>({id:d.id,label:d.label,ansur:d.ansur,kind:d.kind,section:d.section||null,group:d.group||null,internal:!!d.internal,autoSearch:d.autoSearch||null,dynamicRule:d.dynamicRule||null}))};let payload;if(summaryOnly)payload=base;else{const records=await sammyCalGetRecords(run.runId);payload={...base,run,measureCalibration:JSON.parse(JSON.stringify(sammyMeasureLoadCalibration())),records}}const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=summaryOnly?`Sammy_Calibration_Summary_${run.mode}_${run.runId}.json`:`Sammy_Calibration_FULL_${run.mode}_${run.runId}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);sammyCalStatus(summaryOnly?"Summary exportiert.":`FULL Export · ${payload.records.length} Records`)}
 function sammyCalInitUI(){document.querySelectorAll("[data-cal-mode]").forEach(b=>b.onclick=()=>sammyCalSetMode(b.dataset.calMode));const start=$("#sammyCalibrationStart"),pause=$("#sammyCalibrationPause"),reset=$("#sammyCalibrationReset"),exp=$("#sammyCalibrationExport"),sum=$("#sammyCalibrationSummaryExport"),turbo=$("#sammyCalibrationTurbo");if(start)start.onclick=sammyCalStartOrResume;if(pause)pause.onclick=sammyCalPause;if(reset)reset.onclick=sammyCalReset;if(exp)exp.onclick=()=>sammyCalExport(false);if(sum)sum.onclick=()=>sammyCalExport(true);if(turbo)turbo.onclick=sammyCalToggleTurbo;sammyCalSetMode("standard");sammyCalLoadLatest()}
 
 function sammyClearMeasureOverlay(){if(!sammyMeasureOverlayGroup)return;scene.remove(sammyMeasureOverlayGroup);sammyMeasureOverlayGroup.traverse(o=>{o.geometry?.dispose?.();if(o.material?.map)o.material.map.dispose?.();o.material?.dispose?.()});sammyMeasureOverlayGroup=null}
@@ -4924,12 +4942,12 @@ function sammyMeasureStateBadge(id){
 }
 function sammyMeasureInlineEditor(d,c){
  const off=Number(c.offsetCm)||0,span=Number(c.spanOffsetCm)||0,range=d.range||0,spanRange=d.spanRange||20,scopeSpecific=sammyMeasureScope!=="common",isOverride=scopeSpecific&&sammyMeasureSpecificCal(d.id,sammyMeasureScope).override;
- const dynamicFemale=d.dynamicRule==="femaleBustLocalPeak"&&sammyMeasureScope==="female",dynamicNote=d.dynamicRule==="femaleBustLocalPeak"?`<div class="sammyMeasureAutoRule"><b>Weiblich · lokaler Brust-Peak</b><small>Sammy folgt dem Umfang von der natürlichen Taille nach oben und nimmt den ersten deutlichen lokalen Brust-Peak, bevor der Umfang wieder abnimmt. Ein späterer Achsel-/Schulteranstieg wird dadurch ignoriert. Männlich bleibt die kalibrierte Brustebene erhalten.</small></div>`:"";
+ const dynamicSemantic=d.dynamicRule==="nippleMorphLandmark",dynamicNote=dynamicSemantic?`<div class="sammyMeasureAutoRule"><b>Brust · Nipple-Morph-Landmark</b><small>Für Männer und Frauen wird die Messebene direkt aus den Mesh-Vertices abgeleitet, die Annys nipple-point / nipple-size Morphs beeinflussen. Dadurch folgt die Ebene automatisch der tatsächlichen Brustposition.</small></div>`:"";
  const auto=d.anchorSource?`<div class="sammyMeasureAutoRule"><b>Gemeinsamer Landmark</b><small>Diese Messebene wird automatisch von ${escapeHtml(SAMMY_MEASURE_DEFS.find(x=>x.id===d.anchorSource)?.label||d.anchorSource)} übernommen.</small></div>`:(dynamicNote||(d.autoSearch?`<div class="sammyMeasureAutoRule"><b>Automatische ${d.autoSearch==="min"?"Minimum":"Maximum"}-Suche</b><small>Die Position wird aus der aktuellen Körpergeometrie ermittelt und skaliert mit dem Mesh.</small></div>`:""));
- const position=d.adjustable&&!d.autoSearch&&!dynamicFemale?`<div class="sammyMeasureInlineField"><div class="sammyMeasureOffsetHead"><label>Landmark / Messebene feinjustieren</label><span data-inline-off>${off>=0?"+":""}${off.toFixed(1)} cm</span></div><input data-measure-offset type="range" min="${-range}" max="${range}" step="0.1" value="${off}"><small class="sammyMeasureMirrorHint">v0.8.2 skaliert diesen Kalibrierwert proportional zur aktuellen Körperhöhe.</small></div>`:"";
+ const position=d.adjustable&&!d.autoSearch&&!dynamicSemantic?`<div class="sammyMeasureInlineField"><div class="sammyMeasureOffsetHead"><label>Landmark / Messebene feinjustieren</label><span data-inline-off>${off>=0?"+":""}${off.toFixed(1)} cm</span></div><input data-measure-offset type="range" min="${-range}" max="${range}" step="0.1" value="${off}"><small class="sammyMeasureMirrorHint">v0.8.3 skaliert diesen Kalibrierwert proportional zur aktuellen Körperhöhe.</small></div>`:"";
  const spanCtl=d.spanAdjust?`<div class="sammyMeasureInlineField"><div class="sammyMeasureOffsetHead"><label>${escapeHtml(d.spanLabel||"Breitenkorrektur gesamt")}</label><span data-inline-span>${span>=0?"+":""}${span.toFixed(1)} cm</span></div><input data-measure-span type="range" min="${-spanRange}" max="${spanRange}" step="0.1" value="${span}"><small class="sammyMeasureMirrorHint">symmetrisch · skaliert mit Körperhöhe</small></div>`:"";
  const status=c.status||"ungeprüft";
- return `<div class="sammyMeasureInlineEditor">${auto}${position}${spanCtl}<div class="sammyMeasureStatusButtons" role="group" aria-label="Prüfstatus"><button data-status="ungeprüft" class="${status==="ungeprüft"?"active":""}" type="button">ungeprüft</button><button data-status="prüfen" class="${status==="prüfen"?"active":""}" type="button">prüfen</button><button data-status="bestätigt" class="${status==="bestätigt"?"active":""}" type="button">bestätigt</button></div><textarea data-measure-comment placeholder="Kommentar · ${escapeHtml(sammyMeasureScopeLabel())}">${escapeHtml(c.comment||"")}</textarea><div class="sammyMeasureInlineActions"><button data-measure-reset type="button">Werte zurücksetzen</button>${scopeSpecific?`<button data-measure-inherit type="button" ${isOverride?"":"disabled"}>Unisex übernehmen</button>`:""}</div>${sammyMeasureInfoOpenFor===d.id?`<div class="sammyMeasureInfoBox"><b>ANSUR-II / Referenz</b><p>${escapeHtml(d.ansurInfo)}</p><b>Sammy-Implementierung v0.8.2</b><p>${escapeHtml(d.implementation)}</p><b>Quelle</b><p>ANSUR II · Measurer's Handbook NATICK/TR-11/017. Interne/abgeleitete Maße sind ausdrücklich als solche markiert.</p></div>`:""}</div>`
+ return `<div class="sammyMeasureInlineEditor">${auto}${position}${spanCtl}<div class="sammyMeasureStatusButtons" role="group" aria-label="Prüfstatus"><button data-status="ungeprüft" class="${status==="ungeprüft"?"active":""}" type="button">ungeprüft</button><button data-status="prüfen" class="${status==="prüfen"?"active":""}" type="button">prüfen</button><button data-status="bestätigt" class="${status==="bestätigt"?"active":""}" type="button">bestätigt</button></div><textarea data-measure-comment placeholder="Kommentar · ${escapeHtml(sammyMeasureScopeLabel())}">${escapeHtml(c.comment||"")}</textarea><div class="sammyMeasureInlineActions"><button data-measure-reset type="button">Werte zurücksetzen</button>${scopeSpecific?`<button data-measure-inherit type="button" ${isOverride?"":"disabled"}>Unisex übernehmen</button>`:""}</div>${sammyMeasureInfoOpenFor===d.id?`<div class="sammyMeasureInfoBox"><b>ANSUR-II / Referenz</b><p>${escapeHtml(d.ansurInfo)}</p><b>Sammy-Implementierung v0.8.3</b><p>${escapeHtml(d.implementation)}</p><b>Quelle</b><p>ANSUR II · Measurer's Handbook NATICK/TR-11/017. Interne/abgeleitete Maße sind ausdrücklich als solche markiert.</p></div>`:""}</div>`
 }
 function sammyMeasureRenderList(results){
  const list=$("#sammyMeasureList");if(!list)return;const other=sammyMeasureOtherSexSymbol(),scroll=list.closest(".sammyPanelScroll"),keep=scroll?.scrollTop||0;
@@ -4983,7 +5001,7 @@ function sammyMeasureSwitchSex(){
 function sammyMeasureUseUnisex(){if(!sammyMeasureSession)return;sammyMeasureScope="common";sammyMeasureRefresh(true)}
 function sammyMeasureExport(){
  const current=sammyComputeAllMeasures(),sex=sammyMeasureSexKey();sammyMeasureLastSnapshots[sex]={time:new Date().toISOString(),scope:sammyMeasureScope,values:Object.fromEntries(SAMMY_MEASURE_DEFS.map(d=>[d.id,Number.isFinite(current[d.id].valueCm)?Number(current[d.id].valueCm.toFixed(4)):null]))};
- const payload={schema:"sammy-measure-calibration-v2",app:"Sammy",version:"0.8.2",generated:new Date().toISOString(),ansur:{database:"ANSUR II",handbook:"NATICK/TR-11/017",note:"ANSUR II public database contains many more direct measures; Sammy v0.8.2 nutzt einen lokalen weiblichen Bust-Peak, trennt Gesäßumfang von einer gemeinsamen höheren Hüftebene für Hüftbreite und Hüftumfang und setzt den Oberarmumfang in den mittleren Bizepsbereich; Calibration Lab behält L/R-Gruppierung und adaptives Paar-Screening."},currentModelSex:sex,currentCalibrationScope:sammyMeasureScope,definitions:SAMMY_MEASURE_DEFS.map(({id,label,ansur,kind,section,adjustable,range,spanAdjust,spanRange,group,internal,autoSearch,dynamicRule,ansurInfo,implementation})=>({id,label,ansur,kind,section:section||null,adjustable,rangeCm:range||0,spanAdjust:!!spanAdjust,spanRangeCm:spanRange||0,group:group||null,internal:!!internal,autoSearch:autoSearch||null,dynamicRule:dynamicRule||null,ansurInfo,implementation})),calibration:JSON.parse(JSON.stringify(sammyMeasureLoadCalibration())),lastSnapshots:sammyMeasureLastSnapshots,currentShape:{gender:annyParams.gender,age:annyParams.age,ageYears:sammyShapeAgeToYears(),muscle:annyParams.muscle,weight:annyParams.weight,height:annyParams.height,proportions:annyParams.proportions,cupsize:annyParams.cupsize,firmness:annyParams.firmness,activeLocal:Object.entries(annyLocalValues||{}).filter(([,v])=>Math.abs(Number(v))>1e-6)},geometry:{lod:displayLOD,vertices:geometry?.attributes?.position?.count||0,triangles:(geometry?.index?.count||0)/3,tapeBridge:"semantic landmarks + planar/arbitrary section hull + extremum search"}};
+ const payload={schema:"sammy-measure-calibration-v2",app:"Sammy",version:"0.8.3",generated:new Date().toISOString(),ansur:{database:"ANSUR II",handbook:"NATICK/TR-11/017",note:"ANSUR II public database contains many more direct measures; Sammy v0.8.3 bestimmt die Brustebene für Männer und Frauen semantisch aus Annys nipple-point/nipple-size Morph-Vertices, trennt Gesäßumfang von der höheren Hüftebene und behält den mittleren Bizepsbereich; Calibration Lab behält L/R-Gruppierung und adaptives Paar-Screening."},currentModelSex:sex,currentCalibrationScope:sammyMeasureScope,definitions:SAMMY_MEASURE_DEFS.map(({id,label,ansur,kind,section,adjustable,range,spanAdjust,spanRange,group,internal,autoSearch,dynamicRule,ansurInfo,implementation})=>({id,label,ansur,kind,section:section||null,adjustable,rangeCm:range||0,spanAdjust:!!spanAdjust,spanRangeCm:spanRange||0,group:group||null,internal:!!internal,autoSearch:autoSearch||null,dynamicRule:dynamicRule||null,ansurInfo,implementation})),calibration:JSON.parse(JSON.stringify(sammyMeasureLoadCalibration())),lastSnapshots:sammyMeasureLastSnapshots,currentShape:{gender:annyParams.gender,age:annyParams.age,ageYears:sammyShapeAgeToYears(),muscle:annyParams.muscle,weight:annyParams.weight,height:annyParams.height,proportions:annyParams.proportions,cupsize:annyParams.cupsize,firmness:annyParams.firmness,activeLocal:Object.entries(annyLocalValues||{}).filter(([,v])=>Math.abs(Number(v))>1e-6)},geometry:{lod:displayLOD,vertices:geometry?.attributes?.position?.count||0,triangles:(geometry?.index?.count||0)/3,tapeBridge:"semantic landmarks + planar/arbitrary section hull + extremum search"}};
  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Sammy_Measure_Calibration_v2_${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200)
 }
 
@@ -5575,6 +5593,7 @@ function sammyStartGreeting(){
  const first=sammyIntroRel.subarray(0,poseJointCount*9);
  applyAnnyAxis16RetargetPose(currentDisplayRest(),first,false,false,"Sammy Begrüßung · Frame 0");
  sammyCameraTo("greeting",0,true);
+ sammyIntroEditCameraStarted=false;
  sammyIntroActive=true;sammyIntroPhase="clip";sammyIntroStart=performance.now();
  requestAnimationFrame(()=>requestAnimationFrame(()=>{sammyHideSplash();document.body.classList.add("sammy-ready")}))
 }
@@ -5584,6 +5603,8 @@ function sammyUpdateIntro(now){
   const raw=(now-sammyIntroStart)/1000*sammyIntroFps,f0=Math.min(sammyIntroFrames-1,Math.floor(raw)),f1=Math.min(sammyIntroFrames-1,f0+1),t=Math.min(1,raw-f0);
   const a=sammyIntroRel.subarray(f0*poseJointCount*9,(f0+1)*poseJointCount*9),b=sammyIntroRel.subarray(f1*poseJointCount*9,(f1+1)*poseJointCount*9);
   const blended=new Float32Array(poseJointCount*9);sammyBlendRelativePose(a,b,t,blended);applyAnnyAxis16RetargetPose(currentDisplayRest(),blended,false,false,"Sammy Begrüßung");
+  const remainingClipSeconds=Math.max(0,(sammyIntroFrames-1-raw)/Math.max(1,sammyIntroFps));
+  if(!sammyIntroEditCameraStarted&&remainingClipSeconds<=SAMMY_INTRO_EDIT_CAMERA_LEAD_SECONDS){sammyIntroEditCameraStarted=true;sammyCameraTo("edit",900,false)}
   if(raw>=sammyIntroFrames-1){sammyIntroPhase="blend";sammyIntroBlendStart=now;sammyIntroBlendFrom=new Float32Array(blended)}
  }else if(sammyIntroPhase==="blend"){
   let t=Math.min(1,(now-sammyIntroBlendStart)/700);t=t*t*(3-2*t);
@@ -5594,7 +5615,7 @@ function sammyUpdateIntro(now){
 function sammyFinishIntro(){
  sammyIntroActive=false;sammyIntroPhase="done";
  if(sammyEditPoseRel)applyAnnyAxis16RetargetPose(currentDisplayRest(),sammyEditPoseRel,false,false,"Sammy Bearbeitungsposition");
- sammyCameraTo("edit",900,false);
+ if(!sammyIntroEditCameraStarted){sammyIntroEditCameraStarted=true;sammyCameraTo("edit",900,false)}
  const input=$("#sammyAnimFile");if(input)input.disabled=false;
  document.body.classList.add("sammy-ready");
  bootStatus("SAMMY BEREIT","Begrüßung abgeschlossen.","ok");

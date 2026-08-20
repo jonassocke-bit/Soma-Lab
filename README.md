@@ -1,3 +1,11 @@
+## v0.8.3 Nipple Landmark + Early Intro Camera
+
+- Brustumfang/-breite/-tiefe nutzen für Männer und Frauen dieselbe semantische Messebene aus Annys `nipple-point-incr` / `nipple-size-incr` Morph-Vertices.
+- Die frühere lokale Bust-Peak-Suche wurde als aktive Messlogik entfernt; Legacy-Chest-Offets verschieben die neue Nipple-Ebene nicht.
+- Sichtbare MEAS-Landmarks zeigen die erkannten linken/rechten Nipple-Patches.
+- Die Kamera beginnt ca. 1,0 s vor Ende des Greeting-Clips in Richtung Bearbeitungs-/Baumodus zu fahren, also noch während Sammy winkt.
+- Calibration Lab / L/R-Kopplung / Pair-Screening bleiben ansonsten unverändert.
+
 # Sammy v0.7.3
 
 Measurement Calibration v2.
