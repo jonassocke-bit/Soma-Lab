@@ -28,3 +28,14 @@ The proven Axis16 -> transported native-Anny basis -> exact Anny FK/LBS path rem
 - Quick / Standard / Deep in derselben App; LIVE ist Standard, Turbo optional
 - Fortschritt/Records werden nach jedem Test in IndexedDB gespeichert und sind fortsetzbar
 - strukturierter `sammy-calibration-lab-v1` JSON-Export mit stabilen Slider-/Maß-IDs, Rohwerten, cm-Maßen, Interaktionsresiduen und Validierungsdaten
+
+
+## v0.8.1 Calibration Lab R2
+- auf v0.8.0 aufgebaut; Startup/Loader/Anny/SOMA/Rig/FORM/ANIM unverändert
+- weiblicher Brustumfang sucht dynamisch das Umfangsmaximum innerhalb der Brustzone; Breite/Tiefe teilen dieselbe Ebene
+- Hip Breadth ist vom Buttock-Maximum entkoppelt und sucht höher in der oberen Becken-/Hüftzone
+- alle passenden `l-`/`r-` Anny-Morphs werden im Calibration/Solver-Raum als ein logischer symmetrischer L+R-Slider behandelt
+- Standard: alle plausiblen Sliderpaare werden einmal billig gescreent; nur Paare über dem Nichtlinearitäts-Schwellwert erhalten den tiefen Interaction-Scan
+- Quick screent nur die stärksten Kandidaten, Deep screent alle Kandidaten auf mehr Referenzen/Kombinationen
+- Redundanzkandidaten werden anhand ähnlicher 30-dimensionaler Wirkungssignaturen markiert, aber noch nicht automatisch entfernt
+- getrennter Summary- und FULL-JSON-Export; FULL behält Solver-Rohdaten, Summary bleibt für schnelle Analyse kompakt

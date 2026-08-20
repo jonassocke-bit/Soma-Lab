@@ -425,3 +425,5 @@ body.sammy-ready #sammyCameraDebugBtn{opacity:1;transition:opacity .4s ease}
 .sammyCalibrationProgress{height:5px;margin:6px 1px;border-radius:5px;background:rgba(255,255,255,.07);overflow:hidden}.sammyCalibrationProgress i{display:block;width:0;height:100%;border-radius:inherit;background:#e9d783;transition:width .12s linear}
 .sammyCalibrationLiveMeasures{display:grid;grid-template-columns:1fr;gap:2px;margin:6px 0;padding:7px 8px;border-radius:9px;background:rgba(0,0,0,.16);font-size:7.5px;color:#888b94}.sammyCalibrationLiveMeasures>b{margin-bottom:2px;color:#dadbe0;font-size:8px}.sammyCalibrationLiveMeasures span{display:flex;justify-content:space-between;gap:7px}.sammyCalibrationLiveMeasures strong{color:#efeff2;font-variant-numeric:tabular-nums}
 .sammyCalibrationExport{width:100%;min-height:32px!important;border-radius:9px!important;font-size:8px!important}
+
+/* v0.8.1: compact dual export buttons live inside existing Calibration actions grid. */
