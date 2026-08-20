@@ -1,16 +1,13 @@
-# Sammy v0.7.2
+# Sammy v0.7.1
 
-Semantic Measurement / Landmark iteration.
+Measurement Calibration v2.
 
-- Bakes the supplied 2026-08-19 Measurement Calibration v2 export as the fresh-install factory baseline.
-- Calibration offsets now scale with current stature instead of remaining absolute centimeter shifts across differently sized random bodies.
-- Chest breadth/depth/circumference share one chest plane; waist breadth/depth/circumference share one Omphalion/waist plane.
-- Neck circumference and neck-base circumference use planes perpendicular to the current Neck1→Neck2 axis.
-- Right-leg slices are isolated by anatomical side instead of the old ±16 cm rectangle.
-- Calf circumference searches for the maximum right-calf section; ankle circumference searches for the minimum ankle section.
-- Upper-arm circumference is now a Sammy geometric maximum on the right upper arm; a new forearm maximum circumference is added. Both remain clearly separated from pose-dependent ANSUR flexed measures.
-- Torso height reuses the same Crotch landmark instead of owning an independent crotch offset.
-- Visible semantic landmarks can be toggled in MEAS.
-- Random Person and Random Extreme live inside the MEAS bubble menu, regenerate Anny bodies in T-pose, switch to all measurement overlays, and recalculate the full measurement set immediately.
+- MEAS camera composition shifted so the complete T-pose sits higher above the bottom sheet.
+- Calibration is UNISEX by default. Male/female rows become overrides only after an explicit sex switch; UNI returns to common calibration.
+- Existing v0.7.0 calibration is migrated automatically, and the supplied calibration export is baked as the factory migration seed.
+- 28 visible calibration/control measures: the earlier Body-Lab ANSUR-linked/derived set, its MakeHuman diagnostic extras, plus stature and Crotch Height.
+- Selected-row calibration controls now expand directly beneath that measure: position, symmetric breadth/depth correction where relevant, review buttons, comment, reset, and info.
+- Chest/waist/hip/shoulder breadth corrections move both endpoints symmetrically.
+- Bubble edge insertion now previews while dragging and pushes neighboring bubbles apart, including insertion between two docked bubbles. Fling/velocity and safe-area clamping remain enabled.
 
-The proven Axis16 → transported native-Anny basis → exact Anny FK/LBS path is otherwise left untouched.
+The proven Axis16 -> transported native-Anny basis -> exact Anny FK/LBS path remains frozen.

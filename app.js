@@ -5237,7 +5237,7 @@ async function sammyLoadAndPlay(file){
 }
 function sammyRuntimeSnapshot(){
  return {
-  app:"Sammy",version:"0.7.2",time:new Date().toISOString(),
+  app:"Sammy",version:"0.7.1",time:new Date().toISOString(),
   url:location.href,userAgent:navigator.userAgent,
   runtime:{
    autoBootDone,shapePass,shapeEngine,displayLOD,annyPackLoaded,annyMidLoaded,
@@ -5424,7 +5424,7 @@ function sammyApplySoftSmile(){
 }
 
 async function sammyLoadGreeting(){
- const res=await fetch("./standing-greeting.fbx?v=0.7.2",{cache:"force-cache"});
+ const res=await fetch("./standing-greeting.fbx?v=0.7.1",{cache:"force-cache"});
  if(!res.ok)throw new Error(`Standing Greeting konnte nicht geladen werden: HTTP ${res.status}`);
  const conv=await convertMixamoFbxMotion(await res.arrayBuffer(),"Standing Greeting.fbx");
  sammyIntroRel=conv.data;sammyIntroFrames=conv.frames;sammyIntroFps=conv.fps||30;
@@ -5504,9 +5504,9 @@ function sammyInitUi(){
  $("#sammyMeasureShowSelected").onclick=()=>sammyMeasureSetOverlayMode("selected");
  $("#sammyMeasureShowAll").onclick=()=>sammyMeasureSetOverlayMode("all");
  $("#sammyMeasureShowNone").onclick=()=>sammyMeasureSetOverlayMode("none");
- $("#sammyMeasureLandmarks").onclick=()=>sammyMeasureSetLandmarks();
- $("#sammyMeasureRandom").onclick=()=>sammyMeasureRandomize(false);
- $("#sammyMeasureRandomExtreme").onclick=()=>sammyMeasureRandomize(true);
+ const measureLandmarksBtn=$("#sammyMeasureLandmarks");if(measureLandmarksBtn)measureLandmarksBtn.onclick=()=>sammyMeasureSetLandmarks();
+ const measureRandomBtn=$("#sammyMeasureRandom");if(measureRandomBtn)measureRandomBtn.onclick=()=>sammyMeasureRandomize(false);
+ const measureRandomExtremeBtn=$("#sammyMeasureRandomExtreme");if(measureRandomExtremeBtn)measureRandomExtremeBtn.onclick=()=>sammyMeasureRandomize(true);
  $("#sammyMeasureExport").onclick=sammyMeasureExport;
  $("#sammyMeasureUnisex").onclick=sammyMeasureUseUnisex;
  let frameRaf=0;

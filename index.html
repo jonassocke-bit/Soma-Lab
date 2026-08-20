@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.7.2</title>
-<link rel="stylesheet" href="style.css?v=0.7.2">
+<title>Sammy v0.7.2m</title>
+<link rel="stylesheet" href="style.css?v=0.7.2m">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.7.2</div>
+  <div class="sammySplashVersion">v0.7.2m</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.7.2</div>
+<div id="sammyVersion">Sammy · v0.7.2m</div>
 
 <button id="sammyCameraDebugBtn" class="sammyCameraDebugBtn" type="button">CAM</button>
 <div id="sammyCameraDebugPanel" class="sammyCameraDebugPanel hidden">
@@ -115,18 +115,18 @@
    <div class="sammyMeasureHeadActions"><button id="sammyMeasureUnisex" type="button" class="active">UNI</button><button class="sammyPanelClose" type="button">×</button></div>
   </div>
   <div class="sammyPanelScroll">
-   <div class="sammyMeasureIntro">T-Pose · skalierbare Landmark-Engine · 29 Kalibrier-/Kontrollmaße</div>
+   <div class="sammyMeasureIntro">T-Pose · Measurement-Landmarks · 29 Kalibrier-/Kontrollmaße</div>
    <div class="sammyMeasureOverlayModes" role="group" aria-label="Messlinien anzeigen">
     <button id="sammyMeasureShowSelected" type="button" class="active">Ausgewählt</button>
     <button id="sammyMeasureShowAll" type="button">Alle</button>
     <button id="sammyMeasureShowNone" type="button">Aus</button>
    </div>
    <div class="sammyMeasureTestControls">
-    <button id="sammyMeasureLandmarks" type="button" class="active">Landmarks AN</button>
+    <button id="sammyMeasureLandmarks" type="button">Landmarks AN</button>
     <button id="sammyMeasureRandom" type="button">Random Person</button>
     <button id="sammyMeasureRandomExtreme" type="button">Random Extreme</button>
    </div>
-   <div id="sammyMeasureRandomStatus" class="sammyMeasureRandomStatus">Random-Test: bereit · generiert Körper direkt in T-Pose und berechnet alle Maße neu.</div>
+   <div id="sammyMeasureRandomStatus" class="sammyMeasureRandomStatus">Random-Test: bereit.</div>
    <div id="sammyMeasureList" class="sammyMeasureList"></div>
    <button id="sammyMeasureExport" type="button" class="sammyMeasureExport">Kalibrierung exportieren</button>
    <div class="sammyMeasureSource">ANSUR II · NATICK/TR-11/017 · Messnamen gemäß öffentlicher ANSUR-II-Datenbank</div>
@@ -149,7 +149,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.7.2</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.7.2m</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -406,6 +406,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.7.2"></script>
+<script type="module" src="app.js?v=0.7.2m"></script>
 </body>
 </html>

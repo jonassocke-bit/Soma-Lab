@@ -408,8 +408,7 @@ body.sammy-ready #sammyCameraDebugBtn{opacity:1;transition:opacity .4s ease}
 .sammyMeasureInfoBox b{display:block;margin:0 0 3px;color:#efeff2;font-size:8.5px}.sammyMeasureInfoBox p{margin:0 0 8px}.sammyMeasureInfoBox p:last-child{margin-bottom:0}
 .sammyMeasureExport{width:100%;margin-top:11px;background:#ececef!important;color:#17181b!important}.sammyMeasureSource{padding:8px 3px 0;text-align:center;font-size:7.5px;line-height:1.35;color:#676a72}
 
-
-/* Sammy v0.7.2 semantic measurement / random-body test controls */
+/* v0.7.2m — MEAS-only additions. No global/startup styling changed. */
 .sammyMeasureTestControls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:-2px 0 7px}
 .sammyMeasureTestControls button{min-height:34px!important;padding:0 5px!important;border-radius:10px!important;font-size:8.5px!important;line-height:1.05!important}
 .sammyMeasureTestControls button.active{background:#ececef!important;color:#17181b!important}
