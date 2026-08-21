@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.7</title>
+<title>Sammy v0.8.7.1</title>
 <link rel="stylesheet" href="style.css?v=0.8.7">
 <script type="importmap">
 {"imports":{
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.7</div>
+  <div class="sammySplashVersion">v0.8.7.1</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.7</div>
+<div id="sammyVersion">Sammy · v0.8.7.1</div>
 
 <button id="sammyCameraDebugBtn" class="sammyCameraDebugBtn" type="button">CAM</button>
 <div id="sammyCameraDebugPanel" class="sammyCameraDebugPanel hidden">
@@ -138,7 +138,7 @@
      <div class="sammyCalibrationActions"><button id="sammyCalibrationTurbo" type="button">LIVE · Standard</button><button id="sammyCalibrationReset" type="button">Lauf löschen</button></div>
      <div id="sammyCalibrationStatus" class="sammyCalibrationStatus">Noch kein Calibration-Lauf.</div>
      <div class="sammyCalibrationProgress"><i id="sammyCalibrationProgressBar"></i></div>
-     <div id="sammyCalibrationCurrent" class="sammyCalibrationCurrent">Live-Test zeigt jeden erzeugten Körper. v0.8.7 nutzt die Solver-Whitelist (61 statt 202 logische Slider): Kopf/Gesicht, Hände, Füße, Unterschenkel/Knie sowie Manual/Special/Redundanz-Morphs werden übersprungen. Standard screent danach alle plausiblen verbleibenden Paare; nur auffällige Paare werden tief vermessen. Fortschritt wird nach jedem Test gesichert.</div>
+     <div id="sammyCalibrationCurrent" class="sammyCalibrationCurrent">Live-Test zeigt jeden erzeugten Körper. v0.8.7.1 nutzt die Solver-Whitelist (61 statt 202 logische Slider): Kopf/Gesicht, Hände, Füße, Unterschenkel/Knie sowie Manual/Special/Redundanz-Morphs werden übersprungen. Standard screent danach alle plausiblen verbleibenden Paare; nur auffällige Paare werden tief vermessen. Fortschritt wird nach jedem Test gesichert.</div>
      <div id="sammyCalibrationLiveMeasures" class="sammyCalibrationLiveMeasures"></div>
      <div class="sammyCalibrationActions"><button id="sammyCalibrationSummaryExport" type="button">Summary JSON</button><button id="sammyCalibrationExport" type="button">FULL JSON</button></div>
     </div>
@@ -155,7 +155,7 @@
      <div class="sammyCalibrationProgress"><i id="sammySolverProgressBar"></i></div>
      <div id="sammySolverCurrent" class="sammyCalibrationCurrent">Ein kompakter Gesamtlauf: Zuerst misst Sammy auf wenigen neuen Körpern gleichzeitig die alte v0.8.4 Waist/Crotch-Logik und die aktuelle Navel/Bulge-Logik. Daraus wird ein dynamisches Landmark-Delta-Modell gelernt. Anschließend werden die vorhandenen 25.250 Deep-Records nur rechnerisch auf die neue Semantik korrigiert und Forward, Inverse und Mesh-Reality-Check automatisch neu ausgeführt. Deep = 600 Delta-Körper; keine Vollkalibrierung.</div>
      <div id="sammySolverLive" class="sammyCalibrationLiveMeasures"></div>
-     <div class="sammyCalibrationActions"><button id="sammySolverExport" type="button">FULL JSON</button><button type="button" disabled title="v0.8.7 wählt das beste Forward-Modell automatisch">Holdout-Auswahl automatisch</button></div>
+     <div class="sammyCalibrationActions"><button id="sammySolverExport" type="button">FULL JSON</button><button type="button" disabled title="v0.8.7.1 wählt das beste Forward-Modell automatisch">Holdout-Auswahl automatisch</button></div>
     </div>
    </details>
    <div id="sammyMeasureList" class="sammyMeasureList"></div>
@@ -180,7 +180,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.7</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.7.1</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
