@@ -5403,6 +5403,162 @@ async function sammyProductionExport(summaryOnly=false){
 function sammySolverInitUI(){document.querySelectorAll("[data-solver-mode]").forEach(b=>b.onclick=()=>sammySolverSetMode(b.dataset.solverMode));const start=$("#sammySolverStart"),pause=$("#sammySolverPause"),reset=$("#sammySolverReset"),sum=$("#sammySolverSummaryExport"),full=$("#sammySolverExport");if(start)start.onclick=sammyProductionStartOrResume;if(pause)pause.onclick=sammySolverPause;if(reset)reset.onclick=sammySolverReset;if(sum)sum.onclick=()=>sammyProductionExport(true);if(full)full.onclick=()=>sammyProductionExport(false);sammySolverSetMode("standard");sammyProductionLoadLatest()}
 
 
+// -----------------------------------------------------------------------------
+// Sammy v0.8.11 DIMENSIONS + R5 validation/stress loop
+// Strictly additive subsystem. Existing R5/MEAS/Anny/SOMA/Rig paths are reused
+// without modification. Full targets (31 cm measures) -> R5 production solve.
+// Test loop mixes preserved R2 validation holdouts with fresh deterministic
+// plausible and edge bodies, and evaluates the actual current mesh end-to-end.
+// -----------------------------------------------------------------------------
+const SAMMY_DIMENSIONS_SCHEMA="sammy-dimensions-validation-v1";
+const SAMMY_DIMENSIONS_VERSION="0.8.11";
+const SAMMY_DIMENSIONS_TEST_CONFIG={
+ quick:{label:"Quick",bodies:8,canonEvals:6},
+ standard:{label:"Standard",bodies:30,canonEvals:10},
+ deep:{label:"Deep",bodies:80,canonEvals:14},
+ stress:{label:"Stress",bodies:160,canonEvals:14}
+};
+const sammyDimensionsLab={mode:"deep",run:null,lastRun:null,running:false,paused:false,cancelRequested:false,manualRunning:false,sex:0};
+let sammyDimensionsSourceCache=null;
+
+function sammyDimensionsYearsToShapeAge(years,gender=0){
+ const lo=sammyAdultMinYears(gender),y=Math.max(lo,Math.min(SAMMY_ADULT_MAX_YEARS,Number(years)||lo)),t=(y-lo)/Math.max(1e-9,SAMMY_ADULT_MAX_YEARS-lo);
+ return sammyClampAdultShapeAge(SAMMY_ADULT_SHAPE_AGE_MIN+t*(SAMMY_ADULT_SHAPE_AGE_MAX-SAMMY_ADULT_SHAPE_AGE_MIN));
+}
+function sammyDimensionsContextShape(){
+ const sex=sammyDimensionsLab.sex>=.5?1:0,ageInput=$("#sammyDimensionsAge"),years=Number(ageInput?.value)||Math.round(sammyShapeAgeToYears(annyParams.age,sex)),age=sammyDimensionsYearsToShapeAge(years,sex);
+ return {core:{gender:sex,age},local:{}};
+}
+function sammyDimensionsMeasureObject(results){return Object.fromEntries(SAMMY_MEASURE_DEFS.map(d=>[d.id,Number(results?.[d.id]?.valueCm)]))}
+function sammyDimensionsReadTargets(){
+ const out={};let missing=[];
+ for(const d of SAMMY_MEASURE_DEFS){const el=document.querySelector(`[data-dim-measure="${d.id}"]`),v=Number(el?.value);if(!Number.isFinite(v)||v<=0)missing.push(d.label);else out[d.id]=v;}
+ return {targets:out,missing};
+}
+function sammyDimensionsFillTargets(results=sammyMeasureResultsCache){
+ if(!results)results=sammyComputeAllMeasures();
+ for(const d of SAMMY_MEASURE_DEFS){const el=document.querySelector(`[data-dim-measure="${d.id}"]`),v=Number(results?.[d.id]?.valueCm);if(el&&Number.isFinite(v))el.value=v.toFixed(2);}
+ const sex=annyParams.gender>=.5?1:0;sammyDimensionsSetSex(sex);const age=$("#sammyDimensionsAge");if(age)age.value=String(Math.round(sammyShapeAgeToYears(annyParams.age,sex)));
+ sammyDimensionsStatus("Aktueller Körper als 31 Zielmaße übernommen.");
+}
+function sammyDimensionsSetSex(sex){
+ sammyDimensionsLab.sex=Number(sex)>=.5?1:0;
+ document.querySelectorAll("[data-dim-sex]").forEach(b=>b.classList.toggle("active",Number(b.dataset.dimSex)===sammyDimensionsLab.sex));
+ const age=$("#sammyDimensionsAge");if(age){age.min=String(Math.round(sammyAdultMinYears(sammyDimensionsLab.sex)));const v=Math.max(Number(age.min),Math.min(70,Number(age.value)||35));age.value=String(v);}
+}
+function sammyDimensionsRenderInputs(){
+ const host=$("#sammyDimensionsInputs");if(!host)return;
+ host.innerHTML=SAMMY_MEASURE_DEFS.map(d=>`<label class="sammyDimensionsMeasureRow"><span>${escapeHtml(d.label)}</span><input type="number" inputmode="decimal" step="0.1" min="1" data-dim-measure="${escapeHtml(d.id)}" placeholder="cm"><em>cm</em></label>`).join("");
+}
+function sammyDimensionsRenderResult(targets,actual,summary){
+ const host=$("#sammyDimensionsResult");if(!host)return;
+ const rows=SAMMY_MEASURE_DEFS.map(d=>{const t=Number(targets?.[d.id]),a=Number(actual?.[d.id]),e=a-t;return `<div class="sammyDimensionsResultRow"><span>${escapeHtml(d.label)}</span><b>${Number.isFinite(t)?t.toFixed(1):"—"}</b><b>${Number.isFinite(a)?a.toFixed(1):"—"}</b><strong class="${Math.abs(e)>.75?"warn":""}">${Number.isFinite(e)?`${e>=0?"+":""}${e.toFixed(2)}`:"—"}</strong></div>`}).join("");
+ host.innerHTML=`<div class="sammyDimensionsResultSummary"><b>R5 Ergebnis</b><span>Mesh-RMSE <strong>${summary.finalRmseCm.toFixed(3)} cm</strong></span><span>R2 vorher <strong>${summary.baselineRmseCm.toFixed(3)} cm</strong></span><span>Cleanup <strong>${summary.canonicalization.accepted}/${summary.canonicalization.evaluations} akzeptiert</strong></span></div><div class="sammyDimensionsResultHead"><span>Maß</span><b>Ziel</b><b>Ist</b><strong>Δ</strong></div>${rows}`;
+}
+function sammyDimensionsStatus(detail=""){
+ const run=sammyDimensionsLab.run||sammyDimensionsLab.lastRun,st=$("#sammyDimensionsTestStatus"),bar=$("#sammyDimensionsTestProgress"),start=$("#sammyDimensionsTestStart"),pause=$("#sammyDimensionsTestPause"),reset=$("#sammyDimensionsTestReset"),cur=$("#sammyDimensionsTestCurrent");
+ if(run){const total=Number(run.totalBodies||1),cursor=Number(run.cursor||0),pct=Math.min(1,cursor/Math.max(1,total));if(st)st.textContent=`${run.stage==="complete"?"Fertig":"Test"} · ${Math.min(cursor,total)} / ${total}${sammyDimensionsLab.paused?" · PAUSE":""}`;if(bar)bar.style.width=`${(100*pct).toFixed(1)}%`;}else{if(st)st.textContent="Bereit · R5-Quelle wird automatisch verwendet.";if(bar)bar.style.width="0%";}
+ if(cur&&detail)cur.textContent=detail;if(start){start.disabled=sammyDimensionsLab.running||sammyDimensionsLab.manualRunning;start.textContent=sammyDimensionsLab.running?"Läuft …":(run&&run.stage!=="complete"?"Fortsetzen":"Testschleife starten");}if(pause)pause.disabled=!sammyDimensionsLab.running;if(reset)reset.disabled=sammyDimensionsLab.running;
+}
+function sammyDimensionsLive(title,rows=[]){const el=$("#sammyDimensionsTestLive");if(!el)return;el.innerHTML=`<b>${escapeHtml(title)}</b>`+rows.map(([a,b])=>`<span>${escapeHtml(a)} <strong>${escapeHtml(String(b))}</strong></span>`).join("")}
+function sammyDimensionsSetMode(mode){if(!SAMMY_DIMENSIONS_TEST_CONFIG[mode]||sammyDimensionsLab.running)return;sammyDimensionsLab.mode=mode;document.querySelectorAll("[data-dim-mode]").forEach(b=>b.classList.toggle("active",b.dataset.dimMode===mode));const c=SAMMY_DIMENSIONS_TEST_CONFIG[mode];sammyDimensionsStatus(`${c.label}: ${c.bodies} echte End-to-End-Körper · davon 20 % bekannte Regression, 60 % frisch plausibel, 20 % Edge · Fortschritt wird nach jedem Körper gespeichert.`)}
+
+async function sammyDimensionsFindSource(){
+ if(sammyDimensionsSourceCache?.stage==="complete")return sammyDimensionsSourceCache;
+ const src=await sammyProductionFindSource();sammyDimensionsSourceCache=src;return src;
+}
+function sammyDimensionsRuntimeFromSource(source,runId="dimensions-manual"){
+ const runtime={runId:`${runId}:r5`,model:source.model,mode:"deep",productionProfile:null};const model=sammySolverHydrate(runtime),profile=sammyProductionProfile(model,0),counts={};for(const row of profile.rows)counts[row.class]=(counts[row.class]||0)+1;runtime.productionProfile={...profile,classCounts:counts};return runtime;
+}
+function sammyDimensionsRuntimeFromRun(run){return {runId:`${run.runId}:r5`,model:run.model,mode:"deep",productionProfile:run.productionProfile}}
+
+async function sammyDimensionsSolveEngine(runtime,targetMeasures,contextShape,canonEvalLimit=14,onProgress=null,restoreFinal=false){
+ const model=sammySolverHydrate(runtime),target=Float64Array.from(model.measureIds.map(id=>Number(targetMeasures[id]))),weights=sammySolverMeasureWeights(model.measureIds),fresh=sammySolverSolveTarget(runtime,targetMeasures,contextShape),cfg=SAMMY_SOLVER_CONFIG.deep;
+ const st={targetShape:contextShape,sex:fresh.sex,ds:Array.from(fresh.ds),bestDs:Array.from(fresh.ds),bestRmseCm:Infinity,lastRmseCm:Infinity,bestActual:null,initialRmseCm:null};
+ for(let pass=1;pass<=cfg.truthPasses;pass++){
+  const shape=sammySolverDsToShape(runtime,st.ds,st.sex,contextShape),results=await sammySolverApplyShape(shape),actual=sammySolverMeasureArray(results,model),rmse=sammySolverRMSE(target,actual),weighted=sammySolverRMSE(target,actual,weights);if(pass===1)st.initialRmseCm=Number(rmse.toFixed(4));st.lastRmseCm=Number(rmse.toFixed(4));if(rmse<Number(st.bestRmseCm)){st.bestRmseCm=Number(rmse.toFixed(4));st.bestDs=Array.from(st.ds);st.bestActual=Array.from(actual);st.bestWeightedRmseCm=Number(weighted.toFixed(4));}
+  if(onProgress)onProgress({phase:"fit",pass,total:cfg.truthPasses,rmseCm:rmse,bestRmseCm:st.bestRmseCm});if(pass<cfg.truthPasses)st.ds=sammyProductionBaselineCorrection(runtime,st,actual,target);
+ }
+ const baselineUsage=sammyProductionUsage(runtime,st.bestDs,contextShape),cs={baselineRmseCm:Number(st.bestRmseCm),baselineActual:Array.from(st.bestActual),baselineCost:Number(sammyProductionCost(runtime,st.bestDs,contextShape)),currentRmseCm:Number(st.bestRmseCm),currentActual:Array.from(st.bestActual),currentDs:Array.from(st.bestDs),sex:st.sex,currentCost:Number(sammyProductionCost(runtime,st.bestDs,contextShape)),blocked:[],attemptCounts:{},pending:null,evaluations:0,accepted:0,rejected:0,acceptedByClass:{},rejectedByReason:{}};
+ let pending=null;
+ while(cs.evaluations<canonEvalLimit){
+  let proposal=pending||sammyCanonicalNextProposal(runtime,targetMeasures,contextShape,cs.currentDs,cs);pending=null;if(!proposal)break;
+  const shape=sammySolverDsToShape(runtime,proposal.ds,cs.sex,contextShape),results=await sammySolverApplyShape(shape),actual=sammySolverMeasureArray(results,model),guard=sammyCanonicalGuard(runtime,cs,target,actual,proposal);cs.evaluations++;cs.attemptCounts[proposal.targetIndex]=Number(cs.attemptCounts[proposal.targetIndex]||0)+1;
+  if(guard.accepted){cs.accepted++;cs.acceptedByClass[proposal.class]=(cs.acceptedByClass[proposal.class]||0)+1;cs.currentDs=Array.from(proposal.ds);cs.currentActual=Array.from(actual);cs.currentRmseCm=guard.candidateRmseCm;cs.currentCost=proposal.costAfter;if(Math.abs(Number(cs.currentDs[proposal.targetIndex]||0))<.06){const b=new Set(cs.blocked||[]);b.add(proposal.targetIndex);cs.blocked=Array.from(b);}}
+  else{cs.rejected++;const reason=!guard.costOk?"cost":(!guard.bodyOk?"body":"measure");cs.rejectedByReason[reason]=(cs.rejectedByReason[reason]||0)+1;pending=sammyCanonicalRetryProposal(runtime,targetMeasures,contextShape,cs.currentDs,cs,proposal);}
+  if(onProgress)onProgress({phase:"canonical",evaluation:cs.evaluations,total:canonEvalLimit,accepted:guard.accepted,sliderId:proposal.sliderId,rmseCm:guard.candidateRmseCm,currentRmseCm:cs.currentRmseCm});
+ }
+ if(restoreFinal){const finalShape=sammySolverDsToShape(runtime,cs.currentDs,cs.sex,contextShape),finalResults=await sammySolverApplyShape(finalShape);cs.currentActual=Array.from(sammySolverMeasureArray(finalResults,model));cs.currentRmseCm=Number(sammySolverRMSE(target,cs.currentActual).toFixed(4));}
+ const finalUsage=sammyProductionUsage(runtime,cs.currentDs,contextShape),canon={evaluations:cs.evaluations,accepted:cs.accepted,rejected:cs.rejected,costBefore:Number(cs.baselineCost.toFixed(6)),costAfter:Number(cs.currentCost.toFixed(6)),costReductionPct:cs.baselineCost>1e-12?Number((100*(cs.baselineCost-cs.currentCost)/cs.baselineCost).toFixed(2)):0,acceptedByClass:cs.acceptedByClass,rejectedByReason:cs.rejectedByReason,blockedSliderCount:(cs.blocked||[]).length};
+ return {baseline:{initialRmseCm:st.initialRmseCm,bestRmseCm:Number(st.bestRmseCm),actual:Array.from(st.bestActual),ds:Array.from(st.bestDs),usage:baselineUsage,surrogateRmseCm:fresh.weightedRmseCm},production:{bestRmseCm:Number(cs.currentRmseCm),actual:Array.from(cs.currentActual),ds:Array.from(cs.currentDs),usage:finalUsage},canonicalization:canon};
+}
+
+function sammyDimensionsRand(seed){let x=(Number(seed)||1)>>>0;return ()=>{x=(x+0x6D2B79F5)>>>0;let t=x;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296}}
+function sammyDimensionsFreshShape(runtime,index,kind){
+ const model=sammySolverHydrate(runtime),rnd=sammyDimensionsRand(0x51A77EED+index*104729+(kind==="edge"?7919:0)),sex=index%2,ref=model.refs[sex?"female_avg":"male_avg"],ds=new Float64Array(model.n),{lo,hi}=sammySolverBounds(model,sex),edge=kind==="edge";
+ const setAbs=(id,val)=>{const i=model.sliderIndex[id];if(i==null)return;const d=model.sliderDefs[i],r=sammySolverRefValue(ref,d);ds[i]=Math.max(lo[i],Math.min(hi[i],Number(val)-r));};
+ const range=(a,b)=>a+(b-a)*rnd();setAbs("core:gender",sex);setAbs("core:age",range(.70,1));for(const id of ["core:height","core:weight","core:muscle","core:proportions"])setAbs(id,range(edge?.03:.12,edge?.97:.88));setAbs("core:cupsize",sex?range(edge?.03:.12,edge?.97:.88):.5);
+ for(let i=0;i<model.n;i++){
+  const d=model.sliderDefs[i],id=d.id;if(id.startsWith("core:"))continue;const cls=sammyProductionClass(d),prob=edge?({measure:.68,anatomical:.62,scale:.45,translation:.24}[cls]||.4):({measure:.40,anatomical:.34,scale:.18,translation:.08}[cls]||.25);if(rnd()>prob){ds[i]=0;continue;}const amp=edge?({measure:.82,anatomical:.72,scale:.48,translation:.28}[cls]||.55):({measure:.50,anatomical:.44,scale:.28,translation:.14}[cls]||.35),raw=(rnd()*2-1)*amp;ds[i]=Math.max(lo[i],Math.min(hi[i],raw));
+ }
+ const age=ref.core?.age!=null?Math.max(.70,Math.min(1,sammySolverRefValue(ref,model.sliderDefs[model.sliderIndex["core:age"]])+ds[model.sliderIndex["core:age"]])):range(.70,1),shape=sammySolverDsToShape(runtime,ds,sex,{core:{gender:sex,age},local:{}});shape.core.firmness=.5;shape.core.african=.5;shape.core.asian=.5;shape.core.caucasian=.5;return {shape,kind,sex,sourceId:`fresh-${kind}-${String(index).padStart(4,"0")}`};
+}
+function sammyDimensionsTestCase(run,index,source){
+ const runtime=sammyDimensionsRuntimeFromRun(run),slot=index%5;if(slot===0&&source?.targets?.length){const j=(index*137+17)%source.targets.length,t=source.targets[j],shape={core:{...t.shape.core},local:Array.isArray(t.shape.local)?Object.fromEntries(t.shape.local):{...(t.shape.local||{})}};return {shape,kind:"regression",sex:Number(shape.core.gender)>=.5?1:0,sourceId:`r2-holdout-${j}`};}
+ return sammyDimensionsFreshShape(runtime,index,slot===4?"edge":"plausible");
+}
+function sammyDimensionsStatsNew(model){return {count:0,baselineSumSq:0,finalSumSq:0,bodyRmse:[],baselineBodyRmse:[],thresholds:{le050:0,le075:0,le100:0,le150:0},perMeasure:Object.fromEntries(model.measureIds.map(id=>[id,{ss:0,abs:0,bias:0,count:0,maxAbs:0,absValues:[]}])),byKind:{},bySex:{male:{count:0,sumSq:0},female:{count:0,sumSq:0}},canon:{evaluations:0,accepted:0,rejected:0,costBefore:0,costAfter:0,acceptedByClass:{},rejectedByReason:{}},usage:{baseline:{classSum:{},count:0,cost:0,active:0},final:{classSum:{},count:0,cost:0,active:0}},cases:[],nonFinite:0};}
+function sammyDimensionsStatsAdd(run,index,testCase,targetMeasures,result){
+ const model=sammySolverHydrate(sammyDimensionsRuntimeFromRun(run)),s=run.stats,b=Number(result.baseline.bestRmseCm),f=Number(result.production.bestRmseCm);if(!Number.isFinite(f)){s.nonFinite++;return;}s.count++;s.baselineSumSq+=b*b;s.finalSumSq+=f*f;s.baselineBodyRmse.push(b);s.bodyRmse.push(f);if(f<=.5)s.thresholds.le050++;if(f<=.75)s.thresholds.le075++;if(f<=1)s.thresholds.le100++;if(f<=1.5)s.thresholds.le150++;
+ const k=s.byKind[testCase.kind]||(s.byKind[testCase.kind]={count:0,sumSq:0,baselineSumSq:0});k.count++;k.sumSq+=f*f;k.baselineSumSq+=b*b;const sx=testCase.sex?"female":"male";s.bySex[sx].count++;s.bySex[sx].sumSq+=f*f;
+ for(let j=0;j<model.m;j++){const id=model.measureIds[j],e=Number(result.production.actual[j])-Number(targetMeasures[id]),a=Math.abs(e),p=s.perMeasure[id];p.ss+=e*e;p.abs+=a;p.bias+=e;p.count++;p.maxAbs=Math.max(p.maxAbs,a);p.absValues.push(a);}
+ const c=result.canonicalization;s.canon.evaluations+=c.evaluations;s.canon.accepted+=c.accepted;s.canon.rejected+=c.rejected;s.canon.costBefore+=c.costBefore;s.canon.costAfter+=c.costAfter;for(const [x,v] of Object.entries(c.acceptedByClass||{}))s.canon.acceptedByClass[x]=(s.canon.acceptedByClass[x]||0)+v;for(const [x,v] of Object.entries(c.rejectedByReason||{}))s.canon.rejectedByReason[x]=(s.canon.rejectedByReason[x]||0)+v;
+ for(const which of ["baseline","final"]){const u=which==="baseline"?result.baseline.usage:result.production.usage,d=s.usage[which];d.count++;d.cost+=Number(u.priorityCost||0);d.active+=Number(u.activeCount||0);for(const [x,v] of Object.entries(u.classRms||{}))d.classSum[x]=(d.classSum[x]||0)+Number(v||0);}
+ s.cases.push({index,sourceId:testCase.sourceId,kind:testCase.kind,sex:sx,baselineRmseCm:b,finalRmseCm:f,deltaCm:Number((f-b).toFixed(4)),canonicalization:c});
+}
+function sammyDimensionsStatsSummary(run){
+ const s=run.stats,n=Math.max(1,s.count),pct=x=>Number((100*x/n).toFixed(1)),rm=v=>Number(Math.sqrt(v/n).toFixed(4)),byKind={},bySex={};for(const [k,v] of Object.entries(s.byKind)){byKind[k]={count:v.count,baselineRmseCm:Number(Math.sqrt(v.baselineSumSq/Math.max(1,v.count)).toFixed(4)),finalRmseCm:Number(Math.sqrt(v.sumSq/Math.max(1,v.count)).toFixed(4))};}for(const [k,v] of Object.entries(s.bySex))bySex[k]={count:v.count,rmseCm:v.count?Number(Math.sqrt(v.sumSq/v.count).toFixed(4)):null};
+ const perMeasure={};for(const [id,p] of Object.entries(s.perMeasure)){const q=Math.max(1,p.count);perMeasure[id]={rmseCm:Number(Math.sqrt(p.ss/q).toFixed(4)),maeCm:Number((p.abs/q).toFixed(4)),biasCm:Number((p.bias/q).toFixed(4)),p95AbsCm:sammyProductionPercentile(p.absValues,.95),maxAbsCm:Number(p.maxAbs.toFixed(4))};}
+ const usage={};for(const which of ["baseline","final"]){const d=s.usage[which],q=Math.max(1,d.count),classes={};for(const [k,v] of Object.entries(d.classSum))classes[k]=Number((v/q).toFixed(4));usage[which]={meanPriorityCost:Number((d.cost/q).toFixed(6)),meanActiveSliders:Number((d.active/q).toFixed(2)),classUsageRms:classes};}
+ const reductionPct=(a,b)=>Number.isFinite(a)&&Math.abs(a)>1e-12?Number((100*(a-b)/Math.abs(a)).toFixed(2)):null,costReduction=s.canon.costBefore>1e-12?Number((100*(s.canon.costBefore-s.canon.costAfter)/s.canon.costBefore).toFixed(2)):0,worst=s.cases.slice().sort((a,b)=>b.finalRmseCm-a.finalRmseCm).slice(0,20),best=s.cases.slice().sort((a,b)=>a.finalRmseCm-b.finalRmseCm).slice(0,10);
+ return {count:s.count,totalBodies:run.totalBodies,completedPct:Number((100*s.count/Math.max(1,run.totalBodies)).toFixed(1)),baselineOverallRmseCm:rm(s.baselineSumSq),finalOverallRmseCm:rm(s.finalSumSq),improvementPct:s.baselineSumSq>0?Number((100*(rm(s.baselineSumSq)-rm(s.finalSumSq))/rm(s.baselineSumSq)).toFixed(2)):0,p50BodyRmseCm:sammyProductionPercentile(s.bodyRmse,.50),p90BodyRmseCm:sammyProductionPercentile(s.bodyRmse,.90),p95BodyRmseCm:sammyProductionPercentile(s.bodyRmse,.95),maxBodyRmseCm:s.bodyRmse.length?Number(Math.max(...s.bodyRmse).toFixed(4)):null,successRatesPct:{le050:pct(s.thresholds.le050),le075:pct(s.thresholds.le075),le100:pct(s.thresholds.le100),le150:pct(s.thresholds.le150)},byKind,bySex,perMeasure,usageComparison:{priorityCostReductionPct:reductionPct(usage.baseline.meanPriorityCost,usage.final.meanPriorityCost),activeSliderReductionPct:reductionPct(usage.baseline.meanActiveSliders,usage.final.meanActiveSliders),scaleUsageReductionPct:reductionPct(usage.baseline.classUsageRms.scale,usage.final.classUsageRms.scale),translationUsageReductionPct:reductionPct(usage.baseline.classUsageRms.translation,usage.final.classUsageRms.translation)},canonicalization:{meanEvaluations:Number((s.canon.evaluations/n).toFixed(2)),meanAccepted:Number((s.canon.accepted/n).toFixed(2)),meanRejected:Number((s.canon.rejected/n).toFixed(2)),costReductionPct:costReduction,acceptedByClass:s.canon.acceptedByClass,rejectedByReason:s.canon.rejectedByReason},usage,nonFinite:s.nonFinite,worstCases:worst,bestCases:best};
+}
+function sammyDimensionsNewRun(mode,source){
+ const cfg=SAMMY_DIMENSIONS_TEST_CONFIG[mode],runtime=sammyDimensionsRuntimeFromSource(source,`dim-prep-${Date.now()}`),model=sammySolverHydrate(runtime);return {schema:SAMMY_DIMENSIONS_SCHEMA,runId:`dimensions-${new Date().toISOString().replace(/[:.]/g,"-")}-${Math.random().toString(36).slice(2,7)}`,appVersion:SAMMY_DIMENSIONS_VERSION,mode,solverMode:"deep",createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),stage:"testing",cursor:0,ordinal:0,totalBodies:cfg.bodies,canonEvalLimit:cfg.canonEvals,sourceSolverRunId:source.runId,sourceSolverVersion:source.appVersion,calibrationRunId:source.calibrationRunId,model:source.model,productionProfile:runtime.productionProfile,stats:sammyDimensionsStatsNew(model),summary:null,notes:{purpose:"End-to-end DIMENSIONS validation: 31 measured cm targets -> R5 production solver -> real mesh -> remeasurement",corpus:"20% preserved R2 holdout regression + 60% fresh deterministic plausible bodies + 20% fresh deterministic edge bodies",knownContext:"only gender + adult age are supplied to the inverse solver; all other source slider values remain hidden",productionPath:"R2 inverse + four real-mesh refinement passes + R5 mesh-guarded Scale/Translation canonicalization",resume:"saved after every completed body; an interrupted body is safely repeated"}};
+}
+async function sammyDimensionsGetSourceForRun(run){const runs=await sammySolverGetRuns();return runs.find(r=>r.runId===run.sourceSolverRunId)||sammyDimensionsFindSource()}
+async function sammyDimensionsTestOne(run,index){
+ const source=await sammyDimensionsGetSourceForRun(run);if(!source)throw new Error("R2-Quelle für DIMENSIONS-Test nicht gefunden");const runtime=sammyDimensionsRuntimeFromRun(run),tc=sammyDimensionsTestCase(run,index,source),targetResults=await sammySolverApplyShape(tc.shape),targetMeasures=sammyDimensionsMeasureObject(targetResults),context={core:{gender:tc.sex,age:Number(tc.shape.core.age)},local:{}};
+ const result=await sammyDimensionsSolveEngine(runtime,targetMeasures,context,run.canonEvalLimit,p=>{if(p.phase==="fit")sammyDimensionsLive(`Körper ${index+1}/${run.totalBodies} · ${tc.kind}`,[['R2 Mesh-Pass',`${p.pass}/${p.total}`],['aktuell',`${Number(p.rmseCm).toFixed(3)} cm`],['best',`${Number(p.bestRmseCm).toFixed(3)} cm`]]);else sammyDimensionsLive(`Körper ${index+1}/${run.totalBodies} · R5 Guard`,[["Cleanup",`${p.evaluation}/${p.total}`],["Slider",p.sliderId],["Status",p.accepted?"ACCEPT":"ROLLBACK"],["Mesh",`${Number(p.currentRmseCm).toFixed(3)} cm`]])},false);
+ sammyDimensionsStatsAdd(run,index,tc,targetMeasures,result);await sammySolverRecord(run,"dimensions-body",`DIMENSIONS body ${index+1}`,{testIndex:index,kind:tc.kind,sourceId:tc.sourceId,sex:tc.sex,ageShape:Number(tc.shape.core.age),ageYears:Number(sammyShapeAgeToYears(tc.shape.core.age,tc.sex).toFixed(2)),targetMeasures,result:{baseline:result.baseline,production:result.production,canonicalization:result.canonicalization}});
+}
+async function sammyDimensionsRunner(){
+ const run=sammyDimensionsLab.run;if(!run)return;sammyDimensionsLab.running=true;sammyDimensionsLab.paused=false;sammyDimensionsLab.cancelRequested=false;sammyDimensionsStatus("DIMENSIONS End-to-End-Test startet …");
+ try{while(sammyDimensionsLab.running&&!sammyDimensionsLab.paused&&!sammyDimensionsLab.cancelRequested&&run.stage!=="complete"){
+   const i=run.cursor;if(i>=run.totalBodies){run.summary=sammyDimensionsStatsSummary(run);run.stage="complete";run.completedAt=new Date().toISOString();await sammySolverPutRun(run);break;}await sammyDimensionsTestOne(run,i);run.cursor=i+1;run.summary=sammyDimensionsStatsSummary(run);await sammySolverPutRun(run);sammyDimensionsStatus(`Körper ${run.cursor}/${run.totalBodies} fertig · R5 ${run.summary.finalOverallRmseCm} cm · P95 ${run.summary.p95BodyRmseCm} cm`);
+  }
+  if(run.stage==="complete"){sammyDimensionsLab.lastRun=run;sammyDimensionsLab.running=false;sammyDimensionsStatus(`Fertig · ${run.summary.count} Körper · R5 ${run.summary.finalOverallRmseCm} cm · P95 ${run.summary.p95BodyRmseCm} cm · Worst ${run.summary.maxBodyRmseCm} cm`);sammyDimensionsLive("DIMENSIONS TEST FERTIG",[["Körper",run.summary.count],["R5 Gesamt",`${run.summary.finalOverallRmseCm} cm`],["P95",`${run.summary.p95BodyRmseCm} cm`],["≤ 1,0 cm",`${run.summary.successRatesPct.le100}%`],["Edge",`${run.summary.byKind.edge?.finalRmseCm??"—"} cm`]]);}
+ }catch(e){console.error("DIMENSIONS Test",e);sammyDimensionsLab.running=false;sammyDimensionsLab.paused=true;sammyDimensionsStatus(`FEHLER: ${e?.message||e}`);sammyReportError?.(e,{source:"DIMENSIONS Testloop"});}
+ finally{sammyDimensionsLab.running=false;sammyDimensionsStatus();}
+}
+async function sammyDimensionsStartOrResume(){
+ if(sammyDimensionsLab.running||sammyDimensionsLab.manualRunning)return;if(sammyCalibration?.running||sammySolverLab?.running){sammyDimensionsStatus("Calibration/Solver-Lab läuft noch · zuerst pausieren.");return;}if(!annyPackLoaded){sammyDimensionsStatus("Anny-Pack ist noch nicht bereit.");return;}if(!sammyMeasureSession){sammyDimensionsStatus("MEAS zuerst öffnen.");return;}
+ let run=sammyDimensionsLab.run;if(!run||run.schema!==SAMMY_DIMENSIONS_SCHEMA||run.stage==="complete"){const source=await sammyDimensionsFindSource();if(!source){sammyDimensionsStatus("Kein abgeschlossener Solver-R2-Lauf gefunden.");return;}run=sammyDimensionsNewRun(sammyDimensionsLab.mode,source);sammyDimensionsLab.run=run;sammySolverRuntimeCache=null;await sammySolverPutRun(run);}sammyDimensionsLab.paused=false;sammyDimensionsLab.cancelRequested=false;sammyDimensionsRunner();
+}
+function sammyDimensionsPause(){if(!sammyDimensionsLab.running)return;sammyDimensionsLab.paused=true;sammyDimensionsStatus("Pause nach dem aktuellen Körper; Fortschritt bis zum letzten fertigen Körper ist gespeichert.")}
+async function sammyDimensionsReset(){const run=sammyDimensionsLab.run;if(sammyDimensionsLab.running||!run)return;if(!confirm("Gespeicherten DIMENSIONS-Testlauf löschen? R2/R5/Calibration bleiben erhalten."))return;await sammySolverDeleteRun(run.runId);sammyDimensionsLab.run=null;sammyDimensionsLab.lastRun=null;sammyDimensionsStatus("DIMENSIONS-Testlauf gelöscht. R2/R5-Daten unverändert.");sammyDimensionsLive("DIMENSIONS",[["Status","bereit"]]);}
+async function sammyDimensionsLoadLatest(){try{const runs=(await sammySolverGetRuns()).filter(r=>r?.schema===SAMMY_DIMENSIONS_SCHEMA).sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||""))),active=runs.find(r=>r.stage!=="complete")||runs[0]||null;sammyDimensionsLab.run=active;sammyDimensionsLab.lastRun=active;if(active){sammyDimensionsLab.mode=active.mode||"deep";document.querySelectorAll("[data-dim-mode]").forEach(b=>b.classList.toggle("active",b.dataset.dimMode===sammyDimensionsLab.mode));sammyDimensionsStatus(active.stage==="complete"?`Letzter Test fertig · ${active.summary?.count||0} Körper · ${active.summary?.finalOverallRmseCm??"—"} cm`:`Gespeicherter Test kann bei Körper ${Number(active.cursor||0)+1} fortgesetzt werden.`);}else sammyDimensionsStatus("Bereit · noch kein DIMENSIONS-Testlauf.");}catch(e){console.warn("DIMENSIONS resume",e)}}
+async function sammyDimensionsExport(summaryOnly=false){const run=sammyDimensionsLab.run||sammyDimensionsLab.lastRun;if(!run){sammyDimensionsStatus("Kein DIMENSIONS-Testlauf zum Exportieren.");return;}const summary=run.summary||sammyDimensionsStatsSummary(run),base={schema:SAMMY_DIMENSIONS_SCHEMA,app:"Sammy",version:SAMMY_DIMENSIONS_VERSION,generated:new Date().toISOString(),purpose:"End-to-end DIMENSIONS/R5 validation on preserved holdouts plus fresh deterministic plausible/edge bodies.",summary,notes:run.notes};let payload=base;if(!summaryOnly){const records=await sammySolverGetRecords(run.runId);payload={...base,run,records};}const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=summaryOnly?`Sammy_DIMENSIONS_Test_Summary_${run.mode}_${run.runId}.json`:`Sammy_DIMENSIONS_Test_FULL_${run.mode}_${run.runId}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);sammyDimensionsStatus(summaryOnly?"DIMENSIONS Summary exportiert.":"DIMENSIONS FULL exportiert.");}
+async function sammyDimensionsManualSolve(){
+ if(sammyDimensionsLab.running||sammyDimensionsLab.manualRunning)return;if(sammyCalibration?.running||sammySolverLab?.running){sammyDimensionsStatus("Calibration/Solver-Lab läuft noch · zuerst pausieren.");return;}if(!annyPackLoaded||!sammyMeasureSession){sammyDimensionsStatus("MEAS und Anny müssen bereit sein.");return;}const {targets,missing}=sammyDimensionsReadTargets();if(missing.length){sammyDimensionsStatus(`Es fehlen ${missing.length} Zielmaße. Erst aktuellen Körper übernehmen oder alle 31 Werte eintragen.`);return;}const source=await sammyDimensionsFindSource();if(!source){sammyDimensionsStatus("Kein abgeschlossener R2-Solver gefunden.");return;}sammyDimensionsLab.manualRunning=true;const solveBtn=$("#sammyDimensionsSolve");if(solveBtn)solveBtn.disabled=true;sammyDimensionsStatus("31 Zielmaße werden mit R5 gelöst …");
+ try{const runtime=sammyDimensionsRuntimeFromSource(source,`dimensions-manual-${Date.now()}`),context=sammyDimensionsContextShape(),result=await sammyDimensionsSolveEngine(runtime,targets,context,14,p=>{if(p.phase==="fit")sammyDimensionsLive("DIMENSIONS · R2 FIT",[["Pass",`${p.pass}/${p.total}`],["Mesh",`${Number(p.rmseCm).toFixed(3)} cm`]]);else sammyDimensionsLive("DIMENSIONS · R5 MESH-GUARD",[["Cleanup",`${p.evaluation}/${p.total}`],["Slider",p.sliderId],["Status",p.accepted?"ACCEPT":"ROLLBACK"],["Mesh",`${Number(p.currentRmseCm).toFixed(3)} cm`]])},true),model=sammySolverHydrate(runtime),actual=Object.fromEntries(model.measureIds.map((id,j)=>[id,Number(result.production.actual[j])]));sammyDimensionsRenderResult(targets,actual,{baselineRmseCm:result.baseline.bestRmseCm,finalRmseCm:result.production.bestRmseCm,canonicalization:result.canonicalization});sammyDimensionsStatus(`Fertig · echter Mesh-RMSE ${result.production.bestRmseCm.toFixed(3)} cm · R2 vorher ${result.baseline.bestRmseCm.toFixed(3)} cm.`);}
+ catch(e){console.error("DIMENSIONS manual",e);sammyDimensionsStatus(`FEHLER: ${e?.message||e}`);sammyReportError?.(e,{source:"DIMENSIONS manual"});}
+ finally{sammyDimensionsLab.manualRunning=false;const solveBtn=$("#sammyDimensionsSolve");if(solveBtn)solveBtn.disabled=false;}
+}
+function sammyDimensionsInitUI(){
+ sammyDimensionsRenderInputs();document.querySelectorAll("[data-dim-sex]").forEach(b=>b.onclick=()=>sammyDimensionsSetSex(Number(b.dataset.dimSex)));document.querySelectorAll("[data-dim-mode]").forEach(b=>b.onclick=()=>sammyDimensionsSetMode(b.dataset.dimMode));const fill=$("#sammyDimensionsFromCurrent"),solve=$("#sammyDimensionsSolve"),start=$("#sammyDimensionsTestStart"),pause=$("#sammyDimensionsTestPause"),reset=$("#sammyDimensionsTestReset"),sum=$("#sammyDimensionsTestSummary"),full=$("#sammyDimensionsTestExport");if(fill)fill.onclick=()=>sammyDimensionsFillTargets();if(solve)solve.onclick=sammyDimensionsManualSolve;if(start)start.onclick=sammyDimensionsStartOrResume;if(pause)pause.onclick=sammyDimensionsPause;if(reset)reset.onclick=sammyDimensionsReset;if(sum)sum.onclick=()=>sammyDimensionsExport(true);if(full)full.onclick=()=>sammyDimensionsExport(false);sammyDimensionsSetSex(annyParams.gender>=.5?1:0);const age=$("#sammyDimensionsAge");if(age)age.value=String(Math.round(sammyShapeAgeToYears(annyParams.age,sammyDimensionsLab.sex)));sammyDimensionsSetMode("deep");sammyDimensionsLoadLatest();
+}
+
 function sammyClearMeasureOverlay(){if(!sammyMeasureOverlayGroup)return;scene.remove(sammyMeasureOverlayGroup);sammyMeasureOverlayGroup.traverse(o=>{o.geometry?.dispose?.();if(o.material?.map)o.material.map.dispose?.();o.material?.dispose?.()});sammyMeasureOverlayGroup=null}
 function sammyAddMeasureLine(points,id,selected=false,closed=false){if(!points?.length)return;const arr=new Float32Array(points.length*3);for(let i=0;i<points.length;i++){arr[i*3]=points[i][0];arr[i*3+1]=points[i][1];arr[i*3+2]=points[i][2]}const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(arr,3));const mat=new THREE.LineBasicMaterial({color:selected?0xffdf72:0xe1e3e8,transparent:true,opacity:selected?1:.78,depthTest:false,depthWrite:false,linewidth:selected?3:2});const line=closed?new THREE.LineLoop(g,mat):new THREE.Line(g,mat);line.renderOrder=40;line.userData.sammyMeasureId=id;sammyMeasureOverlayGroup.add(line)}
 
@@ -6138,6 +6294,7 @@ function sammyInitUi(){
  sammyInstallMeasurePicking();
  sammyCalInitUI();
  sammySolverInitUI();
+ sammyDimensionsInitUI();
  const measureRandomBtn=$("#sammyMeasureRandom");if(measureRandomBtn)measureRandomBtn.onclick=()=>sammyMeasureRandomize(false);
  const measureRandomExtremeBtn=$("#sammyMeasureRandomExtreme");if(measureRandomExtremeBtn)measureRandomExtremeBtn.onclick=()=>sammyMeasureRandomize(true);
  $("#sammyMeasureExport").onclick=sammyMeasureExport;

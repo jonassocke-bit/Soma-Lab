@@ -1,3 +1,14 @@
+## v0.8.11 · DIMENSIONS + ausführliche R5 End-to-End-Testschleife
+
+- Basis ist unverändert v0.8.10; R5, Calibration, MEAS-Landmarks, Startup, Anny/SOMA, Rig und Animation werden nicht umgebaut.
+- Neuer DIMENSIONS-Bereich im MEAS-Menü: Geschlecht + Erwachsenenalter + 31 Zielmaße in cm → R5 Production Solver → tatsächliches Mesh → Ziel/Ist/Δ-Tabelle.
+- „Aktuellen Körper → Ziele“ übernimmt alle 31 aktuell gemessenen Werte für einen direkten Roundtrip-Test.
+- Testloop-Modi: Quick 8, Standard 30, Deep 80 und Stress 160 echte End-to-End-Körper. Deep/Stress verwenden den vollständigen 4-Pass-R2-Mesh-Fit und bis zu 14 R5-Canonicalization-Prüfungen je Körper.
+- Corpus: 20 % vorhandene R2-Holdouts als Regressionstest, 60 % frisch deterministisch erzeugte plausible Körper, 20 % frisch deterministisch erzeugte Edge-Körper. Die Fresh-Körper stammen nicht aus dem bisherigen 60er-R5-Test.
+- Dem inversen Solver werden im Test nur Geschlecht, Alter und die 31 Zielmaße gegeben. Die ursprünglichen Morphwerte bleiben verborgen.
+- Auswertung: Gesamt-/Baseline-RMSE, P50/P90/P95/Worst, Trefferquoten ≤0.5/0.75/1.0/1.5 cm, getrennt nach Corpus und Geschlecht, RMSE/MAE/Bias/P95/Max je Einzelmaß, R5-Cleanup-Akzeptanz, Scale-/Translation-Nutzung und Prioritätskosten.
+- Fortschritt wird nach jedem vollständig getesteten Körper in der bestehenden Solver-IndexedDB gesichert; nach Abbruch wird höchstens der gerade laufende Körper wiederholt. Summary- und FULL-JSON-Export sind enthalten.
+
 ## v0.8.10 · Production Solver R5 · R2 Fit → real-mesh guarded Canonicalization
 
 - **Keine neue Calibration / kein neuer Delta-Lauf.** R5 verwendet denselben abgeschlossenen Solver-R2-Deep-Datensatz.

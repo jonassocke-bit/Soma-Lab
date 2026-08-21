@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.10</title>
-<link rel="stylesheet" href="style.css?v=0.8.10">
+<title>Sammy v0.8.11</title>
+<link rel="stylesheet" href="style.css?v=0.8.11">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.10</div>
+  <div class="sammySplashVersion">v0.8.11</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.10</div>
+<div id="sammyVersion">Sammy · v0.8.11</div>
 
 <button id="sammyCameraDebugBtn" class="sammyCameraDebugBtn" type="button">CAM</button>
 <div id="sammyCameraDebugPanel" class="sammyCameraDebugPanel hidden">
@@ -158,6 +158,32 @@
      <div class="sammyCalibrationActions"><button id="sammySolverExport" type="button">FULL JSON</button><button type="button" disabled title="R5 vergleicht denselben mesh-korrigierten R2-Körper vor und nach real-mesh-geprüfter Canonicalization">R2 ↔ R5 automatisch</button></div>
     </div>
    </details>
+   <details class="sammyCalibrationLab sammyDimensionsLab" id="sammyDimensionsLab" open>
+    <summary><b>DIMENSIONS · R5</b><span>31 cm-Zielmaße · Production Solver · Stress-Test</span></summary>
+    <div class="sammyCalibrationBody">
+     <div class="sammyDimensionsContext">
+      <div class="sammyDimensionsSex" role="group" aria-label="Geschlecht"><button type="button" data-dim-sex="0" class="active">♂ Mann</button><button type="button" data-dim-sex="1">♀ Frau</button></div>
+      <label class="sammyDimensionsAge"><span>Alter</span><input id="sammyDimensionsAge" type="number" inputmode="numeric" min="19" max="70" step="1" value="35"><em>J.</em></label>
+     </div>
+     <div class="sammyCalibrationActions"><button id="sammyDimensionsFromCurrent" type="button">Aktuellen Körper → Ziele</button><button id="sammyDimensionsSolve" type="button">R5 Körper berechnen</button></div>
+     <details class="sammyDimensionsTargets">
+      <summary>31 Zielmaße in cm <span>alle Werte werden direkt am finalen Mesh kontrolliert</span></summary>
+      <div id="sammyDimensionsInputs" class="sammyDimensionsInputs"></div>
+     </details>
+     <div id="sammyDimensionsResult" class="sammyDimensionsResult"></div>
+     <div class="sammyDimensionsDivider"><span>END-TO-END TESTSCHLEIFE</span></div>
+     <div class="sammyDimensionsModes" role="group" aria-label="DIMENSIONS Testtiefe">
+      <button type="button" data-dim-mode="quick">Quick · 8</button><button type="button" data-dim-mode="standard">Standard · 30</button><button type="button" data-dim-mode="deep" class="active">Deep · 80</button><button type="button" data-dim-mode="stress">Stress · 160</button>
+     </div>
+     <div class="sammyCalibrationActions"><button id="sammyDimensionsTestStart" type="button">Testschleife starten</button><button id="sammyDimensionsTestPause" type="button" disabled>Pause</button></div>
+     <div class="sammyCalibrationActions"><button id="sammyDimensionsTestReset" type="button">Testlauf löschen</button><button id="sammyDimensionsTestSummary" type="button">Summary JSON</button></div>
+     <div id="sammyDimensionsTestStatus" class="sammyCalibrationStatus">Bereit · R5-Quelle wird automatisch verwendet.</div>
+     <div class="sammyCalibrationProgress"><i id="sammyDimensionsTestProgress"></i></div>
+     <div id="sammyDimensionsTestCurrent" class="sammyCalibrationCurrent">Deep testet 80 echte Körper end-to-end: 20 % bekannte R2-Holdouts, 60 % neue deterministische plausible Körper und 20 % neue Edge-Körper. Dem Solver werden nur Geschlecht, Alter und die 31 Zielmaße gegeben; die ursprünglichen Morphwerte bleiben verborgen. Jeder Körper wird nach R5 erneut am echten Mesh vermessen.</div>
+     <div id="sammyDimensionsTestLive" class="sammyCalibrationLiveMeasures"></div>
+     <div class="sammyCalibrationActions"><button id="sammyDimensionsTestExport" type="button">FULL JSON</button><button type="button" disabled title="Gespeichert wird nach jedem vollständig getesteten Körper">Resume nach jedem Körper</button></div>
+    </div>
+   </details>
    <div id="sammyMeasureList" class="sammyMeasureList"></div>
    <button id="sammyMeasureExport" type="button" class="sammyMeasureExport">Kalibrierung exportieren</button>
    <div class="sammyMeasureSource">ANSUR II · NATICK/TR-11/017 · Messnamen gemäß öffentlicher ANSUR-II-Datenbank</div>
@@ -180,7 +206,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.10</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.11</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -437,6 +463,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.10"></script>
+<script type="module" src="app.js?v=0.8.11"></script>
 </body>
 </html>
