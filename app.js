@@ -5636,38 +5636,27 @@ function sammyMeasureExport(){
 
 
 // ---------------------------------------------------------------------------
-// Sammy v0.8.12 · ANSUR LAB / BODY SPACE V1
-// GPU-efficient BODY SPACE shell. V1 already uses all 6,068 public ANSUR-II
-// subjects projected from 24 Sammy-relevant direct anthropometric measures.
-// The highlighted user point remains a centroid placeholder until Prediction V1.
+// Sammy v0.8.13 · ANSUR LAB / BODY SPACE V2 + Prediction Research A/B
+// Scope: ANSUR visual mode + off-thread statistical research only.
+// R2/R5, DIMENSIONS, MEAS, Anny/SOMA, rig and startup are intentionally untouched.
 // ---------------------------------------------------------------------------
-const SAMMY_BODYSPACE_VERSION="0.8.12";
+const SAMMY_BODYSPACE_VERSION="0.8.13";
 const SAMMY_BODYSPACE_FALLBACK_COUNT=6000;
+const SAMMY_ANS_RESULTS_KEY="sammy-ansur-lab-v1-results";
 let sammyBodySpace={
  active:false,phase:"idle",savedCamera:null,group:null,points:null,material:null,you:null,
- raf:0,lastTick:0,phaseStart:0,autoAngle:0,interactionUntil:0,
- savedOrbit:null,drawCount:0,totalCount:0,populationData:null,loadPromise:null,perfStart:0,perfFrames:0,perfReduced:false
+ raf:0,lastTick:0,phaseStart:0,autoAngle:0,pointerActive:false,rotationPaused:false,
+ savedOrbit:null,savedMeshVisible:null,drawCount:0,totalCount:0,populationData:null,loadPromise:null,
+ perfStart:0,perfFrames:0,perfReduced:false,basePointSize:.075,currentPointSize:.075
 };
-function sammyBodySpaceRand(seed=812){let a=seed>>>0;return ()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296}}
+let sammyAnsLab={worker:null,running:null,runA:null,runB:null,lastError:null};
+function sammyBodySpaceRand(seed=813){let a=seed>>>0;return ()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296}}
 function sammyBodySpaceNormal(rng){let u=0,v=0;while(u<=1e-9)u=rng();while(v<=1e-9)v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
 function sammyBodySpaceDemoPositions(count=SAMMY_BODYSPACE_FALLBACK_COUNT){
- const rng=sammyBodySpaceRand(81212026),a=new Float32Array(count*3);
- for(let i=0;i<count;i++){
-  const size=sammyBodySpaceNormal(rng),mass=sammyBodySpaceNormal(rng),prop=sammyBodySpaceNormal(rng),sex=i%5<3?-1:1;
-  // An intentionally body-space-like demo distribution, NOT ANSUR PCA.
-  let x=(mass*.88+size*.24+sex*.15)*3.35;
-  let y=(size*.93-mass*.10+sex*.10)*2.45;
-  let z=(prop*.82+mass*.28-size*.14-sex*.18)*3.05;
-  const bend=.12*x*x*Math.sign(x)/3.35;z+=bend;
-  a[i*3]=x;a[i*3+1]=y;a[i*3+2]=z
- }
- return a
+ const rng=sammyBodySpaceRand(81312026),a=new Float32Array(count*3);
+ for(let i=0;i<count;i++){const size=sammyBodySpaceNormal(rng),mass=sammyBodySpaceNormal(rng),prop=sammyBodySpaceNormal(rng),sex=i%5<3?-1:1;let x=(mass*.88+size*.24+sex*.15)*3.35,y=(size*.93-mass*.10+sex*.10)*2.45,z=(prop*.82+mass*.28-size*.14-sex*.18)*3.05;z+=.12*x*x*Math.sign(x)/3.35;a[i*3]=x;a[i*3+1]=y;a[i*3+2]=z}return a
 }
-function sammyBodySpaceGlowTexture(){
- const c=document.createElement("canvas");c.width=c.height=96;const g=c.getContext("2d"),r=g.createRadialGradient(48,48,0,48,48,48);
- r.addColorStop(0,"rgba(255,255,255,1)");r.addColorStop(.16,"rgba(255,255,255,.96)");r.addColorStop(.42,"rgba(255,255,255,.32)");r.addColorStop(1,"rgba(255,255,255,0)");g.fillStyle=r;g.fillRect(0,0,96,96);
- const t=new THREE.CanvasTexture(c);t.needsUpdate=true;return t
-}
+function sammyBodySpaceGlowTexture(){const c=document.createElement("canvas");c.width=c.height=96;const g=c.getContext("2d"),r=g.createRadialGradient(48,48,0,48,48,48);r.addColorStop(0,"rgba(255,255,255,1)");r.addColorStop(.18,"rgba(255,255,255,.98)");r.addColorStop(.5,"rgba(255,255,255,.25)");r.addColorStop(1,"rgba(255,255,255,0)");g.fillStyle=r;g.fillRect(0,0,96,96);const t=new THREE.CanvasTexture(c);t.needsUpdate=true;return t}
 function sammyBodySpaceCenter(){const b=sammyMeasureBBox();return new THREE.Vector3(b?.cx||0,b?.cy||1,b?.cz||0)}
 function sammyBodySpaceApplyPopulation(data){
  const coords=data?.render?.coords,count=Number(data?.population?.count||0);if(!Array.isArray(coords)||coords.length!==count*3||count<100)return false;
@@ -5677,87 +5666,94 @@ function sammyBodySpaceApplyPopulation(data){
 }
 async function sammyBodySpacePreload(){
  if(sammyBodySpace.populationData)return sammyBodySpace.populationData;if(sammyBodySpace.loadPromise)return sammyBodySpace.loadPromise;
- sammyBodySpace.loadPromise=(async()=>{try{const r=await fetch("./ansur-bodyspace-pca-v1.json?v=0.8.12",{cache:"force-cache"});if(!r.ok)throw new Error(`ANSUR Body-Space HTTP ${r.status}`);const d=await r.json();if(!sammyBodySpaceApplyPopulation(d))throw new Error("ANSUR Body-Space PCA-Datei ungültig");return d}catch(e){console.warn("Sammy BODY SPACE: echter ANSUR-PCA-Preload fehlgeschlagen; deterministischer visueller Fallback bleibt aktiv.",e);return null}finally{sammyBodySpace.loadPromise=null}})();return sammyBodySpace.loadPromise
+ sammyBodySpace.loadPromise=(async()=>{try{const r=await fetch("./ansur-bodyspace-pca-v1.json?v=0.8.13",{cache:"force-cache"});if(!r.ok)throw new Error(`ANSUR Body-Space HTTP ${r.status}`);const d=await r.json();if(!sammyBodySpaceApplyPopulation(d))throw new Error("ANSUR Body-Space PCA-Datei ungültig");return d}catch(e){console.warn("Sammy BODY SPACE: ANSUR-PCA-Preload fehlgeschlagen; deterministischer visueller Fallback bleibt aktiv.",e);return null}finally{sammyBodySpace.loadPromise=null}})();return sammyBodySpace.loadPromise
 }
 function sammyBodySpaceEnsure(){
  if(sammyBodySpace.group)return sammyBodySpace.group;
  const group=new THREE.Group();group.name="Sammy_BODY_SPACE";group.visible=false;
- const real=sammyBodySpace.populationData?.render?.coords,count=Number(sammyBodySpace.populationData?.population?.count||0),positions=(Array.isArray(real)&&real.length===count*3)?new Float32Array(real):sammyBodySpaceDemoPositions();
- const total=(Array.isArray(real)&&count>0)?count:SAMMY_BODYSPACE_FALLBACK_COUNT;
+ const real=sammyBodySpace.populationData?.render?.coords,count=Number(sammyBodySpace.populationData?.population?.count||0),positions=(Array.isArray(real)&&real.length===count*3)?new Float32Array(real):sammyBodySpaceDemoPositions(),total=(Array.isArray(real)&&count>0)?count:SAMMY_BODYSPACE_FALLBACK_COUNT;
  const geo=new THREE.BufferGeometry();geo.setAttribute("position",new THREE.BufferAttribute(positions,3));geo.computeBoundingSphere();geo.setDrawRange(0,total);
- const mat=new THREE.PointsMaterial({color:0xe8e9ee,size:.075,sizeAttenuation:true,transparent:true,opacity:0,depthWrite:false});
+ const mat=new THREE.PointsMaterial({color:0xe8e9ee,size:sammyBodySpace.basePointSize,sizeAttenuation:true,transparent:true,opacity:0,depthWrite:false});
  const pts=new THREE.Points(geo,mat);pts.name="Sammy_BODY_SPACE_Population";pts.frustumCulled=true;group.add(pts);
- const you=new THREE.Sprite(new THREE.SpriteMaterial({map:sammyBodySpaceGlowTexture(),color:0xffffff,transparent:true,opacity:0,depthWrite:false,depthTest:false}));
- you.name="Sammy_BODY_SPACE_You";you.scale.set(.78,.78,.78);group.add(you);scene.add(group);
+ const you=new THREE.Sprite(new THREE.SpriteMaterial({map:sammyBodySpaceGlowTexture(),color:0xffffff,transparent:true,opacity:0,depthWrite:false,depthTest:false}));you.name="Sammy_BODY_SPACE_You";you.scale.set(.38,.38,.38);group.add(you);scene.add(group);
  Object.assign(sammyBodySpace,{group,points:pts,material:mat,you,drawCount:total,totalCount:total});return group
 }
 function sammyBodySpaceSetUi(on){
- document.body.classList.toggle("sammy-bodyspace",!!on);$("#sammyAnsBubble")?.classList.toggle("active",!!on);
- $("#sammyBodySpaceHud")?.classList.toggle("visible",!!on);$("#sammyBodySpaceYou")?.classList.toggle("visible",!!on);
- $("#sammyBodySpaceHud")?.setAttribute("aria-hidden",on?"false":"true");$("#sammyBodySpaceYou")?.setAttribute("aria-hidden",on?"false":"true")
+ document.body.classList.toggle("sammy-bodyspace",!!on);$("#sammyAnsBubble")?.classList.toggle("active",!!on);$("#sammyBodySpaceHud")?.classList.toggle("visible",!!on);$("#sammyBodySpaceYou")?.classList.toggle("visible",!!on);$("#sammyBodySpaceHud")?.setAttribute("aria-hidden",on?"false":"true");$("#sammyBodySpaceYou")?.setAttribute("aria-hidden",on?"false":"true")
 }
 function sammyBodySpaceMeta(text){const n=$("#sammyBodySpaceMeta");if(n)n.textContent=text}
+function sammyAnsApplyStoredPanelHeight(){const p=$("#sammyAnsPanel");if(!p)return;const state=sammyUiLoadState(),h=Number(state.panelHeights?.ansur||0);if(h)p.style.setProperty("--sammy-panel-h",`${h}px`);p.classList.toggle("compact",!!h&&h<138)}
+function sammyAnsOpenPanel(){const p=$("#sammyAnsPanel");if(!p)return;document.querySelectorAll(".sammyPanel").forEach(x=>x.classList.toggle("open",x===p));sammyAnsApplyStoredPanelHeight();sammyAnsRefreshUi()}
+function sammyAnsClosePanel(){const p=$("#sammyAnsPanel");p?.classList.remove("open")}
 function sammyBodySpaceClosePanelsInstant(){
- const before=document.querySelector(".sammyPanel.open")?.id||null;
- if(before==="sammyAnimPanel"&&sammyPreAnimationCamera){const st=sammyPreAnimationCamera;sammyPreAnimationCamera=null;sammyCameraTweenToState(st,0,true)}
- if(before==="sammyMeasurePanel")sammyExitMeasureMode(true);
- document.querySelectorAll(".sammyPanel").forEach(p=>p.classList.remove("open"));document.querySelectorAll(".sammyBubble").forEach(b=>b.classList.remove("active"))
+ const before=document.querySelector(".sammyPanel.open")?.id||null;if(before==="sammyAnimPanel"&&sammyPreAnimationCamera){const st=sammyPreAnimationCamera;sammyPreAnimationCamera=null;sammyCameraTweenToState(st,0,true)}if(before==="sammyMeasurePanel")sammyExitMeasureMode(true);document.querySelectorAll(".sammyPanel").forEach(p=>p.classList.remove("open"));document.querySelectorAll(".sammyBubble").forEach(b=>b.classList.remove("active"))
 }
-function sammyBodySpaceCameraState(){
- const c=sammyBodySpaceCenter(),from=cam.position.clone().sub(c);if(from.length()<.01)from.set(0,.2,1);from.normalize();
- const dist=22,position=c.clone().addScaledVector(from,dist);position.y+=1.2;
- return {position,target:c,zoom:1,fov:38}
-}
+function sammyBodySpaceCameraState(){const c=sammyBodySpaceCenter(),from=cam.position.clone().sub(c);if(from.length()<.01)from.set(0,.2,1);from.normalize();const dist=22,position=c.clone().addScaledVector(from,dist);position.y+=1.2;return {position,target:c,zoom:1,fov:38}}
 function sammyBodySpaceSaveOrbit(){if(sammyBodySpace.savedOrbit)return;sammyBodySpace.savedOrbit={enablePan:orbit.enablePan,minDistance:orbit.minDistance,maxDistance:orbit.maxDistance,rotateSpeed:orbit.rotateSpeed}}
-function sammyBodySpaceApplyOrbit(){sammyBodySpaceSaveOrbit();orbit.enablePan=false;orbit.minDistance=7;orbit.maxDistance=34;orbit.rotateSpeed=.55}
+function sammyBodySpaceApplyOrbit(){sammyBodySpaceSaveOrbit();orbit.enablePan=false;orbit.minDistance=6.5;orbit.maxDistance=34;orbit.rotateSpeed=.55}
 function sammyBodySpaceRestoreOrbit(){const o=sammyBodySpace.savedOrbit;if(!o)return;orbit.enablePan=o.enablePan;orbit.minDistance=o.minDistance;orbit.maxDistance=o.maxDistance;orbit.rotateSpeed=o.rotateSpeed;sammyBodySpace.savedOrbit=null}
+function sammyBodySpaceSetBodyVisible(on){if(mesh)mesh.visible=!!on}
 function sammyBodySpaceEnter(){
- if(sammyBodySpace.active||sammyIntroActive)return;
- sammyBodySpaceClosePanelsInstant();const g=sammyBodySpaceEnsure(),center=sammyBodySpaceCenter();
- sammyBodySpace.savedCamera=sammyCaptureCameraState();g.position.copy(center);g.rotation.set(.08,0,0);g.visible=true;
- sammyBodySpace.material.opacity=0;sammyBodySpace.you.material.opacity=0;sammyBodySpace.points.geometry.setDrawRange(0,sammyBodySpace.totalCount||SAMMY_BODYSPACE_FALLBACK_COUNT);
- Object.assign(sammyBodySpace,{active:true,phase:"entering",phaseStart:performance.now(),lastTick:0,autoAngle:0,drawCount:sammyBodySpace.totalCount||SAMMY_BODYSPACE_FALLBACK_COUNT,perfStart:performance.now(),perfFrames:0,perfReduced:false});
- sammyBodySpaceApplyOrbit();sammyBodySpaceSetUi(true);if(sammyBodySpace.populationData)sammyBodySpaceApplyPopulation(sammyBodySpace.populationData);else{sammyBodySpaceMeta("ANSUR-II-PCA wird geladen … · visueller Fallback bereit");sammyBodySpacePreload()}
- sammyCameraTweenToState(sammyBodySpaceCameraState(),1900,false);sammyBodySpaceStartTick()
+ if(sammyBodySpace.active||sammyIntroActive)return;sammyBodySpaceClosePanelsInstant();const g=sammyBodySpaceEnsure(),center=sammyBodySpaceCenter();
+ sammyBodySpace.savedCamera=sammyCaptureCameraState();sammyBodySpace.savedMeshVisible=mesh?.visible??true;sammyBodySpaceSetBodyVisible(false);g.position.copy(center);g.rotation.set(.08,0,0);g.visible=true;sammyBodySpace.material.opacity=0;sammyBodySpace.you.material.opacity=0;sammyBodySpace.material.size=sammyBodySpace.basePointSize;sammyBodySpace.points.geometry.setDrawRange(0,sammyBodySpace.totalCount||SAMMY_BODYSPACE_FALLBACK_COUNT);
+ Object.assign(sammyBodySpace,{active:true,phase:"entering",phaseStart:performance.now(),lastTick:0,autoAngle:0,pointerActive:false,drawCount:sammyBodySpace.totalCount||SAMMY_BODYSPACE_FALLBACK_COUNT,perfStart:performance.now(),perfFrames:0,perfReduced:false});
+ sammyBodySpaceApplyOrbit();sammyBodySpaceSetUi(true);sammyAnsOpenPanel();if(sammyBodySpace.populationData)sammyBodySpaceApplyPopulation(sammyBodySpace.populationData);else{sammyBodySpaceMeta("ANSUR-II-PCA wird geladen … · visueller Fallback bereit");sammyBodySpacePreload()}sammyCameraTweenToState(sammyBodySpaceCameraState(),1900,false);sammyBodySpaceStartTick()
 }
 function sammyBodySpaceExit(instant=false){
- if(!sammyBodySpace.active&&sammyBodySpace.phase!=="exiting")return;
- sammyBodySpace.phase="exiting";sammyBodySpace.phaseStart=performance.now();sammyBodySpaceSetUi(false);sammyBodySpaceRestoreOrbit();
- if(sammyBodySpace.savedCamera)sammyCameraTweenToState(sammyBodySpace.savedCamera,instant?0:1500,!!instant);
- if(instant){sammyBodySpaceFinishExit()}else sammyBodySpaceStartTick()
+ if(!sammyBodySpace.active&&sammyBodySpace.phase!=="exiting")return;sammyBodySpace.phase="exiting";sammyBodySpace.phaseStart=performance.now();sammyBodySpaceSetUi(false);sammyAnsClosePanel();sammyBodySpaceRestoreOrbit();if(sammyBodySpace.savedCamera)sammyCameraTweenToState(sammyBodySpace.savedCamera,instant?0:1500,!!instant);if(instant)sammyBodySpaceFinishExit();else sammyBodySpaceStartTick()
 }
 function sammyBodySpaceFinishExit(){
- if(sammyBodySpace.group)sammyBodySpace.group.visible=false;if(sammyBodySpace.material)sammyBodySpace.material.opacity=0;if(sammyBodySpace.you?.material)sammyBodySpace.you.material.opacity=0;
- sammyBodySpace.active=false;sammyBodySpace.phase="idle";sammyBodySpace.savedCamera=null;sammyBodySpace.lastTick=0;if(sammyBodySpace.raf){cancelAnimationFrame(sammyBodySpace.raf);sammyBodySpace.raf=0}
+ if(sammyBodySpace.group)sammyBodySpace.group.visible=false;if(sammyBodySpace.material){sammyBodySpace.material.opacity=0;sammyBodySpace.material.size=sammyBodySpace.basePointSize}if(sammyBodySpace.you?.material)sammyBodySpace.you.material.opacity=0;if(sammyBodySpace.savedMeshVisible!==null)sammyBodySpaceSetBodyVisible(sammyBodySpace.savedMeshVisible);sammyBodySpace.active=false;sammyBodySpace.phase="idle";sammyBodySpace.savedCamera=null;sammyBodySpace.savedMeshVisible=null;sammyBodySpace.lastTick=0;if(sammyBodySpace.raf){cancelAnimationFrame(sammyBodySpace.raf);sammyBodySpace.raf=0}
 }
 function sammyBodySpaceToggle(){sammyBodySpace.active||sammyBodySpace.phase==="entering"?sammyBodySpaceExit(false):sammyBodySpaceEnter()}
+function sammyBodySpaceToggleRotation(){sammyBodySpace.rotationPaused=!sammyBodySpace.rotationPaused;sammyAnsRefreshRotationButton();sammyBodySpaceStartTick()}
+function sammyAnsRefreshRotationButton(){const b=$("#sammyAnsRotation");if(!b)return;b.textContent=sammyBodySpace.rotationPaused?"▶":"Ⅱ";b.classList.toggle("paused",sammyBodySpace.rotationPaused);b.setAttribute("aria-label",sammyBodySpace.rotationPaused?"Body-Space-Rotation starten":"Body-Space-Rotation pausieren")}
 function sammyBodySpaceAdaptivePerformance(now){
- if(sammyBodySpace.perfReduced||now-sammyBodySpace.perfStart<2200)return;
- const total=sammyBodySpace.totalCount||SAMMY_BODYSPACE_FALLBACK_COUNT,fps=sammyBodySpace.perfFrames*1000/Math.max(1,now-sammyBodySpace.perfStart);let n=total;
- if(fps<28)n=Math.min(total,2200);else if(fps<40)n=Math.min(total,3600);
- if(n<total){sammyBodySpace.points.geometry.setDrawRange(0,n);sammyBodySpace.drawCount=n;sammyBodySpace.perfReduced=true;sammyBodySpaceMeta(`${n.toLocaleString("de-DE")}/${total.toLocaleString("de-DE")} Punkte · adaptives Mobile-LOD · 1 Draw Call · ANSUR II`)}
- else{sammyBodySpace.perfStart=now;sammyBodySpace.perfFrames=0}
+ if(sammyBodySpace.perfReduced||now-sammyBodySpace.perfStart<2200)return;const total=sammyBodySpace.totalCount||SAMMY_BODYSPACE_FALLBACK_COUNT,fps=sammyBodySpace.perfFrames*1000/Math.max(1,now-sammyBodySpace.perfStart);let n=total;if(fps<28)n=Math.min(total,2200);else if(fps<40)n=Math.min(total,3600);if(n<total){sammyBodySpace.points.geometry.setDrawRange(0,n);sammyBodySpace.drawCount=n;sammyBodySpace.perfReduced=true;sammyBodySpaceMeta(`${n.toLocaleString("de-DE")}/${total.toLocaleString("de-DE")} Punkte · adaptives Mobile-LOD · 1 Draw Call · ANSUR II`)}else{sammyBodySpace.perfStart=now;sammyBodySpace.perfFrames=0}
+}
+function sammyBodySpaceUpdatePointScale(){
+ if(!sammyBodySpace.material||!sammyBodySpace.group)return;const dist=cam.position.distanceTo(sammyBodySpace.group.position),near=6.5,far=22,t=Math.max(0,Math.min(1,(far-dist)/(far-near))),q=t*t*(3-2*t),size=sammyBodySpace.basePointSize*(1+1.05*q);sammyBodySpace.currentPointSize=size;sammyBodySpace.material.size=size;const own=.38*(1+.55*q);sammyBodySpace.you.scale.set(own,own,own)
 }
 function sammyBodySpaceTick(now){
- sammyBodySpace.raf=0;if(sammyBodySpace.phase==="idle"||!sammyBodySpace.group)return;
- const dt=sammyBodySpace.lastTick?Math.min(.05,(now-sammyBodySpace.lastTick)/1000):0;sammyBodySpace.lastTick=now;sammyBodySpace.perfFrames++;
- const e=Math.max(0,(now-sammyBodySpace.phaseStart)/1000);
- if(sammyBodySpace.phase==="entering"){
-  const t=Math.min(1,e/1.25),q=t*t*(3-2*t);sammyBodySpace.material.opacity=.62*q;sammyBodySpace.you.material.opacity=.98*q;
-  if(t>=1)sammyBodySpace.phase="active"
- }else if(sammyBodySpace.phase==="active"){
-  sammyBodySpace.material.opacity=.62;sammyBodySpace.you.material.opacity=.98;sammyBodySpaceAdaptivePerformance(now)
- }else if(sammyBodySpace.phase==="exiting"){
-  const t=Math.min(1,e/.72),q=1-t*t*(3-2*t);sammyBodySpace.material.opacity=.62*q;sammyBodySpace.you.material.opacity=.98*q;if(e>=1.5){sammyBodySpaceFinishExit();return}
- }
- if(now>=sammyBodySpace.interactionUntil&&sammyBodySpace.phase!=="exiting"){sammyBodySpace.autoAngle+=dt*.055;sammyBodySpace.group.rotation.y=sammyBodySpace.autoAngle}
- const pulse=1+.08*Math.sin(now*.0032);sammyBodySpace.you.scale.set(.78*pulse,.78*pulse,.78*pulse);sammyBodySpaceStartTick()
+ sammyBodySpace.raf=0;if(sammyBodySpace.phase==="idle"||!sammyBodySpace.group)return;const dt=sammyBodySpace.lastTick?Math.min(.05,(now-sammyBodySpace.lastTick)/1000):0;sammyBodySpace.lastTick=now;sammyBodySpace.perfFrames++;const e=Math.max(0,(now-sammyBodySpace.phaseStart)/1000);
+ if(sammyBodySpace.phase==="entering"){const t=Math.min(1,e/1.25),q=t*t*(3-2*t);sammyBodySpace.material.opacity=.62*q;sammyBodySpace.you.material.opacity=.98*q;if(t>=1)sammyBodySpace.phase="active"}else if(sammyBodySpace.phase==="active"){sammyBodySpace.material.opacity=.62;sammyBodySpace.you.material.opacity=.98;sammyBodySpaceAdaptivePerformance(now)}else if(sammyBodySpace.phase==="exiting"){const t=Math.min(1,e/.72),q=1-t*t*(3-2*t);sammyBodySpace.material.opacity=.62*q;sammyBodySpace.you.material.opacity=.98*q;if(e>=1.5){sammyBodySpaceFinishExit();return}}
+ if(!sammyBodySpace.pointerActive&&!sammyBodySpace.rotationPaused&&sammyBodySpace.phase!=="exiting"){sammyBodySpace.autoAngle+=dt*.055;sammyBodySpace.group.rotation.y=sammyBodySpace.autoAngle}sammyBodySpaceUpdatePointScale();sammyBodySpaceStartTick()
 }
 function sammyBodySpaceStartTick(){if(!sammyBodySpace.raf)sammyBodySpace.raf=requestAnimationFrame(sammyBodySpaceTick)}
 function sammyBodySpaceInstallInteraction(){
  if(renderer.domElement.dataset.sammyBodySpaceInteraction)return;renderer.domElement.dataset.sammyBodySpaceInteraction="1";
- const pause=()=>{if(sammyBodySpace.active)sammyBodySpace.interactionUntil=performance.now()+1800};
- renderer.domElement.addEventListener("pointerdown",pause,{passive:true});renderer.domElement.addEventListener("pointermove",()=>{if(sammyBodySpace.active)sammyBodySpace.interactionUntil=performance.now()+900},{passive:true});renderer.domElement.addEventListener("pointerup",pause,{passive:true});renderer.domElement.addEventListener("pointercancel",pause,{passive:true})
+ renderer.domElement.addEventListener("pointerdown",()=>{if(sammyBodySpace.active)sammyBodySpace.pointerActive=true},{passive:true});renderer.domElement.addEventListener("pointermove",()=>{if(sammyBodySpace.active&&sammyBodySpace.pointerActive)sammyBodySpaceStartTick()},{passive:true});renderer.domElement.addEventListener("pointerup",()=>{if(sammyBodySpace.active){sammyBodySpace.pointerActive=false;sammyBodySpaceStartTick()}},{passive:true});renderer.domElement.addEventListener("pointercancel",()=>{if(sammyBodySpace.active){sammyBodySpace.pointerActive=false;sammyBodySpaceStartTick()}},{passive:true})
+}
+
+// ---- ANSUR Prediction Research UI / Worker orchestration -------------------
+function sammyAnsStored(){try{return JSON.parse(localStorage.getItem(SAMMY_ANS_RESULTS_KEY)||"{}")||{}}catch{return {}}}
+function sammyAnsPersist(){try{localStorage.setItem(SAMMY_ANS_RESULTS_KEY,JSON.stringify({runA:sammyAnsLab.runA,runB:sammyAnsLab.runB}))}catch(e){console.warn("ANSUR LAB result persistence failed",e)}}
+function sammyAnsStatus(text,cls=""){const n=$("#sammyAnsStatus");if(!n)return;n.textContent=text;n.className=`sammyStatus ${cls}`.trim()}
+function sammyAnsProgress(run,p){const n=$(run==="A"?"#sammyAnsAProgress":"#sammyAnsBProgress");if(n)n.style.width=`${Math.max(0,Math.min(1,Number(p)||0))*100}%`}
+function sammyAnsInputLabel(id){const src=sammyAnsLab.runA?.dataset?.candidateInputs||[];return src.find(x=>x.id===id)?.label||({stature:"Körperhöhe",weightkg:"Gewicht",chest_circumference:"Brustumfang",waist_circumference:"Taillenumfang",buttock_circumference:"Gesäß-/Hüftumfang",biacromial_breadth:"Schulterbreite",crotch_height:"Crotch Height",torso_height:"Schulter → Schritt",thigh_circumference:"Oberschenkelumfang",wrist_circumference:"Handgelenkumfang",calf_circumference:"Wadenumfang"}[id]||id)}
+function sammyAnsSetList(set){return (set||[]).map(sammyAnsInputLabel).join(" · ")}
+function sammyAnsRenderA(){
+ const n=$("#sammyAnsAResult"),r=sammyAnsLab.runA;if(!n)return;if(!r){n.innerHTML="";return}const rows=[5,6,7].map(k=>{const q=r.bestSets?.[String(k)];return q?`<div class="sammyAnsResultRow"><b>${k}</b><span>${sammyAnsSetList(q.set)}</span><strong>nRMSE ${q.score.toFixed(3)}</strong></div>`:""}).join("");n.innerHTML=`<div class="sammyAnsResultTitle"><b>Research Sweep fertig</b><span>λ ${r.selectedLambda} · Testsplit unangetastet</span></div>${rows}`
+}
+function sammyAnsRenderB(){
+ const n=$("#sammyAnsBResult"),r=sammyAnsLab.runB;if(!n)return;if(!r){n.innerHTML="";return}const rows=[5,6,7].map(k=>{const q=r.sets?.[String(k)];return q?`<div class="sammyAnsResultRow"><b>${k}</b><span>${q.overallRmseCm.toFixed(2)} cm · nRMSE ${q.normalizedRmse.toFixed(3)}</span><strong>P95 ${q.bodyDistribution?.p95?.toFixed(2)||"–"} cm</strong></div>`:""}).join("");n.innerHTML=`<div class="sammyAnsResultTitle"><b>Blind Validation fertig</b><span>912 Personen · Empfehlung: ${r.recommendedInputCount||"–"} Angaben</span></div>${rows}`
+}
+function sammyAnsRefreshUi(){
+ sammyAnsRefreshRotationButton();sammyAnsRenderA();sammyAnsRenderB();const busy=!!sammyAnsLab.running,a=$("#sammyAnsRunA"),b=$("#sammyAnsRunB");if(a)a.disabled=busy;if(b)b.disabled=busy||!sammyAnsLab.runA;const ex1=$("#sammyAnsSummaryExport"),ex2=$("#sammyAnsFullExport");if(ex1)ex1.disabled=!sammyAnsLab.runA&&!sammyAnsLab.runB;if(ex2)ex2.disabled=!sammyAnsLab.runA&&!sammyAnsLab.runB;if(!busy){if(sammyAnsLab.runB)sammyAnsStatus("A + B abgeschlossen · Blind-Test liegt vor.","ok");else if(sammyAnsLab.runA)sammyAnsStatus("A abgeschlossen · Blind Validation B ist freigeschaltet.","ok");else sammyAnsStatus("Bereit · A nutzt ausschließlich Train + Validation.")}
+}
+function sammyAnsWorker(){
+ if(sammyAnsLab.worker)return sammyAnsLab.worker;if(typeof Worker==="undefined")throw new Error("Web Worker wird von diesem Browser nicht unterstützt.");const w=new Worker("./ansur-lab-worker.js?v=0.8.13");
+ w.onmessage=e=>{const m=e.data||{};if(m.type==="progress"){sammyAnsProgress(m.run,m.progress);sammyAnsStatus(m.text);return}if(m.type==="error"){sammyAnsLab.running=null;sammyAnsLab.lastError=m;w.terminate();sammyAnsLab.worker=null;sammyAnsStatus(`${m.run} · ${m.message}`,"error");sammyAnsRefreshUi();return}if(m.type==="result"){if(m.run==="A")sammyAnsLab.runA=m.result;if(m.run==="B")sammyAnsLab.runB=m.result;sammyAnsLab.running=null;w.terminate();sammyAnsLab.worker=null;sammyAnsPersist();sammyAnsRefreshUi()}};
+ w.onerror=e=>{sammyAnsLab.running=null;try{w.terminate()}catch{}sammyAnsLab.worker=null;sammyAnsStatus(`Worker-Fehler: ${e.message||"unbekannt"}`,"error");sammyAnsRefreshUi()};sammyAnsLab.worker=w;return w
+}
+function sammyAnsRunA(){if(sammyAnsLab.running)return;try{sammyAnsLab.running="A";sammyAnsProgress("A",0);sammyAnsStatus("A · Research Sweep startet …");sammyAnsRefreshUi();sammyAnsWorker().postMessage({type:"runA"})}catch(e){sammyAnsLab.running=null;sammyAnsStatus(e.message||String(e),"error");sammyAnsRefreshUi()}}
+function sammyAnsRunB(){if(sammyAnsLab.running||!sammyAnsLab.runA)return;try{sammyAnsLab.running="B";sammyAnsProgress("B",0);sammyAnsStatus("B · Blind Validation startet …");sammyAnsRefreshUi();sammyAnsWorker().postMessage({type:"runB",runA:sammyAnsLab.runA})}catch(e){sammyAnsLab.running=null;sammyAnsStatus(e.message||String(e),"error");sammyAnsRefreshUi()}}
+function sammyAnsExport(summaryOnly=false){
+ if(!sammyAnsLab.runA&&!sammyAnsLab.runB)return;const generated=new Date().toISOString(),base={schema:"sammy-ansur-lab-v1",app:"Sammy",version:"0.8.13",generated,purpose:"ANSUR II Research Sweep A + blind held-out Validation B before the later R5 end-to-end body reconstruction.",summary:{runA:sammyAnsLab.runA?{generated:sammyAnsLab.runA.generated,selectedLambda:sammyAnsLab.runA.selectedLambda,bestSets:sammyAnsLab.runA.bestSets,modelComparison:sammyAnsLab.runA.modelComparison}:null,runB:sammyAnsLab.runB?{generated:sammyAnsLab.runB.generated,ranking:sammyAnsLab.runB.ranking,recommendedInputCount:sammyAnsLab.runB.recommendedInputCount,sets:Object.fromEntries(Object.entries(sammyAnsLab.runB.sets||{}).map(([k,v])=>[k,{inputs:v.inputs,normalizedRmse:v.normalizedRmse,overallRmseCm:v.overallRmseCm,bodyDistribution:v.bodyDistribution,bySex:v.bySex,perMeasure:v.perMeasure}]))}:null}};const payload=summaryOnly?base:{...base,runA:sammyAnsLab.runA,runB:sammyAnsLab.runB};const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=summaryOnly?`Sammy_ANSUR_Lab_Summary_${generated.replace(/[:.]/g,"-")}.json`:`Sammy_ANSUR_Lab_FULL_${generated.replace(/[:.]/g,"-")}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)
+}
+function sammyAnsReset(){if(sammyAnsLab.running){sammyAnsStatus("Lauf läuft noch · Reset danach.");return}sammyAnsLab.runA=null;sammyAnsLab.runB=null;sammyAnsLab.lastError=null;try{localStorage.removeItem(SAMMY_ANS_RESULTS_KEY)}catch{}sammyAnsProgress("A",0);sammyAnsProgress("B",0);sammyAnsRefreshUi()}
+function sammyAnsInitUI(){
+ const s=sammyAnsStored();sammyAnsLab.runA=s.runA||null;sammyAnsLab.runB=s.runB||null;const rot=$("#sammyAnsRotation"),a=$("#sammyAnsRunA"),b=$("#sammyAnsRunB"),sum=$("#sammyAnsSummaryExport"),full=$("#sammyAnsFullExport"),reset=$("#sammyAnsReset"),close=$("#sammyAnsClose");if(rot)rot.onclick=sammyBodySpaceToggleRotation;if(a)a.onclick=sammyAnsRunA;if(b)b.onclick=sammyAnsRunB;if(sum)sum.onclick=()=>sammyAnsExport(true);if(full)full.onclick=()=>sammyAnsExport(false);if(reset)reset.onclick=sammyAnsReset;if(close)close.onclick=()=>sammyBodySpaceExit(false);sammyAnsRefreshUi()
 }
 
 function sammyOpenPanel(id){
@@ -5870,11 +5866,11 @@ function sammyInstallBubbleDrag(el,defaultX,defaultY){
 function sammyInstallPanelResize(panel){
  const grip=panel.querySelector(".sammyResizeGrip");if(!grip)return;
  let pid=null,startY=0,startH=0;
- const isAnim=panel.dataset.panelKey==="animation",minH=isAnim?82:190;
- const applyCompact=h=>{if(isAnim)panel.classList.toggle("compact",h<138)};
+ const isCompactable=panel.dataset.panelKey==="animation"||panel.dataset.panelKey==="ansur",minH=isCompactable?82:190;
+ const applyCompact=h=>{if(isCompactable)panel.classList.toggle("compact",h<138)};
  grip.addEventListener("pointerdown",e=>{
   pid=e.pointerId;grip.setPointerCapture(pid);startY=e.clientY;startH=panel.getBoundingClientRect().height;
-  if(isAnim&&panel.classList.contains("compact")){panel.classList.remove("compact");startH=138}
+  if(isCompactable&&panel.classList.contains("compact")){panel.classList.remove("compact");startH=138}
   e.preventDefault()
  });
  grip.addEventListener("pointermove",e=>{
@@ -5885,7 +5881,7 @@ function sammyInstallPanelResize(panel){
  grip.addEventListener("pointerup",e=>{
   if(pid!==e.pointerId)return;pid=null;
   let h=Math.round(panel.getBoundingClientRect().height);
-  if(isAnim&&h<138){h=86;panel.style.setProperty("--sammy-panel-h","86px");panel.classList.add("compact")}
+  if(isCompactable&&h<138){h=86;panel.style.setProperty("--sammy-panel-h","86px");panel.classList.add("compact")}
   const state=sammyUiLoadState();
   sammyUiSaveState({panelHeights:{...(state.panelHeights||{}),[panel.dataset.panelKey]:h}})
  });
@@ -6409,6 +6405,7 @@ function sammyInitUi(){
  sammyInstallBubbleDrag($("#sammyErrorBubble"),8,Math.max(220,h*.62));
  document.querySelectorAll(".sammyPanel").forEach(sammyInstallPanelResize);
  document.querySelectorAll(".sammyPanelClose").forEach(b=>b.onclick=sammyClosePanels);
+ sammyAnsInitUI();
 
  $("#sammyAnimFile").disabled=true;
  $("#sammyAnimFile").onchange=e=>{if(e.target.files?.length)sammyImportAnimationFiles(e.target.files)};

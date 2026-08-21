@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.12</title>
-<link rel="stylesheet" href="style.css?v=0.8.12">
+<title>Sammy v0.8.13</title>
+<link rel="stylesheet" href="style.css?v=0.8.13">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.12</div>
+  <div class="sammySplashVersion">v0.8.13</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.12</div>
+<div id="sammyVersion">Sammy · v0.8.13</div>
 
 <button id="sammyCameraDebugBtn" class="sammyCameraDebugBtn" type="button">CAM</button>
 <div id="sammyCameraDebugPanel" class="sammyCameraDebugPanel hidden">
@@ -191,6 +191,50 @@
   </div>
  </section>
 
+ <section id="sammyAnsPanel" class="sammyPanel sammyAnsPanel" data-panel-key="ansur">
+  <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
+  <div class="sammyMiniTransport sammyAnsMiniTransport" aria-label="Body-Space-Rotation">
+   <button id="sammyAnsRotation" type="button" class="sammyMiniMain" aria-label="Body-Space-Rotation pausieren">Ⅱ</button>
+  </div>
+  <div class="sammyPanelHead"><b>ANSUR LAB</b><button id="sammyAnsClose" class="sammyPanelClose" type="button">×</button></div>
+  <div class="sammyPanelScroll">
+   <div class="sammyAnsIntro">BODY SPACE · 6.068 reale ANSUR-II-Personen · Statistik läuft in einem separaten Worker, damit die 3D-Ansicht flüssig bleibt.</div>
+   <div id="sammyAnsStatus" class="sammyStatus">Bereit · A nutzt ausschließlich Train + Validation.</div>
+
+   <details class="sammyAnsRun" id="sammyAnsRunACard" open>
+    <summary><b>A · RESEARCH SWEEP</b><span>Train 70 % · Validation 15 %</span></summary>
+    <div class="sammyAnsRunBody">
+     <p>Vergleicht Population Mean, OLS und Ridge. Danach sucht ein Beam-Search intelligent eine verschachtelte 5→6→7-Eingabekombination. Geschlecht und Alter sind Kontext und zählen nicht zu den 5–7 Angaben.</p>
+     <button id="sammyAnsRunA" type="button">Research Sweep starten</button>
+     <div class="sammyAnsProgress"><i id="sammyAnsAProgress"></i></div>
+     <div id="sammyAnsAResult" class="sammyAnsResult"></div>
+    </div>
+   </details>
+
+   <details class="sammyAnsRun" id="sammyAnsRunBCard">
+    <summary><b>B · BLIND VALIDATION</b><span>unangetastete 15 %</span></summary>
+    <div class="sammyAnsRunBody">
+     <p>Erst nach A freigeschaltet. Die gewählten 5/6/7-Sets werden auf Train+Validation neu gefittet; erst dann werden die 912 bisher unsichtbaren Testpersonen geöffnet.</p>
+     <button id="sammyAnsRunB" type="button" disabled>Blind Validation starten</button>
+     <div class="sammyAnsProgress"><i id="sammyAnsBProgress"></i></div>
+     <div id="sammyAnsBResult" class="sammyAnsResult"></div>
+    </div>
+   </details>
+
+   <details class="sammyAnsRun sammyAnsRunLocked" id="sammyAnsRunCCard">
+    <summary><b>C · END-TO-END R5</b><span>Prediction → DIMENSIONS → Mesh</span></summary>
+    <div class="sammyAnsRunBody">
+     <p>Vorbereitet, aber bewusst noch gesperrt: Erst A/B entscheiden, welche Eingaben und welche ANSUR→Sammy-Ziele wir einfrieren. Danach folgt der lange echte Mesh-Lauf auf unbekannten ANSUR-Personen.</p>
+     <button type="button" disabled>Nach Blind Validation</button>
+    </div>
+   </details>
+
+   <div class="sammyCalibrationActions"><button id="sammyAnsSummaryExport" type="button" disabled>Summary JSON</button><button id="sammyAnsFullExport" type="button" disabled>FULL JSON</button></div>
+   <button id="sammyAnsReset" type="button" class="sammySecondary">ANSUR-Testresultate löschen</button>
+   <div class="sammyAnsFoot">Mapping V1: 26 ANSUR-gestützte Sammy-Ziele · 22 direkt, 2 abgeleitet, 2 posegebundene Umfang-Proxys. Natural Waist, höhere Hip Circumference, Front Chest, Neck Height und Waist→Hip werden hier noch nicht als echte ANSUR-Ziele ausgegeben.</div>
+  </div>
+ </section>
+
  <section id="sammyErrorPanel" class="sammyPanel sammyErrorPanel" data-panel-key="errors">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
   <div class="sammyPanelHead"><b>Fehlermodus</b><button class="sammyPanelClose" type="button">×</button></div>
@@ -207,14 +251,14 @@
 </div>
 
 <div id="sammyBodySpaceHud" class="sammyBodySpaceHud" aria-hidden="true">
- <div class="sammyBodySpaceTag">BODY SPACE · V1</div>
+ <div class="sammyBodySpaceTag">BODY SPACE · V2</div>
  <b>Du im anthropometrischen Raum</b>
  <span id="sammyBodySpaceMeta">6.068 ANSUR-II-Personen · PCA wird vorgeladen</span>
 </div>
 <div id="sammyBodySpaceYou" class="sammyBodySpaceYou" aria-hidden="true">DU</div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.12</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.13</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -471,6 +515,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.12"></script>
+<script type="module" src="app.js?v=0.8.13"></script>
 </body>
 </html>

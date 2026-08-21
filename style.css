@@ -440,7 +440,7 @@ body.sammy-ready #sammyCameraDebugBtn{opacity:1;transition:opacity .4s ease}
 .sammyDimensionsDivider{display:flex;align-items:center;gap:7px;margin:10px 0 7px;color:#7e858e;font-size:7px;letter-spacing:.08em}.sammyDimensionsDivider:before,.sammyDimensionsDivider:after{content:"";height:1px;flex:1;background:rgba(255,255,255,.08)}
 .sammyDimensionsModes{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px}
 
-/* Sammy v0.8.12 · ANSUR BODY SPACE V1 */
+/* Sammy v0.8.13 · ANSUR BODY SPACE V2 base */
 .sammyBodySpaceHud{
  position:fixed;z-index:24;left:50%;top:max(18px,env(safe-area-inset-top));transform:translate(-50%,-8px);
  width:min(84vw,360px);box-sizing:border-box;padding:10px 14px 11px;border-radius:16px;
@@ -462,3 +462,18 @@ body.sammy-ready #sammyCameraDebugBtn{opacity:1;transition:opacity .4s ease}
 body.sammy-bodyspace #sammyVersion{opacity:.28}
 body.sammy-bodyspace .sammyBubble:not(#sammyAnsBubble){opacity:.34;transition:opacity .35s ease}
 body.sammy-bodyspace #sammyAnsBubble{background:rgba(240,240,244,.94);color:#17181b}
+
+/* Sammy v0.8.13 · ANSUR LAB / BODY SPACE V2 */
+.sammyAnsPanel{min-height:82px;transition:background .24s ease,border-color .24s ease,backdrop-filter .24s ease}
+.sammyAnsPanel.compact{--sammy-panel-h:86px!important;height:86px!important;min-height:86px!important;background:rgba(17,18,21,.48)!important;border-color:rgba(255,255,255,.10)!important;backdrop-filter:blur(15px)!important;-webkit-backdrop-filter:blur(15px)!important}
+.sammyAnsPanel.compact .sammyPanelHead,.sammyAnsPanel.compact .sammyPanelScroll{display:none!important}.sammyAnsPanel.compact .sammyResizeGrip{flex-basis:18px}
+.sammyAnsMiniTransport{padding-bottom:8px}.sammyAnsMiniTransport .sammyMiniMain.paused{background:rgba(255,255,255,.11)!important;color:#f0f0f3!important}
+.sammyAnsIntro{margin-bottom:8px;color:#8f949d;font-size:9px;line-height:1.45}
+.sammyAnsRun{margin:8px 0;border:1px solid rgba(255,255,255,.085);border-radius:13px;background:rgba(255,255,255,.025);overflow:hidden}
+.sammyAnsRun>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 11px;cursor:pointer;list-style:none}.sammyAnsRun>summary::-webkit-details-marker{display:none}.sammyAnsRun>summary b{font-size:9px;letter-spacing:.055em;color:#e8e9ed}.sammyAnsRun>summary span{font-size:7.5px;color:#7f858e;text-align:right}
+.sammyAnsRunBody{padding:0 10px 10px}.sammyAnsRunBody p{margin:0 0 8px;color:#9ba0a8;font-size:8px;line-height:1.45}.sammyAnsRunBody>button{width:100%}
+.sammyAnsProgress{height:4px;margin:8px 1px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,.06)}.sammyAnsProgress i{display:block;width:0;height:100%;border-radius:inherit;background:rgba(235,236,240,.78);transition:width .2s linear}
+.sammyAnsResult:empty{display:none}.sammyAnsResult{margin-top:8px;padding:7px;border-radius:10px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055)}
+.sammyAnsResultTitle{display:flex;justify-content:space-between;gap:8px;margin-bottom:5px}.sammyAnsResultTitle b{font-size:8.5px;color:#e8eaf0}.sammyAnsResultTitle span{font-size:7px;color:#7e848d;text-align:right}
+.sammyAnsResultRow{display:grid;grid-template-columns:18px minmax(0,1fr) 72px;gap:5px;align-items:center;min-height:27px;border-top:1px solid rgba(255,255,255,.045);font-size:7.2px}.sammyAnsResultRow:first-of-type{border-top:0}.sammyAnsResultRow>b{color:#fff;text-align:center}.sammyAnsResultRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#a3a8b0}.sammyAnsResultRow strong{text-align:right;color:#dfe1e6;font-weight:650;font-variant-numeric:tabular-nums}
+.sammyAnsRunLocked{opacity:.68}.sammyAnsFoot{margin-top:9px;padding:8px;border-radius:10px;background:rgba(255,255,255,.025);color:#747a83;font-size:7.3px;line-height:1.45}
