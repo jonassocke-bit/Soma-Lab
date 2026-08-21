@@ -477,3 +477,12 @@ body.sammy-bodyspace #sammyAnsBubble{background:rgba(240,240,244,.94);color:#171
 .sammyAnsResultTitle{display:flex;justify-content:space-between;gap:8px;margin-bottom:5px}.sammyAnsResultTitle b{font-size:8.5px;color:#e8eaf0}.sammyAnsResultTitle span{font-size:7px;color:#7e848d;text-align:right}
 .sammyAnsResultRow{display:grid;grid-template-columns:18px minmax(0,1fr) 72px;gap:5px;align-items:center;min-height:27px;border-top:1px solid rgba(255,255,255,.045);font-size:7.2px}.sammyAnsResultRow:first-of-type{border-top:0}.sammyAnsResultRow>b{color:#fff;text-align:center}.sammyAnsResultRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#a3a8b0}.sammyAnsResultRow strong{text-align:right;color:#dfe1e6;font-weight:650;font-variant-numeric:tabular-nums}
 .sammyAnsRunLocked{opacity:.68}.sammyAnsFoot{margin-top:9px;padding:8px;border-radius:10px;background:rgba(255,255,255,.025);color:#747a83;font-size:7.3px;line-height:1.45}
+
+/* Sammy v0.8.14 · ANSUR LAB C/D + BODY SPACE V3 */
+.sammyAnsModeRow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:7px 0}
+@media (min-width:390px){.sammyAnsModeRow{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.sammyAnsModeRow button{min-height:38px!important;padding:5px 4px!important;border-radius:9px!important;font-size:7.7px!important;line-height:1.15!important;background:rgba(255,255,255,.045)!important;color:#a7abb3!important}
+.sammyAnsModeRow button small{font-size:6.6px;color:#6f747d;font-weight:500}.sammyAnsModeRow button.active{background:#ececef!important;color:#17181b!important}.sammyAnsModeRow button.active small{color:#565a61!important}
+.sammyAnsDControls{display:grid;grid-template-columns:1.4fr .8fr .8fr;gap:5px;margin:6px 0}.sammyAnsDControls button{min-height:32px!important;padding:0 6px!important;font-size:7.6px!important}
+body.sammy-ansur-d-running #sammyAnsPanel{border-color:rgba(148,216,255,.24);background:rgba(16,18,22,.88)}
+body.sammy-ansur-d-running #sammyAnsBubble{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 0 22px rgba(185,220,255,.16)}

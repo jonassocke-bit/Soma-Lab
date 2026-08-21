@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.13</title>
-<link rel="stylesheet" href="style.css?v=0.8.13">
+<title>Sammy v0.8.14</title>
+<link rel="stylesheet" href="style.css?v=0.8.14">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.13</div>
+  <div class="sammySplashVersion">v0.8.14</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.13</div>
+<div id="sammyVersion">Sammy · v0.8.14</div>
 
 <button id="sammyCameraDebugBtn" class="sammyCameraDebugBtn" type="button">CAM</button>
 <div id="sammyCameraDebugPanel" class="sammyCameraDebugPanel hidden">
@@ -221,17 +221,41 @@
     </div>
    </details>
 
-   <details class="sammyAnsRun sammyAnsRunLocked" id="sammyAnsRunCCard">
-    <summary><b>C · END-TO-END R5</b><span>Prediction → DIMENSIONS → Mesh</span></summary>
+   <details class="sammyAnsRun" id="sammyAnsRunCCard">
+    <summary><b>C · MODEL DEPTH + ROBUSTNESS</b><span>post-blind · Worker</span></summary>
     <div class="sammyAnsRunBody">
-     <p>Vorbereitet, aber bewusst noch gesperrt: Erst A/B entscheiden, welche Eingaben und welche ANSUR→Sammy-Ziele wir einfrieren. Danach folgt der lange echte Mesh-Lauf auf unbekannten ANSUR-Personen.</p>
-     <button type="button" disabled>Nach Blind Validation</button>
+     <p>Nach B: fairer 24-Ziel-Vergleich auf identischer Zielmenge. Testet lineare vs. quadratische Ridge-Modelle, optimierte vs. alltagstaugliche 5/6/7-Sets, simulierte Messfehler von ±0,5/1/2 cm bzw. kg und kalibriert 68/90/95-%-Unsicherheitsbänder. C ist Diagnose nach dem ersten Blind-Test, kein neuer unangetasteter Blind-Test.</p>
+     <button id="sammyAnsRunC" type="button" disabled>Model Depth + Robustness starten</button>
+     <div class="sammyAnsProgress"><i id="sammyAnsCProgress"></i></div>
+     <div id="sammyAnsCResult" class="sammyAnsResult"></div>
     </div>
    </details>
 
-   <div class="sammyCalibrationActions"><button id="sammyAnsSummaryExport" type="button" disabled>Summary JSON</button><button id="sammyAnsFullExport" type="button" disabled>FULL JSON</button></div>
-   <button id="sammyAnsReset" type="button" class="sammySecondary">ANSUR-Testresultate löschen</button>
-   <div class="sammyAnsFoot">Mapping V1: 26 ANSUR-gestützte Sammy-Ziele · 22 direkt, 2 abgeleitet, 2 posegebundene Umfang-Proxys. Natural Waist, höhere Hip Circumference, Front Chest, Neck Height und Waist→Hip werden hier noch nicht als echte ANSUR-Ziele ausgegeben.</div>
+   <details class="sammyAnsRun" id="sammyAnsRunDCard">
+    <summary><b>D · END-TO-END R5</b><span>Prediction → DIMENSIONS → echtes Mesh</span></summary>
+    <div class="sammyAnsRunBody">
+     <p>Erst nach C. Dieselben unbekannten ANSUR-Personen werden paarweise mit 5, 6 und 7 echten Eingaben rekonstruiert. Bewertet werden ausschließlich 24 direkt/sauber abgeleitete ANSUR-Maße; sieben Sammy-only/Proxy-Werte dienen nur als Bridge für den eingefrorenen R5.</p>
+     <div class="sammyAnsModeRow" aria-label="End-to-End Testtiefe">
+      <button type="button" data-ans-d-mode="quick">Quick<br><small>6 × 3</small></button>
+      <button type="button" data-ans-d-mode="standard">Standard<br><small>15 × 3</small></button>
+      <button type="button" data-ans-d-mode="deep" class="active">Deep<br><small>30 × 3</small></button>
+      <button type="button" data-ans-d-mode="stress">Stress<br><small>60 × 3</small></button>
+     </div>
+     <div class="sammyAnsDControls">
+      <button id="sammyAnsDStart" type="button" disabled>End-to-End starten</button>
+      <button id="sammyAnsDPause" type="button" disabled>Pause</button>
+      <button id="sammyAnsDReset" type="button" disabled>Reset</button>
+     </div>
+     <div class="sammyAnsProgress"><i id="sammyAnsDProgress"></i></div>
+     <div id="sammyAnsDStatus" class="sammyStatus">C abschließen · danach echter Mesh-Test.</div>
+     <div id="sammyAnsDResult" class="sammyAnsResult"></div>
+     <div class="sammyCalibrationActions"><button id="sammyAnsDSummary" type="button" disabled>D Summary</button><button id="sammyAnsDFull" type="button" disabled>D FULL</button></div>
+    </div>
+   </details>
+
+   <div class="sammyCalibrationActions"><button id="sammyAnsSummaryExport" type="button" disabled>A/B/C Summary</button><button id="sammyAnsFullExport" type="button" disabled>A/B/C FULL</button></div>
+   <button id="sammyAnsReset" type="button" class="sammySecondary">ANSUR-Testresultate A/B/C löschen</button>
+   <div class="sammyAnsFoot">Primary Score: 24 direkt bzw. sauber abgeleitete ANSUR↔Sammy-Maße. Die zwei ANSUR-Flexed-Armumfänge werden nicht als exakte Sammy-Truth gewertet. Für den 31-Maß-R5-Bau ergänzt eine separate Bridge sieben Sammy-only/Proxy-Werte; diese Bridge-Werte fließen ausdrücklich nicht in den ANSUR-End-to-End-Score ein.</div>
   </div>
  </section>
 
@@ -251,14 +275,14 @@
 </div>
 
 <div id="sammyBodySpaceHud" class="sammyBodySpaceHud" aria-hidden="true">
- <div class="sammyBodySpaceTag">BODY SPACE · V2</div>
+ <div class="sammyBodySpaceTag">BODY SPACE · V3</div>
  <b>Du im anthropometrischen Raum</b>
  <span id="sammyBodySpaceMeta">6.068 ANSUR-II-Personen · PCA wird vorgeladen</span>
 </div>
 <div id="sammyBodySpaceYou" class="sammyBodySpaceYou" aria-hidden="true">DU</div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.13</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.14</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -515,6 +539,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.13"></script>
+<script type="module" src="app.js?v=0.8.14"></script>
 </body>
 </html>

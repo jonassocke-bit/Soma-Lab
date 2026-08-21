@@ -1,41 +1,61 @@
-## v0.8.13 · ANSUR LAB A/B + BODY SPACE V2
+## v0.8.14 · ANSUR LAB C/D + BODY SPACE V3
 
-Basis: v0.8.12. Scope dieser Version bleibt auf ANSUR/BODY SPACE sowie dessen Forschungs-UI begrenzt. R2/R5, DIMENSIONS, MEAS, Anny/SOMA, Rig, Greeting und Startup bleiben unverändert.
+Basis: ausgelieferte v0.8.13. Scope bleibt strikt auf ANSUR/BODY SPACE und dessen Forschungs-/Validierungs-UI begrenzt. R2, R5, DIMENSIONS, MEAS, Anny/SOMA, Rig, Greeting und Startup werden nicht verändert; End-to-End D ruft den bestehenden DIMENSIONS/R5-Pfad nur als unveränderte Engine auf.
 
-### BODY SPACE V2
-- Im Body Space wird das Mannequin nicht mehr dargestellt; der Nutzer ist nur der separate Fokuspunkt `DU`.
-- Die 6.068 echten ANSUR-II-Punkte bleiben eine einzelne `THREE.Points`-BufferGeometry (1 Draw Call).
-- Beim Hineinzoomen wächst die World-Point-Size zusätzlich zur perspektivischen Attenuation weich bis zu einem gedeckelten Faktor. So bleibt die Population auch in nahen Ansichten visuell präsent.
-- Auto-Rotation pausiert nur während einer aktiven Pointer-Geste und setzt unmittelbar beim Loslassen wieder ein.
-- ANSUR-Menü wie der Animation-Player: Bottom Panel, Resize-Grip, bis auf 86 px kompakt zusammenschiebbar; im kompakten Zustand bleibt nur Play/Pause für die Population-Rotation.
-- Beim Eintritt wird die Sichtbarkeit des Avatar-Meshes gespeichert und ausgeschaltet; beim Verlassen exakt wiederhergestellt.
+### BODY SPACE V3
+- 6.068 echte ANSUR-II-Personen bleiben eine einzige `THREE.Points`-BufferGeometry (1 Draw Call).
+- Avatar-Mesh im BODY SPACE aus; `DU` bleibt der Nutzer-Fokuspunkt.
+- Punkte sind radial weich statt quadratisch. Beim Hineinzoomen wird ihre World-Size aktiv kleiner, sodass die projizierten Punkte in Nahansicht nicht zu großen Vierecken aufblasen; gleichzeitig werden sie moderat heller/deckender.
+- Auto-Rotation pausiert nur während der aktiven Finger-Geste und läuft unmittelbar nach dem Loslassen wieder weiter.
+- `DU` wird jetzt real in denselben PCA-Raum projiziert. Die aktuellen Sammy-Maße liefern die 24 PCA-Körperfeatures. Das für die PCA nötige physische Gewicht wird mit einem separaten sex-spezifischen ANSUR-Locator aus aktuellen Körpermaßen + Alter geschätzt; der Anny-`Weight`-Morph wird niemals als kg interpretiert.
+- Die Wolke verschiebt sich nach Eintritt weich relativ zum fixen `DU`-Punkt an die berechnete PCA-Position des aktuellen Charakters. Die 6.068 originalen PCA-Koordinaten bleiben unverändert.
+- Adaptives Mobile-LOD bleibt: nur bei gemessenen FPS-Problemen 6.068 → 3.600 → 2.200 sichtbare Punkte.
 
-### ANSUR Prediction Dataset V1
-Zwei kompakte, getrennte Dateien aus den öffentlichen ANSUR-II-Male/Female-Daten: `ansur-prediction-trainval-v1.json` und `ansur-prediction-test-v1.json`. Der Blind-Test wird in Lauf A nicht einmal heruntergeladen:
-- 6.068 Personen (4.082 male / 1.986 female)
-- deterministischer, sex-stratifizierter 70/15/15 Split: 4.247 Train / 909 Validation / 912 Blind Test; Train+Validation und Blind Test liegen physisch in getrennten JSON-Dateien
-- Alter ist freier Kontext; Modelle sind sex-spezifisch.
-- 5–7 zählen nur Körperangaben; Height und Weight sind Pflichtstart der Input-Suche.
-- 26 ANSUR-gestützte Sammy-Ziele: 22 direkt, 2 abgeleitet, 2 als klar markierte posegebundene Umfang-Proxys.
-- Nicht als ANSUR-Truth ausgegeben werden aktuell: Sammy Natural Waist, höhere Hip Circumference, Front Chest Length, Neck Height und Waist→Hip.
+### A/B bleiben kompatibel
+- Bestehende v0.8.13-A/B-Ergebnisse bleiben über denselben LocalStorage-Key erhalten.
+- A: 4.247 Train + 909 Validation; die 912 Blind-Testpersonen werden physisch nicht geladen.
+- B: erster Zugriff auf die separate 912er-Testpartition; Fit auf Train+Validation, Evaluation auf Test.
 
-### Lauf A · Research Sweep
-Läuft vollständig im `ansur-lab-worker.js`, damit Three.js/UI nicht blockiert werden.
-1. Default-5-Set: Population Mean vs OLS vs Ridge-Lambda-Grid.
-2. Bestes Ridge-Lambda wird ausschließlich auf Validation gewählt.
-3. Beam Search (Breite 6) sucht verschachtelte 5→6→7 Input-Sets aus benutzerfreundlichen Kandidaten.
-4. Split 2 / Blind Test wird in A nicht ausgewertet.
+### C · Model Depth + Robustness
+C ist ausdrücklich ein **post-blind Diagnose-Lauf**. Nach B ist die Testpartition nicht mehr unangetastet.
 
-### Lauf B · Blind Validation
-Erst nach A freigeschaltet.
-- Fit auf Train + Validation mit eingefrorenem Lambda und eingefrorenen 5/6/7-Sets.
-- Erst dann Zugriff auf 912 zuvor unangetastete Testpersonen.
-- Report: normalized RMSE, Gesamt-RMSE cm, P50/P90/P95/Max pro Testperson, sex-spezifische Fehler und per-measure RMSE/MAE/Bias/P95.
+C prüft im Web Worker:
+1. identische feste Primärzielmenge aus 24 direkt bzw. sauber abgeleiteten ANSUR↔Sammy-Maßen;
+2. A-optimierte 5/6/7-Sets gegen alltagstaugliche Consumer-Sets;
+3. lineare Ridge- gegen sex-spezifische quadratische Ridge-Modelle;
+4. Lambda-Auswahl ausschließlich auf Validation;
+5. simulierte Eingabefehler ±0,5 / ±1 / ±2 cm bzw. kg;
+6. empirische 68/90/95-%-Unsicherheitsbänder, auf Validation kalibriert und auf Test auf Coverage geprüft.
 
-### Lauf C · End-to-End R5
-UI-Untermenü ist bereits vorhanden, aber bewusst gesperrt. A/B sollen zuerst Input-Sets und ANSUR→Sammy-Zielmapping festlegen. Danach folgt Prediction → vollständige DIMENSIONS-Ziele → R5 → realer Mesh-Vergleich.
+Die zwei posegebundenen ANSUR-Flexed-Armumfänge bleiben Proxy und zählen nicht in den 24-Maß-Primärscore.
+
+### D · End-to-End R5
+D wird nach C freigeschaltet. Er nutzt dieselbe bereits in B geöffnete Testpartition und ist **End-to-End-Validation, kein neuer Blind-Test**.
+
+Pro Person wird paarweise gerechnet:
+`5 / 6 / 7 reale Eingaben → ANSUR Prediction → 24 Primärziele → 7 Bridge-Ziele → 31 DIMENSIONS-Ziele → eingefrorener R5 → echtes Mesh → MEAS → Vergleich gegen 24 echte ANSUR-Maße`.
+
+Testtiefen:
+- Quick: 6 Personen × 3 = 18 echte R5-Builds
+- Standard: 15 × 3 = 45 Builds
+- Deep: 30 × 3 = 90 Builds
+- Stress: 60 × 3 = 180 Builds
+
+Die gleichen Personen werden jeweils mit 5, 6 und 7 Angaben rekonstruiert. Dadurch ist der Zusatznutzen des sechsten und siebten Maßes direkt paarweise vergleichbar. Fortschritt wird nach jedem fertigen Build in IndexedDB gespeichert; Pause erfolgt nach dem aktuellen Build.
+
+### 31-Maß-Bridge
+`ansur-dimensions-bridge-v1.json` ergänzt sieben Sammy-Ziele, die ANSUR nicht als exakte Vergleichswahrheit liefert:
+- Natural Waist Circumference
+- höhere Sammy Hip Circumference
+- Sammy Upperarm Circumference
+- Sammy Forearm Circumference
+- Front Chest Length (runtime exakt = Waist Back Length, weil die aktuelle Sammy-Messimplementierung dieselbe vertikale Strecke nutzt)
+- Neck Height
+- Waist→Hip
+
+Die Bridge wurde auf den korrigierten 6.000 Sammy-Kalibrationskörpern trainiert. Vor der Bridge-Prognose werden ANSUR-Eingaben sex-spezifisch per z/Percentile in den Kalibrationsraum ausgerichtet und auf ±3,25 SD begrenzt; Outputs werden zusätzlich auf robuste 0,5–99,5-%-Kalibrationsbereiche begrenzt. Das verhindert instabile Extrapolation bei ANSUR-Edge-Cases. Diese sieben Bridge-Werte sind **nur Konstruktionsprioren** und fließen nie in den ANSUR-Score ein.
 
 ### Performance
-- Body Space: 1 Draw Call für die Population + 1 Sprite für `DU`.
-- Statistik: eigener Web Worker; Run A lädt nur Train+Validation. Run B startet in einem frischen Worker und lädt die separate Blind-Test-Datei erstmals. Der Worker wird nach jedem fertigen Lauf beendet, damit sein Dataset-Speicher auf dem iPhone wieder freigegeben werden kann.
-- Bestehendes adaptives Point-LOD bleibt erhalten.
+- BODY SPACE: 1 Draw Call + 1 Sprite für `DU`.
+- A/B/C/DPREP: eigener Web Worker, danach Worker-Speicher wieder freigegeben.
+- D läuft absichtlich im Haupt-Runtime-Pfad, weil echte Three.js-/Anny-/MEAS-Meshes erzeugt werden; er ist resumierbar.
