@@ -1,4 +1,4 @@
-## v0.8.8 · Solver Lab R3 · Priority / Purity / Staged
+## v0.8.8.1 · Solver Lab R3 · Priority / Purity / Staged
 
 - nutzt den abgeschlossenen Solver-R2-Lauf als Quelle; **keine neue Kalibrierung und kein erneuter Landmark-Delta-Lauf**
 - vergleicht vier inverse Strategien auf identischen Holdouts: R2 Baseline, Semantic Priority, Semantic + Purity, Staged + Purity
