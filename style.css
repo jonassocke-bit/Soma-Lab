@@ -440,34 +440,11 @@ body.sammy-ready #sammyCameraDebugBtn{opacity:1;transition:opacity .4s ease}
 .sammyDimensionsDivider{display:flex;align-items:center;gap:7px;margin:10px 0 7px;color:#7e858e;font-size:7px;letter-spacing:.08em}.sammyDimensionsDivider:before,.sammyDimensionsDivider:after{content:"";height:1px;flex:1;background:rgba(255,255,255,.08)}
 .sammyDimensionsModes{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px}
 
-/* Sammy v0.8.13 · ANSUR BODY SPACE V2 base */
-.sammyBodySpaceHud{
- position:fixed;z-index:24;left:50%;top:max(18px,env(safe-area-inset-top));transform:translate(-50%,-8px);
- width:min(84vw,360px);box-sizing:border-box;padding:10px 14px 11px;border-radius:16px;
- border:1px solid rgba(255,255,255,.13);background:rgba(15,16,19,.54);
- backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#f4f4f6;text-align:center;
- pointer-events:none;opacity:0;visibility:hidden;transition:opacity .45s ease,transform .45s ease,visibility .45s ease
-}
-.sammyBodySpaceHud.visible{opacity:1;visibility:visible;transform:translate(-50%,0)}
-.sammyBodySpaceHud .sammyBodySpaceTag{font-size:9px;letter-spacing:.16em;color:#9fa2ab;margin-bottom:3px}
-.sammyBodySpaceHud b{display:block;font-size:13px;font-weight:720}
-.sammyBodySpaceHud span{display:block;margin-top:3px;font-size:9px;color:#adafb7;line-height:1.35}
-.sammyBodySpaceYou{
- position:fixed;z-index:24;left:50%;top:50%;transform:translate(-50%,16px) scale(.92);
- padding:4px 7px;border-radius:9px;background:rgba(242,242,246,.88);color:#15161a;
- font-size:8px;font-weight:850;letter-spacing:.12em;pointer-events:none;opacity:0;visibility:hidden;
- transition:opacity .4s ease,transform .4s ease,visibility .4s ease
-}
-.sammyBodySpaceYou.visible{opacity:1;visibility:visible;transform:translate(-50%,16px) scale(1)}
-body.sammy-bodyspace #sammyVersion{opacity:.28}
-body.sammy-bodyspace .sammyBubble:not(#sammyAnsBubble){opacity:.34;transition:opacity .35s ease}
-body.sammy-bodyspace #sammyAnsBubble{background:rgba(240,240,244,.94);color:#17181b}
-
-/* Sammy v0.8.13 · ANSUR LAB / BODY SPACE V2 */
+/* ANSUR LAB bottom panel */
 .sammyAnsPanel{min-height:82px;transition:background .24s ease,border-color .24s ease,backdrop-filter .24s ease}
 .sammyAnsPanel.compact{--sammy-panel-h:86px!important;height:86px!important;min-height:86px!important;background:rgba(17,18,21,.48)!important;border-color:rgba(255,255,255,.10)!important;backdrop-filter:blur(15px)!important;-webkit-backdrop-filter:blur(15px)!important}
 .sammyAnsPanel.compact .sammyPanelHead,.sammyAnsPanel.compact .sammyPanelScroll{display:none!important}.sammyAnsPanel.compact .sammyResizeGrip{flex-basis:18px}
-.sammyAnsMiniTransport{padding-bottom:8px}.sammyAnsMiniTransport .sammyMiniMain.paused{background:rgba(255,255,255,.11)!important;color:#f0f0f3!important}
+.sammyAnsMiniTransport{padding-bottom:8px}.sammyAnsMiniTransport .sammyMiniMain:disabled{opacity:.35}
 .sammyAnsIntro{margin-bottom:8px;color:#8f949d;font-size:9px;line-height:1.45}
 .sammyAnsRun{margin:8px 0;border:1px solid rgba(255,255,255,.085);border-radius:13px;background:rgba(255,255,255,.025);overflow:hidden}
 .sammyAnsRun>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 11px;cursor:pointer;list-style:none}.sammyAnsRun>summary::-webkit-details-marker{display:none}.sammyAnsRun>summary b{font-size:9px;letter-spacing:.055em;color:#e8e9ed}.sammyAnsRun>summary span{font-size:7.5px;color:#7f858e;text-align:right}
@@ -478,7 +455,7 @@ body.sammy-bodyspace #sammyAnsBubble{background:rgba(240,240,244,.94);color:#171
 .sammyAnsResultRow{display:grid;grid-template-columns:18px minmax(0,1fr) 72px;gap:5px;align-items:center;min-height:27px;border-top:1px solid rgba(255,255,255,.045);font-size:7.2px}.sammyAnsResultRow:first-of-type{border-top:0}.sammyAnsResultRow>b{color:#fff;text-align:center}.sammyAnsResultRow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#a3a8b0}.sammyAnsResultRow strong{text-align:right;color:#dfe1e6;font-weight:650;font-variant-numeric:tabular-nums}
 .sammyAnsRunLocked{opacity:.68}.sammyAnsFoot{margin-top:9px;padding:8px;border-radius:10px;background:rgba(255,255,255,.025);color:#747a83;font-size:7.3px;line-height:1.45}
 
-/* Sammy v0.8.14 · ANSUR LAB C/D + BODY SPACE V3 */
+/* ANSUR LAB C/D controls */
 .sammyAnsModeRow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:7px 0}
 @media (min-width:390px){.sammyAnsModeRow{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .sammyAnsModeRow button{min-height:38px!important;padding:5px 4px!important;border-radius:9px!important;font-size:7.7px!important;line-height:1.15!important;background:rgba(255,255,255,.045)!important;color:#a7abb3!important}
@@ -486,3 +463,13 @@ body.sammy-bodyspace #sammyAnsBubble{background:rgba(240,240,244,.94);color:#171
 .sammyAnsDControls{display:grid;grid-template-columns:1.4fr .8fr .8fr;gap:5px;margin:6px 0}.sammyAnsDControls button{min-height:32px!important;padding:0 6px!important;font-size:7.6px!important}
 body.sammy-ansur-d-running #sammyAnsPanel{border-color:rgba(148,216,255,.24);background:rgba(16,18,22,.88)}
 body.sammy-ansur-d-running #sammyAnsBubble{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 0 22px rgba(185,220,255,.16)}
+
+
+/* v0.8.17 · ANSUR D3 live visual audit; Body Space removed */
+.sammyAnsAuditControl{display:grid;grid-template-columns:74px minmax(0,1fr);gap:7px;align-items:center;margin:7px 0 9px;padding:7px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.055)}
+.sammyAnsAuditControl button{min-height:30px!important;padding:0 7px!important;font-size:7.7px!important}.sammyAnsAuditControl button.active{background:#ececef!important;color:#17181b!important}.sammyAnsAuditControl span{font-size:7.2px;line-height:1.4;color:#8f949d}
+.sammyAnsAuditHud{position:fixed;z-index:27;left:50%;top:max(64px,calc(env(safe-area-inset-top) + 42px));width:min(360px,calc(100vw - 28px));transform:translate(-50%,-8px);opacity:0;visibility:hidden;pointer-events:none;padding:8px 9px;border-radius:12px;background:rgba(15,16,19,.78);border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px);box-shadow:0 8px 28px rgba(0,0,0,.20);transition:opacity .14s ease,transform .14s ease,visibility .14s}
+.sammyAnsAuditHud.visible{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.sammyAnsAuditHead{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:5px}.sammyAnsAuditHead b{font-size:8px;letter-spacing:.05em;color:#f0f1f4}.sammyAnsAuditHead span{font-size:7px;color:#959aa3;text-align:right}
+.sammyAnsAuditRows{display:grid;gap:2px}.sammyAnsAuditRow{display:grid;grid-template-columns:minmax(74px,1fr) 62px 62px 66px;gap:4px;align-items:center;min-height:20px;border-top:1px solid rgba(255,255,255,.045);font-size:7.3px;font-variant-numeric:tabular-nums}.sammyAnsAuditRow:first-child{border-top:0}.sammyAnsAuditRow b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e2e4e8}.sammyAnsAuditRow span{color:#a2a6ae;text-align:right}.sammyAnsAuditRow strong{text-align:right}.sammyAnsAuditRow strong.ok{color:#9ee9ae}.sammyAnsAuditRow strong.warn{color:#f2d781}.sammyAnsAuditRow strong.bad{color:#ff9b8c}.sammyAnsAuditRow.anchor{opacity:.62}
+body.sammy-ansur-d-running .sammyBubble:not(#sammyAnsBubble){opacity:.28;pointer-events:none}body.sammy-ansur-d-running #sammyAnsBubble{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 0 22px rgba(185,220,255,.16)}

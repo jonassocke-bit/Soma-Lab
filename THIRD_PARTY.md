@@ -8,11 +8,11 @@ Purpose: browser-side binary FBX serialization of a Three.js SkinnedMesh, Skelet
 
 The library is not bundled into this ZIP; it is loaded on demand from esm.sh.
 
-## ANSUR II public anthropometric data · BODY SPACE / Prediction Lab
+## ANSUR II public anthropometric data · Prediction Lab
 
-`ansur-bodyspace-pca-v1.json`, `ansur-prediction-trainval-v1.json` and `ansur-prediction-test-v1.json` are derived numerical datasets computed from the public 2012 U.S. Army Anthropometric Survey (ANSUR II) working databases published by the U.S. Army / Natick Soldier Research, Development and Engineering Center (NSRDEC): 4,082 male and 1,986 female subjects.
+`ansur-prediction-trainval-v1.json` and `ansur-prediction-test-v1.json` are derived numerical datasets computed from the public 2012 U.S. Army Anthropometric Survey (ANSUR II) working databases published by the U.S. Army / Natick Soldier Research, Development and Engineering Center (NSRDEC): 4,082 male and 1,986 female subjects.
 
-The BODY SPACE file contains derived 3D PCA coordinates/transform metadata plus a compact sex-specific physical-weight locator for projecting the current Sammy body into the same PCA space. The prediction files contain only the fields required for the statistical research. Original Subject IDs and unrelated demographic fields are not bundled.
+The prediction files contain only the fields required for the statistical research. Original Subject IDs and unrelated demographic fields are not bundled. No Body-Space/PCA visualization asset is shipped in v0.8.17.
 
 The prediction split is deterministic and sex-stratified: 4,247 train, 909 validation and 912 test persons. The test partition is physically separate so Run A cannot load it.
 

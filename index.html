@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.16</title>
-<link rel="stylesheet" href="style.css?v=0.8.16">
+<title>Sammy v0.8.17</title>
+<link rel="stylesheet" href="style.css?v=0.8.17">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.16</div>
+  <div class="sammySplashVersion">v0.8.17</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.16</div>
+<div id="sammyVersion">Sammy · v0.8.17</div>
 
 <button id="sammyCameraDebugBtn" class="sammyCameraDebugBtn" type="button">CAM</button>
 <div id="sammyCameraDebugPanel" class="sammyCameraDebugPanel hidden">
@@ -49,7 +49,7 @@
  <button id="sammyAnimBubble" class="sammyBubble" data-panel="sammyAnimPanel" aria-label="Animation">ANIM</button>
  <button id="sammyShapeBubble" class="sammyBubble" data-panel="sammyShapePanel" aria-label="Körperform">FORM</button>
  <button id="sammyMeasureBubble" class="sammyBubble" data-panel="sammyMeasurePanel" aria-label="Maße kalibrieren">MEAS</button>
- <button id="sammyAnsBubble" class="sammyBubble" data-action="bodyspace" aria-label="ANSUR Body Space">ANSR</button>
+ <button id="sammyAnsBubble" class="sammyBubble" data-panel="sammyAnsPanel" aria-label="ANSUR Lab">ANSR</button>
  <button id="sammyErrorBubble" class="sammyBubble errorBubble hidden" data-panel="sammyErrorPanel" aria-label="Fehlerdiagnose"><span>!</span><em id="sammyErrorCount">0</em></button>
 
  <section id="sammyAnimPanel" class="sammyPanel sammyAnimPanel" data-panel-key="animation">
@@ -193,12 +193,12 @@
 
  <section id="sammyAnsPanel" class="sammyPanel sammyAnsPanel" data-panel-key="ansur">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
-  <div class="sammyMiniTransport sammyAnsMiniTransport" aria-label="Body-Space-Rotation">
-   <button id="sammyAnsRotation" type="button" class="sammyMiniMain" aria-label="Body-Space-Rotation pausieren">Ⅱ</button>
+  <div class="sammyMiniTransport sammyAnsMiniTransport" aria-label="D3 Audit Transport">
+   <button id="sammyAnsMiniPlayPause" type="button" class="sammyMiniMain" aria-label="D3 fortsetzen" disabled>▶</button>
   </div>
   <div class="sammyPanelHead"><b>ANSUR LAB</b><button id="sammyAnsClose" class="sammyPanelClose" type="button">×</button></div>
   <div class="sammyPanelScroll">
-   <div class="sammyAnsIntro">BODY SPACE · 6.068 reale ANSUR-II-Personen · Statistik läuft in einem separaten Worker, damit die 3D-Ansicht flüssig bleibt.</div>
+   <div class="sammyAnsIntro">ANSUR LAB · Statistik, Prediction und reale Mesh-Audits. Der Avatar bleibt sichtbar; kein separater Body-Space-Modus.</div>
    <div id="sammyAnsStatus" class="sammyStatus">Bereit · A nutzt ausschließlich Train + Validation.</div>
 
    <details class="sammyAnsRun" id="sammyAnsRunACard" open>
@@ -281,6 +281,7 @@
     <div class="sammyAnsRunBody">
      <p>D2 zeigte, dass 24 echte ANSUR-Maße gemeinsam nicht sauber in den Sammy-Maßraum passen. D3 isoliert deshalb jedes der 24 Maße einzeln (mit echter Stature als Größenanker) und kombiniert sie danach in anatomischen Bundles. So trennen wir <b>Mapping/Semantik</b>, <b>Range/Expressivität</b> und <b>Constraint-Konflikte</b>.</p>
      <p>Nicht getestete Körpermaße werden nur schwach am neutralen sex-/altersgleichen Sammy-Referenzkörper gehalten. ANSUR-Prediction, DIMENSIONS und R5 werden in diesem Audit nicht verändert.</p>
+     <div class="sammyAnsAuditControl"><button id="sammyAnsD3Visual" type="button" class="active">LIVE AN</button><span>Zeigt nur das aktuell geprüfte Maß/Bundle am echten Avatar. Grün ≤0,5 cm · Gelb ≤1,5 cm · Rot &gt;1,5 cm.</span></div>
      <div class="sammyAnsModeRow" aria-label="D3 Audit-Tiefe">
       <button type="button" data-ans-d3-mode="quick">Quick<br><small>3 × 32</small></button>
       <button type="button" data-ans-d3-mode="standard">Standard<br><small>8 × 32</small></button>
@@ -320,15 +321,14 @@
  </section>
 </div>
 
-<div id="sammyBodySpaceHud" class="sammyBodySpaceHud" aria-hidden="true">
- <div class="sammyBodySpaceTag">BODY SPACE · V3</div>
- <b>Du im anthropometrischen Raum</b>
- <span id="sammyBodySpaceMeta">6.068 ANSUR-II-Personen · PCA wird vorgeladen</span>
+
+<div id="sammyAnsAuditHud" class="sammyAnsAuditHud" aria-hidden="true">
+ <div class="sammyAnsAuditHead"><b id="sammyAnsAuditTitle">D3 LIVE</b><span id="sammyAnsAuditSub">–</span></div>
+ <div id="sammyAnsAuditRows" class="sammyAnsAuditRows"></div>
 </div>
-<div id="sammyBodySpaceYou" class="sammyBodySpaceYou" aria-hidden="true">DU</div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.16</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.17</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -585,6 +585,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.16"></script>
+<script type="module" src="app.js?v=0.8.17"></script>
 </body>
 </html>

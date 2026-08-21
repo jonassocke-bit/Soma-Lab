@@ -1,31 +1,16 @@
-## v0.8.16 · ANSUR D3 Alignment Audit
+# SAMMY v0.8.17 · ANSUR D3 LIVE ALIGNMENT AUDIT
 
-Basis: v0.8.15. Scope bleibt strikt auf ANSUR LAB / BODY SPACE / Diagnose beschränkt. Startup, Anny/SOMA, Rig, MEAS, R2, R5, DIMENSIONS und die ANSUR-Prediction A/B/C wurden nicht umgebaut.
+Basis: v0.8.16.
 
-### Warum D3
-D2 zeigte im Stresslauf einen T24-Truth-RMSE von rund 3,67 cm, obwohl alle 24 realen ANSUR-Vergleichsmaße bekannt waren. D3 zerlegt diesen gemeinsamen Fehler diagnostisch.
+## Änderung dieser Version
+- BODY SPACE vollständig aus dem aktiven App-Pfad entfernt; `ANSR` öffnet wieder ein normales Bottom-Panel über dem sichtbaren Avatar.
+- `ansur-bodyspace-pca-v1.json` wird nicht mehr ausgeliefert oder geladen.
+- D3 hat optionales, standardmäßig aktives LIVE-Visual-Audit.
+- Sichtbar sind nur das aktuelle Single/Bundle und ggf. Stature als Größenanker.
+- HUD zeigt pro Zielmaß Ziel / Ist / Delta. Linien/Delta: grün <=0,5 cm, gelb <=1,5 cm, rot >1,5 cm; Anchor gedimmt.
+- D3 zeigt nur akzeptierte Solver-Zustände. Wenn ein Pass keinen Kandidaten akzeptiert, wird vor der visuellen Ausgabe der letzte gültige Zustand real am Mesh wiederhergestellt.
+- Nach jedem Fit bleibt das Finalbild kurz sichtbar; dadurch ist der Lauf etwas langsamer, aber visuell prüfbar. LIVE kann abgeschaltet werden.
+- Mini-Transport im zusammengeklappten ANSUR-Panel pausiert/fortsetzt einen laufenden D3-Audit.
 
-### Audit-Logik
-- 24 Single-Tests: jedes ANSUR-Maß isoliert am echten Mesh.
-- Bei allen Singles außer Stature bleibt die echte ANSUR-Stature als Größenanker aktiv, damit ein Breiten-/Umfangsmaß nicht durch triviales globales Hochskalieren „gelöst“ wird.
-- 8 Bundles: Brust-Querschnitt, Schulter+Brust, Taille, Becken/Gesäß, Hals, Arme, Beine, vertikale Proportionen.
-- Nicht getestete Maße werden nur schwach am neutralen sex-/altersgleichen Sammy-Ausgangskörper regularisiert.
-- Real-Mesh-Refinement; kein R5-Canonicalization im Audit.
-- Zusätzlicher Rescue-Pass für schwer erreichbare Singles/Bundles.
-- Sensitivitätsbasierte Bound-Diagnose: nur die zehn laut Forward-Jacobian relevantesten Slider werden für das Range-Signal betrachtet.
-
-### Automatische Diagnose-Signale
-- reachable / partial: isoliertes Maß gut erreichbar.
-- mapping: großer, gerichteter Restbias ohne entsprechendes sensibles Bound-Signal.
-- range: schwer erreichbar und relevante Slider stoßen an Grenzen.
-- conflict: Bundle deutlich schlechter als die zugehörigen Singles.
-
-Diese Labels sind Diagnose-Signale und werden nicht automatisch als Offsets oder Mapping-Korrekturen angewendet.
-
-### Laufgrößen
-Quick 3 × 32 = 96 Fits
-Standard 8 × 32 = 256 Fits
-Deep 16 × 32 = 512 Fits
-Stress 30 × 32 = 960 Fits
-
-Der Lauf ist resumierbar und speichert nach jedem fertigen Fit.
+## Unverändert
+Startup, Anny/SOMA, Rig, Animation, FORM, MEAS-Definitionen, Calibration, R2/R5, DIMENSIONS, ANSUR A/B/C, D1/D2 und D3-Fitlogik/Zieldefinitionen bleiben unverändert; ergänzt wurde nur die D3-Visualisierung und das exakte Zurücksetzen auf akzeptierte Zustände für die Darstellung.
