@@ -5634,7 +5634,134 @@ function sammyMeasureExport(){
  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Sammy_Measure_Calibration_v2_${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200)
 }
 
+
+// ---------------------------------------------------------------------------
+// Sammy v0.8.12 · ANSUR LAB / BODY SPACE V1
+// GPU-efficient BODY SPACE shell. V1 already uses all 6,068 public ANSUR-II
+// subjects projected from 24 Sammy-relevant direct anthropometric measures.
+// The highlighted user point remains a centroid placeholder until Prediction V1.
+// ---------------------------------------------------------------------------
+const SAMMY_BODYSPACE_VERSION="0.8.12";
+const SAMMY_BODYSPACE_FALLBACK_COUNT=6000;
+let sammyBodySpace={
+ active:false,phase:"idle",savedCamera:null,group:null,points:null,material:null,you:null,
+ raf:0,lastTick:0,phaseStart:0,autoAngle:0,interactionUntil:0,
+ savedOrbit:null,drawCount:0,totalCount:0,populationData:null,loadPromise:null,perfStart:0,perfFrames:0,perfReduced:false
+};
+function sammyBodySpaceRand(seed=812){let a=seed>>>0;return ()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296}}
+function sammyBodySpaceNormal(rng){let u=0,v=0;while(u<=1e-9)u=rng();while(v<=1e-9)v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function sammyBodySpaceDemoPositions(count=SAMMY_BODYSPACE_FALLBACK_COUNT){
+ const rng=sammyBodySpaceRand(81212026),a=new Float32Array(count*3);
+ for(let i=0;i<count;i++){
+  const size=sammyBodySpaceNormal(rng),mass=sammyBodySpaceNormal(rng),prop=sammyBodySpaceNormal(rng),sex=i%5<3?-1:1;
+  // An intentionally body-space-like demo distribution, NOT ANSUR PCA.
+  let x=(mass*.88+size*.24+sex*.15)*3.35;
+  let y=(size*.93-mass*.10+sex*.10)*2.45;
+  let z=(prop*.82+mass*.28-size*.14-sex*.18)*3.05;
+  const bend=.12*x*x*Math.sign(x)/3.35;z+=bend;
+  a[i*3]=x;a[i*3+1]=y;a[i*3+2]=z
+ }
+ return a
+}
+function sammyBodySpaceGlowTexture(){
+ const c=document.createElement("canvas");c.width=c.height=96;const g=c.getContext("2d"),r=g.createRadialGradient(48,48,0,48,48,48);
+ r.addColorStop(0,"rgba(255,255,255,1)");r.addColorStop(.16,"rgba(255,255,255,.96)");r.addColorStop(.42,"rgba(255,255,255,.32)");r.addColorStop(1,"rgba(255,255,255,0)");g.fillStyle=r;g.fillRect(0,0,96,96);
+ const t=new THREE.CanvasTexture(c);t.needsUpdate=true;return t
+}
+function sammyBodySpaceCenter(){const b=sammyMeasureBBox();return new THREE.Vector3(b?.cx||0,b?.cy||1,b?.cz||0)}
+function sammyBodySpaceApplyPopulation(data){
+ const coords=data?.render?.coords,count=Number(data?.population?.count||0);if(!Array.isArray(coords)||coords.length!==count*3||count<100)return false;
+ sammyBodySpace.populationData=data;sammyBodySpace.totalCount=count;
+ if(sammyBodySpace.points){const a=new Float32Array(coords);sammyBodySpace.points.geometry.setAttribute("position",new THREE.BufferAttribute(a,3));sammyBodySpace.points.geometry.computeBoundingSphere();sammyBodySpace.points.geometry.setDrawRange(0,count);sammyBodySpace.drawCount=count}
+ const ev=Number(data?.pca?.explainedVariance3||0)*100;sammyBodySpaceMeta(`${count.toLocaleString("de-DE")} ANSUR II · PCA 24 Maße · 3D erklärt ${ev.toFixed(1)} % · 1 Draw Call`);return true
+}
+async function sammyBodySpacePreload(){
+ if(sammyBodySpace.populationData)return sammyBodySpace.populationData;if(sammyBodySpace.loadPromise)return sammyBodySpace.loadPromise;
+ sammyBodySpace.loadPromise=(async()=>{try{const r=await fetch("./ansur-bodyspace-pca-v1.json?v=0.8.12",{cache:"force-cache"});if(!r.ok)throw new Error(`ANSUR Body-Space HTTP ${r.status}`);const d=await r.json();if(!sammyBodySpaceApplyPopulation(d))throw new Error("ANSUR Body-Space PCA-Datei ungültig");return d}catch(e){console.warn("Sammy BODY SPACE: echter ANSUR-PCA-Preload fehlgeschlagen; deterministischer visueller Fallback bleibt aktiv.",e);return null}finally{sammyBodySpace.loadPromise=null}})();return sammyBodySpace.loadPromise
+}
+function sammyBodySpaceEnsure(){
+ if(sammyBodySpace.group)return sammyBodySpace.group;
+ const group=new THREE.Group();group.name="Sammy_BODY_SPACE";group.visible=false;
+ const real=sammyBodySpace.populationData?.render?.coords,count=Number(sammyBodySpace.populationData?.population?.count||0),positions=(Array.isArray(real)&&real.length===count*3)?new Float32Array(real):sammyBodySpaceDemoPositions();
+ const total=(Array.isArray(real)&&count>0)?count:SAMMY_BODYSPACE_FALLBACK_COUNT;
+ const geo=new THREE.BufferGeometry();geo.setAttribute("position",new THREE.BufferAttribute(positions,3));geo.computeBoundingSphere();geo.setDrawRange(0,total);
+ const mat=new THREE.PointsMaterial({color:0xe8e9ee,size:.075,sizeAttenuation:true,transparent:true,opacity:0,depthWrite:false});
+ const pts=new THREE.Points(geo,mat);pts.name="Sammy_BODY_SPACE_Population";pts.frustumCulled=true;group.add(pts);
+ const you=new THREE.Sprite(new THREE.SpriteMaterial({map:sammyBodySpaceGlowTexture(),color:0xffffff,transparent:true,opacity:0,depthWrite:false,depthTest:false}));
+ you.name="Sammy_BODY_SPACE_You";you.scale.set(.78,.78,.78);group.add(you);scene.add(group);
+ Object.assign(sammyBodySpace,{group,points:pts,material:mat,you,drawCount:total,totalCount:total});return group
+}
+function sammyBodySpaceSetUi(on){
+ document.body.classList.toggle("sammy-bodyspace",!!on);$("#sammyAnsBubble")?.classList.toggle("active",!!on);
+ $("#sammyBodySpaceHud")?.classList.toggle("visible",!!on);$("#sammyBodySpaceYou")?.classList.toggle("visible",!!on);
+ $("#sammyBodySpaceHud")?.setAttribute("aria-hidden",on?"false":"true");$("#sammyBodySpaceYou")?.setAttribute("aria-hidden",on?"false":"true")
+}
+function sammyBodySpaceMeta(text){const n=$("#sammyBodySpaceMeta");if(n)n.textContent=text}
+function sammyBodySpaceClosePanelsInstant(){
+ const before=document.querySelector(".sammyPanel.open")?.id||null;
+ if(before==="sammyAnimPanel"&&sammyPreAnimationCamera){const st=sammyPreAnimationCamera;sammyPreAnimationCamera=null;sammyCameraTweenToState(st,0,true)}
+ if(before==="sammyMeasurePanel")sammyExitMeasureMode(true);
+ document.querySelectorAll(".sammyPanel").forEach(p=>p.classList.remove("open"));document.querySelectorAll(".sammyBubble").forEach(b=>b.classList.remove("active"))
+}
+function sammyBodySpaceCameraState(){
+ const c=sammyBodySpaceCenter(),from=cam.position.clone().sub(c);if(from.length()<.01)from.set(0,.2,1);from.normalize();
+ const dist=22,position=c.clone().addScaledVector(from,dist);position.y+=1.2;
+ return {position,target:c,zoom:1,fov:38}
+}
+function sammyBodySpaceSaveOrbit(){if(sammyBodySpace.savedOrbit)return;sammyBodySpace.savedOrbit={enablePan:orbit.enablePan,minDistance:orbit.minDistance,maxDistance:orbit.maxDistance,rotateSpeed:orbit.rotateSpeed}}
+function sammyBodySpaceApplyOrbit(){sammyBodySpaceSaveOrbit();orbit.enablePan=false;orbit.minDistance=7;orbit.maxDistance=34;orbit.rotateSpeed=.55}
+function sammyBodySpaceRestoreOrbit(){const o=sammyBodySpace.savedOrbit;if(!o)return;orbit.enablePan=o.enablePan;orbit.minDistance=o.minDistance;orbit.maxDistance=o.maxDistance;orbit.rotateSpeed=o.rotateSpeed;sammyBodySpace.savedOrbit=null}
+function sammyBodySpaceEnter(){
+ if(sammyBodySpace.active||sammyIntroActive)return;
+ sammyBodySpaceClosePanelsInstant();const g=sammyBodySpaceEnsure(),center=sammyBodySpaceCenter();
+ sammyBodySpace.savedCamera=sammyCaptureCameraState();g.position.copy(center);g.rotation.set(.08,0,0);g.visible=true;
+ sammyBodySpace.material.opacity=0;sammyBodySpace.you.material.opacity=0;sammyBodySpace.points.geometry.setDrawRange(0,sammyBodySpace.totalCount||SAMMY_BODYSPACE_FALLBACK_COUNT);
+ Object.assign(sammyBodySpace,{active:true,phase:"entering",phaseStart:performance.now(),lastTick:0,autoAngle:0,drawCount:sammyBodySpace.totalCount||SAMMY_BODYSPACE_FALLBACK_COUNT,perfStart:performance.now(),perfFrames:0,perfReduced:false});
+ sammyBodySpaceApplyOrbit();sammyBodySpaceSetUi(true);if(sammyBodySpace.populationData)sammyBodySpaceApplyPopulation(sammyBodySpace.populationData);else{sammyBodySpaceMeta("ANSUR-II-PCA wird geladen … · visueller Fallback bereit");sammyBodySpacePreload()}
+ sammyCameraTweenToState(sammyBodySpaceCameraState(),1900,false);sammyBodySpaceStartTick()
+}
+function sammyBodySpaceExit(instant=false){
+ if(!sammyBodySpace.active&&sammyBodySpace.phase!=="exiting")return;
+ sammyBodySpace.phase="exiting";sammyBodySpace.phaseStart=performance.now();sammyBodySpaceSetUi(false);sammyBodySpaceRestoreOrbit();
+ if(sammyBodySpace.savedCamera)sammyCameraTweenToState(sammyBodySpace.savedCamera,instant?0:1500,!!instant);
+ if(instant){sammyBodySpaceFinishExit()}else sammyBodySpaceStartTick()
+}
+function sammyBodySpaceFinishExit(){
+ if(sammyBodySpace.group)sammyBodySpace.group.visible=false;if(sammyBodySpace.material)sammyBodySpace.material.opacity=0;if(sammyBodySpace.you?.material)sammyBodySpace.you.material.opacity=0;
+ sammyBodySpace.active=false;sammyBodySpace.phase="idle";sammyBodySpace.savedCamera=null;sammyBodySpace.lastTick=0;if(sammyBodySpace.raf){cancelAnimationFrame(sammyBodySpace.raf);sammyBodySpace.raf=0}
+}
+function sammyBodySpaceToggle(){sammyBodySpace.active||sammyBodySpace.phase==="entering"?sammyBodySpaceExit(false):sammyBodySpaceEnter()}
+function sammyBodySpaceAdaptivePerformance(now){
+ if(sammyBodySpace.perfReduced||now-sammyBodySpace.perfStart<2200)return;
+ const total=sammyBodySpace.totalCount||SAMMY_BODYSPACE_FALLBACK_COUNT,fps=sammyBodySpace.perfFrames*1000/Math.max(1,now-sammyBodySpace.perfStart);let n=total;
+ if(fps<28)n=Math.min(total,2200);else if(fps<40)n=Math.min(total,3600);
+ if(n<total){sammyBodySpace.points.geometry.setDrawRange(0,n);sammyBodySpace.drawCount=n;sammyBodySpace.perfReduced=true;sammyBodySpaceMeta(`${n.toLocaleString("de-DE")}/${total.toLocaleString("de-DE")} Punkte · adaptives Mobile-LOD · 1 Draw Call · ANSUR II`)}
+ else{sammyBodySpace.perfStart=now;sammyBodySpace.perfFrames=0}
+}
+function sammyBodySpaceTick(now){
+ sammyBodySpace.raf=0;if(sammyBodySpace.phase==="idle"||!sammyBodySpace.group)return;
+ const dt=sammyBodySpace.lastTick?Math.min(.05,(now-sammyBodySpace.lastTick)/1000):0;sammyBodySpace.lastTick=now;sammyBodySpace.perfFrames++;
+ const e=Math.max(0,(now-sammyBodySpace.phaseStart)/1000);
+ if(sammyBodySpace.phase==="entering"){
+  const t=Math.min(1,e/1.25),q=t*t*(3-2*t);sammyBodySpace.material.opacity=.62*q;sammyBodySpace.you.material.opacity=.98*q;
+  if(t>=1)sammyBodySpace.phase="active"
+ }else if(sammyBodySpace.phase==="active"){
+  sammyBodySpace.material.opacity=.62;sammyBodySpace.you.material.opacity=.98;sammyBodySpaceAdaptivePerformance(now)
+ }else if(sammyBodySpace.phase==="exiting"){
+  const t=Math.min(1,e/.72),q=1-t*t*(3-2*t);sammyBodySpace.material.opacity=.62*q;sammyBodySpace.you.material.opacity=.98*q;if(e>=1.5){sammyBodySpaceFinishExit();return}
+ }
+ if(now>=sammyBodySpace.interactionUntil&&sammyBodySpace.phase!=="exiting"){sammyBodySpace.autoAngle+=dt*.055;sammyBodySpace.group.rotation.y=sammyBodySpace.autoAngle}
+ const pulse=1+.08*Math.sin(now*.0032);sammyBodySpace.you.scale.set(.78*pulse,.78*pulse,.78*pulse);sammyBodySpaceStartTick()
+}
+function sammyBodySpaceStartTick(){if(!sammyBodySpace.raf)sammyBodySpace.raf=requestAnimationFrame(sammyBodySpaceTick)}
+function sammyBodySpaceInstallInteraction(){
+ if(renderer.domElement.dataset.sammyBodySpaceInteraction)return;renderer.domElement.dataset.sammyBodySpaceInteraction="1";
+ const pause=()=>{if(sammyBodySpace.active)sammyBodySpace.interactionUntil=performance.now()+1800};
+ renderer.domElement.addEventListener("pointerdown",pause,{passive:true});renderer.domElement.addEventListener("pointermove",()=>{if(sammyBodySpace.active)sammyBodySpace.interactionUntil=performance.now()+900},{passive:true});renderer.domElement.addEventListener("pointerup",pause,{passive:true});renderer.domElement.addEventListener("pointercancel",pause,{passive:true})
+}
+
 function sammyOpenPanel(id){
+ if(sammyBodySpace.active||sammyBodySpace.phase==="entering")sammyBodySpaceExit(true);
  const before=document.querySelector(".sammyPanel.open")?.id||null;
  if(before===id)return;
  // When switching directly between special camera modes, first restore the
@@ -5726,6 +5853,7 @@ function sammyInstallBubbleDrag(el,defaultX,defaultY){
    const meta=sammyBubbleRegistry[el.id];meta.edge=sammyNearestEdgeFromPos(meta.x,meta.y);
    const cross=sammyBubbleCrossValue(meta.edge);if(meta.edge==="left"||meta.edge==="right")meta.x=cross;else meta.y=cross;
    sammyResolveBubbleLayout();
+   if(el.dataset.action==="bodyspace"){sammyBodySpaceToggle();return}
    const panel=document.getElementById(el.dataset.panel);
    if(panel?.classList.contains("open"))sammyClosePanels();else sammyOpenPanel(el.dataset.panel);
    return
@@ -6275,6 +6403,8 @@ function sammyInitUi(){
  sammyInstallBubbleDrag($("#sammyAnimBubble"),w-66,Math.max(90,h*.26));
  sammyInstallBubbleDrag($("#sammyShapeBubble"),w-66,Math.max(160,h*.39));
  sammyInstallBubbleDrag($("#sammyMeasureBubble"),w-66,Math.max(230,h*.52));
+ sammyInstallBubbleDrag($("#sammyAnsBubble"),w-66,Math.max(300,h*.65));
+ sammyBodySpaceInstallInteraction();sammyBodySpacePreload();
  // error bubble starts hidden but still receives a persisted/default position
  sammyInstallBubbleDrag($("#sammyErrorBubble"),8,Math.max(220,h*.62));
  document.querySelectorAll(".sammyPanel").forEach(sammyInstallPanelResize);
