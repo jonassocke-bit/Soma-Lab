@@ -1,3 +1,7 @@
+## v0.8.14.1 · ANSUR D intermediate-render fix
+
+Hotfix auf Basis von v0.8.14. Geändert wurde nur die D-Zwischenstands-Darstellung plus Versions-/Cache-Busting. Nach dem ersten 5/6/7-Build existieren für noch nicht gelaufene Varianten naturgemäß noch keine P95-Werte; diese werden jetzt als „noch nicht berechnet“/„–“ dargestellt statt `null.toFixed()` aufzurufen. Ein bereits gespeicherter D-Lauf kann ohne Reset fortgesetzt werden.
+
 ## v0.8.14 · ANSUR LAB C/D + BODY SPACE V3
 
 Basis: ausgelieferte v0.8.13. Scope bleibt strikt auf ANSUR/BODY SPACE und dessen Forschungs-/Validierungs-UI begrenzt. R2, R5, DIMENSIONS, MEAS, Anny/SOMA, Rig, Greeting und Startup werden nicht verändert; End-to-End D ruft den bestehenden DIMENSIONS/R5-Pfad nur als unveränderte Engine auf.
