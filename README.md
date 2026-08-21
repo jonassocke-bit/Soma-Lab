@@ -1,3 +1,12 @@
+## v0.8.6 Semantic Navel + Bulge Landmarks
+
+- **ANSUR-Taillenebene / Omphalion:** wird dynamisch aus den Vertices der Anny-Morphs `stomach-navel-out` + `stomach-navel-up` abgeleitet. Taillenumfang, -breite und -tiefe teilen diese Ebene.
+- **Crotch Height:** nutzt `bulge-incr` als semantischen Mesh-Atlas; der Bulge-Patch liefert die dynamische Schritt-Höhe.
+- Historische feste Waist-/Crotch-Höhenoffsets bleiben in Kalibrationsdaten erhalten, werden bei verfügbarem Morph-Landmark aber nicht mehr auf die Messebene addiert.
+- Der abgeschlossene **v0.8.4 Deep-Lauf muss nicht wiederholt werden**; die neue Definition ist als kleine semantische Landmark-Präzisierung gedacht.
+- Nipple-Landmark-Brustebene, Solver-Whitelist und frühe Intro-Kamerafahrt bleiben unverändert.
+- Calibration-IndexedDB bleibt absichtlich `sammy-calibration-lab-v084`, damit der abgeschlossene v0.8.4 Deep-Lauf in der neuen App weiterhin erreichbar bleibt.
+
 ## v0.8.4 Solver-Whitelist Calibration
 
 - Calibration Lab scannt jetzt nur noch den aus Quick + Deep Schritt 1 abgeleiteten Body-Solver-Raum (mit aktuellem Anny-Pack ca. 61 statt 202 logische Slider).
@@ -64,3 +73,14 @@ The proven Axis16 -> transported native-Anny basis -> exact Anny FK/LBS path rem
 - Neuer Sammy-Hüftumfang auf exakt derselben höheren Beckenebene wie Hip Breadth; Gesäßumfang bleibt getrennt am Buttock-Maximum.
 - Oberarm-/Bizepsumfang auf engen mittleren Oberarmbereich begrenzt (Schulteransatz und Ellenbogen ausgeschlossen).
 - Calibration Lab R2-Strategie (symmetrische L/R-Logik, Pair-Screening, Deep-only-if-needed) bleibt unverändert.
+
+## v0.8.6 · Solver Lab R1
+- behält Nipple-, Navel- und Bulge-Landmarks aus v0.8.5
+- neuer resumierbarer Solver-Lab-Lauf direkt im MEAS-Menü
+- verwendet automatisch den vorhandenen abgeschlossenen Calibration-Lab-Deep-Lauf aus IndexedDB; keine Re-Kalibrierung nötig
+- Forward-Benchmark: additives Basismodell, Einzelslider-Quadratik, isolierte tiefe Paarinteraktionen und sex-spezifisches Global-Residual-Ridge-Modell
+- Global-Modell wird ausschließlich auf den 6.000 Global-Samples trainiert und gegen die bisher unangetasteten Validation-Samples getestet
+- inverser Solver behandelt Gender + Alter als bekannten Kontext, respektiert Slider-Grenzen und löst die Körpermaße damped/minimum-norm
+- abschließender Mesh-Reality-Check misst den ursprünglichen Validation-Körper mit der aktuellen v0.8.6-Landmark-Engine erneut und rekonstruiert ihn anschließend live; dadurch müssen die kleinen Navel-/Bulge-Höhenänderungen nicht neu kalibriert werden
+- Quick / Standard / Deep beeinflussen primär Zahl der Inverse-/Reality-Tests; Modelltraining nutzt immer den vollständigen vorhandenen Deep-Datensatz
+- eigener IndexedDB-Speicher `sammy-solver-lab-v086`, Pause/Fortsetzen sowie Summary-/FULL-Export
