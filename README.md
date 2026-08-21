@@ -1,3 +1,15 @@
+## v0.8.9 · Production Solver R4 · Fit → Nullraum → Mesh
+
+- keine neue Calibration / kein neuer Landmark-Delta-Lauf; verwendet den abgeschlossenen Solver-R2-Datensatz
+- Phase 1: bewährter R2/globalRidge-Inverssolver maximiert zuerst die Maßtreue
+- Phase 2: Nullraum-Cleanup reduziert redundante/teure Slider, ohne den Surrogate-Fit über einen engen Guard hinaus zu verschlechtern
+- bevorzugte Rollen: Measure-Dimensionen → anatomische Form → Axis-Scale → Translation; Purity bleibt nur ein weiches Zusatzsignal
+- Core-Policy: Gender/Alter Kontext; Height leicht regularisiert; Weight/Muscle/Proportions als latente Formparameter statt kostenlose Universalregler
+- Phase 3: echter Mesh-Finish mit nur leichtem Production-Prior; Vergleich ausschließlich R2 Baseline ↔ R4 Production
+- Deep: alle 750 Holdouts offline, 60 identische echte Mesh-Zielkörper, 4 Refinement-Pässe
+- Export enthält RMSE/P90/P95/Max, Maßfehler, aktive Slider, Klassen-Nutzung, Prioritätskosten, Cleanup-Fit-Delta und Fit-Guard
+- außerhalb Solver-Lab/UI/Versionshinweisen keine Änderungen an Startup, Anny/SOMA, Rig, Animation, Kamera oder Calibration
+
 ## v0.8.8.1 · Solver Lab R3 · Priority / Purity / Staged
 
 - nutzt den abgeschlossenen Solver-R2-Lauf als Quelle; **keine neue Kalibrierung und kein erneuter Landmark-Delta-Lauf**
