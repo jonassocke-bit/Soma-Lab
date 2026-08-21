@@ -5017,8 +5017,8 @@ async function sammySolverDeleteRun(runId){const db=await sammySolverOpenDB();aw
 function sammySolverRunId(){return `solver-${new Date().toISOString().replace(/[:.]/g,"-")}-${Math.random().toString(36).slice(2,7)}`}
 async function sammySolverEachCalRecord(runId,stage,fn){const db=await sammyCalOpenDB();return new Promise((resolve,reject)=>{let matched=0;const tx=db.transaction(SAMMY_CAL_RECORD_STORE,"readonly"),idx=tx.objectStore(SAMMY_CAL_RECORD_STORE).index("runId"),q=idx.openCursor(IDBKeyRange.only(runId));q.onsuccess=()=>{const c=q.result;if(!c){resolve(matched);return}const r=c.value;if(!stage||r.stage===stage){try{fn(r,matched);matched++}catch(e){reject(e);return}}c.continue()};q.onerror=()=>reject(q.error||new Error("Calibration-Records lesen fehlgeschlagen"));tx.onerror=()=>reject(tx.error||new Error("Calibration-Records lesen fehlgeschlagen"))})}
 async function sammySolverFindCalibration(){const runs=(await sammyCalGetRuns()).filter(r=>r?.stage==="complete"&&Array.isArray(r.sliders)&&r.sliders.length>0);runs.sort((a,b)=>{const ma=a.mode==="deep"?3:a.mode==="standard"?2:1,mb=b.mode==="deep"?3:b.mode==="standard"?2:1;if(mb!==ma)return mb-ma;const oa=Number(a.ordinal||0),ob=Number(b.ordinal||0);if(ob!==oa)return ob-oa;return String(b.completedAt||b.updatedAt||"").localeCompare(String(a.completedAt||a.updatedAt||""))});return runs[0]||null}
-function sammySolverStageLabel(stage){return ({delta:"0 · Landmark Delta",deltaFit:"1 · Delta-Modell",model:"2 · Modellauf",forward:"3 · Forward Benchmark",inverse:"4 · Inverse Solver",sync:"5 · Delta Check",truth:"6 · Mesh Reality Check",productionPrep:"0 · Production-Profil",productionOffline:"1 · Fit + Nullraum-Cleanup",productionTruth:"2 · Mesh Production Check",complete:"3 · Fertig"})[stage]||stage}
-function sammySolverStageTotal(run){const c=SAMMY_SOLVER_CONFIG[run?.mode||sammySolverLab.mode];if(!run)return 1;if(run.schema===SAMMY_PRODUCTION_SCHEMA){if(run.stage==="productionPrep")return 1;if(run.stage==="productionOffline")return run.inverseTargetCount||0;if(run.stage==="productionTruth")return (run.truthTargetIndices?.length||0)*(1+SAMMY_PRODUCTION_STRATEGIES.length*c.truthPasses);return 1}if(run.stage==="delta")return c.deltaSamples;if(run.stage==="deltaFit")return 1;if(run.stage==="model")return 4;if(run.stage==="forward")return run.forwardTargetCount||0;if(run.stage==="inverse")return run.inverseTargetCount||0;if(run.stage==="sync")return 2;if(run.stage==="truth")return (run.truthTargetIndices?.length||0)*(1+c.truthPasses);return 1}
+function sammySolverStageLabel(stage){return ({delta:"0 · Landmark Delta",deltaFit:"1 · Delta-Modell",model:"2 · Modellauf",forward:"3 · Forward Benchmark",inverse:"4 · Inverse Solver",sync:"5 · Delta Check",truth:"6 · Mesh Reality Check",productionPrep:"0 · R5 Profil",productionOffline:"1 · R5 Offline Precheck",productionTruth:"2 · R5 Real-Mesh Guard",complete:"3 · Fertig"})[stage]||stage}
+function sammySolverStageTotal(run){const c=SAMMY_SOLVER_CONFIG[run?.mode||sammySolverLab.mode];if(!run)return 1;if(run.schema===SAMMY_PRODUCTION_SCHEMA){if(run.stage==="productionPrep")return 1;if(run.stage==="productionOffline")return run.inverseTargetCount||0;if(run.stage==="productionTruth")return run.truthTargetIndices?.length||0;return 1}if(run.stage==="delta")return c.deltaSamples;if(run.stage==="deltaFit")return 1;if(run.stage==="model")return 4;if(run.stage==="forward")return run.forwardTargetCount||0;if(run.stage==="inverse")return run.inverseTargetCount||0;if(run.stage==="sync")return 2;if(run.stage==="truth")return (run.truthTargetIndices?.length||0)*(1+c.truthPasses);return 1}
 function sammySolverStatus(detail=""){const run=sammySolverLab.run||sammySolverLab.lastRun,st=$("#sammySolverStatus"),bar=$("#sammySolverProgressBar"),cur=$("#sammySolverCurrent"),start=$("#sammySolverStart"),pause=$("#sammySolverPause"),reset=$("#sammySolverReset");if(run){const total=sammySolverStageTotal(run),cursor=Number(run.cursor||0),p=total?Math.min(1,cursor/total):0;if(st)st.textContent=`${sammySolverStageLabel(run.stage)} · ${Math.min(cursor,total)} / ${total}${sammySolverLab.paused?" · PAUSE":""}`;if(bar)bar.style.width=`${(p*100).toFixed(1)}%`}else{if(st)st.textContent="Bereit · benötigt einen abgeschlossenen Solver-R2-Lauf.";if(bar)bar.style.width="0%"}if(cur&&detail)cur.textContent=detail;if(start){start.disabled=sammySolverLab.running;start.textContent=sammySolverLab.running?"Läuft …":(run&&run.stage!=="complete"?"Fortsetzen":"Neuer Production-Test")}if(pause)pause.disabled=!sammySolverLab.running;if(reset)reset.disabled=sammySolverLab.running}
 function sammySolverLive(text,rows=[]){const el=$("#sammySolverLive");if(!el)return;el.innerHTML=`<b>${escapeHtml(text||"SOLVER")}</b>`+rows.map(([a,b])=>`<span>${escapeHtml(a)} <strong>${escapeHtml(String(b))}</strong></span>`).join("")}
 function sammySolverSetMode(mode){if(!SAMMY_SOLVER_CONFIG[mode]||sammySolverLab.running)return;sammySolverLab.mode=mode;document.querySelectorAll("[data-solver-mode]").forEach(b=>b.classList.toggle("active",b.dataset.solverMode===mode));sammySolverStatus(`Modus ${SAMMY_SOLVER_CONFIG[mode].label} · R4: erst maximaler Fit, dann Nullraum-Cleanup ohne den Fit zu verlieren`)}
@@ -5088,46 +5088,317 @@ function sammySolverSummary(run){const forward=run.forward?{models:Object.fromEn
 async function sammySolverExport(summaryOnly=false){const run=sammySolverLab.run||sammySolverLab.lastRun;if(!run){sammySolverStatus("Kein Solver-Lauf zum Exportieren.");return}const summary=sammySolverSummary(run),base={schema:SAMMY_SOLVER_SCHEMA,app:"Sammy",version:"0.8.7",generated:new Date().toISOString(),purpose:"Compact Landmark-Delta + Solver R2: learns the shape-dependent v0.8.4 → Navel/Bulge measurement correction, upgrades the existing Deep Calibration dataset mathematically, then reruns Forward, inverse and real-mesh validation.",summary};let payload=base;if(!summaryOnly){const records=await sammySolverGetRecords(run.runId);payload={...base,run,records}}const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=summaryOnly?`Sammy_SolverR2_Summary_${run.mode}_${run.runId}.json`:`Sammy_SolverR2_FULL_${run.mode}_${run.runId}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);sammySolverStatus(summaryOnly?"Solver-R2-Summary exportiert.":"Solver-R2-FULL exportiert.")}
 
 // -----------------------------------------------------------------------------
-// Sammy v0.8.9 PRODUCTION SOLVER R4 · fit first, null-space cleanup second
+// Sammy v0.8.10 PRODUCTION SOLVER R5 · mesh-guarded canonicalization
 // Reuses the completed Solver R2 model/targets. No new Calibration/Delta data.
-// Phase 1: obtain the best measurement fit with the proven R2 inverse solver.
-// Phase 2: reduce implausible/redundant slider excursions in the local Jacobian
-// null-space, with a strict fit guard. Phase 3: real-mesh refinement with only a
-// light production prior so measurement accuracy remains the primary objective.
+// Phase 1: proven R2 inverse + real-mesh refinement to the best measurement fit.
+// Phase 2: propose targeted Scale/Translation neutralization with lower-cost
+// compensation, but accept each cleanup only after measuring the REAL mesh.
+// Rejected changes are rolled back and retried smaller; if no cleanup is safe,
+// the exact mesh-refined R2 solution is retained as the production fallback.
 // -----------------------------------------------------------------------------
-const SAMMY_PRODUCTION_SCHEMA="sammy-solver-production-lab-v1";
+const SAMMY_PRODUCTION_SCHEMA="sammy-solver-production-lab-v2";
 const SAMMY_PRODUCTION_STRATEGIES=["baseline","production"];
-const SAMMY_PRODUCTION_LABELS={baseline:"R2 Baseline",production:"R4 Production"};
+const SAMMY_PRODUCTION_LABELS={baseline:"R2 Baseline",production:"R5 Mesh-Guarded"};
 const SAMMY_PRODUCTION_TRUTH_TARGETS={quick:8,standard:24,deep:60};
-const SAMMY_PRODUCTION_CLEANUP_ITERATIONS={quick:8,standard:14,deep:20};
-function sammyProductionClass(d){const id=String(d?.id||"").toLowerCase(),label=String(d?.label||"").toLowerCase();if(d?.kind==="core")return"core";if(id.includes("measure-")||label.startsWith("measure "))return"measure";if(id.includes("trans-")||id.endsWith("-trans-up")||id.includes("trans-forward")||id.includes("trans-out"))return"translation";if(id.includes("scale-"))return"scale";return"anatomical"}
-function sammyProductionBasePenalty(d,cls){const id=String(d?.id||"");if(cls==="measure")return .32;if(cls==="anatomical")return 1.1;if(cls==="scale")return 2.7;if(cls==="translation")return 8;if(id==="core:height")return .7;if(id==="core:cupsize")return .9;if(id==="core:weight"||id==="core:muscle"||id==="core:proportions")return 1.4;return 1}
-function sammyProductionRepairBasePenalty(d,cls){const id=String(d?.id||"");if(cls==="measure")return .72;if(cls==="anatomical")return 1;if(cls==="scale")return 1.45;if(cls==="translation")return 3.2;if(id==="core:height")return .85;if(id==="core:cupsize")return .95;if(id==="core:weight"||id==="core:muscle"||id==="core:proportions")return 1.2;return 1}
-function sammyProductionProfile(model,sex=0){const {lo,hi}=sammySolverBounds(model,sex),rows=[],cleanupPenalty=new Float64Array(model.n),repairPenalty=new Float64Array(model.n);for(let i=0;i<model.n;i++){const d=model.sliderDefs[i],cls=sammyProductionClass(d),x=Math.max(.12,.5*Math.max(Math.abs(lo[i]),Math.abs(hi[i]))),off=i*model.m;let ss=0,mx=0;for(let j=0;j<model.m;j++){const a=model.linear[off+j]*x+model.quadratic[off+j]*x*x,b=-model.linear[off+j]*x+model.quadratic[off+j]*x*x,e=Math.max(Math.abs(a),Math.abs(b));ss+=e*e;mx=Math.max(mx,e)}const purity=ss>1e-12?Math.max(0,Math.min(1,mx/Math.sqrt(ss))):0,base=sammyProductionBasePenalty(d,cls),repairBase=sammyProductionRepairBasePenalty(d,cls),purityStrength=cls==="measure"?.15:(cls==="anatomical"?.5:(cls==="scale"||cls==="translation"?.75:0)),mult=1+purityStrength*(1-purity)*(1-purity),clean=base*mult,repair=repairBase*(1+.25*purityStrength*(1-purity)*(1-purity));cleanupPenalty[i]=clean;repairPenalty[i]=repair;rows.push({id:d.id,label:d.label,class:cls,purity:Number(purity.toFixed(4)),cleanupPenalty:Number(clean.toFixed(4)),repairPenalty:Number(repair.toFixed(4))})}return {rows,cleanupPenalty:Array.from(cleanupPenalty),repairPenalty:Array.from(repairPenalty)}}
-function sammyProductionCost(run,ds,targetShape){const model=sammySolverHydrate(run),sex=Number(targetShape?.core?.gender||0)>=.5?1:0,{fixed}=sammySolverKnownContextDs(model,targetShape,sex),pen=run.productionProfile.cleanupPenalty;let cost=0,n=0;for(let i=0;i<model.n;i++){if(fixed.has(i))continue;const x=Number(ds[i]||0);cost+=Number(pen[i]||1)*x*x;n++}return n?cost/n:0}
-function sammyProductionUsage(run,ds,targetShape){const model=sammySolverHydrate(run),sex=Number(targetShape?.core?.gender||0)>=.5?1:0,{fixed}=sammySolverKnownContextDs(model,targetShape,sex),sum={},count={};let active=0;for(let i=0;i<model.n;i++){if(fixed.has(i))continue;const x=Number(ds[i]||0),c=sammyProductionClass(model.sliderDefs[i]);sum[c]=(sum[c]||0)+x*x;count[c]=(count[c]||0)+1;if(Math.abs(x)>.1)active++}const classRms={};for(const c of Object.keys(sum))classRms[c]=Number(Math.sqrt(sum[c]/Math.max(1,count[c])).toFixed(4));return {activeCount:active,priorityCost:Number(sammyProductionCost(run,ds,targetShape).toFixed(6)),classRms}}
-function sammyProductionProjectedCleanup(run,targetMeasures,targetShape,initialDs){const model=sammySolverHydrate(run),sex=Number(targetShape?.core?.gender||0)>=.5?1:0,{ds:ctx,fixed}=sammySolverKnownContextDs(model,targetShape,sex),{lo,hi}=sammySolverBounds(model,sex),weights=Float64Array.from(sammySolverMeasureWeights(model.measureIds)),sw=Float64Array.from(weights,Math.sqrt),pen=Float64Array.from(run.productionProfile.cleanupPenalty),target=Float64Array.from(model.measureIds.map(id=>Number(targetMeasures[id]))),ds=Float64Array.from(initialDs),free=[];for(const i of fixed)ds[i]=ctx[i];for(let i=0;i<model.n;i++)if(!fixed.has(i))free.push(i);const basePred=sammySolverFinalPrediction(model,ds,sex),baseFit=sammySolverRMSE(target,basePred,weights),fitLimit=baseFit+Math.max(.015,.04*baseFit),cost0=sammyProductionCost(run,ds,targetShape);let bestDs=Float64Array.from(ds),bestFit=baseFit,bestCost=cost0,accepted=0;const maxIterations=SAMMY_PRODUCTION_CLEANUP_ITERATIONS[run.mode]||14;for(let it=0;it<maxIterations;it++){const J=sammySolverJacobian(model,ds,sex),raw=new Float64Array(free.length);let gm=0;for(let k=0;k<free.length;k++){const i=free[k],g=Number(pen[i]||1)*ds[i];raw[k]=g;gm=Math.max(gm,Math.abs(g))}if(gm<1e-9)break;for(let k=0;k<raw.length;k++)raw[k]=-raw[k]/gm*.08;const G=new Float64Array(model.m*model.m),rhs=new Float64Array(model.m);for(let a=0;a<model.m;a++){let rv=0;for(let k=0;k<free.length;k++)rv+=J[a*model.n+free[k]]*sw[a]*raw[k];rhs[a]=rv;for(let b=0;b<=a;b++){let q=0;for(let k=0;k<free.length;k++)q+=(J[a*model.n+free[k]]*sw[a])*(J[b*model.n+free[k]]*sw[b]);G[a*model.m+b]=q;G[b*model.m+a]=q}G[a*model.m+a]+=.04}const z=sammySolverCholeskySolveVec(sammySolverCholesky(G,model.m),rhs,model.m),step=new Float64Array(free.length);let sm=0;for(let k=0;k<free.length;k++){const i=free[k];let q=raw[k];for(let a=0;a<model.m;a++)q-=J[a*model.n+i]*sw[a]*z[a];step[k]=q;sm=Math.max(sm,Math.abs(q))}if(sm<1e-7)break;if(sm>.06){const f=.06/sm;for(let k=0;k<step.length;k++)step[k]*=f}const oldCost=sammyProductionCost(run,ds,targetShape);let improved=false;for(const alpha of [1,.6,.3,.15,.08]){const nd=Float64Array.from(ds);for(let k=0;k<free.length;k++){const i=free[k];nd[i]=Math.max(lo[i],Math.min(hi[i],nd[i]+alpha*step[k]))}const np=sammySolverFinalPrediction(model,nd,sex),nf=sammySolverRMSE(target,np,weights),nc=sammyProductionCost(run,nd,targetShape);if(nf<=fitLimit&&nc<oldCost-1e-7){ds.set(nd);accepted++;improved=true;if(nc<bestCost){bestDs=Float64Array.from(nd);bestCost=nc;bestFit=nf}break}}if(!improved)break}return {sex,ds:Array.from(bestDs),predicted:Array.from(sammySolverFinalPrediction(model,bestDs,sex)),weightedRmseCm:Number(bestFit.toFixed(4)),fitBeforeCm:Number(baseFit.toFixed(4)),fitLimitCm:Number(fitLimit.toFixed(4)),fitAddedCm:Number((bestFit-baseFit).toFixed(4)),costBefore:Number(cost0.toFixed(6)),costAfter:Number(bestCost.toFixed(6)),costReductionPct:cost0>1e-12?Number((100*(cost0-bestCost)/cost0).toFixed(2)):0,cleanupAcceptedSteps:accepted}}
-function sammyProductionWeightedStep(model,ds,sex,error,weights,fixed,penalties,lambda=1.2,maxStep=.12){const J=sammySolverJacobian(model,ds,sex),free=[];for(let i=0;i<model.n;i++)if(!fixed.has(i))free.push(i);const G=new Float64Array(model.m*model.m),rhs=new Float64Array(model.m),sw=weights.map(Math.sqrt);for(let a=0;a<model.m;a++){rhs[a]=error[a]*sw[a];for(let b=0;b<=a;b++){let q=0;for(const i of free){const inv=1/Math.max(.08,Number(penalties[i]||1)),ja=J[a*model.n+i]*sw[a],jb=J[b*model.n+i]*sw[b];q+=ja*jb*inv}G[a*model.m+b]=q;G[b*model.m+a]=q}G[a*model.m+a]+=lambda}const z=sammySolverCholeskySolveVec(sammySolverCholesky(G,model.m),rhs,model.m),step=new Float64Array(model.n);let mx=0;for(const i of free){const inv=1/Math.max(.08,Number(penalties[i]||1));let q=0;for(let a=0;a<model.m;a++)q+=J[a*model.n+i]*sw[a]*z[a];step[i]=inv*q;mx=Math.max(mx,Math.abs(q))}if(mx>maxStep){const f=maxStep/mx;for(let i=0;i<model.n;i++)step[i]*=f}return step}
-function sammyProductionSolveTarget(run,targetMeasures,targetShape,initialDs=null){const phase1=sammySolverSolveTarget(run,targetMeasures,targetShape,null,initialDs),phase2=sammyProductionProjectedCleanup(run,targetMeasures,targetShape,phase1.ds);return {...phase2,phase1WeightedRmseCm:phase1.weightedRmseCm,phase1Iterations:phase1.iterations,iterations:phase1.iterations+phase2.cleanupAcceptedSteps}}
-function sammyProductionMetricNew(){const out={};for(const s of SAMMY_PRODUCTION_STRATEGIES)out[s]={sumSq:0,count:0,paramSumSq:0,paramCount:0,activeSum:0,costSum:0,classSum:{},classCount:{},rmseValues:[],cases:[]};return out}
-function sammyProductionMetricAdd(run,strategy,targetIndex,t,sol){const model=sammySolverHydrate(run),m=run.productionMetrics[strategy],sex=sol.sex,trueDs=sammySolverDeltas(t.shape,model,sex),fixed=sammySolverKnownContextDs(model,t.shape,sex).fixed;let ps=0,pn=0;for(let k=0;k<model.n;k++){if(fixed.has(k))continue;const e=Number(sol.ds[k])-trueDs[k];ps+=e*e;pn++}const prms=pn?Math.sqrt(ps/pn):0,u=sammyProductionUsage(run,sol.ds,t.shape),r=Number(sol.weightedRmseCm);m.sumSq+=r*r;m.count++;m.rmseValues.push(r);m.paramSumSq+=prms*prms;m.paramCount++;m.activeSum+=u.activeCount;m.costSum+=u.priorityCost;for(const [c,v] of Object.entries(u.classRms)){m.classSum[c]=(m.classSum[c]||0)+v;m.classCount[c]=(m.classCount[c]||0)+1}m.cases.push({targetIndex,sourceId:t.sourceId,surrogateRmseCm:r,parameterRms:Number(prms.toFixed(4)),activeCount:u.activeCount,priorityCost:u.priorityCost,fitAddedCm:Number(sol.fitAddedCm||0),costReductionPct:Number(sol.costReductionPct||0),cleanupAcceptedSteps:Number(sol.cleanupAcceptedSteps||0),iterations:Number(sol.iterations||0)});return {prms,u}}
-function sammyProductionPercentile(values,p){if(!values?.length)return null;const a=values.slice().sort((x,y)=>x-y),q=(a.length-1)*p,lo=Math.floor(q),hi=Math.ceil(q),f=q-lo;return Number((a[lo]*(1-f)+a[hi]*f).toFixed(4))}
-function sammyProductionMetricFinalize(run){for(const [s,m] of Object.entries(run.productionMetrics)){m.overallSurrogateRmseCm=m.count?Number(Math.sqrt(m.sumSq/m.count).toFixed(4)):null;m.parameterRms=m.paramCount?Number(Math.sqrt(m.paramSumSq/m.paramCount).toFixed(4)):null;m.meanActiveSliders=m.count?Number((m.activeSum/m.count).toFixed(2)):null;m.meanPriorityCost=m.count?Number((m.costSum/m.count).toFixed(6)):null;m.p90BodyRmseCm=sammyProductionPercentile(m.rmseValues,.90);m.p95BodyRmseCm=sammyProductionPercentile(m.rmseValues,.95);m.maxBodyRmseCm=m.rmseValues.length?Number(Math.max(...m.rmseValues).toFixed(4)):null;m.classUsageRms={};for(const c of Object.keys(m.classSum))m.classUsageRms[c]=Number((m.classSum[c]/Math.max(1,m.classCount[c])).toFixed(4));m.cases.sort((a,b)=>b.surrogateRmseCm-a.surrogateRmseCm);m.worstCases=m.cases.slice(0,15);if(s==="production"){m.meanCleanupAddedRmseCm=run.productionCleanupCount?Number((run.productionCleanupAddedSum/run.productionCleanupCount).toFixed(4)):0;m.meanCleanupCostReductionPct=run.productionCleanupCount?Number((run.productionCleanupReductionSum/run.productionCleanupCount).toFixed(2)):0;m.meanCleanupAcceptedSteps=run.productionCleanupCount?Number((run.productionCleanupStepsSum/run.productionCleanupCount).toFixed(2)):0}delete m.cases;delete m.rmseValues}run.offlineComparison=sammyProductionCompareMetrics(run.productionMetrics)}
-function sammyProductionCompareMetrics(metrics){const b=metrics?.baseline,p=metrics?.production;if(!b||!p)return null;const pct=(before,after)=>Number.isFinite(before)&&Math.abs(before)>1e-12?Number((100*(before-after)/Math.abs(before)).toFixed(2)):null;return {surrogateDeltaCm:Number(((p.overallSurrogateRmseCm??0)-(b.overallSurrogateRmseCm??0)).toFixed(4)),priorityCostReductionPct:pct(b.meanPriorityCost,p.meanPriorityCost),activeSliderReductionPct:pct(b.meanActiveSliders,p.meanActiveSliders),scaleUsageReductionPct:pct(b.classUsageRms?.scale,p.classUsageRms?.scale),translationUsageReductionPct:pct(b.classUsageRms?.translation,p.classUsageRms?.translation)}}
-async function sammyProductionFindSource(){const runs=(await sammySolverGetRuns()).filter(r=>r?.schema===SAMMY_SOLVER_SCHEMA&&r.stage==="complete"&&r.model&&Array.isArray(r.targets)&&r.targets.length);runs.sort((a,b)=>String(b.completedAt||b.updatedAt||"").localeCompare(String(a.completedAt||a.updatedAt||"")));return runs[0]||null}
-function sammyProductionNewRun(mode,source){const cfg=SAMMY_SOLVER_CONFIG[mode],cnt=cfg.inverseTargets==null?source.targets.length:Math.min(cfg.inverseTargets,source.targets.length),truthCount=Math.min(SAMMY_PRODUCTION_TRUTH_TARGETS[mode]||24,cnt);return {schema:SAMMY_PRODUCTION_SCHEMA,runId:`production-${new Date().toISOString().replace(/[:.]/g,"-")}-${Math.random().toString(36).slice(2,7)}`,appVersion:"0.8.9",mode,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),stage:"productionPrep",cursor:0,ordinal:0,sourceSolverRunId:source.runId,sourceSolverVersion:source.appVersion,calibrationRunId:source.calibrationRunId,calibrationVersion:source.calibrationVersion,model:source.model,targets:source.targets,inverseTargetCount:cnt,truthTargetIndices:sammySolverSelectEven(cnt,truthCount),productionProfile:null,productionMetrics:null,productionSeeds:{},productionTruthTargets:{},productionTruthState:{},productionTruth:null,productionCleanupAddedSum:0,productionCleanupReductionSum:0,productionCleanupStepsSum:0,productionCleanupCount:0,offlineComparison:null,meshComparison:null,notes:{purpose:"Production Solver R4: fit first, then choose a cleaner solution in the local measurement null-space without materially sacrificing fit",phase1:"proven R2 globalRidge inverse solver; measurement fit has absolute priority",phase2:"project expensive-slider neutralization into the local weighted Jacobian null-space; accept only steps inside a strict surrogate-fit guard",phase3:"real mesh refinement uses a much lighter prior than R3 so corrections favor semantic/anatomical controls but remain fit-driven",corePolicy:"gender/age are known context; male cupsize fixed; height lightly regularized; weight/muscle/proportions are latent body-shape controls and are not free universal correction knobs"}}}
-async function sammyProductionStepPrep(run){const model=sammySolverHydrate(run),profile=sammyProductionProfile(model,0),counts={};for(const row of profile.rows)counts[row.class]=(counts[row.class]||0)+1;run.productionProfile={...profile,classCounts:counts};run.productionMetrics=sammyProductionMetricNew();run.stage="productionOffline";run.cursor=0;sammySolverLive("PRODUCTION PROFIL",[["Measure",counts.measure||0],["Anatomical",counts.anatomical||0],["Scale",counts.scale||0],["Translation",counts.translation||0],["Core",counts.core||0]]);await sammySolverRecord(run,"production-prep","R4 Production profile",{classCounts:counts,sliderPriorities:profile.rows})}
-async function sammyProductionStepOffline(run){const i=run.cursor,t=run.targets[i],base=sammySolverSolveTarget(run,t.measures,t.shape),prod=sammyProductionProjectedCleanup(run,t.measures,t.shape,base.ds),d0=sammyProductionMetricAdd(run,"baseline",i,t,base),d1=sammyProductionMetricAdd(run,"production",i,t,prod);run.productionCleanupAddedSum+=Number(prod.fitAddedCm||0);run.productionCleanupReductionSum+=Number(prod.costReductionPct||0);run.productionCleanupStepsSum+=Number(prod.cleanupAcceptedSteps||0);run.productionCleanupCount++;if(run.truthTargetIndices.includes(i))run.productionSeeds[String(i)]={baseline:base.ds,production:prod.ds};await sammySolverRecord(run,"production-offline",`Production ${i+1}`,{targetIndex:i,sourceId:t.sourceId,baseline:{surrogateRmseCm:base.weightedRmseCm,usage:d0.u,solutionDs:base.ds},production:{surrogateRmseCm:prod.weightedRmseCm,fitBeforeCm:prod.fitBeforeCm,fitLimitCm:prod.fitLimitCm,fitAddedCm:prod.fitAddedCm,costBefore:prod.costBefore,costAfter:prod.costAfter,costReductionPct:prod.costReductionPct,cleanupAcceptedSteps:prod.cleanupAcceptedSteps,usage:d1.u,solutionDs:prod.ds}});run.cursor++;if(run.cursor%10===0||run.cursor>=run.inverseTargetCount)sammySolverLive("R4 FIT + NULLRAUM",[["Holdout",`${run.cursor}/${run.inverseTargetCount}`],["R2 Fit",`${base.weightedRmseCm} cm`],["R4 Fit",`${prod.weightedRmseCm} cm`],["Prior-Kosten",`−${prod.costReductionPct}%`]]);if(run.cursor>=run.inverseTargetCount){sammyProductionMetricFinalize(run);run.productionTruth={};for(const s of SAMMY_PRODUCTION_STRATEGIES)run.productionTruth[s]={sumSqInitial:0,countInitial:0,sumSqBest:0,countBest:0,perSumSq:{},perCount:{},bodyRmseValues:[],cases:[],usage:{activeSum:0,costSum:0,count:0,classSum:{},classCount:{}}};run.stage="productionTruth";run.cursor=0}}
-function sammyProductionTruthCorrection(run,state,actual,target,strategy){const model=sammySolverHydrate(run),sex=state.sex,weights=sammySolverMeasureWeights(model.measureIds),err=new Float64Array(model.m);for(let j=0;j<model.m;j++)err[j]=target[j]-actual[j];const fixed=sammySolverKnownContextDs(model,state.targetShape,sex).fixed,{lo,hi}=sammySolverBounds(model,sex),base=Float64Array.from(state.bestDs||state.ds),worsened=Number.isFinite(state.bestRmseCm)&&Number.isFinite(state.lastRmseCm)&&state.bestRmseCm<state.lastRmseCm-1e-6,step=strategy==="baseline"?sammySolverDampedStep(model,base,sex,err,weights,fixed,1.2,worsened?.08:.12):sammyProductionWeightedStep(model,base,sex,err,weights,fixed,run.productionProfile.repairPenalty,1.2,worsened?.08:.12),nd=Float64Array.from(base),alpha=worsened?.35:.55;for(let i=0;i<model.n;i++)if(!fixed.has(i))nd[i]=Math.max(lo[i],Math.min(hi[i],nd[i]+alpha*step[i]));return Array.from(nd)}
-function sammyProductionTruthAccumulate(run,strategy,targetIndex,t,state,target){const model=sammySolverHydrate(run),m=run.productionTruth[strategy],r=Number(state.bestRmseCm),u=sammyProductionUsage(run,state.bestDs,t.shape);m.sumSqBest+=r*r;m.countBest++;m.bodyRmseValues.push(r);for(let j=0;j<model.m;j++){const e=Number(state.bestActual?.[j])-Number(target[j]),id=model.measureIds[j];m.perSumSq[id]=(m.perSumSq[id]||0)+e*e;m.perCount[id]=(m.perCount[id]||0)+1}m.usage.activeSum+=u.activeCount;m.usage.costSum+=u.priorityCost;m.usage.count++;for(const [c,v] of Object.entries(u.classRms)){m.usage.classSum[c]=(m.usage.classSum[c]||0)+v;m.usage.classCount[c]=(m.usage.classCount[c]||0)+1}m.cases.push({targetIndex,sourceId:t.sourceId,initialRmseCm:state.initialRmseCm,bestRmseCm:r,passes:SAMMY_SOLVER_CONFIG[run.mode].truthPasses,activeCount:u.activeCount,priorityCost:u.priorityCost,classRms:u.classRms})}
-function sammyProductionFinalizeTruth(run){const model=sammySolverHydrate(run);for(const [s,m] of Object.entries(run.productionTruth)){m.initialOverallRmseCm=m.countInitial?Number(Math.sqrt(m.sumSqInitial/m.countInitial).toFixed(4)):null;m.bestOverallRmseCm=m.countBest?Number(Math.sqrt(m.sumSqBest/m.countBest).toFixed(4)):null;m.p90BodyRmseCm=sammyProductionPercentile(m.bodyRmseValues,.90);m.p95BodyRmseCm=sammyProductionPercentile(m.bodyRmseValues,.95);m.maxBodyRmseCm=m.bodyRmseValues.length?Number(Math.max(...m.bodyRmseValues).toFixed(4)):null;m.rmseByMeasure={};for(const id of model.measureIds){const n=m.perCount[id]||0;if(n)m.rmseByMeasure[id]=Number(Math.sqrt(m.perSumSq[id]/n).toFixed(4))}m.meanActiveSliders=m.usage.count?Number((m.usage.activeSum/m.usage.count).toFixed(2)):null;m.meanPriorityCost=m.usage.count?Number((m.usage.costSum/m.usage.count).toFixed(6)):null;m.classUsageRms={};for(const c of Object.keys(m.usage.classSum))m.classUsageRms[c]=Number((m.usage.classSum[c]/Math.max(1,m.usage.classCount[c])).toFixed(4));m.cases.sort((a,b)=>b.bestRmseCm-a.bestRmseCm);m.worstCases=m.cases.slice(0,20);delete m.cases;delete m.usage;delete m.bodyRmseValues}run.meshComparison=sammyProductionCompareTruth(run.productionTruth)}
-function sammyProductionCompareTruth(truth){const b=truth?.baseline,p=truth?.production;if(!b||!p)return null;const pct=(before,after)=>Number.isFinite(before)&&Math.abs(before)>1e-12?Number((100*(before-after)/Math.abs(before)).toFixed(2)):null,delta=Number(((p.bestOverallRmseCm??0)-(b.bestOverallRmseCm??0)).toFixed(4)),guard=delta<=.05;return {meshDeltaCm:delta,meshDeltaPct:Number.isFinite(b.bestOverallRmseCm)&&b.bestOverallRmseCm?Number((100*delta/b.bestOverallRmseCm).toFixed(2)):null,priorityCostReductionPct:pct(b.meanPriorityCost,p.meanPriorityCost),activeSliderReductionPct:pct(b.meanActiveSliders,p.meanActiveSliders),scaleUsageReductionPct:pct(b.classUsageRms?.scale,p.classUsageRms?.scale),translationUsageReductionPct:pct(b.classUsageRms?.translation,p.classUsageRms?.translation),fitGuardCm:.05,passesFitGuard:guard,productionReady:guard}}
-async function sammyProductionStepTruth(run){const cfg=SAMMY_SOLVER_CONFIG[run.mode],perTarget=1+SAMMY_PRODUCTION_STRATEGIES.length*cfg.truthPasses,slot=Math.floor(run.cursor/perTarget),local=run.cursor%perTarget,targetIndex=run.truthTargetIndices[slot],t=run.targets[targetIndex],model=sammySolverHydrate(run);if(local===0){const sourceShape={core:{...t.shape.core},local:Object.fromEntries(t.shape.local||[])},results=await sammySolverApplyShape(sourceShape),target=sammySolverMeasureArray(results,model);run.productionTruthTargets[String(targetIndex)]=Array.from(target);sammySolverLive(`Mesh Ziel ${slot+1}/${run.truthTargetIndices.length}`,[['aktuelle Landmark-Maße','erfasst'],['Vergleich','R2 vs R4']]);await sammySolverRecord(run,"production-truth-target",`Truth target ${targetIndex}`,{targetIndex,sourceId:t.sourceId,currentTargetMeasures:Object.fromEntries(model.measureIds.map((id,j)=>[id,Number(target[j].toFixed(4))]))})}else{const z=local-1,si=Math.floor(z/cfg.truthPasses),pass=z%cfg.truthPasses+1,strategy=SAMMY_PRODUCTION_STRATEGIES[si],key=`${targetIndex}:${strategy}`,target=Float64Array.from(run.productionTruthTargets[String(targetIndex)]),seed=run.productionSeeds[String(targetIndex)]?.[strategy];let st=run.productionTruthState[key];if(!st){const targetObj=Object.fromEntries(model.measureIds.map((id,j)=>[id,target[j]])),fresh=strategy==="baseline"?sammySolverSolveTarget(run,targetObj,t.shape,null,seed):sammyProductionSolveTarget(run,targetObj,t.shape,seed);st=run.productionTruthState[key]={strategy,targetIndex,targetShape:t.shape,sex:fresh.sex,ds:fresh.ds,bestDs:Array.from(fresh.ds),bestRmseCm:Infinity,lastRmseCm:Infinity,bestActual:null,initialRmseCm:null,surrogateCurrentRmseCm:fresh.weightedRmseCm,cleanup:fresh.costReductionPct==null?null:{fitAddedCm:fresh.fitAddedCm,costReductionPct:fresh.costReductionPct,acceptedSteps:fresh.cleanupAcceptedSteps}}}const shape=sammySolverDsToShape(run,st.ds,st.sex,t.shape),results=await sammySolverApplyShape(shape),actual=sammySolverMeasureArray(results,model),all=sammySolverRMSE(target,actual),weighted=sammySolverRMSE(target,actual,sammySolverMeasureWeights(model.measureIds));if(pass===1){st.initialRmseCm=Number(all.toFixed(4));const m=run.productionTruth[strategy];m.sumSqInitial+=all*all;m.countInitial++}st.lastRmseCm=Number(all.toFixed(4));if(all<Number(st.bestRmseCm??Infinity)){st.bestRmseCm=Number(all.toFixed(4));st.bestDs=Array.from(st.ds);st.bestActual=Array.from(actual)}sammySolverLive(`${SAMMY_PRODUCTION_LABELS[strategy]} · ${slot+1}/${run.truthTargetIndices.length}`,[['Pass',`${pass}/${cfg.truthPasses}`],['aktuell',`${all.toFixed(3)} cm`],['best',`${Number(st.bestRmseCm).toFixed(3)} cm`]]);await sammySolverRecord(run,"production-truth-pass",`${strategy} truth ${targetIndex} pass ${pass}`,{strategy,targetIndex,pass,actualRmseCm:Number(all.toFixed(4)),weightedRmseCm:Number(weighted.toFixed(4)),bestRmseCm:st.bestRmseCm,cleanup:st.cleanup,solutionDs:Array.from(st.ds)});if(pass<cfg.truthPasses)st.ds=sammyProductionTruthCorrection(run,st,actual,target,strategy);else{sammyProductionTruthAccumulate(run,strategy,targetIndex,t,st,target);delete run.productionTruthState[key]}}run.cursor++;if(run.cursor>=run.truthTargetIndices.length*perTarget){sammyProductionFinalizeTruth(run);run.stage="complete";run.completedAt=new Date().toISOString();run.cursor=1}}
-async function sammyProductionRunner(){const run=sammySolverLab.run;if(!run)return;sammySolverLab.running=true;sammySolverLab.paused=false;sammySolverLab.cancelRequested=false;sammySolverStatus("Production Solver R4 startet …");try{while(sammySolverLab.running&&!sammySolverLab.paused&&!sammySolverLab.cancelRequested&&run.stage!=="complete"){if(run.stage==="productionPrep")await sammyProductionStepPrep(run);else if(run.stage==="productionOffline")await sammyProductionStepOffline(run);else if(run.stage==="productionTruth")await sammyProductionStepTruth(run);else throw new Error(`Unbekannte Production-Stufe ${run.stage}`);await sammySolverPutRun(run);sammySolverStatus()}if(run.stage==="complete"){sammySolverLab.running=false;sammySolverLab.lastRun=run;const b=run.productionTruth?.baseline?.bestOverallRmseCm,p=run.productionTruth?.production?.bestOverallRmseCm,g=run.meshComparison?.passesFitGuard;sammySolverStatus(`Fertig · R2 ${b??"—"} cm · R4 ${p??"—"} cm · Fit-Guard ${g?"PASS":"CHECK"}`);sammySolverLive("PRODUCTION SOLVER R4 FERTIG",[["R2 Baseline",`${b??"—"} cm`],["R4 Production",`${p??"—"} cm`],["Fit-Guard",g?"PASS":"CHECK"],["Translation Δ",`${run.meshComparison?.translationUsageReductionPct??"—"}%`]])}}catch(e){console.error("Production Solver R4",e);sammySolverLab.running=false;sammySolverLab.paused=true;sammySolverStatus(`FEHLER: ${e?.message||e}`);sammyReportError?.(e,{source:"Solver Lab R4"})}finally{sammySolverLab.running=false;sammySolverStatus()}}
-async function sammyProductionStartOrResume(){if(sammySolverLab.running)return;if(sammyCalibration?.running){sammySolverStatus("Calibration Lab läuft noch · zuerst pausieren.");return}if(!annyPackLoaded){sammySolverStatus("Anny-Pack ist noch nicht bereit.");return}if(!sammyMeasureSession){sammySolverStatus("MEAS zuerst öffnen.");return}let run=sammySolverLab.run;if(!run||run.schema!==SAMMY_PRODUCTION_SCHEMA||run.stage==="complete"){const source=await sammyProductionFindSource();if(!source){sammySolverStatus("Kein abgeschlossener Solver-R2-Lauf in IndexedDB gefunden. Bitte zuerst R2 abschließen/importieren.");return}run=sammyProductionNewRun(sammySolverLab.mode,source);sammySolverLab.run=run;sammySolverRuntimeCache=null;await sammySolverPutRun(run);sammySolverStatus(`R2-Quelle ${source.appVersion} · ${source.targets.length} Holdouts · keine neue Kalibrierung`)}sammySolverLab.paused=false;sammySolverLab.cancelRequested=false;sammyProductionRunner()}
-async function sammyProductionLoadLatest(){try{const runs=(await sammySolverGetRuns()).filter(r=>r?.schema===SAMMY_PRODUCTION_SCHEMA).sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||""))),active=runs.find(r=>r.stage!=="complete")||runs[0]||null;sammySolverLab.run=active;sammySolverLab.lastRun=active;sammySolverRuntimeCache=null;if(active){sammySolverLab.mode=active.mode||"standard";document.querySelectorAll("[data-solver-mode]").forEach(b=>b.classList.toggle("active",b.dataset.solverMode===sammySolverLab.mode));sammySolverStatus(active.stage==="complete"?`Letzter R4-Lauf fertig · Mesh ${active.productionTruth?.production?.bestOverallRmseCm??"—"} cm`:"Gespeicherter R4-Lauf kann fortgesetzt werden.")}else{const src=await sammyProductionFindSource();sammySolverStatus(src?`R2-Quelle bereit · ${src.targets.length} Holdouts · R4 kann starten.`:"Kein abgeschlossener R2-Lauf gefunden.")}}catch(e){console.warn("Production resume",e)}}
-function sammyProductionSummary(run){const prof=run.productionProfile?{classCounts:run.productionProfile.classCounts,sliderPriorities:run.productionProfile.rows}:null;return {schema:"sammy-solver-production-summary-v1",runId:run.runId,appVersion:run.appVersion,mode:run.mode,createdAt:run.createdAt,completedAt:run.completedAt||null,sourceSolver:{runId:run.sourceSolverRunId,version:run.sourceSolverVersion,calibrationRunId:run.calibrationRunId,calibrationVersion:run.calibrationVersion},profile:prof,offline:run.productionMetrics,offlineComparison:run.offlineComparison,mesh:run.productionTruth,meshComparison:run.meshComparison,notes:run.notes}}
-async function sammyProductionExport(summaryOnly=false){const run=sammySolverLab.run||sammySolverLab.lastRun;if(!run||run.schema!==SAMMY_PRODUCTION_SCHEMA){sammySolverStatus("Kein Solver-R4-Lauf zum Exportieren.");return}const summary=sammyProductionSummary(run),base={schema:SAMMY_PRODUCTION_SCHEMA,app:"Sammy",version:"0.8.9",generated:new Date().toISOString(),purpose:"Production Solver R4: phase-1 measurement fit, phase-2 null-space plausibility cleanup with strict fit guard, phase-3 real-mesh refinement; benchmarked only against R2 baseline.",summary};let payload=base;if(!summaryOnly){const records=await sammySolverGetRecords(run.runId);payload={...base,run,records}}const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=summaryOnly?`Sammy_SolverR4_Summary_${run.mode}_${run.runId}.json`:`Sammy_SolverR4_FULL_${run.mode}_${run.runId}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);sammySolverStatus(summaryOnly?"Solver-R4-Summary exportiert.":"Solver-R4-FULL exportiert.")}
+const SAMMY_PRODUCTION_CANON_EVALS={quick:6,standard:10,deep:14};
+const SAMMY_PRODUCTION_CANON_ALPHAS={translation:[.35,.18,.09,.045],scale:[.28,.14,.07,.035]};
+const SAMMY_PRODUCTION_BODY_GUARD_CM=.02;
+
+function sammyProductionClass(d){
+ const id=String(d?.id||"").toLowerCase(),label=String(d?.label||"").toLowerCase();
+ if(d?.kind==="core")return"core";
+ if(id.includes("measure-")||label.startsWith("measure "))return"measure";
+ if(id.includes("trans-")||id.endsWith("-trans-up")||id.includes("trans-forward")||id.includes("trans-out"))return"translation";
+ if(id.includes("scale-"))return"scale";
+ return"anatomical";
+}
+function sammyProductionBasePenalty(d,cls){
+ const id=String(d?.id||"");
+ if(cls==="measure")return .32;
+ if(cls==="anatomical")return 1.1;
+ if(cls==="scale")return 2.7;
+ if(cls==="translation")return 8;
+ if(id==="core:height")return .7;
+ if(id==="core:cupsize")return .9;
+ if(id==="core:weight"||id==="core:muscle"||id==="core:proportions")return 1.4;
+ return 1;
+}
+function sammyProductionProfile(model,sex=0){
+ const {lo,hi}=sammySolverBounds(model,sex),rows=[],cleanupPenalty=new Float64Array(model.n);
+ for(let i=0;i<model.n;i++){
+  const d=model.sliderDefs[i],cls=sammyProductionClass(d),x=Math.max(.12,.5*Math.max(Math.abs(lo[i]),Math.abs(hi[i]))),off=i*model.m;
+  let ss=0,mx=0;
+  for(let j=0;j<model.m;j++){
+   const a=model.linear[off+j]*x+model.quadratic[off+j]*x*x,b=-model.linear[off+j]*x+model.quadratic[off+j]*x*x,e=Math.max(Math.abs(a),Math.abs(b));
+   ss+=e*e;mx=Math.max(mx,e);
+  }
+  const purity=ss>1e-12?Math.max(0,Math.min(1,mx/Math.sqrt(ss))):0,base=sammyProductionBasePenalty(d,cls),purityStrength=cls==="measure"?.15:(cls==="anatomical"?.5:(cls==="scale"||cls==="translation"?.75:0)),mult=1+purityStrength*(1-purity)*(1-purity),clean=base*mult;
+  cleanupPenalty[i]=clean;
+  rows.push({id:d.id,label:d.label,class:cls,purity:Number(purity.toFixed(4)),cleanupPenalty:Number(clean.toFixed(4))});
+ }
+ return {rows,cleanupPenalty:Array.from(cleanupPenalty)};
+}
+function sammyProductionCost(run,ds,targetShape){
+ const model=sammySolverHydrate(run),sex=Number(targetShape?.core?.gender||0)>=.5?1:0,{fixed}=sammySolverKnownContextDs(model,targetShape,sex),pen=run.productionProfile.cleanupPenalty;
+ let cost=0,n=0;
+ for(let i=0;i<model.n;i++){
+  if(fixed.has(i))continue;
+  const x=Number(ds[i]||0);cost+=Number(pen[i]||1)*x*x;n++;
+ }
+ return n?cost/n:0;
+}
+function sammyProductionUsage(run,ds,targetShape){
+ const model=sammySolverHydrate(run),sex=Number(targetShape?.core?.gender||0)>=.5?1:0,{fixed}=sammySolverKnownContextDs(model,targetShape,sex),sum={},count={};
+ let active=0;
+ for(let i=0;i<model.n;i++){
+  if(fixed.has(i))continue;
+  const x=Number(ds[i]||0),c=sammyProductionClass(model.sliderDefs[i]);
+  sum[c]=(sum[c]||0)+x*x;count[c]=(count[c]||0)+1;if(Math.abs(x)>.1)active++;
+ }
+ const classRms={};for(const c of Object.keys(sum))classRms[c]=Number(Math.sqrt(sum[c]/Math.max(1,count[c])).toFixed(4));
+ return {activeCount:active,priorityCost:Number(sammyProductionCost(run,ds,targetShape).toFixed(6)),classRms};
+}
+function sammyProductionPercentile(values,p){
+ if(!values?.length)return null;
+ const a=values.slice().sort((x,y)=>x-y),q=(a.length-1)*p,lo=Math.floor(q),hi=Math.ceil(q),f=q-lo;
+ return Number((a[lo]*(1-f)+a[hi]*f).toFixed(4));
+}
+async function sammyProductionFindSource(){
+ const runs=(await sammySolverGetRuns()).filter(r=>r?.schema===SAMMY_SOLVER_SCHEMA&&r.stage==="complete"&&r.model&&Array.isArray(r.targets)&&r.targets.length);
+ runs.sort((a,b)=>String(b.completedAt||b.updatedAt||"").localeCompare(String(a.completedAt||a.updatedAt||"")));
+ return runs[0]||null;
+}
+function sammyProductionWeightedStep(model,ds,sex,error,weights,fixed,penalties,lambda=.45,maxStep=.10){
+ const J=sammySolverJacobian(model,ds,sex),free=[];
+ for(let i=0;i<model.n;i++)if(!fixed.has(i))free.push(i);
+ const G=new Float64Array(model.m*model.m),rhs=new Float64Array(model.m),sw=weights.map(Math.sqrt);
+ for(let a=0;a<model.m;a++){
+  rhs[a]=error[a]*sw[a];
+  for(let b=0;b<=a;b++){
+   let q=0;
+   for(const i of free){const inv=1/Math.max(.08,Number(penalties[i]||1)),ja=J[a*model.n+i]*sw[a],jb=J[b*model.n+i]*sw[b];q+=ja*jb*inv;}
+   G[a*model.m+b]=q;G[b*model.m+a]=q;
+  }
+  G[a*model.m+a]+=lambda;
+ }
+ const z=sammySolverCholeskySolveVec(sammySolverCholesky(G,model.m),rhs,model.m),step=new Float64Array(model.n);
+ let mx=0;
+ for(const i of free){
+  const inv=1/Math.max(.08,Number(penalties[i]||1));let q=0;
+  for(let a=0;a<model.m;a++)q+=J[a*model.n+i]*sw[a]*z[a];
+  step[i]=inv*q;mx=Math.max(mx,Math.abs(step[i]));
+ }
+ if(mx>maxStep){const f=maxStep/mx;for(let i=0;i<model.n;i++)step[i]*=f;}
+ return step;
+}
+function sammyProductionMetricNew(){
+ return {sumSq:0,count:0,paramSumSq:0,paramCount:0,activeSum:0,costSum:0,classSum:{},classCount:{},rmseValues:[],cases:[]};
+}
+function sammyProductionMetricAdd(run,targetIndex,t,sol){
+ const model=sammySolverHydrate(run),m=run.offlineBaseline,sex=sol.sex,trueDs=sammySolverDeltas(t.shape,model,sex),fixed=sammySolverKnownContextDs(model,t.shape,sex).fixed;
+ let ps=0,pn=0;
+ for(let k=0;k<model.n;k++){if(fixed.has(k))continue;const e=Number(sol.ds[k])-trueDs[k];ps+=e*e;pn++;}
+ const prms=pn?Math.sqrt(ps/pn):0,u=sammyProductionUsage(run,sol.ds,t.shape),r=Number(sol.weightedRmseCm);
+ m.sumSq+=r*r;m.count++;m.rmseValues.push(r);m.paramSumSq+=prms*prms;m.paramCount++;m.activeSum+=u.activeCount;m.costSum+=u.priorityCost;
+ for(const [c,v] of Object.entries(u.classRms)){m.classSum[c]=(m.classSum[c]||0)+v;m.classCount[c]=(m.classCount[c]||0)+1;}
+ m.cases.push({targetIndex,sourceId:t.sourceId,surrogateRmseCm:r,parameterRms:Number(prms.toFixed(4)),activeCount:u.activeCount,priorityCost:u.priorityCost,iterations:Number(sol.iterations||0)});
+ return u;
+}
+function sammyProductionMetricFinalize(run){
+ const m=run.offlineBaseline;
+ m.overallSurrogateRmseCm=m.count?Number(Math.sqrt(m.sumSq/m.count).toFixed(4)):null;
+ m.parameterRms=m.paramCount?Number(Math.sqrt(m.paramSumSq/m.paramCount).toFixed(4)):null;
+ m.meanActiveSliders=m.count?Number((m.activeSum/m.count).toFixed(2)):null;
+ m.meanPriorityCost=m.count?Number((m.costSum/m.count).toFixed(6)):null;
+ m.p90BodyRmseCm=sammyProductionPercentile(m.rmseValues,.90);m.p95BodyRmseCm=sammyProductionPercentile(m.rmseValues,.95);m.maxBodyRmseCm=m.rmseValues.length?Number(Math.max(...m.rmseValues).toFixed(4)):null;
+ m.classUsageRms={};for(const c of Object.keys(m.classSum))m.classUsageRms[c]=Number((m.classSum[c]/Math.max(1,m.classCount[c])).toFixed(4));
+ m.cases.sort((a,b)=>b.surrogateRmseCm-a.surrogateRmseCm);m.worstCases=m.cases.slice(0,15);delete m.cases;delete m.rmseValues;
+ const d=run.proposalDiagnostics,n=Math.max(1,d.available);
+ d.availablePct=Number((100*d.available/Math.max(1,d.count)).toFixed(2));d.meanPredictedFitDeltaCm=Number((d.predictedFitDeltaSum/n).toFixed(4));d.meanPredictedCostReductionPct=Number((d.costReductionSum/n).toFixed(2));
+}
+function sammyCanonicalCandidateScore(run,ds,targetShape,i,attempts={}){
+ const model=sammySolverHydrate(run),cls=sammyProductionClass(model.sliderDefs[i]);if(cls!=="scale"&&cls!=="translation")return -Infinity;
+ const x=Math.abs(Number(ds[i]||0));if(x<.06)return -Infinity;
+ const p=Number(run.productionProfile.cleanupPenalty[i]||1),a=Number(attempts[i]||0);
+ return p*x*x/(1+.7*a);
+}
+function sammyCanonicalBuildProposal(run,targetMeasures,targetShape,currentDs,targetIndex,alphaPos=0){
+ const model=sammySolverHydrate(run),sex=Number(targetShape?.core?.gender||0)>=.5?1:0,{fixed}=sammySolverKnownContextDs(model,targetShape,sex),cls=sammyProductionClass(model.sliderDefs[targetIndex]),alphas=SAMMY_PRODUCTION_CANON_ALPHAS[cls];
+ if(!alphas||fixed.has(targetIndex)||alphaPos<0||alphaPos>=alphas.length)return null;
+ const ds=Float64Array.from(currentDs),x=Number(ds[targetIndex]||0);if(Math.abs(x)<.06)return null;
+ const {lo,hi}=sammySolverBounds(model,sex),alpha=alphas[alphaPos],maxRaw=cls==="translation"?.18:.14,rawDelta=Math.max(-maxRaw,Math.min(maxRaw,-x*alpha));
+ if(Math.abs(rawDelta)<.005)return null;
+ const J=sammySolverJacobian(model,ds,sex),weights=sammySolverMeasureWeights(model.measureIds),error=new Float64Array(model.m);
+ for(let j=0;j<model.m;j++)error[j]=-J[j*model.n+targetIndex]*rawDelta;
+ const fixed2=new Set(fixed);fixed2.add(targetIndex);
+ const compensation=sammyProductionWeightedStep(model,ds,sex,error,weights,fixed2,run.productionProfile.cleanupPenalty,.4,.10),nd=Float64Array.from(ds);
+ nd[targetIndex]=Math.max(lo[targetIndex],Math.min(hi[targetIndex],nd[targetIndex]+rawDelta));
+ for(let i=0;i<model.n;i++)if(!fixed2.has(i))nd[i]=Math.max(lo[i],Math.min(hi[i],nd[i]+compensation[i]));
+ const target=Float64Array.from(model.measureIds.map(id=>Number(targetMeasures[id]))),pred0=sammySolverFinalPrediction(model,ds,sex),pred1=sammySolverFinalPrediction(model,nd,sex),fit0=sammySolverRMSE(target,pred0,weights),fit1=sammySolverRMSE(target,pred1,weights),cost0=sammyProductionCost(run,ds,targetShape),cost1=sammyProductionCost(run,nd,targetShape),reduction=cost0>1e-12?100*(cost0-cost1)/cost0:0;
+ if(!Number.isFinite(fit1)||!Number.isFinite(cost1)||cost1>=cost0-1e-8||reduction<.12||fit1>fit0+Math.max(.08,.12*fit0))return null;
+ return {targetIndex,sliderId:model.sliderDefs[targetIndex].id,label:model.sliderDefs[targetIndex].label,class:cls,alphaPos,alpha,ds:Array.from(nd),surrogateFitBeforeCm:Number(fit0.toFixed(4)),surrogateFitAfterCm:Number(fit1.toFixed(4)),surrogateFitDeltaCm:Number((fit1-fit0).toFixed(4)),costBefore:Number(cost0.toFixed(6)),costAfter:Number(cost1.toFixed(6)),costReductionPct:Number(reduction.toFixed(2)),targetValueBefore:Number(x.toFixed(5)),targetValueAfter:Number(nd[targetIndex].toFixed(5))};
+}
+function sammyCanonicalNextProposal(run,targetMeasures,targetShape,currentDs,state){
+ const model=sammySolverHydrate(run),sex=Number(targetShape?.core?.gender||0)>=.5?1:0,{fixed}=sammySolverKnownContextDs(model,targetShape,sex),blocked=new Set(state.blocked||[]),attempts=state.attemptCounts||{};
+ const ranked=[];
+ for(let i=0;i<model.n;i++){if(fixed.has(i)||blocked.has(i))continue;const score=sammyCanonicalCandidateScore(run,currentDs,targetShape,i,attempts);if(Number.isFinite(score)&&score>0)ranked.push([score,i]);}
+ ranked.sort((a,b)=>b[0]-a[0]);
+ for(const [,i] of ranked){const cls=sammyProductionClass(model.sliderDefs[i]),alphas=SAMMY_PRODUCTION_CANON_ALPHAS[cls]||[];for(let ap=0;ap<alphas.length;ap++){const p=sammyCanonicalBuildProposal(run,targetMeasures,targetShape,currentDs,i,ap);if(p)return p;}blocked.add(i);}
+ state.blocked=Array.from(blocked);return null;
+}
+function sammyCanonicalRetryProposal(run,targetMeasures,targetShape,currentDs,state,previous){
+ if(!previous)return sammyCanonicalNextProposal(run,targetMeasures,targetShape,currentDs,state);
+ const model=sammySolverHydrate(run),cls=sammyProductionClass(model.sliderDefs[previous.targetIndex]),alphas=SAMMY_PRODUCTION_CANON_ALPHAS[cls]||[];
+ for(let ap=previous.alphaPos+1;ap<alphas.length;ap++){const p=sammyCanonicalBuildProposal(run,targetMeasures,targetShape,currentDs,previous.targetIndex,ap);if(p)return p;}
+ const blocked=new Set(state.blocked||[]);blocked.add(previous.targetIndex);state.blocked=Array.from(blocked);return sammyCanonicalNextProposal(run,targetMeasures,targetShape,currentDs,state);
+}
+function sammyCanonicalMeasureWorsenLimit(id){
+ if(SAMMY_SOLVER_LOW_WEIGHT_MEASURES.has(id))return .5;
+ if(String(id).includes("circumference"))return .35;
+ return .25;
+}
+function sammyCanonicalGuard(run,state,target,candidateActual,proposal){
+ const model=sammySolverHydrate(run),baseRmse=Number(state.baselineRmseCm),candRmse=sammySolverRMSE(target,candidateActual),bodyLimit=baseRmse+SAMMY_PRODUCTION_BODY_GUARD_CM;
+ let worstWorsen=-Infinity,worstMeasure=null,worstLimit=null,worstOverLimit=-Infinity,measureOk=true;
+ for(let j=0;j<model.m;j++){
+  const id=model.measureIds[j],b=Math.abs(Number(state.baselineActual[j])-Number(target[j])),c=Math.abs(Number(candidateActual[j])-Number(target[j])),w=c-b,lim=sammyCanonicalMeasureWorsenLimit(id),over=w-lim;
+  if(w>worstWorsen){worstWorsen=w;worstMeasure=id;worstLimit=lim;}
+  if(over>worstOverLimit)worstOverLimit=over;
+  if(w>lim+1e-9)measureOk=false;
+ }
+ const costBefore=Number(state.currentCost),costAfter=Number(proposal.costAfter),costOk=Number.isFinite(costAfter)&&costAfter<costBefore-Math.max(1e-7,.001*costBefore),bodyOk=Number.isFinite(candRmse)&&candRmse<=bodyLimit+1e-9,accepted=costOk&&bodyOk&&measureOk;
+ return {accepted,candidateRmseCm:Number(candRmse.toFixed(4)),bodyLimitCm:Number(bodyLimit.toFixed(4)),worstMeasure,worstMeasureWorsenCm:Number(worstWorsen.toFixed(4)),worstMeasureLimitCm:Number(Number(worstLimit).toFixed(4)),worstOverLimitCm:Number(worstOverLimit.toFixed(4)),costBefore:Number(costBefore.toFixed(6)),costAfter:Number(costAfter.toFixed(6)),costOk,bodyOk,measureOk};
+}
+function sammyProductionNewRun(mode,source){
+ const cfg=SAMMY_SOLVER_CONFIG[mode],cnt=cfg.inverseTargets==null?source.targets.length:Math.min(cfg.inverseTargets,source.targets.length),truthCount=Math.min(SAMMY_PRODUCTION_TRUTH_TARGETS[mode]||24,cnt);
+ return {schema:SAMMY_PRODUCTION_SCHEMA,runId:`production-r5-${new Date().toISOString().replace(/[:.]/g,"-")}-${Math.random().toString(36).slice(2,7)}`,appVersion:"0.8.10",mode,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),stage:"productionPrep",cursor:0,ordinal:0,sourceSolverRunId:source.runId,sourceSolverVersion:source.appVersion,calibrationRunId:source.calibrationRunId,calibrationVersion:source.calibrationVersion,model:source.model,targets:source.targets,inverseTargetCount:cnt,truthTargetIndices:sammySolverSelectEven(cnt,truthCount),productionProfile:null,offlineBaseline:null,proposalDiagnostics:null,productionSeeds:{},productionTruthTargets:{},productionTruthState:{},productionTruth:null,truthSlot:0,truthPhase:"target",truthPass:1,truthEval:0,meshComparison:null,notes:{purpose:"Production Solver R5: preserve the mesh-refined R2 fit, then canonicalize only through real-mesh guarded cleanup",phase1:"R2 inverse + the proven real-mesh refinement is completed first and becomes the immutable fallback",phase2:"surrogate/Jacobian data only PROPOSE targeted Scale/Translation neutralization; every proposal is measured on the real mesh before acceptance",guard:`fixed per-body guard +${SAMMY_PRODUCTION_BODY_GUARD_CM.toFixed(2)} cm over that body's R2 mesh fit, plus per-measure deterioration guards and rollback`,fallback:"if no cleanup passes the real-mesh guard, production output is exactly the mesh-refined R2 body",corePolicy:"gender/age remain known context; R5 canonicalization targets only Scale/Translation controls, not latent Weight/Muscle/Proportions"}};
+}
+async function sammyProductionStepPrep(run){
+ const model=sammySolverHydrate(run),profile=sammyProductionProfile(model,0),counts={};for(const row of profile.rows)counts[row.class]=(counts[row.class]||0)+1;
+ run.productionProfile={...profile,classCounts:counts};run.offlineBaseline=sammyProductionMetricNew();run.proposalDiagnostics={count:0,available:0,predictedFitDeltaSum:0,costReductionSum:0,byClass:{}};run.stage="productionOffline";run.cursor=0;
+ sammySolverLive("R5 CANONICAL PROFILE",[["Measure",counts.measure||0],["Anatomical",counts.anatomical||0],["Scale",counts.scale||0],["Translation",counts.translation||0],["Mesh guard",`+${SAMMY_PRODUCTION_BODY_GUARD_CM.toFixed(2)} cm`]]);
+ await sammySolverRecord(run,"production-prep","R5 mesh-guarded profile",{classCounts:counts,sliderPriorities:profile.rows,canonEvalLimit:SAMMY_PRODUCTION_CANON_EVALS[run.mode]});
+}
+async function sammyProductionStepOffline(run){
+ const i=run.cursor,t=run.targets[i],base=sammySolverSolveTarget(run,t.measures,t.shape),u=sammyProductionMetricAdd(run,i,t,base),probeState={blocked:[],attemptCounts:{}},probe=sammyCanonicalNextProposal(run,t.measures,t.shape,base.ds,probeState),d=run.proposalDiagnostics;
+ d.count++;if(probe){d.available++;d.predictedFitDeltaSum+=Number(probe.surrogateFitDeltaCm||0);d.costReductionSum+=Number(probe.costReductionPct||0);d.byClass[probe.class]=(d.byClass[probe.class]||0)+1;}
+ if(run.truthTargetIndices.includes(i))run.productionSeeds[String(i)]=base.ds;
+ await sammySolverRecord(run,"production-offline",`R5 offline ${i+1}`,{targetIndex:i,sourceId:t.sourceId,baseline:{surrogateRmseCm:base.weightedRmseCm,usage:u,solutionDs:base.ds},firstCanonicalProposal:probe?{sliderId:probe.sliderId,class:probe.class,alpha:probe.alpha,surrogateFitDeltaCm:probe.surrogateFitDeltaCm,costReductionPct:probe.costReductionPct}:null});
+ run.cursor++;
+ if(run.cursor%10===0||run.cursor>=run.inverseTargetCount)sammySolverLive("R5 OFFLINE PRECHECK",[["Holdout",`${run.cursor}/${run.inverseTargetCount}`],["R2 Fit",`${base.weightedRmseCm} cm`],["Mesh cleanup",probe?`${probe.class} proposal`:`kein sicherer Vorschlag`]]);
+ if(run.cursor>=run.inverseTargetCount){sammyProductionMetricFinalize(run);run.productionTruth={};for(const s of SAMMY_PRODUCTION_STRATEGIES)run.productionTruth[s]={sumSqInitial:0,countInitial:0,sumSqBest:0,countBest:0,perSumSq:{},perCount:{},bodyRmseValues:[],cases:[],usage:{activeSum:0,costSum:0,count:0,classSum:{},classCount:{}}};run.stage="productionTruth";run.cursor=0;run.truthSlot=0;run.truthPhase="target";run.truthPass=1;run.truthEval=0;}
+}
+function sammyProductionBaselineCorrection(run,state,actual,target){
+ const model=sammySolverHydrate(run),sex=state.sex,weights=sammySolverMeasureWeights(model.measureIds),err=new Float64Array(model.m);for(let j=0;j<model.m;j++)err[j]=target[j]-actual[j];
+ const fixed=sammySolverKnownContextDs(model,state.targetShape,sex).fixed,{lo,hi}=sammySolverBounds(model,sex),base=Float64Array.from(state.bestDs||state.ds),worsened=Number.isFinite(state.bestRmseCm)&&Number.isFinite(state.lastRmseCm)&&state.bestRmseCm<state.lastRmseCm-1e-6,step=sammySolverDampedStep(model,base,sex,err,weights,fixed,1.2,worsened?.08:.12),nd=Float64Array.from(base),alpha=worsened?.35:.55;
+ for(let i=0;i<model.n;i++)if(!fixed.has(i))nd[i]=Math.max(lo[i],Math.min(hi[i],nd[i]+alpha*step[i]));return Array.from(nd);
+}
+function sammyProductionTruthAccumulate(run,strategy,targetIndex,t,state,target){
+ const model=sammySolverHydrate(run),m=run.productionTruth[strategy],r=Number(state.bestRmseCm),u=sammyProductionUsage(run,state.bestDs,t.shape);
+ m.sumSqBest+=r*r;m.countBest++;m.bodyRmseValues.push(r);
+ for(let j=0;j<model.m;j++){const e=Number(state.bestActual?.[j])-Number(target[j]),id=model.measureIds[j];m.perSumSq[id]=(m.perSumSq[id]||0)+e*e;m.perCount[id]=(m.perCount[id]||0)+1;}
+ m.usage.activeSum+=u.activeCount;m.usage.costSum+=u.priorityCost;m.usage.count++;for(const [c,v] of Object.entries(u.classRms)){m.usage.classSum[c]=(m.usage.classSum[c]||0)+v;m.usage.classCount[c]=(m.usage.classCount[c]||0)+1;}
+ m.cases.push({targetIndex,sourceId:t.sourceId,initialRmseCm:state.initialRmseCm,bestRmseCm:r,passes:Number(state.passes||SAMMY_SOLVER_CONFIG[run.mode].truthPasses),activeCount:u.activeCount,priorityCost:u.priorityCost,classRms:u.classRms,canonicalization:state.canonicalization||null});
+}
+function sammyProductionFinalizeTruth(run){
+ const model=sammySolverHydrate(run);
+ for(const [,m] of Object.entries(run.productionTruth)){
+  m.initialOverallRmseCm=m.countInitial?Number(Math.sqrt(m.sumSqInitial/m.countInitial).toFixed(4)):null;m.bestOverallRmseCm=m.countBest?Number(Math.sqrt(m.sumSqBest/m.countBest).toFixed(4)):null;m.p90BodyRmseCm=sammyProductionPercentile(m.bodyRmseValues,.90);m.p95BodyRmseCm=sammyProductionPercentile(m.bodyRmseValues,.95);m.maxBodyRmseCm=m.bodyRmseValues.length?Number(Math.max(...m.bodyRmseValues).toFixed(4)):null;m.rmseByMeasure={};
+  for(const id of model.measureIds){const n=m.perCount[id]||0;if(n)m.rmseByMeasure[id]=Number(Math.sqrt(m.perSumSq[id]/n).toFixed(4));}
+  m.meanActiveSliders=m.usage.count?Number((m.usage.activeSum/m.usage.count).toFixed(2)):null;m.meanPriorityCost=m.usage.count?Number((m.usage.costSum/m.usage.count).toFixed(6)):null;m.classUsageRms={};for(const c of Object.keys(m.usage.classSum))m.classUsageRms[c]=Number((m.usage.classSum[c]/Math.max(1,m.usage.classCount[c])).toFixed(4));m.cases.sort((a,b)=>b.bestRmseCm-a.bestRmseCm);m.worstCases=m.cases.slice(0,20);delete m.cases;delete m.usage;delete m.bodyRmseValues;
+ }
+ run.meshComparison=sammyProductionCompareTruth(run.productionTruth);
+}
+function sammyProductionCompareTruth(truth){
+ const b=truth?.baseline,p=truth?.production;if(!b||!p)return null;
+ const pct=(before,after)=>Number.isFinite(before)&&Math.abs(before)>1e-12?Number((100*(before-after)/Math.abs(before)).toFixed(2)):null,delta=Number(((p.bestOverallRmseCm??0)-(b.bestOverallRmseCm??0)).toFixed(4)),guard=delta<=SAMMY_PRODUCTION_BODY_GUARD_CM+.002,costReduction=pct(b.meanPriorityCost,p.meanPriorityCost),translationReduction=pct(b.classUsageRms?.translation,p.classUsageRms?.translation),scaleReduction=pct(b.classUsageRms?.scale,p.classUsageRms?.scale),ready=guard&&Number(costReduction||0)>0;
+ return {meshDeltaCm:delta,meshDeltaPct:Number.isFinite(b.bestOverallRmseCm)&&b.bestOverallRmseCm?Number((100*delta/b.bestOverallRmseCm).toFixed(2)):null,priorityCostReductionPct:costReduction,activeSliderReductionPct:pct(b.meanActiveSliders,p.meanActiveSliders),scaleUsageReductionPct:scaleReduction,translationUsageReductionPct:translationReduction,fitGuardCm:SAMMY_PRODUCTION_BODY_GUARD_CM,passesFitGuard:guard,productionReady:ready};
+}
+function sammyCanonicalFinishTarget(run,targetIndex,t,target,cstate){
+ const finalState={initialRmseCm:cstate.baselineRmseCm,bestRmseCm:cstate.currentRmseCm,bestDs:Array.from(cstate.currentDs),bestActual:Array.from(cstate.currentActual),passes:cstate.evaluations,canonicalization:{evaluations:cstate.evaluations,accepted:cstate.accepted,rejected:cstate.rejected,costBefore:Number(cstate.baselineCost.toFixed(6)),costAfter:Number(cstate.currentCost.toFixed(6)),costReductionPct:cstate.baselineCost>1e-12?Number((100*(cstate.baselineCost-cstate.currentCost)/cstate.baselineCost).toFixed(2)):0,blockedSliderCount:(cstate.blocked||[]).length,acceptedByClass:cstate.acceptedByClass||{},rejectedByReason:cstate.rejectedByReason||{}}};
+ const m=run.productionTruth.production;m.sumSqInitial+=cstate.baselineRmseCm*cstate.baselineRmseCm;m.countInitial++;sammyProductionTruthAccumulate(run,"production",targetIndex,t,finalState,target);delete run.productionTruthState[`canonical:${targetIndex}`];
+ run.truthSlot++;run.truthPhase="target";run.truthPass=1;run.truthEval=0;run.cursor=run.truthSlot;
+}
+async function sammyProductionStepTruth(run){
+ const cfg=SAMMY_SOLVER_CONFIG[run.mode],slot=run.truthSlot||0;
+ if(slot>=run.truthTargetIndices.length){sammyProductionFinalizeTruth(run);run.stage="complete";run.completedAt=new Date().toISOString();run.cursor=1;return;}
+ const targetIndex=run.truthTargetIndices[slot],t=run.targets[targetIndex],model=sammySolverHydrate(run),phase=run.truthPhase||"target";
+ if(phase==="target"){
+  const sourceShape={core:{...t.shape.core},local:Object.fromEntries(t.shape.local||[])},results=await sammySolverApplyShape(sourceShape),target=sammySolverMeasureArray(results,model);run.productionTruthTargets[String(targetIndex)]=Array.from(target);run.truthPhase="baseline";run.truthPass=1;
+  sammySolverLive(`Mesh Ziel ${slot+1}/${run.truthTargetIndices.length}`,[["aktuelle Landmark-Maße","erfasst"],["Ablauf","R2 fit → echter Mesh-Guard"]]);
+  await sammySolverRecord(run,"production-truth-target",`R5 truth target ${targetIndex}`,{targetIndex,sourceId:t.sourceId,currentTargetMeasures:Object.fromEntries(model.measureIds.map((id,j)=>[id,Number(target[j].toFixed(4))]))});return;
+ }
+ const target=Float64Array.from(run.productionTruthTargets[String(targetIndex)]),targetObj=Object.fromEntries(model.measureIds.map((id,j)=>[id,target[j]]));
+ if(phase==="baseline"){
+  const key=`baseline:${targetIndex}`;let st=run.productionTruthState[key];
+  if(!st){const seed=run.productionSeeds[String(targetIndex)],fresh=sammySolverSolveTarget(run,targetObj,t.shape,null,seed);st=run.productionTruthState[key]={targetIndex,targetShape:t.shape,sex:fresh.sex,ds:fresh.ds,bestDs:Array.from(fresh.ds),bestRmseCm:Infinity,lastRmseCm:Infinity,bestActual:null,initialRmseCm:null};}
+  const shape=sammySolverDsToShape(run,st.ds,st.sex,t.shape),results=await sammySolverApplyShape(shape),actual=sammySolverMeasureArray(results,model),all=sammySolverRMSE(target,actual),weighted=sammySolverRMSE(target,actual,sammySolverMeasureWeights(model.measureIds)),pass=run.truthPass||1;
+  if(pass===1){st.initialRmseCm=Number(all.toFixed(4));const m=run.productionTruth.baseline;m.sumSqInitial+=all*all;m.countInitial++;}
+  st.lastRmseCm=Number(all.toFixed(4));if(all<Number(st.bestRmseCm??Infinity)){st.bestRmseCm=Number(all.toFixed(4));st.bestDs=Array.from(st.ds);st.bestActual=Array.from(actual);}
+  sammySolverLive(`R2 Baseline · ${slot+1}/${run.truthTargetIndices.length}`,[["Pass",`${pass}/${cfg.truthPasses}`],["aktuell",`${all.toFixed(3)} cm`],["best",`${Number(st.bestRmseCm).toFixed(3)} cm`]]);
+  await sammySolverRecord(run,"production-truth-pass",`baseline truth ${targetIndex} pass ${pass}`,{strategy:"baseline",targetIndex,pass,actualRmseCm:Number(all.toFixed(4)),weightedRmseCm:Number(weighted.toFixed(4)),bestRmseCm:st.bestRmseCm,solutionDs:Array.from(st.ds)});
+  if(pass<cfg.truthPasses){st.ds=sammyProductionBaselineCorrection(run,st,actual,target);run.truthPass=pass+1;return;}
+  sammyProductionTruthAccumulate(run,"baseline",targetIndex,t,{...st,passes:cfg.truthPasses},target);
+  const baseCost=sammyProductionCost(run,st.bestDs,t.shape);run.productionTruthState[`canonical:${targetIndex}`]={targetIndex,targetShape:t.shape,sex:st.sex,baselineDs:Array.from(st.bestDs),baselineActual:Array.from(st.bestActual),baselineRmseCm:Number(st.bestRmseCm),baselineCost:baseCost,currentDs:Array.from(st.bestDs),currentActual:Array.from(st.bestActual),currentRmseCm:Number(st.bestRmseCm),currentCost:baseCost,evaluations:0,accepted:0,rejected:0,blocked:[],attemptCounts:{},acceptedByClass:{},rejectedByReason:{},pending:null};delete run.productionTruthState[key];run.truthPhase="canonical";run.truthEval=0;return;
+ }
+ if(phase==="canonical"){
+  const key=`canonical:${targetIndex}`,cs=run.productionTruthState[key],maxEvals=SAMMY_PRODUCTION_CANON_EVALS[run.mode]||10;
+  if(!cs||cs.evaluations>=maxEvals){if(cs)sammyCanonicalFinishTarget(run,targetIndex,t,target,cs);else{run.truthSlot++;run.truthPhase="target";}return;}
+  let proposal=cs.pending;
+  if(!proposal)proposal=sammyCanonicalNextProposal(run,targetObj,t.shape,cs.currentDs,cs);
+  if(!proposal){sammyCanonicalFinishTarget(run,targetIndex,t,target,cs);return;}
+  const shape=sammySolverDsToShape(run,proposal.ds,cs.sex,t.shape),results=await sammySolverApplyShape(shape),actual=sammySolverMeasureArray(results,model),guard=sammyCanonicalGuard(run,cs,target,actual,proposal);cs.evaluations++;run.truthEval=cs.evaluations;
+  const cls=proposal.class,id=proposal.sliderId;cs.attemptCounts[proposal.targetIndex]=Number(cs.attemptCounts[proposal.targetIndex]||0)+1;
+  if(guard.accepted){cs.accepted++;cs.acceptedByClass[cls]=(cs.acceptedByClass[cls]||0)+1;cs.currentDs=Array.from(proposal.ds);cs.currentActual=Array.from(actual);cs.currentRmseCm=guard.candidateRmseCm;cs.currentCost=proposal.costAfter;cs.pending=null;if(Math.abs(Number(cs.currentDs[proposal.targetIndex]||0))<.06){const b=new Set(cs.blocked||[]);b.add(proposal.targetIndex);cs.blocked=Array.from(b);}}
+  else{cs.rejected++;const reason=!guard.costOk?"cost":(!guard.bodyOk?"body":"measure");cs.rejectedByReason[reason]=(cs.rejectedByReason[reason]||0)+1;cs.pending=sammyCanonicalRetryProposal(run,targetObj,t.shape,cs.currentDs,cs,proposal);}
+  const reduction=cs.baselineCost>1e-12?100*(cs.baselineCost-cs.currentCost)/cs.baselineCost:0;
+  sammySolverLive(`R5 MESH-GUARD · ${slot+1}/${run.truthTargetIndices.length}`,[["Test",`${cs.evaluations}/${maxEvals}`],["Slider",id],["Ergebnis",guard.accepted?"ACCEPT":"ROLLBACK"],["Mesh",`${guard.candidateRmseCm} / ≤${guard.bodyLimitCm} cm`],["Prior-Kosten",`−${reduction.toFixed(1)}%`]]);
+  await sammySolverRecord(run,"production-canonical-eval",`R5 canonical ${targetIndex} eval ${cs.evaluations}`,{targetIndex,sourceId:t.sourceId,sliderId:id,class:cls,alpha:proposal.alpha,alphaPos:proposal.alphaPos,proposal:{surrogateFitBeforeCm:proposal.surrogateFitBeforeCm,surrogateFitAfterCm:proposal.surrogateFitAfterCm,costBefore:proposal.costBefore,costAfter:proposal.costAfter,costReductionPct:proposal.costReductionPct,targetValueBefore:proposal.targetValueBefore,targetValueAfter:proposal.targetValueAfter},meshGuard:guard,accepted:guard.accepted,currentRmseCm:cs.currentRmseCm,currentCost:Number(cs.currentCost.toFixed(6)),solutionDs:guard.accepted?Array.from(cs.currentDs):null});
+  if(cs.evaluations>=maxEvals)sammyCanonicalFinishTarget(run,targetIndex,t,target,cs);return;
+ }
+ throw new Error(`Unbekannte R5 Truth-Phase ${phase}`);
+}
+async function sammyProductionRunner(){
+ const run=sammySolverLab.run;if(!run)return;sammySolverLab.running=true;sammySolverLab.paused=false;sammySolverLab.cancelRequested=false;sammySolverStatus("Production Solver R5 startet …");
+ try{
+  while(sammySolverLab.running&&!sammySolverLab.paused&&!sammySolverLab.cancelRequested&&run.stage!=="complete"){
+   if(run.stage==="productionPrep")await sammyProductionStepPrep(run);else if(run.stage==="productionOffline")await sammyProductionStepOffline(run);else if(run.stage==="productionTruth")await sammyProductionStepTruth(run);else throw new Error(`Unbekannte Production-Stufe ${run.stage}`);
+   await sammySolverPutRun(run);sammySolverStatus();
+  }
+  if(run.stage==="complete"){
+   sammySolverLab.running=false;sammySolverLab.lastRun=run;const b=run.productionTruth?.baseline?.bestOverallRmseCm,p=run.productionTruth?.production?.bestOverallRmseCm,g=run.meshComparison?.passesFitGuard;
+   sammySolverStatus(`Fertig · R2 ${b??"—"} cm · R5 ${p??"—"} cm · Mesh-Guard ${g?"PASS":"CHECK"}`);
+   sammySolverLive("PRODUCTION SOLVER R5 FERTIG",[["R2 Baseline",`${b??"—"} cm`],["R5 Mesh-Guarded",`${p??"—"} cm`],["Fit-Guard",g?"PASS":"CHECK"],["Translation Δ",`${run.meshComparison?.translationUsageReductionPct??"—"}%`]]);
+  }
+ }catch(e){console.error("Production Solver R5",e);sammySolverLab.running=false;sammySolverLab.paused=true;sammySolverStatus(`FEHLER: ${e?.message||e}`);sammyReportError?.(e,{source:"Solver Lab R5"});}
+ finally{sammySolverLab.running=false;sammySolverStatus();}
+}
+async function sammyProductionStartOrResume(){
+ if(sammySolverLab.running)return;if(sammyCalibration?.running){sammySolverStatus("Calibration Lab läuft noch · zuerst pausieren.");return;}if(!annyPackLoaded){sammySolverStatus("Anny-Pack ist noch nicht bereit.");return;}if(!sammyMeasureSession){sammySolverStatus("MEAS zuerst öffnen.");return;}
+ let run=sammySolverLab.run;
+ if(!run||run.schema!==SAMMY_PRODUCTION_SCHEMA||run.stage==="complete"){
+  const source=await sammyProductionFindSource();if(!source){sammySolverStatus("Kein abgeschlossener Solver-R2-Lauf in IndexedDB gefunden. Bitte zuerst R2 abschließen/importieren.");return;}
+  run=sammyProductionNewRun(sammySolverLab.mode,source);sammySolverLab.run=run;sammySolverRuntimeCache=null;await sammySolverPutRun(run);sammySolverStatus(`R2-Quelle ${source.appVersion} · ${source.targets.length} Holdouts · R5 erzeugt keine neue Kalibrierung`);
+ }
+ sammySolverLab.paused=false;sammySolverLab.cancelRequested=false;sammyProductionRunner();
+}
+async function sammyProductionLoadLatest(){
+ try{
+  const runs=(await sammySolverGetRuns()).filter(r=>r?.schema===SAMMY_PRODUCTION_SCHEMA).sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||""))),active=runs.find(r=>r.stage!=="complete")||runs[0]||null;sammySolverLab.run=active;sammySolverLab.lastRun=active;sammySolverRuntimeCache=null;
+  if(active){sammySolverLab.mode=active.mode||"standard";document.querySelectorAll("[data-solver-mode]").forEach(b=>b.classList.toggle("active",b.dataset.solverMode===sammySolverLab.mode));sammySolverStatus(active.stage==="complete"?`Letzter R5-Lauf fertig · Mesh ${active.productionTruth?.production?.bestOverallRmseCm??"—"} cm`:"Gespeicherter R5-Lauf kann fortgesetzt werden.");}
+  else{const src=await sammyProductionFindSource();sammySolverStatus(src?`R2-Quelle bereit · ${src.targets.length} Holdouts · R5 kann starten.`:"Kein abgeschlossener R2-Lauf gefunden.");}
+ }catch(e){console.warn("Production R5 resume",e);}
+}
+function sammyProductionSummary(run){
+ const prof=run.productionProfile?{classCounts:run.productionProfile.classCounts,sliderPriorities:run.productionProfile.rows}:null;
+ return {schema:"sammy-solver-production-summary-v2",runId:run.runId,appVersion:run.appVersion,mode:run.mode,createdAt:run.createdAt,completedAt:run.completedAt||null,sourceSolver:{runId:run.sourceSolverRunId,version:run.sourceSolverVersion,calibrationRunId:run.calibrationRunId,calibrationVersion:run.calibrationVersion},profile:prof,offline:{baseline:run.offlineBaseline,proposalDiagnostics:run.proposalDiagnostics},mesh:run.productionTruth,meshComparison:run.meshComparison,notes:run.notes};
+}
+async function sammyProductionExport(summaryOnly=false){
+ const run=sammySolverLab.run||sammySolverLab.lastRun;if(!run||run.schema!==SAMMY_PRODUCTION_SCHEMA){sammySolverStatus("Kein Solver-R5-Lauf zum Exportieren.");return;}
+ const summary=sammyProductionSummary(run),base={schema:SAMMY_PRODUCTION_SCHEMA,app:"Sammy",version:"0.8.10",generated:new Date().toISOString(),purpose:"Production Solver R5: mesh-refined R2 fit first; targeted Scale/Translation canonicalization only when each proposed change passes the real current-mesh guard.",summary};let payload=base;
+ if(!summaryOnly){const records=await sammySolverGetRecords(run.runId);payload={...base,run,records};}
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=summaryOnly?`Sammy_SolverR5_Summary_${run.mode}_${run.runId}.json`:`Sammy_SolverR5_FULL_${run.mode}_${run.runId}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);sammySolverStatus(summaryOnly?"Solver-R5-Summary exportiert.":"Solver-R5-FULL exportiert.");
+}
 
 function sammySolverInitUI(){document.querySelectorAll("[data-solver-mode]").forEach(b=>b.onclick=()=>sammySolverSetMode(b.dataset.solverMode));const start=$("#sammySolverStart"),pause=$("#sammySolverPause"),reset=$("#sammySolverReset"),sum=$("#sammySolverSummaryExport"),full=$("#sammySolverExport");if(start)start.onclick=sammyProductionStartOrResume;if(pause)pause.onclick=sammySolverPause;if(reset)reset.onclick=sammySolverReset;if(sum)sum.onclick=()=>sammyProductionExport(true);if(full)full.onclick=()=>sammyProductionExport(false);sammySolverSetMode("standard");sammyProductionLoadLatest()}
 

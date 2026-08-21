@@ -1,3 +1,13 @@
+## v0.8.10 · Production Solver R5 · R2 Fit → real-mesh guarded Canonicalization
+
+- **Keine neue Calibration / kein neuer Delta-Lauf.** R5 verwendet denselben abgeschlossenen Solver-R2-Deep-Datensatz.
+- Phase 1 ist der unveränderte bewährte R2-Solver **inklusive der realen Mesh-Refinement-Pässe**. Dieser fertige Körper ist der unveränderliche Fallback.
+- Phase 2 räumt erst danach auf: Das Forward-Modell schlägt gezielt das Zurücknehmen von **Translation- und Scale-Morphs** vor und kompensiert die erwartete Maßänderung bevorzugt mit günstigeren Measure-/Anatomical-Morphs.
+- **Entscheidend ist nicht mehr der Surrogate-Nullraum:** Jeder Cleanup-Vorschlag wird wirklich auf Sammy angewendet und mit dem aktuellen MEAS-System neu vermessen.
+- Akzeptiert wird nur, wenn die Prioritätskosten sinken, der reale Körper höchstens **+0,02 cm RMSE** gegenüber seinem eigenen fertigen R2-Fit verliert und kein einzelnes Maß über seinen Guard springt. Andernfalls Rollback und kleinerer Versuch; wenn nichts sicher geht, bleibt exakt R2.
+- Deep: 750 bekannte Holdouts als schneller Offline-Precheck + 60 echte Mesh-Körper.
+- Export: Summary + FULL inklusive jedes Mesh-Guard-Entscheids, Accept/Rollback, Slider, Alpha, Maß-Guard und Kostenänderung.
+
 ## v0.8.9 · Production Solver R4 · Fit → Nullraum → Mesh
 
 - keine neue Calibration / kein neuer Landmark-Delta-Lauf; verwendet den abgeschlossenen Solver-R2-Datensatz

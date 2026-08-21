@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.9</title>
-<link rel="stylesheet" href="style.css?v=0.8.9">
+<title>Sammy v0.8.10</title>
+<link rel="stylesheet" href="style.css?v=0.8.10">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.9</div>
+  <div class="sammySplashVersion">v0.8.10</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.9</div>
+<div id="sammyVersion">Sammy · v0.8.10</div>
 
 <button id="sammyCameraDebugBtn" class="sammyCameraDebugBtn" type="button">CAM</button>
 <div id="sammyCameraDebugPanel" class="sammyCameraDebugPanel hidden">
@@ -144,7 +144,7 @@
     </div>
    </details>
    <details class="sammyCalibrationLab sammySolverLab" id="sammySolverLab" open>
-    <summary><b>PRODUCTION SOLVER R4</b><span>Fit · Nullraum-Cleanup · Mesh</span></summary>
+    <summary><b>PRODUCTION SOLVER R5</b><span>R2 Fit · echter Mesh-Guard · Canonicalization</span></summary>
     <div class="sammyCalibrationBody">
      <div class="sammyCalibrationModes" role="group" aria-label="Solver-Testtiefe">
       <button type="button" data-solver-mode="quick">Quick</button><button type="button" data-solver-mode="standard" class="active">Standard</button><button type="button" data-solver-mode="deep">Deep</button>
@@ -153,9 +153,9 @@
      <div class="sammyCalibrationActions"><button id="sammySolverReset" type="button">Solver-Lauf löschen</button><button id="sammySolverSummaryExport" type="button">Summary JSON</button></div>
      <div id="sammySolverStatus" class="sammyCalibrationStatus">Noch kein Solver-Lauf.</div>
      <div class="sammyCalibrationProgress"><i id="sammySolverProgressBar"></i></div>
-     <div id="sammySolverCurrent" class="sammyCalibrationCurrent">R4 sammelt keine neuen Kalibrierungsdaten. Phase 1 löst die Zielmaße mit dem bewährten R2-Solver. Phase 2 zieht unnötige Scale-/Translation-/Latent-Ausschläge im lokalen Mess-Nullraum Richtung neutral und akzeptiert nur Änderungen innerhalb eines strengen Fit-Guards. Phase 3 vergleicht R2 und R4 auf denselben echten Mesh-Zielkörpern. Deep: 750 Holdouts offline + 60 Mesh-Körper.</div>
+     <div id="sammySolverCurrent" class="sammyCalibrationCurrent">R5 sammelt keine neuen Kalibrierungsdaten. Phase 1 beendet zuerst den bewährten R2-Fit inklusive echter Mesh-Korrektur. Erst danach schlägt das Forward-Modell gezielt Scale-/Translation-Cleanups vor. Jeder Vorschlag wird am echten Mesh neu gemessen: nur bei sinkenden Prioritätskosten, maximal +0,02 cm Körper-RMSE und ohne relevanten Sprung eines Einzelmaßes wird er übernommen; sonst Rollback und kleinerer Versuch. Deep: 750 Holdouts offline + 60 echte Mesh-Körper.</div>
      <div id="sammySolverLive" class="sammyCalibrationLiveMeasures"></div>
-     <div class="sammyCalibrationActions"><button id="sammySolverExport" type="button">FULL JSON</button><button type="button" disabled title="R4 vergleicht nur R2-Baseline gegen den finalen Production-Solver">R2 ↔ R4 automatisch</button></div>
+     <div class="sammyCalibrationActions"><button id="sammySolverExport" type="button">FULL JSON</button><button type="button" disabled title="R5 vergleicht denselben mesh-korrigierten R2-Körper vor und nach real-mesh-geprüfter Canonicalization">R2 ↔ R5 automatisch</button></div>
     </div>
    </details>
    <div id="sammyMeasureList" class="sammyMeasureList"></div>
@@ -180,7 +180,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.9</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.10</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -437,6 +437,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.9"></script>
+<script type="module" src="app.js?v=0.8.10"></script>
 </body>
 </html>
