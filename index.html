@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.7.1</title>
-<link rel="stylesheet" href="style.css?v=0.8.7">
+<title>Sammy v0.8.8</title>
+<link rel="stylesheet" href="style.css?v=0.8.8">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.7.1</div>
+  <div class="sammySplashVersion">v0.8.8</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.7.1</div>
+<div id="sammyVersion">Sammy · v0.8.8</div>
 
 <button id="sammyCameraDebugBtn" class="sammyCameraDebugBtn" type="button">CAM</button>
 <div id="sammyCameraDebugPanel" class="sammyCameraDebugPanel hidden">
@@ -144,18 +144,18 @@
     </div>
    </details>
    <details class="sammyCalibrationLab sammySolverLab" id="sammySolverLab" open>
-    <summary><b>SOLVER LAB R2</b><span>Landmark Δ → korrigierte Deep-Daten → Inverse → Mesh</span></summary>
+    <summary><b>SOLVER LAB R3</b><span>Priorität · Purity · Staged Solve · Mesh</span></summary>
     <div class="sammyCalibrationBody">
      <div class="sammyCalibrationModes" role="group" aria-label="Solver-Testtiefe">
       <button type="button" data-solver-mode="quick">Quick</button><button type="button" data-solver-mode="standard" class="active">Standard</button><button type="button" data-solver-mode="deep">Deep</button>
      </div>
-     <div class="sammyCalibrationActions"><button id="sammySolverStart" type="button">Neuer Delta+Solver-Test</button><button id="sammySolverPause" type="button" disabled>Pause</button></div>
+     <div class="sammyCalibrationActions"><button id="sammySolverStart" type="button">Neuer Priority-Test</button><button id="sammySolverPause" type="button" disabled>Pause</button></div>
      <div class="sammyCalibrationActions"><button id="sammySolverReset" type="button">Solver-Lauf löschen</button><button id="sammySolverSummaryExport" type="button">Summary JSON</button></div>
      <div id="sammySolverStatus" class="sammyCalibrationStatus">Noch kein Solver-Lauf.</div>
      <div class="sammyCalibrationProgress"><i id="sammySolverProgressBar"></i></div>
-     <div id="sammySolverCurrent" class="sammyCalibrationCurrent">Ein kompakter Gesamtlauf: Zuerst misst Sammy auf wenigen neuen Körpern gleichzeitig die alte v0.8.4 Waist/Crotch-Logik und die aktuelle Navel/Bulge-Logik. Daraus wird ein dynamisches Landmark-Delta-Modell gelernt. Anschließend werden die vorhandenen 25.250 Deep-Records nur rechnerisch auf die neue Semantik korrigiert und Forward, Inverse und Mesh-Reality-Check automatisch neu ausgeführt. Deep = 600 Delta-Körper; keine Vollkalibrierung.</div>
+     <div id="sammySolverCurrent" class="sammyCalibrationCurrent">R3 sammelt keine neuen Kalibrierungsdaten. Es verwendet den abgeschlossenen R2-Lauf und vergleicht auf denselben Holdout-Körpern vier Lösungsstrategien: R2-Baseline, Semantic Priority, Semantic + datenbasierte Purity und Staged + Purity. Semantische Measure-Circ/Length-Morphs werden bevorzugt; Axis-Scales sind teuer, Translations sehr teuer. Deep prüft alle Holdouts offline und 30 Körper im echten Mesh.</div>
      <div id="sammySolverLive" class="sammyCalibrationLiveMeasures"></div>
-     <div class="sammyCalibrationActions"><button id="sammySolverExport" type="button">FULL JSON</button><button type="button" disabled title="v0.8.7.1 wählt das beste Forward-Modell automatisch">Holdout-Auswahl automatisch</button></div>
+     <div class="sammyCalibrationActions"><button id="sammySolverExport" type="button">FULL JSON</button><button type="button" disabled title="R3 vergleicht vier inverse Lösungsstrategien auf denselben Holdouts">4 Strategien automatisch</button></div>
     </div>
    </details>
    <div id="sammyMeasureList" class="sammyMeasureList"></div>
@@ -180,7 +180,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.7.1</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.8</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -437,6 +437,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.7"></script>
+<script type="module" src="app.js?v=0.8.8"></script>
 </body>
 </html>

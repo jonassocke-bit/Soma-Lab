@@ -1,3 +1,14 @@
+## v0.8.8 · Solver Lab R3 · Priority / Purity / Staged
+
+- nutzt den abgeschlossenen Solver-R2-Lauf als Quelle; **keine neue Kalibrierung und kein erneuter Landmark-Delta-Lauf**
+- vergleicht vier inverse Strategien auf identischen Holdouts: R2 Baseline, Semantic Priority, Semantic + Purity, Staged + Purity
+- semantische `Measure ... Circ/Length`-Morphs werden bevorzugt; anatomische Form-Morphs folgen; Axis-Scales sind deutlich teurer; Translations sehr teuer
+- datenbasierte Purity wird aus den bereits kalibrierten Maß-Effektvektoren berechnet: diffuse Slider erhalten eine zusätzliche Strafe
+- Staged Solver: Core + semantische Maße → Anatomical → Scale → Translation; spätere Stufen nur bei verbleibendem Fehler
+- Deep: alle verfügbaren R2-Holdouts offline, 30 identisch ausgewählte Ziele im echten Mesh für alle vier Strategien
+- Export: SolverR3 Summary + FULL mit Slider-Prioritätsprofil, Parameter-RMS, aktiven Slidern, Klassen-Nutzung und Mesh-RMSE je Strategie
+- v0.8.7.1 Landmark-/Calibration-/Rig-/Startup-Logik bleibt unverändert
+
 ## v0.8.7.1 · Landmark Delta + Solver R2
 - Ein Solver-Lauf erledigt **Landmark-Delta + semantische Datensatzkorrektur + Forward + Inverse + Mesh-Reality-Check**.
 - Deep erzeugt nur 600 frische Delta-Körper; jeder wird gleichzeitig mit alter v0.8.4 Waist/Crotch- und aktueller Navel/Bulge-Semantik vermessen.
