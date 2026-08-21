@@ -1,65 +1,59 @@
-## v0.8.14.1 · ANSUR D intermediate-render fix
+## v0.8.15 · ANSUR D2 Alignment + Weighted Constraints
 
-Hotfix auf Basis von v0.8.14. Geändert wurde nur die D-Zwischenstands-Darstellung plus Versions-/Cache-Busting. Nach dem ersten 5/6/7-Build existieren für noch nicht gelaufene Varianten naturgemäß noch keine P95-Werte; diese werden jetzt als „noch nicht berechnet“/„–“ dargestellt statt `null.toFixed()` aufzurufen. Ein bereits gespeicherter D-Lauf kann ohne Reset fortgesetzt werden.
+Basis: v0.8.14.1. Scope bleibt strikt auf ANSUR LAB / BODY SPACE / ANSUR-End-to-End-Test beschränkt. Startup, Anny/SOMA, Rig, MEAS, R2, R5 und der bestehende DIMENSIONS-Solver wurden nicht verändert.
 
-## v0.8.14 · ANSUR LAB C/D + BODY SPACE V3
+### Warum D2 existiert
 
-Basis: ausgelieferte v0.8.13. Scope bleibt strikt auf ANSUR/BODY SPACE und dessen Forschungs-/Validierungs-UI begrenzt. R2, R5, DIMENSIONS, MEAS, Anny/SOMA, Rig, Greeting und Startup werden nicht verändert; End-to-End D ruft den bestehenden DIMENSIONS/R5-Pfad nur als unveränderte Engine auf.
+D1 zeigte eine klare Trennung: Die reine ANSUR-Vorhersage lag bei ca. 1 cm, das fertige Mesh aber bei ca. 4 cm. Selbst bekannte Eingabemaße wurden im Mesh stark geopfert. D2 trennt deshalb drei Fehlerquellen explizit:
 
-### BODY SPACE V3
-- 6.068 echte ANSUR-II-Personen bleiben eine einzige `THREE.Points`-BufferGeometry (1 Draw Call).
-- Avatar-Mesh im BODY SPACE aus; `DU` bleibt der Nutzer-Fokuspunkt.
-- Punkte sind radial weich statt quadratisch. Beim Hineinzoomen wird ihre World-Size aktiv kleiner, sodass die projizierten Punkte in Nahansicht nicht zu großen Vierecken aufblasen; gleichzeitig werden sie moderat heller/deckender.
-- Auto-Rotation pausiert nur während der aktiven Finger-Geste und läuft unmittelbar nach dem Loslassen wieder weiter.
-- `DU` wird jetzt real in denselben PCA-Raum projiziert. Die aktuellen Sammy-Maße liefern die 24 PCA-Körperfeatures. Das für die PCA nötige physische Gewicht wird mit einem separaten sex-spezifischen ANSUR-Locator aus aktuellen Körpermaßen + Alter geschätzt; der Anny-`Weight`-Morph wird niemals als kg interpretiert.
-- Die Wolke verschiebt sich nach Eintritt weich relativ zum fixen `DU`-Punkt an die berechnete PCA-Position des aktuellen Charakters. Die 6.068 originalen PCA-Koordinaten bleiben unverändert.
-- Adaptives Mobile-LOD bleibt: nur bei gemessenen FPS-Problemen 6.068 → 3.600 → 2.200 sichtbare Punkte.
+- **T24 · Full Truth:** Alle 24 wirklich vergleichbaren ANSUR-Maße werden als reale Wahrheit vorgegeben. Nur die sieben Sammy-only/Bridge-Werte bleiben sehr weich. Dieser Lauf prüft direkt, ob ANSUR-Maßraum und Sammy/Anny überhaupt kompatibel bzw. ausdrückbar sind.
+- **K7 · Weighted:** Sieben reale Nutzereingaben gehen in ANSUR ein; davon sind sechs echte Sammy-Maße harte Mesh-Ziele, während `weightkg` ausschließlich Statistik-Input bleibt. Alle übrigen ANSUR-Predictions werden anhand der in C empirisch gemessenen p68-Unsicherheit gewichtet.
+- **K5 · Weighted:** Analog mit fünf Nutzereingaben; davon sind vier direkte Sammy-Maße harte Mesh-Ziele plus `weightkg` als reiner Statistik-Input.
 
-### A/B bleiben kompatibel
-- Bestehende v0.8.13-A/B-Ergebnisse bleiben über denselben LocalStorage-Key erhalten.
-- A: 4.247 Train + 909 Validation; die 912 Blind-Testpersonen werden physisch nicht geladen.
-- B: erster Zugriff auf die separate 912er-Testpartition; Fit auf Train+Validation, Evaluation auf Test.
+### Lexikographischer Mesh-Fit
 
-### C · Model Depth + Robustness
-C ist ausdrücklich ein **post-blind Diagnose-Lauf**. Nach B ist die Testpartition nicht mehr unangetastet.
+Jeder D2-Build läuft in drei realen Mesh-Stufen:
 
-C prüft im Web Worker:
-1. identische feste Primärzielmenge aus 24 direkt bzw. sauber abgeleiteten ANSUR↔Sammy-Maßen;
-2. A-optimierte 5/6/7-Sets gegen alltagstaugliche Consumer-Sets;
-3. lineare Ridge- gegen sex-spezifische quadratische Ridge-Modelle;
-4. Lambda-Auswahl ausschließlich auf Validation;
-5. simulierte Eingabefehler ±0,5 / ±1 / ±2 cm bzw. kg;
-6. empirische 68/90/95-%-Unsicherheitsbänder, auf Validation kalibriert und auf Test auf Coverage geprüft.
+1. **HARD:** bekannte/reale Maße zuerst; große Gewichtung, echte Mesh-Messung, adaptive Korrekturen mit Bounds.
+2. **SOFT:** statistisch geschätzte Maße dürfen nur nachziehen, solange die HARD-Maße innerhalb enger RMSE- und Einzelmaß-Guards bleiben. Soft-Gewichte stammen aus C (`1 / p68²`, begrenzt).
+3. **R5 Guarded Canonicalization:** R5 darf Scale/Translation weiterhin aufräumen, aber nur wenn Prioritätskosten sinken und HARD- sowie gewichteter Ziel-Fit am echten Mesh erhalten bleiben.
 
-Die zwei posegebundenen ANSUR-Flexed-Armumfänge bleiben Proxy und zählen nicht in den 24-Maß-Primärscore.
+Der bestehende R5-Code selbst ist unverändert; D2 hat eine separate gewichtete Fit-/Guard-Schicht.
 
-### D · End-to-End R5
-D wird nach C freigeschaltet. Er nutzt dieselbe bereits in B geöffnete Testpartition und ist **End-to-End-Validation, kein neuer Blind-Test**.
+### Testtiefe
 
-Pro Person wird paarweise gerechnet:
-`5 / 6 / 7 reale Eingaben → ANSUR Prediction → 24 Primärziele → 7 Bridge-Ziele → 31 DIMENSIONS-Ziele → eingefrorener R5 → echtes Mesh → MEAS → Vergleich gegen 24 echte ANSUR-Maße`.
-
-Testtiefen:
-- Quick: 6 Personen × 3 = 18 echte R5-Builds
-- Standard: 15 × 3 = 45 Builds
+- Quick: 4 Personen × T24/K7/K5 = 12 Builds
+- Standard: 12 × 3 = 36 Builds
 - Deep: 30 × 3 = 90 Builds
 - Stress: 60 × 3 = 180 Builds
 
-Die gleichen Personen werden jeweils mit 5, 6 und 7 Angaben rekonstruiert. Dadurch ist der Zusatznutzen des sechsten und siebten Maßes direkt paarweise vergleichbar. Fortschritt wird nach jedem fertigen Build in IndexedDB gespeichert; Pause erfolgt nach dem aktuellen Build.
+D2 ist bewusst rechenintensiver als D1: pro Build können mehrere echte Mesh-Kandidaten getestet werden. Fortschritt wird nach jedem vollständigen Build in IndexedDB gespeichert und ist resumierbar.
 
-### 31-Maß-Bridge
-`ansur-dimensions-bridge-v1.json` ergänzt sieben Sammy-Ziele, die ANSUR nicht als exakte Vergleichswahrheit liefert:
-- Natural Waist Circumference
-- höhere Sammy Hip Circumference
-- Sammy Upperarm Circumference
-- Sammy Forearm Circumference
-- Front Chest Length (runtime exakt = Waist Back Length, weil die aktuelle Sammy-Messimplementierung dieselbe vertikale Strecke nutzt)
-- Neck Height
-- Waist→Hip
+### Report
 
-Die Bridge wurde auf den korrigierten 6.000 Sammy-Kalibrationskörpern trainiert. Vor der Bridge-Prognose werden ANSUR-Eingaben sex-spezifisch per z/Percentile in den Kalibrationsraum ausgerichtet und auf ±3,25 SD begrenzt; Outputs werden zusätzlich auf robuste 0,5–99,5-%-Kalibrationsbereiche begrenzt. Das verhindert instabile Extrapolation bei ANSUR-Edge-Cases. Diese sieben Bridge-Werte sind **nur Konstruktionsprioren** und fließen nie in den ANSUR-Score ein.
+D2 Summary/FULL enthält u.a.:
 
-### Performance
-- BODY SPACE: 1 Draw Call + 1 Sprite für `DU`.
-- A/B/C/DPREP: eigener Web Worker, danach Worker-Speicher wieder freigegeben.
-- D läuft absichtlich im Haupt-Runtime-Pfad, weil echte Three.js-/Anny-/MEAS-Meshes erzeugt werden; er ist resumierbar.
+- Primary Truth RMSE gegen alle 24 realen ANSUR-Werte
+- Hard-Input RMSE und maximalen Hard-Einzelfehler
+- Ziel-Fit gegen T24 bzw. Prediction-Vektor
+- P50/P90/P95/Worst Case pro Variante
+- Fehler/Bias/P95 je Einzelmaß
+- Geschlechtertrennung
+- durchschnittliche Slider an Bounds
+- Mesh-Evaluationen / Canonicalization
+- Vergleich zum letzten abgeschlossenen D1-Lauf
+- automatische T24-Einordnung: kompatibel / teilweise kompatibel / Mapping-Expressivität auffällig
+
+### Safety / Regression
+
+Vor Release geprüft:
+
+- `node --check app.js`
+- TypeScript-AST ohne Parsefehler
+- keine fehlenden Sammy-Helper im ANSUR-Block
+- keine `const`-Mutationen
+- keine doppelten Funktionen
+- keine doppelten HTML-IDs
+- D2-Target-Preflight auf 60 ANSUR-Personen × 3 Varianten: 180 vollständige 31/31 finite Zielvektoren
+- C-Unsicherheitsbänder für alle nicht bekannten K5/K7-Primärziele vorhanden
+- Startup / Anny / MEAS / R2 / R5 / DIMENSIONS-Funktionen textlich identisch zu v0.8.14.1

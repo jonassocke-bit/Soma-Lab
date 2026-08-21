@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.14.1</title>
-<link rel="stylesheet" href="style.css?v=0.8.14.1">
+<title>Sammy v0.8.15</title>
+<link rel="stylesheet" href="style.css?v=0.8.15">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.14.1</div>
+  <div class="sammySplashVersion">v0.8.15</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.14.1</div>
+<div id="sammyVersion">Sammy · v0.8.15</div>
 
 <button id="sammyCameraDebugBtn" class="sammyCameraDebugBtn" type="button">CAM</button>
 <div id="sammyCameraDebugPanel" class="sammyCameraDebugPanel hidden">
@@ -253,6 +253,29 @@
     </div>
    </details>
 
+   <details class="sammyAnsRun" id="sammyAnsD2Card" open>
+    <summary><b>D2 · ALIGNMENT + WEIGHTED CONSTRAINTS</b><span>T24 ↔ K7 ↔ K5 · echtes Mesh</span></summary>
+    <div class="sammyAnsRunBody">
+     <p><b>T24</b> gibt Sammy alle 24 realen ANSUR-Vergleichsmaße und prüft damit Mapping/Anny-Expressivität ohne Prediction. <b>K7/K5</b> halten die tatsächlich eingegebenen Maße hart; alle statistisch geschätzten Maße werden nach der in C gemessenen Unsicherheit weich gewichtet. Gewicht in kg bleibt ausschließlich ANSUR-Input und wird nie als Anny-Weight interpretiert.</p>
+     <p>D2 arbeitet lexikographisch: zuerst Hard-Input-Fit am echten Mesh, danach Soft-Prediction-Fit innerhalb eines engen Hard-Guards, zuletzt R5-Canonicalization ebenfalls nur unter diesem Guard. Dadurch kann ein echtes Nutzermaß nicht mehr für mehrere geschätzte Maße geopfert werden.</p>
+     <div class="sammyAnsModeRow" aria-label="D2 Testtiefe">
+      <button type="button" data-ans-d2-mode="quick">Quick<br><small>4 × 3</small></button>
+      <button type="button" data-ans-d2-mode="standard">Standard<br><small>12 × 3</small></button>
+      <button type="button" data-ans-d2-mode="deep" class="active">Deep<br><small>30 × 3</small></button>
+      <button type="button" data-ans-d2-mode="stress">Stress<br><small>60 × 3</small></button>
+     </div>
+     <div class="sammyAnsDControls">
+      <button id="sammyAnsD2Start" type="button" disabled>D2 starten</button>
+      <button id="sammyAnsD2Pause" type="button" disabled>Pause</button>
+      <button id="sammyAnsD2Reset" type="button" disabled>Reset</button>
+     </div>
+     <div class="sammyAnsProgress"><i id="sammyAnsD2Progress"></i></div>
+     <div id="sammyAnsD2Status" class="sammyStatus">Bereit · T24 trennt Mapping/Expressivität von Prediction-Fehlern.</div>
+     <div id="sammyAnsD2Result" class="sammyAnsResult"></div>
+     <div class="sammyCalibrationActions"><button id="sammyAnsD2Summary" type="button" disabled>D2 Summary</button><button id="sammyAnsD2Full" type="button" disabled>D2 FULL</button></div>
+    </div>
+   </details>
+
    <div class="sammyCalibrationActions"><button id="sammyAnsSummaryExport" type="button" disabled>A/B/C Summary</button><button id="sammyAnsFullExport" type="button" disabled>A/B/C FULL</button></div>
    <button id="sammyAnsReset" type="button" class="sammySecondary">ANSUR-Testresultate A/B/C löschen</button>
    <div class="sammyAnsFoot">Primary Score: 24 direkt bzw. sauber abgeleitete ANSUR↔Sammy-Maße. Die zwei ANSUR-Flexed-Armumfänge werden nicht als exakte Sammy-Truth gewertet. Für den 31-Maß-R5-Bau ergänzt eine separate Bridge sieben Sammy-only/Proxy-Werte; diese Bridge-Werte fließen ausdrücklich nicht in den ANSUR-End-to-End-Score ein.</div>
@@ -282,7 +305,7 @@
 <div id="sammyBodySpaceYou" class="sammyBodySpaceYou" aria-hidden="true">DU</div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.14.1</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.15</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -539,6 +562,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.14.1"></script>
+<script type="module" src="app.js?v=0.8.15"></script>
 </body>
 </html>
