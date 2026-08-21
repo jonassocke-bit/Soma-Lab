@@ -1,4 +1,4 @@
-# SAMMY v0.8.17 · ANSUR D3 LIVE ALIGNMENT AUDIT
+# SAMMY v0.8.17.1 · ANSUR D3 LIVE ALIGNMENT AUDIT
 
 Basis: v0.8.16.
 
@@ -14,3 +14,9 @@ Basis: v0.8.16.
 
 ## Unverändert
 Startup, Anny/SOMA, Rig, Animation, FORM, MEAS-Definitionen, Calibration, R2/R5, DIMENSIONS, ANSUR A/B/C, D1/D2 und D3-Fitlogik/Zieldefinitionen bleiben unverändert; ergänzt wurde nur die D3-Visualisierung und das exakte Zurücksetzen auf akzeptierte Zustände für die Darstellung.
+
+
+## v0.8.17.1 D3 runtime fix
+- Fixes the D3 audit crash when computing `requestedDeltaRmse`: the frozen forward model stores `measureIds[]` but does not guarantee a `measureIndex` property. D3 now builds the local ID→index lookup exactly like the existing D2/D3 metric helpers.
+- Missing/unmapped IDs are skipped defensively instead of dereferencing `undefined`.
+- R5, DIMENSIONS, MEAS, Anny, rig, D1/D2 and the D3 target/fit logic are unchanged.
