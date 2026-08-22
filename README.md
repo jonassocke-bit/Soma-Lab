@@ -1,5 +1,13 @@
 # Sammy
 
+## v0.8.19.4 · PROT compact header / exports / status geometry
+
+- PROT-Kopfzeile: fünf Review-Icons nebeneinander; eigener Schließen-Button entfernt.
+- Anzeige-Toggles liegen am Ende des scrollbar Inhalts statt als feste Panel-Leiste.
+- Zwei Export-Shortcuts am Scroll-Ende: Audit JSON und Diagnostics JSON.
+- Messgeometrie auf dem Mannequin übernimmt den Prüfstatus: grün = korrekt, rot = inkorrekt, neutral = ungeprüft.
+- Messlinien werden als echte Tube-Geometrie gerendert, damit die Dicke auf iPhone/WebGL zuverlässig sichtbar ist; die aktive Messung ist nochmals deutlich dicker.
+
 ## v0.8.19.3 · PROT streamline / review status
 
 - PROT-Kopfzeile: nur Icons für vorher/nachher, Hold-Info, korrekt/inkorrekt und Schließen.

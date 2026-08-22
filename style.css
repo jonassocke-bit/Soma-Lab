@@ -559,3 +559,29 @@ body.sammy-protocol-mode #sammyProtocolBubble{box-shadow:0 0 0 1px rgba(255,255,
 .sammyProtocolHoldInfo[hidden]{display:none!important}.sammyProtocolHoldInfo img{display:block;width:100%;max-height:calc(62vh - 16px);object-fit:contain;border-radius:9px;background:#fff}
 body.sammy-protocol-mode .sammyProtocolImageModal{display:none!important}
 @media(max-width:600px){.sammyProtocolPanel{--sammy-panel-h:60vh;max-height:86vh}.sammyProtocolHeadIcons{gap:5px}#sammyUi .sammyProtocolIconBtn{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important}.sammyProtocolListHead small{max-width:58%;line-height:1.25}.sammyProtocolHoldInfo{width:94vw;top:max(68px,calc(env(safe-area-inset-top) + 52px));padding:6px}}
+
+/* Sammy v0.8.19.4 · PROT compact head + scroll footer */
+.sammyProtocolPanel .sammyProtocolHead .sammyProtocolHeadIcons{
+ display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;gap:6px!important
+}
+.sammyProtocolHead{justify-content:flex-start!important;padding-right:12px!important}
+.sammyProtocolHeadIcons{width:auto!important}
+.sammyProtocolScrollFooter{margin-top:16px;padding:12px 0 2px;border-top:1px solid rgba(255,255,255,.075)}
+.sammyProtocolScrollFooter .sammyProtocolBottomBar{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0;padding:0;border:0;background:transparent
+}
+#sammyUi .sammyProtocolScrollFooter .sammyProtocolBottomBar button{
+ min-width:0!important;min-height:38px!important;height:38px!important;padding:0!important;border-radius:11px!important;font-size:17px!important;font-weight:800!important
+}
+#sammyUi .sammyProtocolScrollFooter .sammyProtocolBottomBar button:nth-child(3){font-size:11px!important;letter-spacing:-.04em}
+#sammyUi .sammyProtocolScrollFooter .sammyProtocolBottomBar button.active{background:#eceef2!important;color:#15161a!important}
+.sammyProtocolExportTools{display:flex;justify-content:flex-end;gap:7px;margin-top:8px}
+#sammyUi .sammyProtocolExportTools button{
+ position:relative;width:40px!important;min-width:40px!important;height:36px!important;min-height:36px!important;padding:0!important;border-radius:11px!important;font-size:17px!important;font-weight:800!important
+}
+.sammyProtocolExportTools button small{position:absolute;right:6px;bottom:3px;font-size:7px;line-height:1;color:#aeb2ba;font-weight:800}
+.sammyProtocolExportTools button span{display:block;transform:translateY(-1px)}
+@media(max-width:600px){
+ .sammyProtocolPanel .sammyProtocolHead .sammyProtocolHeadIcons{gap:5px!important}
+ #sammyUi .sammyProtocolHead .sammyProtocolIconBtn{width:35px!important;height:35px!important;min-width:35px!important;min-height:35px!important}
+}
