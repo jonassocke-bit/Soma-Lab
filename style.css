@@ -635,3 +635,25 @@ body.sammy-protocol-mode .sammyProtocolImageModal{display:none!important}
  .sammyProtocolPoseMeasureMain{grid-template-columns:minmax(0,1fr) 36px 49px!important;gap:5px!important}
  .sammyProtocolPoseMeasureMain .sammyProtocolRefValue{min-width:36px;font-size:7.5px}.sammyProtocolPoseMeasureMain .sammyProtocolRealValue{min-width:49px;font-size:8px}
 }
+
+/* Sammy v0.8.19.6 · PROT edit / dynamic-search / compact assets */
+.sammyProtocolCompactInspector{display:none!important}
+.sammyProtocolCommentPopup{pointer-events:auto!important;touch-action:manipulation!important}
+.sammyProtocolCommentPopup textarea{pointer-events:auto!important;touch-action:auto!important;font-size:16px!important;-webkit-user-select:text!important;user-select:text!important}
+.sammyProtocolAdjustPopup{position:fixed;z-index:192;left:50%;transform:translateX(-50%);bottom:max(86px,calc(env(safe-area-inset-bottom) + 80px));width:min(90vw,410px);box-sizing:border-box;padding:10px;border:1px solid rgba(255,255,255,.16);border-radius:14px;background:rgba(22,23,27,.98);box-shadow:0 18px 56px rgba(0,0,0,.48);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);pointer-events:auto;touch-action:manipulation}
+.sammyProtocolAdjustPopup[hidden]{display:none!important}
+.sammyProtocolAdjustPopupHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 8px}.sammyProtocolAdjustPopupHead b{font-size:10px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sammyProtocolAdjustPopupHead small{font-size:7px;color:#989ca5;text-align:right}
+.sammyProtocolAdjustPopupGrid{display:grid;gap:7px}.sammyProtocolAdjustPopupGrid label{display:grid;grid-template-columns:17px minmax(0,1fr) 35px;gap:8px;align-items:center;font-size:9px;color:#d7d9de}.sammyProtocolAdjustPopupGrid input{width:100%;min-width:0;margin:0}.sammyProtocolAdjustPopupGrid output{text-align:right;font-variant-numeric:tabular-nums;font-size:8px;color:#aeb2ba}.sammyProtocolAdjustPopupGrid label.disabled{opacity:.35}.sammyProtocolAdjustPopupGrid label.disabled input{pointer-events:none}
+.sammyProtocolAdjustPopupActions{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-top:9px}.sammyProtocolAdjustPopupActions button{display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;min-height:36px!important;padding:0 10px!important;border-radius:10px!important}.sammyProtocolAdjustPopupActions button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.sammyProtocolAdjustPopupActions #sammyProtocolAdjustReset{width:38px!important;min-width:38px!important;padding:0!important}.sammyProtocolAdjustPopupActions #sammyProtocolPlaceLandmark[hidden]{display:none!important}
+#sammyUi #sammyProtocolAdjustBtn.active{background:#eceef2!important;color:#15161a!important}
+#sammyUi #sammyProtocolAdjustBtn.placing{background:rgba(231,191,74,.92)!important;color:#17181b!important;border-color:rgba(255,224,127,.95)!important}
+body.sammy-protocol-placement canvas{cursor:crosshair!important}
+.sammyProtocolDynamicBadge{display:inline-grid;place-items:center;margin-left:4px;min-width:13px;height:13px;padding:0 3px;border:1px solid rgba(190,213,235,.42);border-radius:6px;color:#c9dceb;font-size:7px;font-style:italic;font-weight:780;line-height:1;vertical-align:1px}
+.sammyProtocolPoseMeasureItem.selected .sammyProtocolDynamicBadge{border-color:rgba(40,44,50,.35);color:#32363c}
+.sammyProtocolHoldInfo canvas{display:block;width:100%;height:auto;max-height:calc(62vh - 16px);object-fit:contain;border-radius:9px;background:#fff;user-select:none}
+.sammyProtocolPlacementHint{position:fixed;z-index:193;left:50%;top:max(70px,calc(env(safe-area-inset-top) + 54px));transform:translateX(-50%);padding:8px 11px;border-radius:999px;background:rgba(20,21,24,.94);border:1px solid rgba(255,221,111,.5);color:#ffdf72;font-size:9px;font-weight:720;pointer-events:none}
+@media(max-width:390px){
+ #sammyUi .sammyProtocolIconBtn{flex-basis:32px!important;width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important}
+ .sammyProtocolHeadIcons{gap:3px!important}
+ #sammyUi .sammyProtocolIconBtn svg{width:17px;height:17px}
+}

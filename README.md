@@ -1,4 +1,13 @@
 # Sammy
+## v0.8.19.6 · PROT edit + dynamic search + ANSUR-94 audit
+
+- Kommentarpopup ist auf iPhone/Safari ein echtes UI-Eingabefeld und blockiert Picking/Orbit darunter.
+- Neuer einheitlicher XYZ-Button in der PROT-Kopfzeile für Landmark- und Maß-Offsets. Landmarke kann zusätzlich direkt auf dem Mannequin neu gesetzt werden; Spiegelpaare übernehmen die Position symmetrisch.
+- Dynamisch gesuchte Maße tragen ein kleines `d`; nur beim ausgewählten dynamischen Maß wird dessen tatsächlicher Suchbereich am Mesh eingeblendet.
+- PROT enthält nur direkte ANSUR-II-Dimensionskonzepte: die beiden Sammy-Ableitungen `torso_height`/`upperleg_height` wurden entfernt; Biceps Circumference, Flexed und Forearm Circumference, Flexed sind als ausdrücklich nicht äquivalente MEAS-Proxies aufgenommen.
+- Vollständiges 94er ANSUR-II↔Sammy-Audit liegt als JSON/MD bei (22 direkt, 2 Proxy, 70 derzeit nicht implementiert).
+- Referenz-Crops sind zu `ansur-crops-atlas.jpg/json` zusammengefasst; Einzel-JPGs werden nicht mehr im GitHub-Paket benötigt.
+
 ## v0.8.19.5 · PROT reference + comments + compact collapse
 
 - PROT header uses one consistent SVG icon family: previous, info toggle, comment, correct, incorrect, random, next.

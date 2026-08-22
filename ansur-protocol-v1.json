@@ -180,6 +180,25 @@
       "description": "Participant first spreads the legs only enough to place the anthropometer blade near the crotch. The heels are then brought back together before the actual height is read.",
       "implementationNote": "Nur Setup-Schritt zum Einführen der Anthropometer-Klinge. Für die eigentliche Messung werden die Fersen wieder zusammengeführt (zweiter Pose-Schritt).",
       "implementationKind": "native_world_constraints"
+    },
+    "arm_flexed_forward": {
+      "id": "arm_flexed_forward",
+      "label": "Flexed arm circumference pose",
+      "kind": "derived_pose",
+      "base": "standing",
+      "modifiers": [
+        "right_arm_flexed_forward"
+      ],
+      "conditions": [
+        "right upper arm horizontal",
+        "elbow 90°",
+        "fist tightly clenched"
+      ],
+      "pdfPage": 96,
+      "image": "ansur-page-96.jpg",
+      "description": "Standing; right upper arm extended forward horizontally, elbow flexed 90°, fist tightly clenched.",
+      "implementationNote": "The protocol pose is defined, but the current MEAS geometry remains a standing/T-pose proxy and must not be treated as direct ANSUR equivalence until this modifier is validated.",
+      "implementationKind": "manual_pending_base_validation"
     }
   },
   "landmarks": {
@@ -432,6 +451,27 @@
       "DESCRIPTION": "No drawn landmark. ANSUR defines the ankle measure as the minimum horizontal circumference of the ankle.",
       "heading": "Dynamic measurement zone · Ankle",
       "cropImage": "crop-measure-ankle_circumference.jpg"
+    },
+    "biceps_point": {
+      "label": "Biceps Point · right",
+      "region": "rightUpperArm",
+      "pair": false,
+      "pdfPage": 35,
+      "image": "ansur-page-35.jpg",
+      "cropImage": "crop-landmark-biceps_point.jpg",
+      "DESCRIPTION": "The highest point of the right flexed biceps brachii muscle as viewed from the participant’s right side.",
+      "PROCEDURE": "Participant stands with the right upper arm extended forward horizontally and the elbow flexed 90°. The fist is tightly clenched and held facing the head. Locate the highest point on the flexed biceps brachii muscle and mark a short line perpendicular to the long axis of the upper arm.",
+      "mappingNote": "PROT currently places a geometric proxy until the flexed-arm base modifier is validated."
+    },
+    "elbow_crease": {
+      "label": "Elbow Crease · right",
+      "region": "rightForeArm",
+      "pair": false,
+      "pdfPage": 125,
+      "image": "ansur-page-125.jpg",
+      "cropImage": "crop-landmark-elbow_crease.jpg",
+      "DESCRIPTION": "The skin crease on the inside of the elbow joint when the elbow is flexed 90°.",
+      "mappingNote": "Undrawn ANSUR landmark; PROT uses the right elbow/forearm junction as a review proxy until the flexed-arm modifier is validated."
     }
   },
   "measures": [
@@ -747,54 +787,6 @@
       "cropImage": "crop-measure-crotch_height.jpg"
     },
     {
-      "id": "torso_height",
-      "label": "Torso Height · derived",
-      "sourceName": "DERIVED: Acromial Height - Crotch Height",
-      "pdfPage": null,
-      "image": null,
-      "pose": "standing",
-      "steps": [
-        "standing"
-      ],
-      "landmarks": [
-        "acromion",
-        "crotch"
-      ],
-      "region": "whole",
-      "derived": {
-        "sources": [
-          "acromial_height",
-          "crotch_height"
-        ],
-        "pages": [
-          88,
-          114
-        ]
-      },
-      "allowableObserverErrorMm": null,
-      "observerErrorKind": "derived_no_direct_ansur_limit",
-      "observerErrorSources": [
-        {
-          "id": "acromial_height",
-          "label": "Acromial Height",
-          "allowableObserverErrorMm": 7,
-          "pdfPage": 235,
-          "reportPage": 225,
-          "image": "ansur-page-235.jpg"
-        },
-        {
-          "id": "crotch_height",
-          "label": "Crotch Height",
-          "allowableObserverErrorMm": 10,
-          "pdfPage": 235,
-          "reportPage": 225,
-          "image": "ansur-page-235.jpg"
-        }
-      ],
-      "observerErrorNote": "No direct ANSUR allowable-observer-error value exists for this Sammy-derived difference. The two source dimensions are shown separately; no combined official limit is claimed.",
-      "cropImage": "crop-measure-torso_height.jpg"
-    },
-    {
       "id": "neck_circumference",
       "label": "Neck Circumference",
       "sourceName": "6.4.63 Neck Circumference",
@@ -1043,6 +1035,63 @@
       "cropImage": "crop-measure-lowerarm_length.jpg"
     },
     {
+      "id": "upperarm_circumference",
+      "label": "Biceps Circumference, Flexed",
+      "sourceName": "6.4.10 Biceps Circumference, Flexed",
+      "pdfPage": 96,
+      "image": "ansur-page-96.jpg",
+      "cropImage": "crop-measure-upperarm_circumference.jpg",
+      "pose": "arm_flexed_forward",
+      "steps": [
+        "arm_flexed_forward"
+      ],
+      "landmarks": [
+        "biceps_point"
+      ],
+      "region": "rightUpperArm",
+      "derived": null,
+      "DESCRIPTION": "The circumference of the right upper arm at the biceps point landmark.",
+      "DRAWN LANDMARK": "Biceps point, right.",
+      "PROCEDURE": "Participant stands. The right upper arm is extended forward horizontally and the elbow is flexed about 90°. Place a tape around the upper arm at the level of the drawn biceps point landmark. The fist is clenched and held facing the head. The participant exerts maximum effort in “making a muscle.” The tape is perpendicular to the long axis of the upper arm and only enough tension is used to maintain skin contact.",
+      "INSTRUMENT": "Steel tape.",
+      "heading": "6.4.10 Biceps Circumference, Flexed",
+      "allowableObserverErrorMm": 6,
+      "observerErrorPdfPage": 235,
+      "observerErrorReportPage": 225,
+      "observerErrorKind": "direct_ansur",
+      "mappingQuality": "proxy_pose_mismatch",
+      "mappingNote": "MEAS upperarm_circumference is a dynamic mid-upper-arm maximum in the current body pose; it is not yet equivalent to the ANSUR flexed-arm protocol. Included here specifically so this mismatch can be reviewed."
+    },
+    {
+      "id": "forearm_circumference",
+      "label": "Forearm Circumference, Flexed",
+      "sourceName": "6.4.39 Forearm Circumference, Flexed",
+      "pdfPage": 125,
+      "image": "ansur-page-125.jpg",
+      "cropImage": "crop-measure-forearm_circumference.jpg",
+      "pose": "arm_flexed_forward",
+      "steps": [
+        "arm_flexed_forward"
+      ],
+      "landmarks": [
+        "elbow_crease"
+      ],
+      "region": "rightForeArm",
+      "derived": null,
+      "DESCRIPTION": "The circumference at the elbow crease of the flexed right forearm.",
+      "UNDRAWN LANDMARK": "Elbow crease.",
+      "PROCEDURE": "Participant stands with the upper arm extended forward horizontally, the elbow flexed 90°, and the fist tightly clenched. Measure the forearm circumference at the level where the bottom edge of the tape passes across the elbow crease, in a plane perpendicular to the long axis of the forearm. Use only enough tension to maintain skin contact.",
+      "INSTRUMENT": "Steel tape.",
+      "CAUTION": "Urge the participant to clench the fist tightly.",
+      "heading": "6.4.39 Forearm Circumference, Flexed",
+      "allowableObserverErrorMm": 5,
+      "observerErrorPdfPage": 235,
+      "observerErrorReportPage": 225,
+      "observerErrorKind": "direct_ansur",
+      "mappingQuality": "proxy_pose_mismatch",
+      "mappingNote": "MEAS forearm_circumference is a dynamic maximum along the forearm in the current body pose; ANSUR measures specifically at the elbow crease in the flexed-arm pose. Included for explicit review, not claimed as equivalent."
+    },
+    {
       "id": "tibiale_height",
       "label": "Tibial Height",
       "sourceName": "6.4.82 Tibial Height",
@@ -1068,54 +1117,6 @@
       "observerErrorImage": "ansur-page-237.jpg",
       "observerErrorKind": "direct_ansur",
       "cropImage": "crop-measure-tibiale_height.jpg"
-    },
-    {
-      "id": "upperleg_height",
-      "label": "Upperleg Height · derived",
-      "sourceName": "DERIVED: Trochanterion Height - Tibial Height",
-      "pdfPage": null,
-      "image": null,
-      "pose": "standing",
-      "steps": [
-        "standing"
-      ],
-      "landmarks": [
-        "trochanterion",
-        "tibiale"
-      ],
-      "region": "rightLeg",
-      "derived": {
-        "sources": [
-          "trochanterion_height",
-          "tibiale_height"
-        ],
-        "pages": [
-          170,
-          168
-        ]
-      },
-      "allowableObserverErrorMm": null,
-      "observerErrorKind": "derived_no_direct_ansur_limit",
-      "observerErrorSources": [
-        {
-          "id": "trochanterion_height",
-          "label": "Trochanterion Height",
-          "allowableObserverErrorMm": 4,
-          "pdfPage": 237,
-          "reportPage": 227,
-          "image": "ansur-page-237.jpg"
-        },
-        {
-          "id": "tibiale_height",
-          "label": "Tibial Height",
-          "allowableObserverErrorMm": 2,
-          "pdfPage": 237,
-          "reportPage": 227,
-          "image": "ansur-page-237.jpg"
-        }
-      ],
-      "observerErrorNote": "No direct ANSUR allowable-observer-error value exists for this Sammy-derived difference. The two source dimensions are shown separately; no combined official limit is claimed.",
-      "cropImage": "crop-measure-upperleg_height.jpg"
     },
     {
       "id": "shoulder_length",
@@ -1346,7 +1347,9 @@
       83,
       85,
       86
-    ]
+    ],
+    "measureScope": "Only direct ANSUR II dimensions are included in PROT. Sammy-only derived/internal dimensions are excluded from the protocol review list.",
+    "mappingQuality": "Direct equivalence and explicit MEAS proxies are distinguished. Proxy measures are included only to expose gaps that must be corrected."
   },
   "basePoses": {
     "standing": {
@@ -1482,6 +1485,13 @@
       "kind": "pose_modifier",
       "description": "Future seated-protocol instruction; not auto-applied in rescue mode.",
       "constraintMode": "two_bone_contact_target",
+      "automation": "manual_pending_base_validation"
+    },
+    "right_arm_flexed_forward": {
+      "label": "Right arm forward · elbow 90° · fist clenched",
+      "kind": "pose_modifier",
+      "description": "Required for ANSUR Biceps Circumference, Flexed and Forearm Circumference, Flexed. Kept as a protocol instruction until this special arm pose is visually validated.",
+      "constraintMode": "upperarm_forward_elbow_90_fist",
       "automation": "manual_pending_base_validation"
     }
   },

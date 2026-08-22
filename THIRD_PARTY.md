@@ -29,4 +29,4 @@ The new `ansur-protocol-v1.json` and `ansur-page-*.jpg` assets are derived only 
 
 ## v0.8.19.0 · User-provided pose-source FBX files
 
-`sammy-ansur-standing-source.fbx` and `sammy-ansur-sitting-source.fbx` are copies of the two FBX motion files supplied by the project user in this conversation. Sammy uses them only as local pose-source assets for the PROT audit layer. The app does not present them as ANSUR source material; the ANSUR posture requirements still come from NATICK/TR-11/017.
+`sammy-ansur-standing-source.fbx` and `sammy-ansur-sitting-source.fbx` are copies of the two FBX motion files supplied by the project user in this conversation. They are retained only as local reference assets for the PROT audit layer; v0.8.19.6 does not retarget them at runtime. The app does not present them as ANSUR source material; the ANSUR posture requirements still come from NATICK/TR-11/017.

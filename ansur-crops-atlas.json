@@ -1,0 +1,260 @@
+{
+  "schema": "sammy-ansur-crop-atlas-v1",
+  "version": "0.8.19.6",
+  "width": 2048,
+  "height": 5499,
+  "items": {
+    "crop-landmark-vertex.jpg": {
+      "x": 8,
+      "y": 8,
+      "w": 751,
+      "h": 707
+    },
+    "crop-landmark-crotch.jpg": {
+      "x": 767,
+      "y": 8,
+      "w": 751,
+      "h": 707
+    },
+    "crop-landmark-buttock_posterior.jpg": {
+      "x": 8,
+      "y": 723,
+      "w": 751,
+      "h": 707
+    },
+    "crop-landmark-gluteal_furrow.jpg": {
+      "x": 767,
+      "y": 723,
+      "w": 224,
+      "h": 633
+    },
+    "crop-landmark-chest_point.jpg": {
+      "x": 999,
+      "y": 723,
+      "w": 389,
+      "h": 587
+    },
+    "crop-landmark-trapezius.jpg": {
+      "x": 1396,
+      "y": 723,
+      "w": 462,
+      "h": 576
+    },
+    "crop-landmark-trochanterion.jpg": {
+      "x": 8,
+      "y": 1438,
+      "w": 236,
+      "h": 541
+    },
+    "crop-landmark-tibiale.jpg": {
+      "x": 252,
+      "y": 1438,
+      "w": 242,
+      "h": 497
+    },
+    "crop-landmark-waist_omphalion.jpg": {
+      "x": 502,
+      "y": 1438,
+      "w": 365,
+      "h": 497
+    },
+    "crop-landmark-biceps_point.jpg": {
+      "x": 875,
+      "y": 1438,
+      "w": 420,
+      "h": 465
+    },
+    "crop-landmark-infrathyroid.jpg": {
+      "x": 1303,
+      "y": 1438,
+      "w": 411,
+      "h": 459
+    },
+    "crop-landmark-acromion.jpg": {
+      "x": 8,
+      "y": 1987,
+      "w": 388,
+      "h": 449
+    },
+    "crop-landmark-neck_base_points.jpg": {
+      "x": 404,
+      "y": 1987,
+      "w": 346,
+      "h": 429
+    },
+    "crop-landmark-radiale.jpg": {
+      "x": 758,
+      "y": 1987,
+      "w": 385,
+      "h": 421
+    },
+    "crop-measure-upperarm_circumference.jpg": {
+      "x": 1151,
+      "y": 1987,
+      "w": 780,
+      "h": 420
+    },
+    "crop-measure-forearm_circumference.jpg": {
+      "x": 8,
+      "y": 2444,
+      "w": 780,
+      "h": 415
+    },
+    "crop-landmark-elbow_crease.jpg": {
+      "x": 796,
+      "y": 2444,
+      "w": 360,
+      "h": 400
+    },
+    "crop-landmark-buttock_lateral.jpg": {
+      "x": 1164,
+      "y": 2444,
+      "w": 186,
+      "h": 378
+    },
+    "crop-landmark-cervicale.jpg": {
+      "x": 1358,
+      "y": 2444,
+      "w": 216,
+      "h": 346
+    },
+    "crop-measure-thigh_circumference.jpg": {
+      "x": 8,
+      "y": 2867,
+      "w": 648,
+      "h": 335
+    },
+    "crop-measure-shoulder_length.jpg": {
+      "x": 664,
+      "y": 2867,
+      "w": 648,
+      "h": 335
+    },
+    "crop-measure-neck_base_circumference.jpg": {
+      "x": 1320,
+      "y": 2867,
+      "w": 648,
+      "h": 335
+    },
+    "crop-measure-crotch_height.jpg": {
+      "x": 8,
+      "y": 3210,
+      "w": 648,
+      "h": 335
+    },
+    "crop-measure-chest_circumference.jpg": {
+      "x": 664,
+      "y": 3210,
+      "w": 648,
+      "h": 335
+    },
+    "crop-measure-waist_circumference.jpg": {
+      "x": 1320,
+      "y": 3210,
+      "w": 648,
+      "h": 335
+    },
+    "crop-measure-stature.jpg": {
+      "x": 8,
+      "y": 3553,
+      "w": 648,
+      "h": 335
+    },
+    "crop-measure-waist_depth.jpg": {
+      "x": 664,
+      "y": 3553,
+      "w": 648,
+      "h": 335
+    },
+    "crop-measure-waist_back_length.jpg": {
+      "x": 1320,
+      "y": 3553,
+      "w": 648,
+      "h": 335
+    },
+    "crop-measure-hip_breadth.jpg": {
+      "x": 8,
+      "y": 3896,
+      "w": 648,
+      "h": 334
+    },
+    "crop-measure-chest_breadth.jpg": {
+      "x": 664,
+      "y": 3896,
+      "w": 648,
+      "h": 334
+    },
+    "crop-measure-biacromial_breadth.jpg": {
+      "x": 1320,
+      "y": 3896,
+      "w": 648,
+      "h": 334
+    },
+    "crop-measure-upperarm_length.jpg": {
+      "x": 8,
+      "y": 4238,
+      "w": 648,
+      "h": 334
+    },
+    "crop-measure-chest_depth.jpg": {
+      "x": 664,
+      "y": 4238,
+      "w": 648,
+      "h": 334
+    },
+    "crop-measure-buttock_circumference.jpg": {
+      "x": 1320,
+      "y": 4238,
+      "w": 648,
+      "h": 333
+    },
+    "crop-measure-neck_circumference.jpg": {
+      "x": 8,
+      "y": 4580,
+      "w": 648,
+      "h": 330
+    },
+    "crop-measure-waist_breadth.jpg": {
+      "x": 664,
+      "y": 4580,
+      "w": 648,
+      "h": 330
+    },
+    "crop-measure-wrist_circumference.jpg": {
+      "x": 1320,
+      "y": 4580,
+      "w": 648,
+      "h": 330
+    },
+    "crop-measure-lowerarm_length.jpg": {
+      "x": 8,
+      "y": 4918,
+      "w": 648,
+      "h": 312
+    },
+    "crop-measure-tibiale_height.jpg": {
+      "x": 664,
+      "y": 4918,
+      "w": 648,
+      "h": 275
+    },
+    "crop-measure-calf_circumference.jpg": {
+      "x": 1320,
+      "y": 4918,
+      "w": 648,
+      "h": 257
+    },
+    "crop-landmark-stylion.jpg": {
+      "x": 8,
+      "y": 5238,
+      "w": 545,
+      "h": 253
+    },
+    "crop-measure-ankle_circumference.jpg": {
+      "x": 561,
+      "y": 5238,
+      "w": 648,
+      "h": 219
+    }
+  }
+}
