@@ -1,3 +1,19 @@
+# SAMMY / BODY LAB
+
+## v0.8.19.8 · Audit correction + constrained editing
+
+This is an incremental correction pass based on the v0.8.19.7 user audit. It preserves approved geometry and manual calibration instead of resetting dynamic points.
+
+- PROT measure-list taps no longer auto-scroll.
+- Dynamic landmark = auto mesh anchor + persistent user calibration bias.
+- Linked landmarks can move along the associated measurement line.
+- Circumference planes can be tilted in two axes for audit.
+- Upper-arm region masks exclude shoulder/torso spill.
+- The audited +1.6 cm neck-base correction is promoted into shared MEAS geometry.
+- Buttock lateral, trapezius, waist-back path and shoulder surface path were corrected/reopened.
+- MEAS remains the geometric source of truth; PROT remains its review layer.
+- Flat GitHub package; no individual ANSUR crop JPGs (single atlas only).
+
 # Sammy
 ## v0.8.19.7 · Canonical ANSUR measurement pass
 

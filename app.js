@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {unzipSync} from "https://esm.sh/fflate@0.8.2";
 
-const SAMMY_APP_VERSION="0.8.19.7";
+const SAMMY_APP_VERSION="0.8.19.8";
 
 const HF="https://huggingface.co/nvidia/SOMA-X/resolve/main/";
 const SHAPE=HF+"SOMA_neutral.npz?download=true";
@@ -5927,7 +5927,7 @@ function sammyProtocolRenderReviewTabs(){const measure=sammyProtocolActiveTab===
 function sammyProtocolFocusState(){return sammyProtocolFocusKind==="landmark"&&sammyProtocolSelectedLandmark?sammyProtocolLandmarkState(sammyProtocolSelectedLandmark):sammyProtocolMeasureState(sammyProtocolMeasure()?.id)}
 function sammyProtocolRenderFocusControls(){const state=sammyProtocolFocusState(),st=state?.status||"unchecked",ok=$("#sammyProtocolStatusOk"),bad=$("#sammyProtocolStatusFlag"),cb=$("#sammyProtocolCommentBtn"),ab=$("#sammyProtocolAdjustBtn");if(ok){ok.classList.toggle("active",st==="ok"||st==="adjusted");ok.setAttribute("aria-pressed",ok.classList.contains("active")?"true":"false")}if(bad){bad.classList.toggle("active",st==="flag");bad.setAttribute("aria-pressed",bad.classList.contains("active")?"true":"false")}if(cb){cb.classList.toggle("has-comment",!!String(state?.comment||"").trim());cb.setAttribute("aria-pressed",sammyProtocolCommentVisible?"true":"false")}if(ab){ab.classList.toggle("active",sammyProtocolAdjustVisible);ab.classList.toggle("placing",sammyProtocolPlacementMode)}if(sammyProtocolAdjustVisible)sammyProtocolRenderAdjustPopup()}
 function sammyProtocolRenderFocusSummary(){const box=$("#sammyProtocolFocusSummary");if(!box)return;let title="—",value="—",meta="",status="unchecked";if(sammyProtocolFocusKind==="landmark"&&sammyProtocolSelectedLandmark){const lm=sammyProtocolData?.landmarks?.[sammyProtocolSelectedLandmark],st=sammyProtocolLandmarkState(sammyProtocolSelectedLandmark);title=lm?.label||sammyProtocolSelectedLandmark;value="●";meta=`Landmark · ${lm?.region||"Region"}`;status=st.status}else{const m=sammyProtocolMeasure(),st=m?sammyProtocolMeasureState(m.id):{status:"unchecked"},v=sammyProtocolLiveMeasure?.id===m?.id?sammyProtocolLiveMeasure.valueCm:null;title=m?.label||"Maß auswählen";value=Number.isFinite(v)?`${v.toFixed(1)} cm`:"—";meta=`Messung · ${m?.region||"Region"}`;status=st.status}box.className=`sammyProtocolFocusSummary ${sammyProtocolStatusClass(status)}`;box.innerHTML=`<b>${escapeHtml(title)}</b><strong>${escapeHtml(value)}</strong><small>${escapeHtml(meta)}</small>`;sammyProtocolRenderFocusControls()}
-function sammyProtocolRenderPoseMeasureList(results=sammyMeasureResultsCache,preparedMap=null,referenceProfile=null){const mount=$("#sammyProtocolPoseMeasureList");if(!mount)return;const currentBase=sammyProtocolBaseView,all=sammyProtocolData?.measures||[],profile=referenceProfile||sammyProtocolReferenceProfile(sammyCurrentBodyHeightCm());mount.innerHTML="";for(const m of all){const st=sammyProtocolMeasureState(m.id),sameBase=sammyProtocolMeasureBase(m)===currentBase,row=document.createElement("div"),hasComment=!!String(st.comment||"").trim();row.className=`sammyProtocolPoseMeasureItem ${sammyProtocolStatusClass(st.status)}${m.id===sammyProtocolSelectedMeasure?" selected":""}${sameBase?" in-pose":" other-pose"}${hasComment?"":" no-comment"}`;const line=document.createElement("div");line.className="sammyProtocolPoseMeasureRow";const main=document.createElement("button");main.type="button";main.className="sammyProtocolPoseMeasureMain";let val="→",ref="—";if(sameBase){const safe=preparedMap?.get(m.id)||sammyProtocolStrictMeasureGeometry(m,results?.[m.id]),v=Number(safe.valueCm),rv=sammyProtocolReferenceValue(m.id,profile);val=Number.isFinite(v)?v.toFixed(1)+" cm":"—";ref=Number.isFinite(rv)?rv.toFixed(1):"—"}main.innerHTML=`<span class="sammyProtocolMeasureName">${escapeHtml(m.label)}${sammyProtocolIsDynamicMeasure(m.id)?`<sup class="sammyProtocolDynamicBadge" title="Dynamisch im Suchbereich bestimmt">d</sup>`:""}</span><em class="sammyProtocolRefValue">${ref}</em><strong class="sammyProtocolRealValue">${val}</strong>`;main.onclick=()=>sammyProtocolSelectMeasure(m.id,true);line.append(main);if(hasComment){const c=document.createElement("button");c.type="button";c.className="sammyProtocolRowCommentBtn";c.setAttribute("aria-label","Kommentar anzeigen");c.title="Kommentar";c.innerHTML=sammyProtocolCommentIconSvg();c.onclick=e=>{e.stopPropagation();sammyProtocolToggleRowComment("measure",m.id,st.comment)};line.append(c)}row.append(line);mount.appendChild(row)}}
+function sammyProtocolRenderPoseMeasureList(results=sammyMeasureResultsCache,preparedMap=null,referenceProfile=null){const mount=$("#sammyProtocolPoseMeasureList");if(!mount)return;const currentBase=sammyProtocolBaseView,all=sammyProtocolData?.measures||[],profile=referenceProfile||sammyProtocolReferenceProfile(sammyCurrentBodyHeightCm());mount.innerHTML="";for(const m of all){const st=sammyProtocolMeasureState(m.id),sameBase=sammyProtocolMeasureBase(m)===currentBase,row=document.createElement("div"),hasComment=!!String(st.comment||"").trim();row.className=`sammyProtocolPoseMeasureItem ${sammyProtocolStatusClass(st.status)}${m.id===sammyProtocolSelectedMeasure?" selected":""}${sameBase?" in-pose":" other-pose"}${hasComment?"":" no-comment"}`;const line=document.createElement("div");line.className="sammyProtocolPoseMeasureRow";const main=document.createElement("button");main.type="button";main.className="sammyProtocolPoseMeasureMain";let val="→",ref="—";if(sameBase){const safe=preparedMap?.get(m.id)||sammyProtocolStrictMeasureGeometry(m,results?.[m.id]),v=Number(safe.valueCm),rv=sammyProtocolReferenceValue(m.id,profile);val=Number.isFinite(v)?v.toFixed(1)+" cm":"—";ref=Number.isFinite(rv)?rv.toFixed(1):"—"}main.innerHTML=`<span class="sammyProtocolMeasureName">${escapeHtml(m.label)}${sammyProtocolIsDynamicMeasure(m.id)?`<sup class="sammyProtocolDynamicBadge" title="Dynamisch im Suchbereich bestimmt">d</sup>`:""}</span><em class="sammyProtocolRefValue">${ref}</em><strong class="sammyProtocolRealValue">${val}</strong>`;main.onclick=()=>sammyProtocolSelectMeasure(m.id,false);line.append(main);if(hasComment){const c=document.createElement("button");c.type="button";c.className="sammyProtocolRowCommentBtn";c.setAttribute("aria-label","Kommentar anzeigen");c.title="Kommentar";c.innerHTML=sammyProtocolCommentIconSvg();c.onclick=e=>{e.stopPropagation();sammyProtocolToggleRowComment("measure",m.id,st.comment)};line.append(c)}row.append(line);mount.appendChild(row)}}
 function sammyProtocolSetTab(tab){if(!["measure","landmark"].includes(tab))return;sammyProtocolCancelPlacement();sammyProtocolActiveTab=tab;sammyProtocolFocusKind=tab;if(tab==="landmark"&&!sammyProtocolSelectedLandmark)sammyProtocolSelectedLandmark=sammyProtocolMeasure()?.landmarks?.[0]||sammyProtocolAllLandmarkIds()[0]||null;sammyProtocolHideHoldInfo();sammyProtocolHideCommentPopup();sammyProtocolHideRowComment();sammyProtocolRenderReviewTabs();sammyProtocolRenderLandmarkList();sammyProtocolRenderFocusSummary();sammyProtocolRefreshOverlay()}
 function sammyProtocolStepFocus(delta){if(sammyProtocolActiveTab==="landmark"){const a=sammyProtocolAllLandmarkIds();if(!a.length)return;const i=Math.max(0,a.indexOf(sammyProtocolSelectedLandmark)),j=(i+delta+a.length)%a.length;sammyProtocolSelectLandmark(a[j],false);return}sammyProtocolStepMeasure(delta)}
 function sammyProtocolSetFocusedStatus(status){if(sammyProtocolFocusKind==="landmark"&&sammyProtocolSelectedLandmark){const st=sammyProtocolLandmarkState(sammyProtocolSelectedLandmark);st.status=status}else{const m=sammyProtocolMeasure();if(!m)return;sammyProtocolMeasureState(m.id).status=status}sammyProtocolSaveState();sammyProtocolRender()}
@@ -5969,7 +5969,7 @@ function sammyProtocolPreview(id){const q=sammyProtocolData?.poses?.[id]||sammyP
 
 async function sammyProtocolEnter(){if(sammyProtocolSession)return;await sammyProtocolLoadData();sammyProtocolSession={euler:poseEulerDeg?Float32Array.from(poseEulerDeg):null,relative:lastAppliedRelative3?Float32Array.from(lastAppliedRelative3):null,camera:sammyCaptureCameraState()};document.body.classList.add("sammy-protocol-mode");stopPoseAnimation(false);sammyProtocolBaseView=sammyProtocolMeasureBase(sammyProtocolMeasure());sammyProtocolApplyCurrentPose();sammyCameraTo("measure",700,false);sammyProtocolRender()}
 function sammyProtocolExit(restoreCamera=true){if(!sammyProtocolSession)return;sammyProtocolHideHoldInfo();sammyProtocolHideCommentPopup();sammyProtocolHideAdjustPopup();sammyProtocolClearOverlay();if(sammyProtocolAidGroup){scene.remove(sammyProtocolAidGroup);sammyProtocolAidGroup.traverse?.(o=>{o.geometry?.dispose?.();o.material?.dispose?.()});sammyProtocolAidGroup=null}const s=sammyProtocolSession;sammyProtocolSession=null;sammyProtocolPreviewPose=null;document.body.classList.remove("sammy-protocol-mode");if(s.relative)sammyApplyMeasurementRelative(s.relative,"PROT → vorherige Pose");else if(s.euler&&poseEulerDeg){poseEulerDeg.set(s.euler);applyPoseToRest(currentDisplayRest(),true)}if(restoreCamera&&s.camera)sammyCameraTweenToState(s.camera,650,true)}
-async function sammyProtocolInitUI(){try{await sammyProtocolLoadData();await sammyProtocolLoadReferenceData();sammyProtocolLoadState();sammyProtocolMigrateV8197();sammyProtocolInstallPicking();sammyProtocolRender()}catch(e){sammyReportError(e,{source:"ANSUR Protocol Lab init"});return}document.querySelectorAll("[data-proto-tab]").forEach(b=>b.onclick=()=>sammyProtocolSetTab(b.dataset.protoTab));document.querySelectorAll("[data-proto-base]").forEach(b=>b.onclick=()=>sammyProtocolSelectBase(b.dataset.protoBase));const ib=$("#sammyProtocolInfoBtn");if(ib)ib.onclick=()=>sammyProtocolToggleInfo();const cb=$("#sammyProtocolCommentBtn"),cpt=$("#sammyProtocolCommentPopupText"),ab=$("#sammyProtocolAdjustBtn"),ap=$("#sammyProtocolAdjustPopup");if(cb)cb.onclick=()=>sammyProtocolToggleCommentPopup();if(cpt)cpt.oninput=e=>sammyProtocolSaveFocusedComment(e.target.value);if(ab)ab.onclick=()=>sammyProtocolToggleAdjustPopup();for(const el of [$("#sammyProtocolCommentPopup"),cpt,ap])if(el)for(const ev of ["pointerdown","pointerup","click","touchstart","touchend"])el.addEventListener(ev,e=>e.stopPropagation(),{passive:true});for(const [id,i] of [["#sammyProtocolAdjustX",0],["#sammyProtocolAdjustY",1],["#sammyProtocolAdjustZ",2]]){const el=$(id);if(el)el.oninput=e=>sammyProtocolSetFocusedOffset(i,e.target.value)}const place=$("#sammyProtocolPlaceLandmark"),adjReset=$("#sammyProtocolAdjustReset");if(place)place.onclick=()=>sammyProtocolStartPlacement();if(adjReset)adjReset.onclick=()=>sammyProtocolResetFocusedOffset();const sel=$("#sammyProtocolMeasureSelect");if(sel)sel.onchange=e=>sammyProtocolSelectMeasure(e.target.value);const prev=$("#sammyProtocolPrev"),next=$("#sammyProtocolNext");if(prev)prev.onclick=()=>sammyProtocolStepFocus(-1);if(next)next.onclick=()=>sammyProtocolStepFocus(1);const ok=$("#sammyProtocolStatusOk"),bad=$("#sammyProtocolStatusFlag");if(ok)ok.onclick=()=>sammyProtocolSetFocusedStatus("ok");if(bad)bad.onclick=()=>sammyProtocolSetFocusedStatus("flag");const mirrorBtn=$("#sammyProtocolMirror");if(mirrorBtn){mirrorBtn.disabled=true;mirrorBtn.title="Bilaterale Landmark-Gruppen sind fest gespiegelt gekoppelt."}const measureLineBtn=$("#sammyProtocolMeasureLine");if(measureLineBtn)measureLineBtn.onclick=()=>{sammyProtocolMeasureLineVisible=!sammyProtocolMeasureLineVisible;sammyProtocolRender()};const zones=$("#sammyProtocolZones");if(zones)zones.onclick=()=>{sammyProtocolRegionsVisible=!sammyProtocolRegionsVisible;sammyProtocolRender()};const labels=$("#sammyProtocolLabels");if(labels)labels.onclick=()=>{sammyProtocolLabelsVisible=!sammyProtocolLabelsVisible;sammyProtocolRender()};const rand=$("#sammyProtocolRandom");if(rand)rand.onclick=()=>sammyProtocolRandomize(false);const randWide=$("#sammyProtocolRandomWide");if(randWide)randWide.onclick=()=>sammyProtocolRandomize(true);const resetBody=$("#sammyProtocolResetBody");if(resetBody)resetBody.onclick=sammyProtocolResetBody;const lmReset=$("#sammyProtocolLandmarkReset");if(lmReset)lmReset.onclick=sammyProtocolResetLandmark;for(const [id,i] of [["#sammyProtocolX",0],["#sammyProtocolY",1],["#sammyProtocolZ",2]]){const el=$(id);if(el)el.oninput=e=>sammyProtocolAdjust(i,e.target.value)}const lc=$("#sammyProtocolComment");if(lc)lc.oninput=e=>{if(!sammyProtocolSelectedLandmark)return;sammyProtocolLandmarkState(sammyProtocolSelectedLandmark).comment=e.target.value;sammyProtocolSaveState()};const mc=$("#sammyProtocolMeasureComment");if(mc)mc.oninput=e=>{const m=sammyProtocolMeasure();if(!m)return;sammyProtocolMeasureState(m.id).comment=e.target.value;sammyProtocolSaveState()};document.querySelectorAll("[data-proto-status]").forEach(b=>b.onclick=()=>sammyProtocolSetStatus(b.dataset.protoStatus));document.querySelectorAll("[data-proto-measure-status]").forEach(b=>b.onclick=()=>sammyProtocolSetMeasureStatus(b.dataset.protoMeasureStatus));const poseOk=$("#sammyProtocolPoseOk"),poseFlag=$("#sammyProtocolPoseFlag"),poseReset=$("#sammyProtocolPoseReset");if(poseOk)poseOk.onclick=()=>sammyProtocolSetPoseStatus("ok");if(poseFlag)poseFlag.onclick=()=>sammyProtocolSetPoseStatus("flag");if(poseReset)poseReset.onclick=()=>{sammyProtocolPreviewPose=null;sammyProtocolApplyCurrentPose();sammyProtocolRender()};const doc=$("#sammyProtocolDocOpen");if(doc)doc.onclick=sammyProtocolOpenImage;const imgClose=$("#sammyProtocolImageClose");if(imgClose)imgClose.onclick=sammyProtocolCloseImage;const imgModal=$("#sammyProtocolImageModal");if(imgModal)imgModal.onclick=e=>{if(e.target.id==="sammyProtocolImageModal")sammyProtocolCloseImage()};const ex=$("#sammyProtocolExport");if(ex)ex.onclick=sammyProtocolExport;const dx=$("#sammyProtocolDiagExport");if(dx)dx.onclick=sammyDownloadDiagnostics;const reset=$("#sammyProtocolResetAudit");if(reset)reset.onclick=()=>{if(!confirm("Protocol-/Landmark-Audit wirklich löschen?"))return;localStorage.removeItem(SAMMY_PROTOCOL_KEY);sammyProtocolState=sammyProtocolBlankState();sammyProtocolRender()}}
+async function sammyProtocolInitUI(){try{await sammyProtocolLoadData();await sammyProtocolLoadReferenceData();sammyProtocolLoadState();sammyProtocolMigrateV8197();sammyProtocolMigrateV8198();sammyProtocolInstallPicking();sammyProtocolRender()}catch(e){sammyReportError(e,{source:"ANSUR Protocol Lab init"});return}document.querySelectorAll("[data-proto-tab]").forEach(b=>b.onclick=()=>sammyProtocolSetTab(b.dataset.protoTab));document.querySelectorAll("[data-proto-base]").forEach(b=>b.onclick=()=>sammyProtocolSelectBase(b.dataset.protoBase));const ib=$("#sammyProtocolInfoBtn");if(ib)ib.onclick=()=>sammyProtocolToggleInfo();const cb=$("#sammyProtocolCommentBtn"),cpt=$("#sammyProtocolCommentPopupText"),ab=$("#sammyProtocolAdjustBtn"),ap=$("#sammyProtocolAdjustPopup");if(cb)cb.onclick=()=>sammyProtocolToggleCommentPopup();if(cpt)cpt.oninput=e=>sammyProtocolSaveFocusedComment(e.target.value);if(ab)ab.onclick=()=>sammyProtocolToggleAdjustPopup();for(const el of [$("#sammyProtocolCommentPopup"),cpt,ap])if(el)for(const ev of ["pointerdown","pointerup","click","touchstart","touchend"])el.addEventListener(ev,e=>e.stopPropagation(),{passive:true});for(const [id,i] of [["#sammyProtocolAdjustX",0],["#sammyProtocolAdjustY",1],["#sammyProtocolAdjustZ",2]]){const el=$(id);if(el)el.oninput=e=>sammyProtocolSetFocusedOffset(i,e.target.value)}const place=$("#sammyProtocolPlaceLandmark"),adjReset=$("#sammyProtocolAdjustReset");if(place)place.onclick=()=>sammyProtocolStartPlacement();if(adjReset)adjReset.onclick=()=>sammyProtocolResetFocusedOffset();const sel=$("#sammyProtocolMeasureSelect");if(sel)sel.onchange=e=>sammyProtocolSelectMeasure(e.target.value);const prev=$("#sammyProtocolPrev"),next=$("#sammyProtocolNext");if(prev)prev.onclick=()=>sammyProtocolStepFocus(-1);if(next)next.onclick=()=>sammyProtocolStepFocus(1);const ok=$("#sammyProtocolStatusOk"),bad=$("#sammyProtocolStatusFlag");if(ok)ok.onclick=()=>sammyProtocolSetFocusedStatus("ok");if(bad)bad.onclick=()=>sammyProtocolSetFocusedStatus("flag");const mirrorBtn=$("#sammyProtocolMirror");if(mirrorBtn){mirrorBtn.disabled=true;mirrorBtn.title="Bilaterale Landmark-Gruppen sind fest gespiegelt gekoppelt."}const measureLineBtn=$("#sammyProtocolMeasureLine");if(measureLineBtn)measureLineBtn.onclick=()=>{sammyProtocolMeasureLineVisible=!sammyProtocolMeasureLineVisible;sammyProtocolRender()};const zones=$("#sammyProtocolZones");if(zones)zones.onclick=()=>{sammyProtocolRegionsVisible=!sammyProtocolRegionsVisible;sammyProtocolRender()};const labels=$("#sammyProtocolLabels");if(labels)labels.onclick=()=>{sammyProtocolLabelsVisible=!sammyProtocolLabelsVisible;sammyProtocolRender()};const rand=$("#sammyProtocolRandom");if(rand)rand.onclick=()=>sammyProtocolRandomize(false);const randWide=$("#sammyProtocolRandomWide");if(randWide)randWide.onclick=()=>sammyProtocolRandomize(true);const resetBody=$("#sammyProtocolResetBody");if(resetBody)resetBody.onclick=sammyProtocolResetBody;const lmReset=$("#sammyProtocolLandmarkReset");if(lmReset)lmReset.onclick=sammyProtocolResetLandmark;for(const [id,i] of [["#sammyProtocolX",0],["#sammyProtocolY",1],["#sammyProtocolZ",2]]){const el=$(id);if(el)el.oninput=e=>sammyProtocolAdjust(i,e.target.value)}const lc=$("#sammyProtocolComment");if(lc)lc.oninput=e=>{if(!sammyProtocolSelectedLandmark)return;sammyProtocolLandmarkState(sammyProtocolSelectedLandmark).comment=e.target.value;sammyProtocolSaveState()};const mc=$("#sammyProtocolMeasureComment");if(mc)mc.oninput=e=>{const m=sammyProtocolMeasure();if(!m)return;sammyProtocolMeasureState(m.id).comment=e.target.value;sammyProtocolSaveState()};document.querySelectorAll("[data-proto-status]").forEach(b=>b.onclick=()=>sammyProtocolSetStatus(b.dataset.protoStatus));document.querySelectorAll("[data-proto-measure-status]").forEach(b=>b.onclick=()=>sammyProtocolSetMeasureStatus(b.dataset.protoMeasureStatus));const poseOk=$("#sammyProtocolPoseOk"),poseFlag=$("#sammyProtocolPoseFlag"),poseReset=$("#sammyProtocolPoseReset");if(poseOk)poseOk.onclick=()=>sammyProtocolSetPoseStatus("ok");if(poseFlag)poseFlag.onclick=()=>sammyProtocolSetPoseStatus("flag");if(poseReset)poseReset.onclick=()=>{sammyProtocolPreviewPose=null;sammyProtocolApplyCurrentPose();sammyProtocolRender()};const doc=$("#sammyProtocolDocOpen");if(doc)doc.onclick=sammyProtocolOpenImage;const imgClose=$("#sammyProtocolImageClose");if(imgClose)imgClose.onclick=sammyProtocolCloseImage;const imgModal=$("#sammyProtocolImageModal");if(imgModal)imgModal.onclick=e=>{if(e.target.id==="sammyProtocolImageModal")sammyProtocolCloseImage()};const ex=$("#sammyProtocolExport");if(ex)ex.onclick=sammyProtocolExport;const dx=$("#sammyProtocolDiagExport");if(dx)dx.onclick=sammyDownloadDiagnostics;const reset=$("#sammyProtocolResetAudit");if(reset)reset.onclick=()=>{if(!confirm("Protocol-/Landmark-Audit wirklich löschen?"))return;localStorage.removeItem(SAMMY_PROTOCOL_KEY);sammyProtocolState=sammyProtocolBlankState();sammyProtocolRender()}}
 
 
 // ---------------------------------------------------------------------------
@@ -5979,7 +5979,7 @@ async function sammyProtocolInitUI(){try{await sammyProtocolLoadData();await sam
 // ---------------------------------------------------------------------------
 const SAMMY_PROTOCOL_DYNAMIC_LANDMARKS_V8197=new Set(["buttock_lateral","buttock_posterior","calf_max","ankle_min","biceps_point","neck_base_points","trapezius","gluteal_furrow"]);
 const SAMMY_PROTOCOL_REAUDIT_MEASURES_V8197=["biacromial_breadth","neck_circumference","buttock_circumference","hip_breadth","wrist_circumference","thigh_circumference","calf_circumference","ankle_circumference","waist_back_length","upperarm_length","lowerarm_length","tibiale_height","shoulder_length","upperarm_circumference","forearm_circumference"];
-function sammyProtocolMigrateV8197(){const s=sammyProtocolLoadState();if(s.measureAlgorithmVersion==="0.8.19.7")return;for(const id of SAMMY_PROTOCOL_DYNAMIC_LANDMARKS_V8197){const st=s.landmarks?.[id];if(st){st.offsetCm=[0,0,0];st.status="unchecked"}}for(const id of SAMMY_PROTOCOL_REAUDIT_MEASURES_V8197){const st=s.measures?.[id];if(st){st.offsetCm=[0,0,0];st.status="unchecked"}}if(s.measures){delete s.measures.torso_height;delete s.measures.upperleg_height}s.measureAlgorithmVersion="0.8.19.7";s.migrationNote="v0.8.19.7 canonical MEAS geometry; comments preserved, changed measures/dynamic landmarks reopened for audit.";sammyProtocolSaveState()}
+function sammyProtocolMigrateV8197(){const s=sammyProtocolLoadState();if(s.measureAlgorithmVersion==="0.8.19.7"||s.measureAlgorithmVersion==="0.8.19.8")return;if(s.measures){delete s.measures.torso_height;delete s.measures.upperleg_height}s.measureAlgorithmVersion="0.8.19.7";s.migrationNote="v0.8.19.7 compatibility migration; existing calibration offsets/comments preserved.";sammyProtocolSaveState()}
 function sammyProtocolDynamicLandmarkV8197(id){return SAMMY_PROTOCOL_DYNAMIC_LANDMARKS_V8197.has(id)}
 // PROT and MEAS now use exactly the same skin-weight partitions.
 sammyProtocolRegionIndices=function(region){return sammyMeasureRegionIndicesV8197(region)};
@@ -6967,6 +6967,213 @@ Noch NICHT behauptet: Diese nativen 0–1-Parameter treffen bereits konkrete Zen
  }else if(shapePass&&rigPass){setState("#decision","NÄCHSTER TEST: CURRENT 122 LBS","warn");info("#decisionInfo","Shape und Current-Rig-Pack sind vorhanden. In Punkt 5 jetzt Expanded 122-Joint LBS aktivieren.")}
  else if(shapePass)setState("#decision","SHAPE BESTANDEN","ok")
 }
+
+
+
+// ---------------------------------------------------------------------------
+// v0.8.19.8 · ANSUR calibration-preserving correction pass
+// Audit-driven rules:
+// - dynamic landmarks keep an automatic mesh anchor PLUS the user's calibration bias;
+// - selecting a measure in the list never moves the panel scroll position;
+// - linked landmarks can be nudged along their related measurement line;
+// - circumference audit planes can be tilted in two axes;
+// - upper-arm masks exclude shoulder/torso spill;
+// - flagged buttock/trapezius/back/shoulder geometry gets an incremental correction.
+// ---------------------------------------------------------------------------
+
+// Tighten limb masks without creating a new measurement engine.
+SAMMY_MEASURE_REGION_JOINTS_V8197.rightUpperArm=["RightArm","RightArmTwist1","RightArmTwist2"];
+SAMMY_MEASURE_REGION_JOINTS_V8197.leftUpperArm=["LeftArm","LeftArmTwist1","LeftArmTwist2"];
+sammyMeasureRegionCacheV8197.clear();
+
+// The v0.8.19.7 audit needed +1.6 cm vertical correction for the neck-base
+// circumference while the linked neck-base landmarks were still flagged as too
+// low. Absorb that reviewed correction into the shared MEAS anchor instead of
+// leaving it as a PROT-only display offset.
+const sammyMeasureNeckBaseSliceCoreV8198=sammyMeasureNeckBaseSliceV8197;
+sammyMeasureNeckBaseSliceV8197=function(){
+ const base=sammyMeasureNeckBaseSliceCoreV8198();if(!base?.origin||!base?.normal)return base;
+ const origin=base.origin.slice();origin[1]+=.016;
+ const s=sammyMeasureSlicePlaneRegionV8197(origin,base.normal,"neckBase",Number.isFinite(base.maxRadius)?base.maxRadius:Infinity);
+ if(s){s.semanticAnchor="neckBaseTransition+audit1.6cm";s.maxRadius=base.maxRadius}
+ return s||base
+};
+
+function sammyMeasureNearestUnionV8198(target,regions,extra=null){
+ if(!target)return null;let best=null,bd=Infinity;
+ for(const v of sammyMeasureRegionUnionV8197(regions)){
+  const q=sammyMeasureVertexV8197(v);if(extra&&!extra(q))continue;
+  const d=(q[0]-target[0])**2+(q[1]-target[1])**2+(q[2]-target[2])**2;
+  if(d<bd){bd=d;best=q}
+ }
+ return best
+}
+
+// Lateral buttock landmarks are the lateral extrema of the SAME horizontal
+// level as maximum posterior buttock protrusion (ANSUR transfer-rod logic).
+sammyMeasureButtockLateralV8197=function(side="right"){
+ const post=sammyMeasureButtockPosteriorV8197();if(!post)return null;
+ const s=sammyMeasureSliceYRegionV8197(post[1],"pelvis");
+ return sammyMeasureSliceWorldExtremumV8197(s,side)
+};
+
+// Keep trapezius distinct from the neck-base circumference point. This remains
+// a geometric proxy for a palpated muscle border, but is intentionally placed
+// superior/medial to the tape-level lateral neck point and remains auditable.
+sammyMeasureTrapeziusV8197=function(side="right"){
+ const base=sammyMeasureNeckBasePointV8197(side),n=sammyMeasureJoint("Neck1"),sh=sammyMeasureJoint(side==="right"?"RightShoulder":"LeftShoulder"),box=sammyMeasureBBox();
+ if(!base||!n||!sh)return base||null;
+ const target=sammyMeasureLerp(base,n,.42),sg=sammyMeasureSideSignV8197(side),cx=box?.cx||0;
+ target[0]=target[0]*.72+sammyMeasureLerp(n,sh,.22)[0]*.28;
+ return sammyMeasureNearestUnionV8198(target,["neckBase","shoulder"],q=>sg*(q[0]-cx)>.002)||base
+};
+
+// Biceps must stay on the upper-arm skin partition and at the flexed biceps
+// area, never the shoulder/torso transition.
+sammyMeasureBicepsPointV8197=function(){
+ const a=sammyMeasureJoint("RightArm"),b=sammyMeasureJoint("RightForeArm");if(!a||!b)return null;
+ const ab=sammyVecSub(b,a),den=Math.max(1e-9,sammyVecDot(ab,ab));
+ return sammyMeasureRegionBestV8197("rightUpperArm",p=>{const t=sammyVecDot(sammyVecSub(p,a),ab)/den;return t>=.32&&t<=.72?p[1]-Math.abs(t-.54)*.012:-Infinity})
+};
+
+// Smooth posterior midline surface path for Waist Back Length.
+sammyMeasureBackSurfacePathV8197=function(){
+ const box=sammyMeasureBBox(),top=sammyMeasureCervicaleV8197(),wy=sammyMeasureSharedPlaneY("waist");if(!box||!top)return null;
+ const back=-sammyMeasureFrontSignV8197(),bottom=sammyMeasureRegionAtLevelV8197("torso",wy,p=>back*(p[2]-box.cz)-Math.abs(p[0]-box.cx)*8,.025);if(!bottom)return null;
+ const ids=sammyMeasureRegionUnionV8197(["torso","neckBase"]),raw=[bottom],steps=28;
+ for(let i=1;i<steps;i++){
+  const t=i/steps,y=bottom[1]+(top[1]-bottom[1])*t;let best=null,bs=-Infinity;
+  for(const v of ids){const q=sammyMeasureVertexV8197(v),dy=Math.abs(q[1]-y);if(dy>.022)continue;const s=back*(q[2]-box.cz)-Math.abs(q[0]-box.cx)*9-dy*9;if(s>bs){bs=s;best=q}}
+  if(best)raw.push(best)
+ }
+ raw.push(top);
+ // Remove mesh-to-mesh jitter without turning the tape into a straight chord.
+ let pts=raw.map(q=>q.slice());
+ for(let pass=0;pass<2;pass++){const sm=pts.map(q=>q.slice());for(let i=1;i<pts.length-1;i++){sm[i][0]=(pts[i-1][0]+2*pts[i][0]+pts[i+1][0])/4;sm[i][2]=(pts[i-1][2]+2*pts[i][2]+pts[i+1][2])/4}pts=sm}
+ return pts
+};
+
+// Smoothed surface-following shoulder path; endpoints stay exact.
+sammyMeasureShoulderSurfacePathV8197=function(){
+ const a=sammyMeasureTrapeziusV8197("right"),b=sammyMeasureAcromionV8197("right"),box=sammyMeasureBBox();if(!a||!b)return null;
+ const sg=sammyMeasureSideSignV8197("right"),cx=box?.cx||0,raw=[a],N=20;
+ for(let i=1;i<N;i++){
+  const t=i/N,target=sammyMeasureLerp(a,b,t),q=sammyMeasureNearestUnionV8198(target,["neckBase","shoulder"],p=>sg*(p[0]-cx)>-.005);
+  if(q)raw.push(q)
+ }
+ raw.push(b);let pts=raw.map(q=>q.slice());
+ for(let pass=0;pass<3;pass++){
+  const sm=pts.map(q=>q.slice());
+  for(let i=1;i<pts.length-1;i++)for(let k=0;k<3;k++)sm[i][k]=(pts[i-1][k]+2*pts[i][k]+pts[i+1][k])/4;
+  pts=sm.map((q,i)=>i===0?a:i===sm.length-1?b:(sammyMeasureNearestUnionV8198(q,["neckBase","shoulder"],p=>sg*(p[0]-cx)>-.005)||q))
+ }
+ return pts
+};
+
+// State extensions are deliberately backward-compatible with the audit-v2 JSON.
+const sammyProtocolMeasureStateV8197=sammyProtocolMeasureState;
+sammyProtocolMeasureState=function(id){const st=sammyProtocolMeasureStateV8197(id);if(!Array.isArray(st.tiltDeg))st.tiltDeg=[0,0];return st};
+const sammyProtocolLandmarkStateV8197=sammyProtocolLandmarkState;
+sammyProtocolLandmarkState=function(id){const st=sammyProtocolLandmarkStateV8197(id);if(!Number.isFinite(Number(st.lineOffsetCm)))st.lineOffsetCm=0;return st};
+
+function sammyProtocolMigrateV8198(){
+ const s=sammyProtocolLoadState();if(s.measureAlgorithmVersion==="0.8.19.8")return;const from=s.measureAlgorithmVersion||"legacy";
+ if(s.measures){delete s.measures.torso_height;delete s.measures.upperleg_height}
+ // Preserve every existing manual offset/comment. Only reopen geometry that
+ // actually changed in this pass so the user's prior audit remains meaningful.
+ for(const id of ["buttock_lateral","neck_base_points","trapezius","biceps_point"]){const st=s.landmarks?.[id];if(st&&st.status!=="unchecked")st.status="unchecked"}
+ for(const id of ["hip_breadth","neck_base_circumference","waist_back_length","shoulder_length","upperarm_circumference"]){const st=s.measures?.[id];if(st&&st.status!=="unchecked")st.status="unchecked"}
+ // v0.8.19.7 user audit established +1.6 cm Y for neck-base. It is now part
+ // of canonical MEAS geometry, so remove only that exact legacy compensation.
+ const nb=s.measures?.neck_base_circumference;if(from==="0.8.19.7"&&nb&&Array.isArray(nb.offsetCm)){const x=Number(nb.offsetCm[0]||0),y=Number(nb.offsetCm[1]||0),z=Number(nb.offsetCm[2]||0);if(Math.abs(x)<.15&&Math.abs(z)<.15&&Math.abs(y-1.6)<.2)nb.offsetCm=[0,0,0]}
+ for(const st of Object.values(s.measures||{}))if(!Array.isArray(st.tiltDeg))st.tiltDeg=[0,0];
+ for(const st of Object.values(s.landmarks||{}))if(!Number.isFinite(Number(st.lineOffsetCm)))st.lineOffsetCm=0;
+ s.measureAlgorithmVersion="0.8.19.8";
+ s.migrationNote="v0.8.19.8 audit correction pass: existing offsets/comments preserved; dynamic landmarks use auto anchor + calibration bias; upper-arm region tightened; buttock/trapezius/back/shoulder geometry reopened; circumference tilt + line-follow editing added.";
+ sammyProtocolSaveState()
+}
+
+// Dynamic landmark = automatic base + user calibration bias. v0.8.19.7 had
+// accidentally made dynamic points immutable and discarded the bias.
+sammyProtocolLandmarkPoints=function(id){
+ const lm=sammyProtocolData?.landmarks?.[id];if(!lm)return [];
+ const state=sammyProtocolLandmarkState(id),off=state.offsetCm||[0,0,0],lineOff=Number(state.lineOffsetCm||0),region=lm.region||"whole";
+ return sammyProtocolAutoPoints(id).map(it=>{
+  const lateral=it.side==="left"?-1:it.side==="right"?1:0,xFactor=lm.pair?lateral:1;
+  let target=[it.point[0]+Number(off[0]||0)/100*xFactor,it.point[1]+Number(off[1]||0)/100,it.point[2]+Number(off[2]||0)/100];
+  if(Math.abs(lineOff)>.001){const tan=sammyProtocolLinkedLineTangentV8198(id,target,it.side);if(tan){const d=lineOff/100;target=[target[0]+tan[0]*d,target[1]+tan[1]*d,target[2]+tan[2]*d]}}
+  const q=sammyProtocolNearest(target,region)||it.point;return {...it,point:q}
+ })
+};
+sammyProtocolAdjustAxisMask=sammyProtocolAdjustAxisMaskV8196;
+sammyProtocolStartPlacement=sammyProtocolStartPlacementV8196;
+
+function sammyProtocolRelatedLineV8198(id){
+ const related=sammyProtocolRelatedMeasuresV8197(id);if(!related.length)return null;
+ const preferred=related.find(m=>m.id===sammyProtocolSelectedMeasure)||related[0],results=sammyProtocolLastResults||sammyComputeAllMeasures(),safe=sammyProtocolLastPrepared?.get(preferred.id)||sammyProtocolStrictMeasureGeometry(preferred,results?.[preferred.id]);
+ return safe?.lp?.points?.length>1?{measure:preferred,lp:safe.lp}:null
+}
+function sammyProtocolLinkedLineTangentV8198(id,point,side="center"){
+ const x=sammyProtocolRelatedLineV8198(id);if(!x)return null;const pts=x.lp.points,closed=!!x.lp.closed;let best=null,bd=Infinity;
+ const n=closed?pts.length:pts.length-1;
+ for(let i=0;i<n;i++){const a=pts[i],b=pts[(i+1)%pts.length],ab=sammyVecSub(b,a),den=sammyVecDot(ab,ab);if(den<1e-10)continue;const u=THREE.MathUtils.clamp(sammyVecDot(sammyVecSub(point,a),ab)/den,0,1),q=sammyMeasureLerp(a,b,u),d=sammyVecDot(sammyVecSub(point,q),sammyVecSub(point,q));if(d<bd){bd=d;best=sammyVecNorm(ab)}}
+ if(!best)return null;const lm=sammyProtocolData?.landmarks?.[id];
+ // For bilateral points on a mostly transverse line, positive = outward on both sides.
+ if(lm?.pair&&side!=="center"&&Math.abs(best[0])>Math.abs(best[1])*.8&&Math.abs(best[0])>Math.abs(best[2])*.8){const want=side==="right"?sammyMeasureSideSignV8197("right"):sammyMeasureSideSignV8197("left");if(Math.sign(best[0])!==Math.sign(want))best=best.map(v=>-v)}
+ return best
+}
+function sammyProtocolHasLinkedLineV8198(id){return !!sammyProtocolRelatedLineV8198(id)}
+
+function sammyProtocolIsCircumferenceV8198(id){return ["chest_circumference","waist_circumference","buttock_circumference","neck_circumference","neck_base_circumference","wrist_circumference","thigh_circumference","calf_circumference","ankle_circumference","upperarm_circumference","forearm_circumference"].includes(id)}
+function sammyRotateVectorV8198(v,axis,angle){const a=sammyVecNorm(axis),c=Math.cos(angle),s=Math.sin(angle),dot=sammyVecDot(a,v),cross=[a[1]*v[2]-a[2]*v[1],a[2]*v[0]-a[0]*v[2],a[0]*v[1]-a[1]*v[0]];return [v[0]*c+cross[0]*s+a[0]*dot*(1-c),v[1]*c+cross[1]*s+a[1]*dot*(1-c),v[2]*c+cross[2]*s+a[2]*dot*(1-c)]}
+function sammyProtocolTiltedPlaneV8198(slice,off,tilt){
+ let origin,normal,radius=Number.isFinite(slice?.maxRadius)?slice.maxRadius:Infinity;
+ if(slice.axis==="P"){origin=(slice.origin||[0,0,0]).slice();normal=(slice.normal||[0,1,0]).slice()}
+ else if(slice.axis==="X"){origin=sammySliceCenterWorldV3(slice);normal=[1,0,0]}
+ else {origin=sammySliceCenterWorldV3(slice);normal=[0,1,0]}
+ origin=origin.map((v,i)=>v+Number(off?.[i]||0)/100);
+ const basis=sammyPlaneBasis(normal),a=Number(tilt?.[0]||0)*Math.PI/180,b=Number(tilt?.[1]||0)*Math.PI/180;
+ if(Math.abs(a)>1e-9)normal=sammyRotateVectorV8198(normal,basis.u,a);
+ if(Math.abs(b)>1e-9)normal=sammyRotateVectorV8198(normal,basis.v,b);
+ return {origin,normal:sammyVecNorm(normal),radius}
+}
+
+const sammyProtocolStrictMeasureGeometryV8197=sammyProtocolStrictMeasureGeometry;
+sammyProtocolStrictMeasureGeometry=function(m,result){
+ const line=result?.line,st=sammyProtocolMeasureState(m?.id),tilt=st?.tiltDeg||[0,0],hasTilt=sammyProtocolIsCircumferenceV8198(m?.id)&&tilt.some(v=>Math.abs(Number(v||0))>.001);
+ if(!hasTilt||!line?.slice||!["loop","loopX","loopP"].includes(line.kind))return sammyProtocolStrictMeasureGeometryV8197(m,result);
+ const off=st.offsetCm||[0,0,0],p=sammyProtocolTiltedPlaneV8198(line.slice,off,tilt),region=m?.region,strict=!!region&&region!=="whole"&&region!=="shoulder",ss=strict?sammyProtocolSlicePlaneRegion(p.origin,p.normal,region,p.radius):sammyPlaneSliceArbitraryV3(p.origin,p.normal,p.radius);
+ if(!ss||ss.hull?.length<3)return {lp:null,valueCm:NaN,strict,blocked:true,offsetApplied:true,tiltApplied:true};
+ ss.maxRadius=p.radius;ss.region=region;const safeLine={kind:"loopP",slice:ss};return {lp:sammyMeasureLinePoints({line:safeLine}),valueCm:ss.circ,strict,offsetApplied:(off||[]).some(v=>Math.abs(Number(v||0))>1e-8),tiltApplied:true,slice:ss}
+};
+
+const sammyProtocolRenderAdjustPopupV8197=sammyProtocolRenderAdjustPopup;
+sammyProtocolRenderAdjustPopup=function(){
+ // Call the pre-v8197 popup renderer: it preserves XYZ + direct placement.
+ sammyProtocolRenderAdjustPopupV8196();
+ const lineBox=$("#sammyProtocolLineAdjustRow"),tiltBox=$("#sammyProtocolTiltControls");
+ if(lineBox)lineBox.hidden=true;if(tiltBox)tiltBox.hidden=true;
+ if(sammyProtocolFocusKind==="landmark"&&sammyProtocolSelectedLandmark){
+  const st=sammyProtocolLandmarkState(sammyProtocolSelectedLandmark),has=sammyProtocolHasLinkedLineV8198(sammyProtocolSelectedLandmark),el=$("#sammyProtocolLineAdjust"),out=$("#sammyProtocolLineAdjustOut"),hint=$("#sammyProtocolAdjustPopupHint");
+  if(lineBox)lineBox.hidden=!has;if(el)el.value=String(Number(st.lineOffsetCm||0));if(out)out.value=Number(st.lineOffsetCm||0).toFixed(1);if(hint&&sammyProtocolDynamicLandmarkV8197(sammyProtocolSelectedLandmark))hint.textContent="Dynamische Basis + gespeicherter Kalibrier-Offset · cm";
+ }
+ if(sammyProtocolFocusKind==="measure"){
+  const m=sammyProtocolMeasure(),st=m?sammyProtocolMeasureState(m.id):null,show=!!m&&sammyProtocolIsCircumferenceV8198(m.id);
+  if(tiltBox)tiltBox.hidden=!show;
+  if(show){for(const [id,i] of [["#sammyProtocolTiltA",0],["#sammyProtocolTiltB",1]]){const el=$(id),out=$(`${id}Out`);if(el)el.value=String(Number(st.tiltDeg?.[i]||0));if(out)out.value=Number(st.tiltDeg?.[i]||0).toFixed(1)+"°"}}
+ }
+};
+function sammyProtocolSetLineOffsetV8198(value){if(sammyProtocolFocusKind!=="landmark"||!sammyProtocolSelectedLandmark)return;const st=sammyProtocolLandmarkState(sammyProtocolSelectedLandmark);st.lineOffsetCm=Number(value)||0;if(st.status==="unchecked")st.status="adjusted";sammyProtocolSaveState();sammyProtocolRenderAdjustPopup();sammyProtocolRenderLandmarkList();sammyProtocolRefreshOverlay();sammyProtocolRenderFocusSummary()}
+function sammyProtocolSetTiltV8198(axis,value){const m=sammyProtocolMeasure();if(sammyProtocolFocusKind!=="measure"||!m)return;const st=sammyProtocolMeasureState(m.id);st.tiltDeg[axis]=Number(value)||0;if(st.status==="ok")st.status="unchecked";sammyProtocolSaveState();sammyProtocolRenderAdjustPopup();sammyProtocolRenderPoseMeasureList(sammyProtocolLastResults,sammyProtocolLastPrepared,sammyProtocolLastReferenceProfile);sammyProtocolRefreshOverlay();sammyProtocolRenderFocusSummary()}
+
+// Extend reset semantics to the new audit controls but retain comments.
+const sammyProtocolResetFocusedOffsetV8197=sammyProtocolResetFocusedOffset;
+sammyProtocolResetFocusedOffset=function(){const st=sammyProtocolFocusOffsetState();if(st){if(sammyProtocolFocusKind==="landmark")st.lineOffsetCm=0;else st.tiltDeg=[0,0]}return sammyProtocolResetFocusedOffsetV8197()};
+
+// Bind controls after the original UI initializer has installed its handlers.
+const sammyProtocolInitUIV8197=sammyProtocolInitUI;
+sammyProtocolInitUI=async function(){await sammyProtocolInitUIV8197();const l=$("#sammyProtocolLineAdjust"),a=$("#sammyProtocolTiltA"),b=$("#sammyProtocolTiltB");if(l)l.oninput=e=>sammyProtocolSetLineOffsetV8198(e.target.value);if(a)a.oninput=e=>sammyProtocolSetTiltV8198(0,e.target.value);if(b)b.oninput=e=>sammyProtocolSetTiltV8198(1,e.target.value)};
+
 
 // Sammy v0.7.1: production shell + automatic runtime.
 sammyInitUi();

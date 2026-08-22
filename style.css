@@ -657,3 +657,13 @@ body.sammy-protocol-placement canvas{cursor:crosshair!important}
  .sammyProtocolHeadIcons{gap:3px!important}
  #sammyUi .sammyProtocolIconBtn svg{width:17px;height:17px}
 }
+
+
+/* Sammy v0.8.19.8 · linked-landmark + circumference-plane audit controls */
+.sammyProtocolAdjustExtra{display:grid;gap:6px;margin-top:7px;padding-top:7px;border-top:1px solid rgba(255,255,255,.10)}
+.sammyProtocolAdjustExtra[hidden]{display:none!important}
+.sammyProtocolAdjustExtra label{display:grid;grid-template-columns:48px minmax(100px,1fr) 48px;gap:8px;align-items:center;font-size:11px;color:#cbd2dc}
+.sammyProtocolAdjustExtra label span{font-weight:650}
+.sammyProtocolAdjustExtra input[type=range]{width:100%;min-width:0}
+.sammyProtocolAdjustExtra output{text-align:right;font-variant-numeric:tabular-nums;color:#f3f5f7}
+.sammyProtocolTiltControls{grid-template-columns:1fr}
