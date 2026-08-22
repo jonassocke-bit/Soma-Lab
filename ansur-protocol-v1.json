@@ -4,8 +4,8 @@
     "title": "Measurer’s Handbook: US Army and Marine Corps Anthropometric Surveys, 2010-2011",
     "report": "NATICK/TR-11/017",
     "uploadedPdf": "ADA548497(patient-vacuum-cloth).pdf",
-    "note": "24 ANSUR-comparable Sammy targets. v0.8.19.1 rescue uses exactly two native SOMA/Axis16 base poses. The two user FBX files are reference-only; PROT does not retarget them. Existing Measurement-Lab geometry is shown as MEAS CURRENT and remains separate from ANSUR approval.",
-    "integrationVersion": "0.8.19.1"
+    "note": "24 direct ANSUR-II targets. v0.8.19.7 promotes the reviewed protocol geometry into MEAS: PROT and MEAS share strict skin-weight regions and canonical landmark-driven measurement definitions. The two user FBX files remain reference-only; runtime poses use native SOMA/Axis16 constraints.",
+    "integrationVersion": "0.8.19.7"
   },
   "poses": {
     "standing": {
@@ -146,8 +146,9 @@
       "pdfPage": 179,
       "image": "ansur-page-179.jpg",
       "description": "Standing, upper arm relaxed, elbow flexed 90°, palm up.",
-      "implementationNote": "90°-Ellenbogen und palm-up sind Constraint-Presets; Hand-/Unterarmorientierung pro Körper visuell gegen die Referenz prüfen.",
-      "implementationKind": "native_world_constraints"
+      "implementationNote": "Upper arm relaxed and elbow ≈90° are now native world-direction constraints. Exact forearm supination/palm-up twist remains a visual protocol caveat.",
+      "implementationKind": "native_world_constraints",
+      "implementationVersion": "0.8.19.7"
     },
     "arm_relaxed_palm_forward": {
       "id": "arm_relaxed_palm_forward",
@@ -197,8 +198,9 @@
       "pdfPage": 96,
       "image": "ansur-page-96.jpg",
       "description": "Standing; right upper arm extended forward horizontally, elbow flexed 90°, fist tightly clenched.",
-      "implementationNote": "The protocol pose is defined, but the current MEAS geometry remains a standing/T-pose proxy and must not be treated as direct ANSUR equivalence until this modifier is validated.",
-      "implementationKind": "manual_pending_base_validation"
+      "implementationNote": "Right upper arm forward/horizontal and elbow ≈90° are now native world-direction constraints. Fist clench and max-effort muscle bulging remain non-deforming protocol conditions.",
+      "implementationKind": "native_world_constraints",
+      "implementationVersion": "0.8.19.7"
     }
   },
   "landmarks": {
@@ -229,7 +231,9 @@
       "PROCEDURE": "Participant is in the anthropometric standing position. Stand at the right of the participant and sight the point of maximum protrusion of the right buttock (buttock point, posterior). (This landmark is not drawn.) Set the landmark transfer rod to the height of the posterior buttock landmark. Move it to the right and left sides of the participant and draw short horizontal marks on each side.",
       "REQUIRED INSTRUMENTS": "Landmark transfer rod.",
       "heading": "5.2.4 Buttock Point, Right Lateral and Left Lateral",
-      "cropImage": "crop-landmark-buttock_lateral.jpg"
+      "cropImage": "crop-landmark-buttock_lateral.jpg",
+      "dynamicGeometry": true,
+      "implementationVersion": "0.8.19.7"
     },
     "cervicale": {
       "label": "Cervicale · C7",
@@ -270,7 +274,9 @@
       "DESCRIPTION": "The lowest point of the lowest furrow or crease at the juncture of the right buttock and the thigh.",
       "PROCEDURE": "Participant is in the anthropometric standing position. Stand behind the participant and draw a short horizontal line at the top of the thigh at the lowest point of the lowest crease. Where there is a smooth continuous curve at the juncture of the thigh and buttock, view the buttock/thigh juncture from the right side and draw the landmark where you judge it to be appropriate. Even on participants with a continuous curve, a skin crease can usually be discerned.",
       "heading": "5.2.15 Gluteal Furrow Point",
-      "cropImage": "crop-landmark-gluteal_furrow.jpg"
+      "cropImage": "crop-landmark-gluteal_furrow.jpg",
+      "dynamicGeometry": true,
+      "implementationVersion": "0.8.19.7"
     },
     "infrathyroid": {
       "label": "Infrathyroid",
@@ -298,7 +304,9 @@
       "PROCEDURE": "Participant stands looking straight ahead. Stand behind the participant. Place a tape around the base of the neck, laying it first in front, then on the sides, and finally, across the back, as if to measure NECK CIRCUMFERENCE, BASE. The anterior landmark is at the bottom of the tape, on the front of the neck in the midsagittal plane. The participant places a finger on the tape near the anterior landmark to help hold the tape in place. Draw a short horizontal line through the landmark. The right lateral and left lateral landmarks are located at the bottom of the tape on both sides. Draw roughly 4 cm long horizontal lines through both landmarks following the bottom of the tape.",
       "REQUIRED INSTRUMENTS": "Steel tape.",
       "heading": "5.2.29 Neck, Anterior, Right Lateral, and Left Lateral",
-      "cropImage": "crop-landmark-neck_base_points.jpg"
+      "cropImage": "crop-landmark-neck_base_points.jpg",
+      "dynamicGeometry": true,
+      "implementationVersion": "0.8.19.7"
     },
     "radiale": {
       "label": "Radiale",
@@ -353,7 +361,9 @@
       "REQUIRED LANDMARKS": "Neck, right lateral and left lateral.",
       "PROCEDURE": "Participant stands looking straight ahead. Ask the participant to place the right hand on his/her left shoulder to help outline the trapezius muscle on the right shoulder. Stand at the side of the participant. Moving from the shoulder to the neck, palpate the mass of the trapezius muscle to locate its anterior border. Draw a short line from the neck toward the shoulder at the point where the anterior border of the muscle crosses the lateral neck landmark. Repeat this procedure on the other side.",
       "heading": "5.2.43 Trapezius Point, Right and Left",
-      "cropImage": "crop-landmark-trapezius.jpg"
+      "cropImage": "crop-landmark-trapezius.jpg",
+      "dynamicGeometry": true,
+      "implementationVersion": "0.8.19.7"
     },
     "trochanterion": {
       "label": "Trochanterion",
@@ -424,7 +434,9 @@
       "image": "ansur-page-31.jpg",
       "heading": "5.1 Undrawn Landmarks · Buttock point, posterior",
       "DESCRIPTION": "Point of maximum protrusion of the right buttock of a standing participant.",
-      "cropImage": "crop-landmark-buttock_posterior.jpg"
+      "cropImage": "crop-landmark-buttock_posterior.jpg",
+      "dynamicGeometry": true,
+      "implementationVersion": "0.8.19.7"
     },
     "calf_max": {
       "label": "Calf maximum zone",
@@ -437,7 +449,9 @@
       "image": null,
       "DESCRIPTION": "No drawn landmark. ANSUR locates the maximum horizontal circumference by measuring three locations in the observed maximum calf area.",
       "heading": "Dynamic measurement zone · Calf",
-      "cropImage": "crop-measure-calf_circumference.jpg"
+      "cropImage": "crop-measure-calf_circumference.jpg",
+      "dynamicGeometry": true,
+      "implementationVersion": "0.8.19.7"
     },
     "ankle_min": {
       "label": "Ankle minimum zone",
@@ -450,7 +464,9 @@
       "image": null,
       "DESCRIPTION": "No drawn landmark. ANSUR defines the ankle measure as the minimum horizontal circumference of the ankle.",
       "heading": "Dynamic measurement zone · Ankle",
-      "cropImage": "crop-measure-ankle_circumference.jpg"
+      "cropImage": "crop-measure-ankle_circumference.jpg",
+      "dynamicGeometry": true,
+      "implementationVersion": "0.8.19.7"
     },
     "biceps_point": {
       "label": "Biceps Point · right",
@@ -461,7 +477,9 @@
       "cropImage": "crop-landmark-biceps_point.jpg",
       "DESCRIPTION": "The highest point of the right flexed biceps brachii muscle as viewed from the participant’s right side.",
       "PROCEDURE": "Participant stands with the right upper arm extended forward horizontally and the elbow flexed 90°. The fist is tightly clenched and held facing the head. Locate the highest point on the flexed biceps brachii muscle and mark a short line perpendicular to the long axis of the upper arm.",
-      "mappingNote": "PROT currently places a geometric proxy until the flexed-arm base modifier is validated."
+      "mappingNote": "PROT currently places a geometric proxy until the flexed-arm base modifier is validated.",
+      "dynamicGeometry": true,
+      "implementationVersion": "0.8.19.7"
     },
     "elbow_crease": {
       "label": "Elbow Crease · right",
@@ -529,7 +547,9 @@
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-biacromial_breadth.jpg"
+      "cropImage": "crop-measure-biacromial_breadth.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Direct Acromion-L/R landmark distance; historical shoulder-joint/span proxy removed."
     },
     {
       "id": "chest_circumference",
@@ -727,7 +747,10 @@
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-buttock_circumference.jpg"
+      "cropImage": "crop-measure-buttock_circumference.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Horizontal strict pelvis slice at the dynamically found maximum posterior right-buttock level.",
+      "dynamicSearch": true
     },
     {
       "id": "hip_breadth",
@@ -755,7 +778,10 @@
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-hip_breadth.jpg"
+      "cropImage": "crop-measure-hip_breadth.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Direct horizontal distance between lateral buttock landmarks at the same level as Buttock Circumference.",
+      "dynamicSearch": true
     },
     {
       "id": "crotch_height",
@@ -812,7 +838,9 @@
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-neck_circumference.jpg"
+      "cropImage": "crop-measure-neck_circumference.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Strict neck slice at the Infrathyroid landmark level, perpendicular to the local neck axis."
     },
     {
       "id": "neck_base_circumference",
@@ -867,7 +895,10 @@
       "observerErrorReportPage": 227,
       "observerErrorImage": "ansur-page-237.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-wrist_circumference.jpg"
+      "cropImage": "crop-measure-wrist_circumference.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Strict right-wrist slice at Stylion level, perpendicular to local forearm axis; not a minimum search.",
+      "dynamicSearch": false
     },
     {
       "id": "thigh_circumference",
@@ -895,7 +926,10 @@
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-thigh_circumference.jpg"
+      "cropImage": "crop-measure-thigh_circumference.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Strict right-thigh slice at dynamic Gluteal Furrow level, perpendicular to local thigh axis.",
+      "dynamicSearch": false
     },
     {
       "id": "calf_circumference",
@@ -920,7 +954,10 @@
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-calf_circumference.jpg"
+      "cropImage": "crop-measure-calf_circumference.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Dynamic maximum horizontal circumference search restricted to RIGHT_CALF.",
+      "dynamicSearch": true
     },
     {
       "id": "ankle_circumference",
@@ -946,7 +983,10 @@
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-ankle_circumference.jpg"
+      "cropImage": "crop-measure-ankle_circumference.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Dynamic minimum horizontal circumference search restricted to RIGHT_ANKLE.",
+      "dynamicSearch": true
     },
     {
       "id": "waist_back_length",
@@ -975,7 +1015,9 @@
       "observerErrorReportPage": 227,
       "observerErrorImage": "ansur-page-237.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-waist_back_length.jpg"
+      "cropImage": "crop-measure-waist_back_length.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Surface polyline from Cervicale to posterior Waist (Omphalion), following back contour."
     },
     {
       "id": "upperarm_length",
@@ -1004,7 +1046,9 @@
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-upperarm_length.jpg"
+      "cropImage": "crop-measure-upperarm_length.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Direct canonical Acromion-Radiale landmark distance."
     },
     {
       "id": "lowerarm_length",
@@ -1032,7 +1076,9 @@
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-lowerarm_length.jpg"
+      "cropImage": "crop-measure-lowerarm_length.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Direct canonical Radiale-Stylion landmark distance."
     },
     {
       "id": "upperarm_circumference",
@@ -1059,8 +1105,11 @@
       "observerErrorPdfPage": 235,
       "observerErrorReportPage": 225,
       "observerErrorKind": "direct_ansur",
-      "mappingQuality": "proxy_pose_mismatch",
-      "mappingNote": "MEAS upperarm_circumference is a dynamic mid-upper-arm maximum in the current body pose; it is not yet equivalent to the ANSUR flexed-arm protocol. Included here specifically so this mismatch can be reviewed."
+      "mappingQuality": "protocol_geometry_pose_partial",
+      "mappingNote": "v0.8.19.7 implements the prescribed arm/elbow geometry and strict measurement region. Max-effort muscle-contraction deformation is not modeled, so this remains a protocol approximation rather than exact soft-tissue equivalence.",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Strict RIGHT_UPPER_ARM slice through dynamic Biceps Point in the flexed-arm protocol pose. Actual max-effort muscle deformation is not simulated.",
+      "dynamicSearch": true
     },
     {
       "id": "forearm_circumference",
@@ -1088,8 +1137,11 @@
       "observerErrorPdfPage": 235,
       "observerErrorReportPage": 225,
       "observerErrorKind": "direct_ansur",
-      "mappingQuality": "proxy_pose_mismatch",
-      "mappingNote": "MEAS forearm_circumference is a dynamic maximum along the forearm in the current body pose; ANSUR measures specifically at the elbow crease in the flexed-arm pose. Included for explicit review, not claimed as equivalent."
+      "mappingQuality": "protocol_geometry_pose_partial",
+      "mappingNote": "v0.8.19.7 implements the prescribed arm/elbow geometry and strict measurement region. Max-effort muscle-contraction deformation is not modeled, so this remains a protocol approximation rather than exact soft-tissue equivalence.",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Strict RIGHT_FOREARM slice at Elbow Crease in the flexed-arm protocol pose.",
+      "dynamicSearch": false
     },
     {
       "id": "tibiale_height",
@@ -1116,7 +1168,9 @@
       "observerErrorReportPage": 227,
       "observerErrorImage": "ansur-page-237.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-tibiale_height.jpg"
+      "cropImage": "crop-measure-tibiale_height.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Vertical standing-surface height of canonical Tibiale landmark."
     },
     {
       "id": "shoulder_length",
@@ -1145,7 +1199,9 @@
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-shoulder_length.jpg"
+      "cropImage": "crop-measure-shoulder_length.jpg",
+      "implementationVersion": "0.8.19.7",
+      "implementationNote": "Surface polyline from right Trapezius to right Acromion."
     }
   ],
   "derivedSources": {
@@ -1608,7 +1664,7 @@
       "WBX fists/arm detail",
       "lap/chest contact targets"
     ],
-    "measurementOverlay": "Reuses Measurement Lab results via sammyComputeAllMeasures() + sammyMeasureLinePoints(); displayed as MEAS CURRENT until protocol approval.",
-    "regionPolicy": "strict skin-weight partitions; left/right limbs never merged; no whole-body fallback for body-part measures"
+    "measurementOverlay": "Reuses the same canonical MEAS v0.8.19.7 geometry used by sammyComputeAllMeasures(); PROT is the audit/visualization layer, not a second measurement engine.",
+    "regionPolicy": "shared MEAS/PROT strict skin-weight partitions; left/right limbs never merged; no whole-body fallback for body-part measures"
   }
 }

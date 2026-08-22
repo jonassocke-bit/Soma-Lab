@@ -636,7 +636,7 @@ body.sammy-protocol-mode .sammyProtocolImageModal{display:none!important}
  .sammyProtocolPoseMeasureMain .sammyProtocolRefValue{min-width:36px;font-size:7.5px}.sammyProtocolPoseMeasureMain .sammyProtocolRealValue{min-width:49px;font-size:8px}
 }
 
-/* Sammy v0.8.19.6 · PROT edit / dynamic-search / compact assets */
+/* Sammy v0.8.19.7 · PROT edit / dynamic-search / compact assets */
 .sammyProtocolCompactInspector{display:none!important}
 .sammyProtocolCommentPopup{pointer-events:auto!important;touch-action:manipulation!important}
 .sammyProtocolCommentPopup textarea{pointer-events:auto!important;touch-action:auto!important;font-size:16px!important;-webkit-user-select:text!important;user-select:text!important}

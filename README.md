@@ -1,4 +1,15 @@
 # Sammy
+## v0.8.19.7 · Canonical ANSUR measurement pass
+
+- MEAS und PROT verwenden jetzt dieselben strikten Skin-Weight-Regionen. Körperteilmaße haben keinen Whole-Body-Fallback.
+- Die Audit-Korrekturen wurden in die kanonische Geometrie übernommen: Biacromial direkt Acromion↔Acromion; Hip Breadth auf Buttock-Level; Wrist am Stylion; Thigh am Gluteal Furrow; Arm-/Tibiale-Längen an kanonischen Landmarks; Waist Back Length und Shoulder Length als Oberflächenpfade.
+- Dynamische Geometrie ist gekoppelt: Buttock posterior/lateral, Calf maximum, Ankle minimum, Neck Base/Trapezius und Biceps Point werden aus dem aktuellen Mesh neu bestimmt.
+- Landmark-Ansicht zeigt wieder die zugehörigen Maßlinien und verbindet Landmark-Gruppen, die gemeinsam ein Maß definieren.
+- Flexed-arm und Wrist-90 erhalten numerisch prüfbare native Arm-/Ellenbogen-Constraints. Fist-clench, Supination und max-effort Muskelverformung bleiben als Protokoll-Caveat sichtbar.
+- Geänderte Maße und dynamische Landmarks werden beim ersten Start dieser Version für einen neuen Audit auf `ungeprüft` gesetzt; Kommentare bleiben erhalten.
+- Die bisherigen Measurement-Lab-Kalibrierungs- und Einflussdaten bleiben bewusst erhalten: sie sind der Startpunkt für die nächste Phase `Maß → Slider-Einfluss`, nachdem der 24er Mess-Audit grün ist.
+- Paket bleibt flach; Referenzbilder liegen weiterhin im Atlas statt als Einzel-JPGs.
+
 ## v0.8.19.6 · PROT edit + dynamic search + ANSUR-94 audit
 
 - Kommentarpopup ist auf iPhone/Safari ein echtes UI-Eingabefeld und blockiert Picking/Orbit darunter.
