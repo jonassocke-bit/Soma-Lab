@@ -1,4 +1,13 @@
 # Sammy
+## v0.8.19.5 · PROT reference + comments + compact collapse
+
+- PROT header uses one consistent SVG icon family: previous, info toggle, comment, correct, incorrect, random, next.
+- Info is tap-to-toggle; comments are stored per landmark/measure and surfaced via row speech-bubble icons.
+- Measure rows show ANSUR II same-sex / same-stature population mean in italic next to the live mesh value.
+- Landmark mode suppresses measure lines; landmark markers inherit green/red audit status.
+- PROT can collapse to header-only; display toggles and audit/diagnostic exports remain at the end of the scroll area.
+- Measure tubes are thicker overall and selected geometry is substantially thicker.
+
 
 ## v0.8.19.4 · PROT compact header / exports / status geometry
 

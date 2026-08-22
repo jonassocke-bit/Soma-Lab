@@ -560,7 +560,7 @@ body.sammy-protocol-mode #sammyProtocolBubble{box-shadow:0 0 0 1px rgba(255,255,
 body.sammy-protocol-mode .sammyProtocolImageModal{display:none!important}
 @media(max-width:600px){.sammyProtocolPanel{--sammy-panel-h:60vh;max-height:86vh}.sammyProtocolHeadIcons{gap:5px}#sammyUi .sammyProtocolIconBtn{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important}.sammyProtocolListHead small{max-width:58%;line-height:1.25}.sammyProtocolHoldInfo{width:94vw;top:max(68px,calc(env(safe-area-inset-top) + 52px));padding:6px}}
 
-/* Sammy v0.8.19.4 · PROT compact head + scroll footer */
+/* Sammy v0.8.19.5 · PROT compact head + scroll footer */
 .sammyProtocolPanel .sammyProtocolHead .sammyProtocolHeadIcons{
  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;gap:6px!important
 }
@@ -584,4 +584,54 @@ body.sammy-protocol-mode .sammyProtocolImageModal{display:none!important}
 @media(max-width:600px){
  .sammyProtocolPanel .sammyProtocolHead .sammyProtocolHeadIcons{gap:5px!important}
  #sammyUi .sammyProtocolHead .sammyProtocolIconBtn{width:35px!important;height:35px!important;min-width:35px!important;min-height:35px!important}
+}
+
+/* Sammy v0.8.19.5 · PROT compact review controls / comments / reference values */
+.sammyProtocolHead{width:100%;box-sizing:border-box}
+.sammyProtocolHeadIcons{width:100%!important;display:flex!important;align-items:center!important;gap:5px!important}
+#sammyUi .sammyProtocolIconBtn{display:grid!important;place-items:center!important;flex:0 0 35px!important;width:35px!important;height:35px!important;min-width:35px!important;min-height:35px!important;padding:0!important;border-radius:50%!important}
+#sammyUi .sammyProtocolIconBtn svg,#sammyUi .sammyProtocolBottomBar button svg,#sammyUi .sammyProtocolExportTools button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#sammyUi .sammyProtocolNextBtn{margin-left:auto!important}
+#sammyUi #sammyProtocolCommentBtn.has-comment{border-color:rgba(255,255,255,.48)!important;background:rgba(255,255,255,.10)!important}
+#sammyUi #sammyProtocolInfoBtn.active,#sammyUi #sammyProtocolCommentBtn.active{background:#eceef2!important;color:#15161a!important}
+
+.sammyProtocolPoseMeasureItem,.sammyProtocolLandmarkRow{min-width:0}
+.sammyProtocolPoseMeasureRow,.sammyProtocolLandmarkRow{display:grid;grid-template-columns:minmax(0,1fr) 30px;gap:5px;align-items:center}
+.sammyProtocolPoseMeasureItem.no-comment .sammyProtocolPoseMeasureRow,.sammyProtocolLandmarkRow.no-comment{grid-template-columns:minmax(0,1fr)}
+#sammyUi .sammyProtocolRowCommentBtn{display:grid!important;place-items:center!important;width:30px!important;min-width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;border-radius:50%!important}
+#sammyUi .sammyProtocolRowCommentBtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sammyProtocolPoseMeasureMain{display:grid!important;grid-template-columns:minmax(0,1fr) auto auto!important;gap:7px!important;align-items:center!important}
+.sammyProtocolPoseMeasureMain .sammyProtocolMeasureName{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sammyProtocolPoseMeasureMain .sammyProtocolRefValue{font-size:8px;color:#a9adb5;font-style:italic;font-weight:520;white-space:nowrap;min-width:38px;text-align:right}
+.sammyProtocolPoseMeasureMain .sammyProtocolRealValue{font-size:8.5px;color:#dfe1e6;font-weight:760;white-space:nowrap;min-width:53px;text-align:right}
+.sammyProtocolPoseMeasureItem.selected .sammyProtocolRefValue{color:#5c6068}.sammyProtocolPoseMeasureItem.selected .sammyProtocolRealValue{color:#22252a}
+.sammyProtocolPoseMeasureItem.ok .sammyProtocolRefValue,.sammyProtocolPoseMeasureItem.adjusted .sammyProtocolRefValue{color:#b7d8c0}.sammyProtocolPoseMeasureItem.flag .sammyProtocolRefValue{color:#e0b5b8}
+.sammyProtocolRowCommentPreview{grid-column:1/-1;margin:1px 5px 5px;padding:7px 9px;border:1px solid rgba(255,255,255,.09);border-radius:9px;background:rgba(255,255,255,.045);font-size:8px;line-height:1.35;color:#d8dae0}
+
+.sammyProtocolCommentPopup,.sammyProtocolRowCommentBubble{position:fixed;z-index:191;left:50%;transform:translateX(-50%);width:min(88vw,390px);border:1px solid rgba(255,255,255,.16);border-radius:14px;background:rgba(22,23,27,.97);box-shadow:0 18px 56px rgba(0,0,0,.48);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.sammyProtocolCommentPopup{bottom:max(86px,calc(env(safe-area-inset-bottom) + 80px));padding:10px}
+.sammyProtocolCommentPopup[hidden],.sammyProtocolRowCommentBubble[hidden]{display:none!important}
+.sammyProtocolCommentPopup>div{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:0 2px 7px}.sammyProtocolCommentPopup b{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sammyProtocolCommentPopup small{font-size:7px;color:#9599a2;white-space:nowrap}
+.sammyProtocolCommentPopup textarea{width:100%;box-sizing:border-box;min-height:78px;max-height:180px;resize:vertical;background:#191a1e;color:#f0f1f4;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:9px;font:inherit;font-size:9px;line-height:1.4}
+.sammyProtocolRowCommentBubble{top:max(70px,calc(env(safe-area-inset-top) + 54px));padding:9px 11px;font-size:9px;line-height:1.4;color:#eceef2;pointer-events:auto}
+
+.sammyProtocolHoldInfo{pointer-events:auto}
+.sammyProtocolHoldInfo img{user-select:none;-webkit-user-drag:none}
+
+.sammyProtocolScrollFooter .sammyProtocolBottomBar{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#sammyUi .sammyProtocolScrollFooter .sammyProtocolBottomBar button{display:grid!important;place-items:center!important}
+#sammyUi .sammyProtocolScrollFooter .sammyProtocolBottomBar button svg{width:19px;height:19px}
+.sammyProtocolExportTools{align-items:center}
+
+.sammyProtocolPanel{min-height:70px}
+.sammyProtocolPanel.compact{--sammy-panel-h:74px!important;height:74px!important;min-height:74px!important;background:rgba(17,18,21,.58)!important;border-color:rgba(255,255,255,.11)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+.sammyProtocolPanel.compact .sammyPanelScroll{display:none!important}
+.sammyProtocolPanel.compact .sammyResizeGrip{flex-basis:17px!important}
+.sammyProtocolPanel.compact .sammyProtocolHead{border-bottom:0!important;padding-bottom:8px!important}
+
+@media(max-width:390px){
+ #sammyUi .sammyProtocolIconBtn{flex-basis:34px!important;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important}
+ .sammyProtocolHeadIcons{gap:4px!important}
+ .sammyProtocolPoseMeasureMain{grid-template-columns:minmax(0,1fr) 36px 49px!important;gap:5px!important}
+ .sammyProtocolPoseMeasureMain .sammyProtocolRefValue{min-width:36px;font-size:7.5px}.sammyProtocolPoseMeasureMain .sammyProtocolRealValue{min-width:49px;font-size:8px}
 }

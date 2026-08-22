@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.19.4</title>
-<link rel="stylesheet" href="style.css?v=0.8.19.4">
+<title>Sammy v0.8.19.5</title>
+<link rel="stylesheet" href="style.css?v=0.8.19.5">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.19.4</div>
+  <div class="sammySplashVersion">v0.8.19.5</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.19.4</div>
+<div id="sammyVersion">Sammy · v0.8.19.5</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -185,11 +185,13 @@
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
   <div class="sammyPanelHead sammyProtocolHead">
    <div class="sammyProtocolHeadIcons" role="toolbar" aria-label="PROT Navigation">
-    <button id="sammyProtocolPrev" class="sammyProtocolIconBtn" type="button" aria-label="Vorheriger Prüfpunkt" title="Vorheriger Prüfpunkt">‹</button>
-    <button id="sammyProtocolNext" class="sammyProtocolIconBtn" type="button" aria-label="Nächster Prüfpunkt" title="Nächster Prüfpunkt">›</button>
-    <button id="sammyProtocolInfoBtn" class="sammyProtocolIconBtn sammyProtocolHoldBtn" type="button" aria-label="Referenzbild halten" title="Gedrückt halten für Referenzbild">i</button>
-    <button id="sammyProtocolStatusOk" class="sammyProtocolIconBtn sammyProtocolStatusOk" type="button" aria-label="Korrekt" title="Korrekt">✓</button>
-    <button id="sammyProtocolStatusFlag" class="sammyProtocolIconBtn sammyProtocolStatusFlag" type="button" aria-label="Inkorrekt" title="Inkorrekt">×</button>
+    <button id="sammyProtocolPrev" class="sammyProtocolIconBtn" type="button" aria-label="Vorheriger Prüfpunkt" title="Vorheriger Prüfpunkt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 5.5 9 12l6.5 6.5"/></svg></button>
+    <button id="sammyProtocolInfoBtn" class="sammyProtocolIconBtn" type="button" aria-label="ANSUR Referenz ein oder aus" title="ANSUR Referenz"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 10.7v5.2M12 7.6h.01"/></svg></button>
+    <button id="sammyProtocolCommentBtn" class="sammyProtocolIconBtn" type="button" aria-label="Kommentar" title="Kommentar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 6.5h13v9h-7l-4.5 3v-3H5.5z"/></svg></button>
+    <button id="sammyProtocolStatusOk" class="sammyProtocolIconBtn sammyProtocolStatusOk" type="button" aria-label="Korrekt" title="Korrekt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5.5 12.5 4.1 4.1 8.9-9.2"/></svg></button>
+    <button id="sammyProtocolStatusFlag" class="sammyProtocolIconBtn sammyProtocolStatusFlag" type="button" aria-label="Inkorrekt" title="Inkorrekt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg></button>
+    <button id="sammyProtocolRandom" class="sammyProtocolIconBtn" type="button" aria-label="Mannequin randomisieren" title="Random"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h2.2c4.1 0 5.2 10 9.6 10H19M16.5 14.5 19 17l-2.5 2.5M5 17h2.2c1.6 0 2.8-1.6 3.9-3.5M13.1 9.8c1-1.6 2.1-2.8 3.7-2.8H19M16.5 4.5 19 7l-2.5 2.5"/></svg></button>
+    <button id="sammyProtocolNext" class="sammyProtocolIconBtn sammyProtocolNextBtn" type="button" aria-label="Nächster Prüfpunkt" title="Nächster Prüfpunkt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 5.5 6.5 6.5-6.5 6.5"/></svg></button>
    </div>
    <small id="sammyProtocolProgress" hidden>0 / 24 Maße</small>
   </div>
@@ -235,18 +237,19 @@
    </div>
    <div class="sammyProtocolScrollFooter">
     <div class="sammyProtocolBottomBar" role="toolbar" aria-label="PROT Anzeige">
-     <button id="sammyProtocolMeasureLine" class="active" type="button" aria-label="Maße ein oder aus" title="Maße">⌁</button>
-     <button id="sammyProtocolZones" type="button" aria-label="Regionen ein oder aus" title="Regionen">▦</button>
-     <button id="sammyProtocolLabels" type="button" aria-label="Namen ein oder aus" title="Namen">Aa</button>
-     <button id="sammyProtocolRandom" type="button" aria-label="Mannequin randomisieren" title="Random">⚄</button>
+     <button id="sammyProtocolMeasureLine" class="active" type="button" aria-label="Maße ein oder aus" title="Maße"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15c3-8 6 2 9-6 2-5 4 1 7-3"/></svg></button>
+     <button id="sammyProtocolZones" type="button" aria-label="Regionen ein oder aus" title="Regionen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="1.5"/><path d="M9.7 5v14M14.3 5v14M5 9.7h14M5 14.3h14"/></svg></button>
+     <button id="sammyProtocolLabels" type="button" aria-label="Namen ein oder aus" title="Namen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18 9.4 6h2.2L16 18M6.8 13.2h7.4M17.5 8.5h1.7v9h-1.7"/></svg></button>
     </div>
     <div class="sammyProtocolExportTools" role="toolbar" aria-label="PROT Export">
-     <button id="sammyProtocolExport" type="button" aria-label="Audit JSON exportieren" title="Audit JSON exportieren"><span>⇩</span><small>A</small></button>
-     <button id="sammyProtocolDiagExport" type="button" aria-label="Diagnose JSON exportieren" title="Diagnose JSON exportieren"><span>⇩</span><small>D</small></button>
+     <button id="sammyProtocolExport" type="button" aria-label="Audit JSON exportieren" title="Audit JSON exportieren"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10M8.5 10.5 12 14l3.5-3.5M5 18.5h14"/></svg><small>A</small></button>
+     <button id="sammyProtocolDiagExport" type="button" aria-label="Diagnose JSON exportieren" title="Diagnose JSON exportieren"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10M8.5 10.5 12 14l3.5-3.5M5 18.5h14"/></svg><small>D</small></button>
     </div>
    </div>
   </div>
  </section>
+ <div id="sammyProtocolCommentPopup" class="sammyProtocolCommentPopup" hidden aria-hidden="true"><div><b id="sammyProtocolCommentPopupTitle">Kommentar</b><small>automatisch gespeichert</small></div><textarea id="sammyProtocolCommentPopupText" rows="4" placeholder="Anmerkung zu diesem Prüfpunkt …"></textarea></div>
+ <div id="sammyProtocolRowCommentBubble" class="sammyProtocolRowCommentBubble" hidden aria-hidden="true"></div>
  <div id="sammyProtocolHoldInfo" class="sammyProtocolHoldInfo" hidden aria-hidden="true"><img id="sammyProtocolHoldInfoImage" alt="ANSUR Referenzbild"></div>
  <div id="sammyProtocolImageModal" class="sammyProtocolImageModal hidden"><button id="sammyProtocolImageClose" type="button">×</button><img id="sammyProtocolImageLarge" alt="ANSUR Handbook Seite"></div>
 
@@ -387,7 +390,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.19.4</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.19.5</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -644,6 +647,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.19.4"></script>
+<script type="module" src="app.js?v=0.8.19.5"></script>
 </body>
 </html>
