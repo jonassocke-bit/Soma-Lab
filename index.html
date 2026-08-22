@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.19.2</title>
-<link rel="stylesheet" href="style.css?v=0.8.19.2">
+<title>Sammy v0.8.19.3</title>
+<link rel="stylesheet" href="style.css?v=0.8.19.3">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,24 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.19.2</div>
+  <div class="sammySplashVersion">v0.8.19.3</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.19.2</div>
-
-<button id="sammyCameraDebugBtn" class="sammyCameraDebugBtn" type="button">CAM</button>
-<div id="sammyCameraDebugPanel" class="sammyCameraDebugPanel hidden">
- <div class="sammyCameraDebugHead">
-  <b>Kamera</b>
-  <button id="sammyCameraDebugClose" type="button">×</button>
- </div>
- <pre id="sammyCameraDebugReadout">–</pre>
- <button id="sammyCameraCopy" type="button">Werte kopieren</button>
-</div>
-
+<div id="sammyVersion">Sammy · v0.8.19.3</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -194,26 +183,66 @@
 
  <section id="sammyProtocolPanel" class="sammyPanel sammyProtocolPanel" data-panel-key="protocol">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
-  <div class="sammyPanelHead"><div><b>ANSUR PROTOCOL LAB</b><small id="sammyProtocolProgress">0 / 24 Maße</small></div><button class="sammyPanelClose" type="button">×</button></div>
-  <div class="sammyPanelScroll">
-   <div class="sammyProtocolBaseSwitch" aria-label="ANSUR Basispose"><button type="button" data-proto-base="standing">Stehen</button><button type="button" data-proto-base="sitting">Sitzen</button></div>
-   <div class="sammyProtocolSelectedRow"><div id="sammyProtocolLiveMeasure" class="sammyProtocolLiveMeasure"><b>MEAS</b><strong>—</strong><small>Maß am Mannequin antippen.</small></div><button id="sammyProtocolInfoBtn" class="sammyProtocolInfoButton sammyProtocolInfoMain" type="button" aria-label="Zusatzinfo">i</button></div>
-   <details class="sammyProtocolPoseMeasures" open><summary><b>Maße dieser Pose</b><span id="sammyProtocolPoseMeasureCount">—</span></summary><div id="sammyProtocolPoseMeasureList" class="sammyProtocolPoseMeasureList"></div></details>
-   <div id="sammyProtocolQuickInfo" class="sammyProtocolQuickInfo" hidden><div class="sammyProtocolQuickInfoHead"><b id="sammyProtocolQuickInfoTitle">Info</b><button id="sammyProtocolQuickInfoClose" type="button">×</button></div><img id="sammyProtocolQuickInfoImage" alt="ANSUR Referenzausschnitt"><p id="sammyProtocolQuickInfoText"></p><div id="sammyProtocolQuickInfoMeta"></div></div>
+  <div class="sammyPanelHead sammyProtocolHead">
+   <div class="sammyProtocolHeadIcons" role="toolbar" aria-label="PROT Navigation">
+    <button id="sammyProtocolPrev" class="sammyProtocolIconBtn" type="button" aria-label="Vorheriger Prüfpunkt" title="Vorheriger Prüfpunkt">‹</button>
+    <button id="sammyProtocolNext" class="sammyProtocolIconBtn" type="button" aria-label="Nächster Prüfpunkt" title="Nächster Prüfpunkt">›</button>
+    <button id="sammyProtocolInfoBtn" class="sammyProtocolIconBtn sammyProtocolHoldBtn" type="button" aria-label="Referenzbild halten" title="Gedrückt halten für Referenzbild">i</button>
+    <button id="sammyProtocolStatusOk" class="sammyProtocolIconBtn sammyProtocolStatusOk" type="button" aria-label="Korrekt" title="Korrekt">✓</button>
+    <button id="sammyProtocolStatusFlag" class="sammyProtocolIconBtn sammyProtocolStatusFlag" type="button" aria-label="Inkorrekt" title="Inkorrekt">×</button>
+   </div>
+   <button class="sammyPanelClose sammyProtocolIconBtn" type="button" aria-label="Schließen">×</button>
+   <small id="sammyProtocolProgress" hidden>0 / 24 Maße</small>
+  </div>
+  <div class="sammyPanelScroll sammyProtocolStreamlinedScroll">
+   <div id="sammyProtocolFocusSummary" class="sammyProtocolFocusSummary"><b>Maß auswählen</b><strong>—</strong><small>Direkt am Mannequin oder in der Liste antippen.</small></div>
+   <div class="sammyProtocolReviewTabs" role="tablist" aria-label="PROT Bereich">
+    <button id="sammyProtocolTabLandmarks" type="button" data-proto-tab="landmark" role="tab">Landmarks</button>
+    <button id="sammyProtocolTabMeasures" type="button" data-proto-tab="measure" role="tab" class="active">Maße</button>
+   </div>
+   <section id="sammyProtocolMeasurePane" class="sammyProtocolReviewPane" role="tabpanel">
+    <div class="sammyProtocolListHead"><b>Messungen</b><small>aktive Pose: alle relevanten Linien am Mannequin</small></div>
+    <div id="sammyProtocolPoseMeasureList" class="sammyProtocolPoseMeasureList"></div>
+   </section>
+   <section id="sammyProtocolLandmarkPane" class="sammyProtocolReviewPane" role="tabpanel" hidden>
+    <div class="sammyProtocolListHead"><b>Landmarks</b><small>Anker bleiben am Mannequin sichtbar</small></div>
+    <div id="sammyProtocolLandmarkList" class="sammyProtocolLandmarkList"></div>
+    <details id="sammyProtocolInspector" class="sammyProtocolInspector sammyProtocolCompactInspector">
+     <summary><b id="sammyProtocolInspectorTitle">Landmark auswählen</b><span id="sammyProtocolInspectorState">ungeprüft</span></summary>
+     <div class="sammyProtocolInspectorBody">
+      <div class="sammyProtocolAdjust"><div class="sammyProtocolAdjustHead"><b>Feinjustierung</b><small>strikte Körperregion · cm</small></div>
+       <label>X / lateral <output id="sammyProtocolXOut">0.0</output><input id="sammyProtocolX" type="range" min="-8" max="8" step="0.1" value="0"></label>
+       <label>Y / Höhe <output id="sammyProtocolYOut">0.0</output><input id="sammyProtocolY" type="range" min="-8" max="8" step="0.1" value="0"></label>
+       <label>Z / Tiefe <output id="sammyProtocolZOut">0.0</output><input id="sammyProtocolZ" type="range" min="-8" max="8" step="0.1" value="0"></label>
+       <button id="sammyProtocolLandmarkReset" type="button">↺</button>
+      </div>
+      <textarea id="sammyProtocolComment" rows="2" placeholder="Kommentar …"></textarea>
+      <div class="sammyProtocolCompatSources" hidden><div id="sammyProtocolSourceTabs"></div><button id="sammyProtocolDocOpen" type="button"><img id="sammyProtocolDocImage" alt="ANSUR Referenz"></button><div id="sammyProtocolSourceText"></div><div class="sammyProtocolStatusButtons"><button data-proto-status="ok" type="button">✓</button><button data-proto-status="adjusted" type="button">✓</button><button data-proto-status="flag" type="button">×</button><button data-proto-status="unchecked" type="button">○</button></div></div>
+     </div>
+    </details>
+   </section>
 
-   <details class="sammyProtocolAdvanced"><summary><b>Prüfung / Debug</b><span>Landmarks · Zonen · Audit</span></summary><div class="sammyProtocolAdvancedBody">
-    <div class="sammyProtocolToolbar"><button id="sammyProtocolPrev" type="button">‹ Maß</button><button id="sammyProtocolNext" type="button">Maß ›</button><button id="sammyProtocolRandom" type="button">Random</button><button id="sammyProtocolRandomWide" type="button">Random breit</button><button id="sammyProtocolResetBody" type="button">Körper Reset</button></div>
-    <label class="sammyProtocolSelectLabel">Maß<select id="sammyProtocolMeasureSelect"></select></label>
-    <div id="sammyProtocolPoseCard" class="sammyProtocolPoseCard"><div><b id="sammyProtocolPoseName">–</b><small id="sammyProtocolPoseNote">–</small><small id="sammyProtocolPoseSource" class="sammyProtocolPoseSource">Native Constraints</small></div><div id="sammyProtocolPoseSteps" class="sammyProtocolPoseSteps"></div><div class="sammyProtocolPoseActions"><button id="sammyProtocolPoseOk" type="button">Pose ✓</button><button id="sammyProtocolPoseFlag" type="button">Pose ?</button><button id="sammyProtocolPoseReset" type="button">Messpose</button></div></div>
-    <div class="sammyProtocolSwitchRow"><button id="sammyProtocolMirror" type="button" class="active" disabled>Spiegel gekoppelt</button><button id="sammyProtocolMeasureLine" type="button" class="active">Maße AN</button><button id="sammyProtocolZones" type="button">Region AN</button><button id="sammyProtocolLabels" type="button">Namen AN</button></div>
-    <div id="sammyProtocolMeasureInfo" class="sammyProtocolMeasureInfo"></div><div id="sammyProtocolToleranceInfo" class="sammyProtocolToleranceInfo"></div>
-    <div class="sammyProtocolLandmarkHead"><b>Landmarks</b><small>am Körper direkt antippbar</small></div><div id="sammyProtocolLandmarkList" class="sammyProtocolLandmarkList"></div>
-    <details id="sammyProtocolInspector" class="sammyProtocolInspector"><summary><b id="sammyProtocolInspectorTitle">Landmark auswählen</b><span id="sammyProtocolInspectorState">ungeprüft</span></summary><div class="sammyProtocolInspectorBody"><div id="sammyProtocolSourceTabs" class="sammyProtocolSourceTabs"></div><button id="sammyProtocolDocOpen" class="sammyProtocolDocButton" type="button"><img id="sammyProtocolDocImage" alt="Handbook Referenz"><span>Originalseite öffnen</span></button><div id="sammyProtocolSourceText" class="sammyProtocolSourceText"></div><div class="sammyProtocolAdjust"><div class="sammyProtocolAdjustHead"><b>Landmark-Offset</b><small>nur erlaubte Körperregion · cm</small></div><label>X / lateral <output id="sammyProtocolXOut">0.0</output><input id="sammyProtocolX" type="range" min="-8" max="8" step="0.1" value="0"></label><label>Y / Höhe <output id="sammyProtocolYOut">0.0</output><input id="sammyProtocolY" type="range" min="-8" max="8" step="0.1" value="0"></label><label>Z / Tiefe <output id="sammyProtocolZOut">0.0</output><input id="sammyProtocolZ" type="range" min="-8" max="8" step="0.1" value="0"></label><button id="sammyProtocolLandmarkReset" type="button">Landmark Reset</button></div><textarea id="sammyProtocolComment" rows="3" placeholder="Kommentar …"></textarea><div class="sammyProtocolStatusButtons"><button data-proto-status="ok" type="button">✓ korrekt</button><button data-proto-status="adjusted" type="button">✓ korrigiert</button><button data-proto-status="flag" type="button">? prüfen</button><button data-proto-status="unchecked" type="button">zurücksetzen</button></div></div></details>
-    <details class="sammyProtocolSourceMeasure"><summary><b>Messprotokoll</b><span id="sammyProtocolMeasurePage">–</span></summary><div id="sammyProtocolMeasureText"></div><div class="sammyProtocolMeasureAudit"><div class="sammyProtocolMeasureAuditHead"><b>Freigabe</b><span id="sammyProtocolMeasureAuditState">ungeprüft</span></div><textarea id="sammyProtocolMeasureComment" rows="2" placeholder="Kommentar …"></textarea><div class="sammyProtocolStatusButtons"><button data-proto-measure-status="ok" type="button">✓ korrekt</button><button data-proto-measure-status="flag" type="button">? prüfen</button><button data-proto-measure-status="unchecked" type="button">zurücksetzen</button></div></div></details>
-    <div class="sammyProtocolExportRow"><button id="sammyProtocolExport" type="button">Audit JSON</button><button id="sammyProtocolResetAudit" type="button">Audit löschen</button></div>
-   </div></details>
+   <div class="sammyProtocolCompat" hidden>
+    <div class="sammyProtocolBaseSwitch"><button type="button" data-proto-base="standing">Stehen</button><button type="button" data-proto-base="sitting">Sitzen</button></div>
+    <div id="sammyProtocolLiveMeasure"></div>
+    <div id="sammyProtocolQuickInfo" hidden><button id="sammyProtocolQuickInfoClose" type="button">×</button><b id="sammyProtocolQuickInfoTitle"></b><img id="sammyProtocolQuickInfoImage" alt=""><p id="sammyProtocolQuickInfoText"></p><div id="sammyProtocolQuickInfoMeta"></div></div>
+    <label>Maß<select id="sammyProtocolMeasureSelect"></select></label>
+    <div id="sammyProtocolPoseCard"><b id="sammyProtocolPoseName"></b><small id="sammyProtocolPoseNote"></small><small id="sammyProtocolPoseSource"></small><div id="sammyProtocolPoseSteps"></div><button id="sammyProtocolPoseOk" type="button">✓</button><button id="sammyProtocolPoseFlag" type="button">×</button><button id="sammyProtocolPoseReset" type="button">↺</button></div>
+    <button id="sammyProtocolMirror" type="button" disabled></button>
+    <button id="sammyProtocolRandomWide" type="button"></button><button id="sammyProtocolResetBody" type="button"></button>
+    <div id="sammyProtocolMeasureInfo"></div><div id="sammyProtocolToleranceInfo"></div>
+    <div class="sammyProtocolSourceMeasure"><span id="sammyProtocolMeasurePage"></span><div id="sammyProtocolMeasureText"></div><span id="sammyProtocolMeasureAuditState"></span><textarea id="sammyProtocolMeasureComment"></textarea><div class="sammyProtocolStatusButtons"><button data-proto-measure-status="ok" type="button">✓</button><button data-proto-measure-status="flag" type="button">×</button><button data-proto-measure-status="unchecked" type="button">○</button></div></div>
+    <button id="sammyProtocolExport" type="button"></button><button id="sammyProtocolResetAudit" type="button"></button>
+   </div>
+  </div>
+  <div class="sammyProtocolBottomBar" role="toolbar" aria-label="PROT Anzeige">
+   <button id="sammyProtocolMeasureLine" class="active" type="button" aria-label="Maße ein oder aus" title="Maße">⌁</button>
+   <button id="sammyProtocolZones" type="button" aria-label="Regionen ein oder aus" title="Regionen">▦</button>
+   <button id="sammyProtocolLabels" type="button" aria-label="Namen ein oder aus" title="Namen">Aa</button>
+   <button id="sammyProtocolRandom" type="button" aria-label="Mannequin randomisieren" title="Random">⚄</button>
   </div>
  </section>
+ <div id="sammyProtocolHoldInfo" class="sammyProtocolHoldInfo" hidden aria-hidden="true"><img id="sammyProtocolHoldInfoImage" alt="ANSUR Referenzbild"></div>
  <div id="sammyProtocolImageModal" class="sammyProtocolImageModal hidden"><button id="sammyProtocolImageClose" type="button">×</button><img id="sammyProtocolImageLarge" alt="ANSUR Handbook Seite"></div>
 
  <section id="sammyAnsPanel" class="sammyPanel sammyAnsPanel" data-panel-key="ansur">
@@ -353,7 +382,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.19.2</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.19.3</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -610,6 +639,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.19.2"></script>
+<script type="module" src="app.js?v=0.8.19.3"></script>
 </body>
 </html>

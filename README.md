@@ -1,3 +1,15 @@
+# Sammy
+
+## v0.8.19.3 · PROT streamline / review status
+
+- PROT-Kopfzeile: nur Icons für vorher/nachher, Hold-Info, korrekt/inkorrekt und Schließen.
+- Menü in **Landmarks** und **Maße** getrennt; Standing/Sitting-Schalter und Pose-Erklärung aus der sichtbaren Oberfläche entfernt.
+- Maß- und Landmark-Zeilen werden grün (korrekt) bzw. rot (inkorrekt) hinterlegt; aktive Auswahl bleibt zusätzlich klar umrandet.
+- Hold-Info zeigt nur den relevanten ANSUR-Bildausschnitt; Maß-Crops enthalten ausschließlich die beiden Referenzbilder.
+- Untere Ein-Zeilen-Leiste: Maße, Regionen, Namen, Random.
+- CAM-Button entfernt; Haupt-Bubbles werden beim ersten Start dieser Version vertikal oben rechts gruppiert.
+- Messgeometrie/Regionstrennung bleibt unverändert aus v0.8.19.2 (MEAS als Geometriequelle, strikte anatomische Masks, kein Whole-Body-Fallback).
+
 
 ## v0.8.19.2 · PROT pose-first review
 - Standing/Sitting remain the two base views. Arm/leg side signs are derived from the actual SOMA rig, not assumed X directions.
