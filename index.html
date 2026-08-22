@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.19.0</title>
-<link rel="stylesheet" href="style.css?v=0.8.19.0">
+<title>Sammy v0.8.19.1</title>
+<link rel="stylesheet" href="style.css?v=0.8.19.1">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.19.0</div>
+  <div class="sammySplashVersion">v0.8.19.1</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.19.0</div>
+<div id="sammyVersion">Sammy · v0.8.19.1</div>
 
 <button id="sammyCameraDebugBtn" class="sammyCameraDebugBtn" type="button">CAM</button>
 <div id="sammyCameraDebugPanel" class="sammyCameraDebugPanel hidden">
@@ -196,26 +196,28 @@
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
   <div class="sammyPanelHead"><div><b>ANSUR PROTOCOL LAB</b><small id="sammyProtocolProgress">0 / 24 Maße</small></div><button class="sammyPanelClose" type="button">×</button></div>
   <div class="sammyPanelScroll">
-   <div class="sammyProtocolIntro">NATICK/TR-11/017 · 24 Sammy-Zielmaße. Zwei FBX-basierte Grundposen (Stehen/Sitzen); alle Sonderstellungen sind Modifier oder Protokollbedingungen. Pose, Landmark und Messmethode werden getrennt geprüft. Landmark-Snapping bleibt anatomisch segmentiert.</div>
+   <div class="sammyProtocolIntro">NATICK/TR-11/017 · 24 Sammy-Zielmaße. Zwei native SOMA/Axis16-Grundposen (Stehen/Sitzen) werden aus Welt-Richtungs-Constraints erzeugt – ohne FBX-Retarget und ohne geratene lokale Eulerachsen. Komplexe Hand-/Kontakt-Modifier bleiben bis zur Basisfreigabe bewusst nur Protokollanweisungen. Die vorhandene Measurement-Lab-Geometrie wird direkt als gelbe Messlinie eingeblendet; PROT bleibt die ANSUR-Prüfschicht.</div>
    <div class="sammyProtocolToolbar">
     <button id="sammyProtocolPrev" type="button">‹ Maß</button><button id="sammyProtocolNext" type="button">Maß ›</button>
     <button id="sammyProtocolRandom" type="button">Random</button><button id="sammyProtocolRandomWide" type="button">Random breit</button><button id="sammyProtocolResetBody" type="button">Körper Reset</button>
    </div>
    <label class="sammyProtocolSelectLabel">Maß<select id="sammyProtocolMeasureSelect"></select></label>
    <div id="sammyProtocolPoseCard" class="sammyProtocolPoseCard">
-    <div><b id="sammyProtocolPoseName">–</b><small id="sammyProtocolPoseNote">–</small><small id="sammyProtocolPoseSource" class="sammyProtocolPoseSource">FBX lädt beim Öffnen</small></div>
-    <div class="sammyProtocolPreviewHead"><b>Basis / Debug-Vorschau</b><small>nicht Teil der Messfreigabe</small></div>
-    <div class="sammyProtocolPreviewRow">
-     <button type="button" data-proto-preview="standing">Stehen</button><button type="button" data-proto-preview="sitting">Sitzen</button><button type="button" data-proto-preview="wbx_scan">WBX</button><button type="button" data-proto-preview="rig_debug_a">Rig A</button><button type="button" data-proto-preview="sitting_arms_lap">Sitz · Schoß</button><button type="button" data-proto-preview="sitting_hand_chest">Sitz · Brust</button>
+    <div><b id="sammyProtocolPoseName">–</b><small id="sammyProtocolPoseNote">–</small><small id="sammyProtocolPoseSource" class="sammyProtocolPoseSource">Native Constraints</small></div>
+    <div class="sammyProtocolPreviewHead"><b>Native Basis-Vorschau</b><small>nur die zwei kanonischen Grundposen</small></div>
+    <div class="sammyProtocolPreviewRow sammyProtocolPreviewRowTwo">
+     <button type="button" data-proto-preview="standing">Stehen</button><button type="button" data-proto-preview="sitting">Sitzen</button>
     </div>
     <div id="sammyProtocolPoseSteps" class="sammyProtocolPoseSteps"></div>
     <div class="sammyProtocolPoseActions"><button id="sammyProtocolPoseOk" type="button">Pose ✓</button><button id="sammyProtocolPoseFlag" type="button">Pose ?</button><button id="sammyProtocolPoseReset" type="button">Messpose</button></div>
    </div>
    <div class="sammyProtocolSwitchRow">
     <button id="sammyProtocolMirror" type="button" class="active" disabled>Spiegel fest gekoppelt</button>
+    <button id="sammyProtocolMeasureLine" type="button" class="active">Messlinie AN</button>
     <button id="sammyProtocolZones" type="button" class="active">Geometrie-Zonen AN</button>
     <button id="sammyProtocolLabels" type="button" class="active">Namen AN</button>
    </div>
+   <div id="sammyProtocolLiveMeasure" class="sammyProtocolLiveMeasure"><b>MEAS CURRENT</b><strong>—</strong><small>Measurement-Lab-Geometrie wird geladen.</small></div>
    <div id="sammyProtocolMeasureInfo" class="sammyProtocolMeasureInfo"></div>
    <div id="sammyProtocolToleranceInfo" class="sammyProtocolToleranceInfo"></div>
    <div class="sammyProtocolLandmarkHead"><b>Landmarks / Suchzonen</b><small>Tippe Punkt am Mannequin oder Eintrag</small></div>
@@ -381,7 +383,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.19.0</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.19.1</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -638,6 +640,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.19.0"></script>
+<script type="module" src="app.js?v=0.8.19.1"></script>
 </body>
 </html>

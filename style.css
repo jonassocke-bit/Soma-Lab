@@ -474,7 +474,7 @@ body.sammy-ansur-d-running #sammyAnsBubble{box-shadow:0 0 0 1px rgba(255,255,255
 .sammyAnsAuditRows{display:grid;gap:2px}.sammyAnsAuditRow{display:grid;grid-template-columns:minmax(74px,1fr) 62px 62px 66px;gap:4px;align-items:center;min-height:20px;border-top:1px solid rgba(255,255,255,.045);font-size:7.3px;font-variant-numeric:tabular-nums}.sammyAnsAuditRow:first-child{border-top:0}.sammyAnsAuditRow b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e2e4e8}.sammyAnsAuditRow span{color:#a2a6ae;text-align:right}.sammyAnsAuditRow strong{text-align:right}.sammyAnsAuditRow strong.ok{color:#9ee9ae}.sammyAnsAuditRow strong.warn{color:#f2d781}.sammyAnsAuditRow strong.bad{color:#ff9b8c}.sammyAnsAuditRow.anchor{opacity:.62}
 body.sammy-ansur-d-running .sammyBubble:not(#sammyAnsBubble){opacity:.28;pointer-events:none}body.sammy-ansur-d-running #sammyAnsBubble{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 0 22px rgba(185,220,255,.16)}
 
-/* Sammy v0.8.19.0 · ANSUR Protocol / Landmark Lab */
+/* Sammy v0.8.19.1 · ANSUR Protocol / Landmark Lab */
 .sammyProtocolPanel .sammyPanelHead>div{display:flex;flex-direction:column;gap:2px}.sammyProtocolPanel .sammyPanelHead small{font-size:9px;color:#999da6;font-weight:500;letter-spacing:.04em}
 .sammyProtocolIntro{font-size:10px;line-height:1.45;color:#aeb1b9;padding:2px 2px 9px}
 .sammyProtocolToolbar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:5px 0 9px}.sammyProtocolToolbar button:nth-child(1),.sammyProtocolToolbar button:nth-child(2){grid-column:auto}.sammyProtocolToolbar button{min-height:36px;font-size:9px!important;padding:7px 6px!important}
@@ -499,5 +499,10 @@ body.sammy-ansur-d-running .sammyBubble:not(#sammyAnsBubble){opacity:.28;pointer
 body.sammy-protocol-mode #sammyProtocolBubble{box-shadow:0 0 0 1px rgba(255,255,255,.22),0 0 25px rgba(190,220,255,.12)}
 @media(max-width:600px){.sammyProtocolToolbar{grid-template-columns:1fr 1fr 1fr}.sammyProtocolDocButton img{max-height:230px}.sammyProtocolPanel{max-height:86vh}}
 
-/* v0.8.19.0 · ANSUR Appendix-G observer-error guidance + full protocol audit */
+/* v0.8.19.1 · ANSUR Appendix-G observer-error guidance + full protocol audit */
 .sammyProtocolToleranceInfo{margin:8px 0 10px;padding:9px 10px;border:1px solid rgba(255,255,255,.10);border-radius:10px;background:rgba(110,145,180,.08);font-size:12px;line-height:1.45}.sammyProtocolToleranceInfo strong{font-size:13px}.sammyInlineSourceButton{margin-left:5px;padding:3px 7px!important;min-height:0!important;font-size:11px!important}.sammyProtocolMeasureAudit{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.09)}.sammyProtocolMeasureAuditHead{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:7px}.sammyProtocolMeasureAudit textarea{width:100%;box-sizing:border-box;resize:vertical}.sammyProtocolPoseSteps button.ok{box-shadow:inset 0 0 0 1px rgba(88,190,130,.55)}.sammyProtocolPoseSteps button.flag{box-shadow:inset 0 0 0 1px rgba(232,183,76,.60)}#sammyProtocolMirror:disabled{opacity:1;cursor:default}
+/* v0.8.19.1 · PROT rescue: native pose constraints + MEAS geometry */
+.sammyProtocolPreviewRowTwo{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.sammyProtocolSwitchRow{grid-template-columns:repeat(2,minmax(0,1fr))}
+.sammyProtocolLiveMeasure{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:baseline;padding:9px 10px;margin-bottom:8px;border:1px solid rgba(255,223,114,.28);border-radius:12px;background:rgba(255,223,114,.06)}
+.sammyProtocolLiveMeasure b{font-size:8px;color:#ffdf72;letter-spacing:.05em}.sammyProtocolLiveMeasure strong{font-size:13px;color:#fff;text-align:right}.sammyProtocolLiveMeasure small{grid-column:1/-1;font-size:7.5px;line-height:1.35;color:#aeb2ba}.sammyProtocolLiveMeasure.missing{border-color:rgba(238,141,141,.25);background:rgba(238,141,141,.04)}.sammyProtocolLiveMeasure.missing b{color:#eab0b0}
