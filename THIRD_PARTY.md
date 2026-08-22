@@ -21,3 +21,7 @@ Public database information: Defense Centers for Public Health – Aberdeen, Ant
 ## Sammy-only ANSUR→DIMENSIONS bridge · v0.8.14
 
 `ansur-dimensions-bridge-v1.json` is **not** ANSUR source data. It is a compact derived model built from Sammy's corrected 6,000-body calibration corpus to provide seven Sammy-only/proxy dimensions needed by the frozen 31-measure R5 construction path. The bridge uses sex-specific input-domain alignment and bounded outputs to avoid edge-case extrapolation. These seven values are explicitly excluded from ANSUR truth scoring.
+
+## v0.8.18.1 · ANSUR Protocol Lab reference assets
+
+The new `ansur-protocol-v1.json` and `ansur-page-*.jpg` assets are derived only from the user-provided copy of **NATICK/TR-11/017, Measurer’s Handbook: US Army and Marine Corps Anthropometric Surveys, 2010-2011**. The report itself states: “Approved for public release; distribution is unlimited.” Only pages needed for Sammy’s 24 current ANSUR-comparable targets and their source landmarks/standard postures are bundled. No ANSUR participant-level source rows are added by this feature.

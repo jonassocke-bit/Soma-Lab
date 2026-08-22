@@ -1,0 +1,1453 @@
+{
+  "schema": "sammy-ansur-protocol-v1",
+  "source": {
+    "title": "Measurer’s Handbook: US Army and Marine Corps Anthropometric Surveys, 2010-2011",
+    "report": "NATICK/TR-11/017",
+    "uploadedPdf": "ADA548497(patient-vacuum-cloth).pdf",
+    "note": "Only the 24 ANSUR-comparable Sammy targets, their source landmarks/poses, and Appendix-G allowable-observer-error guidance are included.",
+    "integrationVersion": "0.8.18.1"
+  },
+  "poses": {
+    "standing": {
+      "label": "Anthropometric Standing",
+      "pdfPage": 83,
+      "image": "ansur-page-83.jpg",
+      "description": "Erect, weight even, heels together as much as possible, legs/trunk straight without stiffness, head erect, arms relaxed at sides, palms beside thighs.",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ]
+      },
+      "editable": [
+        "LeftArm",
+        "RightArm",
+        "LeftForeArm",
+        "RightForeArm",
+        "LeftHand",
+        "RightHand",
+        "Head",
+        "Neck1"
+      ],
+      "id": "standing",
+      "implementationNote": "Rig-Preset für die ANSUR-Ausgangshaltung. Gewichtsverteilung und Muskelentspannung sind semantische Prüfbedingungen und werden nicht physikalisch simuliert.",
+      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+    },
+    "sitting": {
+      "label": "Anthropometric Sitting",
+      "pdfPage": 84,
+      "image": "ansur-page-84.jpg",
+      "description": "Erect sitting, thighs parallel, knees 90°, feet in line with thighs, shoulders relaxed; upper arms hang at sides; before measuring elbows flex 90°, hands straight, palms inward.",
+      "joints": {
+        "LeftLeg": [
+          90,
+          0,
+          0
+        ],
+        "RightLeg": [
+          90,
+          0,
+          0
+        ],
+        "LeftShin": [
+          90,
+          0,
+          0
+        ],
+        "RightShin": [
+          90,
+          0,
+          0
+        ],
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ],
+        "LeftForeArm": [
+          0,
+          0,
+          90
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          -90
+        ]
+      },
+      "editable": [
+        "LeftLeg",
+        "RightLeg",
+        "LeftShin",
+        "RightShin",
+        "LeftFoot",
+        "RightFoot",
+        "LeftArm",
+        "RightArm",
+        "LeftForeArm",
+        "RightForeArm",
+        "LeftHand",
+        "RightHand",
+        "Head"
+      ],
+      "id": "sitting",
+      "implementationNote": "90°-Hüft/Knie-Preset. Der im Handbook geforderte ca. 8-cm-Abstand zur Sitzkante sowie die exakte Fußstützen-/Landmark-Ausrichtung werden nicht automatisch gelöst und müssen visuell geprüft werden.",
+      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+    },
+    "chest_breadth_prep": {
+      "label": "Chest Breadth · Setup",
+      "pdfPage": 110,
+      "image": "ansur-page-110.jpg",
+      "description": "Standing, heels together. Both hands on hips while the caliper is aligned. Participant takes and holds a deep breath.",
+      "joints": {
+        "LeftArm": [
+          15,
+          0,
+          -55
+        ],
+        "RightArm": [
+          15,
+          0,
+          55
+        ],
+        "LeftForeArm": [
+          0,
+          0,
+          105
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          -105
+        ]
+      },
+      "editable": [
+        "LeftArm",
+        "RightArm",
+        "LeftForeArm",
+        "RightForeArm",
+        "LeftHand",
+        "RightHand"
+      ],
+      "id": "chest_breadth_prep",
+      "implementationNote": "Hands-on-hips ist eine Rig-Näherung. Die volle Inspiration ist eine Protokollbedingung und verändert in dieser Version das Brustvolumen nicht automatisch.",
+      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+    },
+    "chest_breadth_measure": {
+      "label": "Chest Breadth · Measurement",
+      "pdfPage": 110,
+      "image": "ansur-page-110.jpg",
+      "description": "After full inspiration and caliper alignment, arms are lowered and breadth is measured. Full inspiration is a protocol condition; Sammy V1 pose does not simulate breathing volume.",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ]
+      },
+      "editable": [
+        "LeftArm",
+        "RightArm",
+        "LeftForeArm",
+        "RightForeArm",
+        "Head"
+      ],
+      "id": "chest_breadth_measure",
+      "implementationNote": "Arme werden nach dem Setup abgesenkt. Der Atemzustand bleibt eine nicht volumetrisch simulierte Protokollbedingung.",
+      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+    },
+    "hip_arms_away": {
+      "label": "Hip Breadth · arms slightly away",
+      "pdfPage": 137,
+      "image": "ansur-page-137.jpg",
+      "description": "Anthropometric standing with arms held slightly away from the body.",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -78
+        ],
+        "RightArm": [
+          0,
+          0,
+          78
+        ]
+      },
+      "editable": [
+        "LeftArm",
+        "RightArm"
+      ],
+      "id": "hip_arms_away",
+      "implementationNote": "„Slightly away“ ist im Handbook nicht als Winkel festgelegt; der Sammy-Winkel ist deshalb ein reproduzierbarer Startwert und muss visuell freigegeben werden.",
+      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+    },
+    "waist_hand_chest": {
+      "label": "Waist Depth · right hand on chest",
+      "pdfPage": 175,
+      "image": "ansur-page-175.jpg",
+      "description": "Anthropometric standing, but with the right hand on the chest.",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          18,
+          0,
+          55
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          -115
+        ]
+      },
+      "editable": [
+        "RightArm",
+        "RightForeArm",
+        "RightHand",
+        "Head"
+      ],
+      "id": "waist_hand_chest",
+      "implementationNote": "Hand-auf-Brust ist als reproduzierbarer Rig-Startwert angenähert; entscheidend ist, dass der rechte Arm die Taillenmessung nicht stört.",
+      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+    },
+    "thigh_special": {
+      "label": "Thigh Circumference · special",
+      "pdfPage": 165,
+      "image": "ansur-page-165.jpg",
+      "description": "Standing erect, legs just far enough apart that thighs do not touch; right hand on chest.",
+      "joints": {
+        "LeftLeg": [
+          0,
+          0,
+          4
+        ],
+        "RightLeg": [
+          0,
+          0,
+          -4
+        ],
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          18,
+          0,
+          55
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          -115
+        ]
+      },
+      "editable": [
+        "LeftLeg",
+        "RightLeg",
+        "LeftArm",
+        "RightArm",
+        "RightForeArm",
+        "RightHand"
+      ],
+      "id": "thigh_special",
+      "implementationNote": "Die Beinspreizung ist ein Startwinkel, kein fester ANSUR-Winkel. Pro randomisiertem Körper prüfen, dass sich die Oberschenkel gerade nicht berühren.",
+      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+    },
+    "lowerleg_10cm": {
+      "label": "Calf / Ankle · ~10 cm stance",
+      "pdfPage": 108,
+      "image": "ansur-page-108.jpg",
+      "description": "Standing erect on table, feet/heels approximately 10 cm apart, weight equally distributed.",
+      "joints": {
+        "LeftLeg": [
+          0,
+          0,
+          3
+        ],
+        "RightLeg": [
+          0,
+          0,
+          -3
+        ],
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ]
+      },
+      "editable": [
+        "LeftLeg",
+        "RightLeg",
+        "LeftFoot",
+        "RightFoot"
+      ],
+      "id": "lowerleg_10cm",
+      "implementationNote": "Die 10-cm-Vorgabe ist eine reale Distanz; der feste Hüftwinkel erzeugt je nach Beinlänge nur eine Näherung. Abstand am Mannequin visuell prüfen.",
+      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+    },
+    "wrist_90": {
+      "label": "Wrist · elbow 90°, palm up",
+      "pdfPage": 179,
+      "image": "ansur-page-179.jpg",
+      "description": "Standing, upper arm relaxed, elbow flexed 90°, palm up.",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightHand": [
+          0,
+          90,
+          0
+        ]
+      },
+      "editable": [
+        "RightArm",
+        "RightForeArm",
+        "RightHand"
+      ],
+      "id": "wrist_90",
+      "implementationNote": "90°-Ellenbogen und palm-up sind Rig-Presets; Hand-/Unterarmorientierung pro Körper visuell gegen die Referenz prüfen.",
+      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+    },
+    "arm_relaxed_palm_forward": {
+      "label": "Arm Length · relaxed / palm forward",
+      "pdfPage": 154,
+      "image": "ansur-page-154.jpg",
+      "description": "Standing with arms relaxed at sides; for Radiale-Stylion Length the right palm faces forward.",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ],
+        "RightHand": [
+          0,
+          90,
+          0
+        ]
+      },
+      "editable": [
+        "RightArm",
+        "RightForeArm",
+        "RightHand"
+      ],
+      "id": "arm_relaxed_palm_forward",
+      "implementationNote": "Palm-forward ist eine Rig-Preset-Orientierung und muss visuell geprüft werden; die Arme bleiben ansonsten entspannt an der Seite.",
+      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+    },
+    "crotch_setup": {
+      "label": "Crotch Height · blade setup",
+      "pdfPage": 114,
+      "image": "ansur-page-114.jpg",
+      "description": "Participant first spreads the legs only enough to place the anthropometer blade near the crotch. The heels are then brought back together before the actual height is read.",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ],
+        "LeftLeg": [
+          0,
+          0,
+          8
+        ],
+        "RightLeg": [
+          0,
+          0,
+          -8
+        ]
+      },
+      "editable": [
+        "LeftLeg",
+        "RightLeg",
+        "LeftArm",
+        "RightArm"
+      ],
+      "id": "crotch_setup",
+      "implementationNote": "Nur Setup-Schritt zum Einführen der Anthropometer-Klinge. Für die eigentliche Messung werden die Fersen wieder zusammengeführt (zweiter Pose-Schritt).",
+      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+    }
+  },
+  "landmarks": {
+    "acromion": {
+      "label": "Acromion",
+      "pair": true,
+      "region": "shoulder",
+      "side": "both",
+      "id": "acromion",
+      "pdfPage": 33,
+      "image": "ansur-page-33.jpg",
+      "DESCRIPTION": "The point of intersection of the lateral border of the acromial process and a line running down the middle of the shoulder from the neck to the tip of the shoulder.",
+      "REQUIRED LANDMARKS": "Trapezius point; Clavicle point.",
+      "PROCEDURE": "Participant is in the anthropometric standing position. Stand behind the participant and palpate the tips of both shoulders simultaneously. Draw a line along the lateral bony border of each shoulder. Then stand at the right of the participant, and lay a tape on the shoulder originating at the trapezius point (at the base of the neck), passing so that the front edge of the tape lies over the clavicle (collar bone) point, and crosses the drawn acromial border at the tip of the shoulder. Draw a short line along the front edge of the tape where it crosses the acromial border. Repeat the process for the left shoulder.",
+      "REQUIRED INSTRUMENTS": "Tape.",
+      "heading": "5.2.1 Acromion, Right and Left"
+    },
+    "buttock_lateral": {
+      "label": "Buttock Point · lateral",
+      "pair": true,
+      "region": "pelvis",
+      "side": "both",
+      "id": "buttock_lateral",
+      "pdfPage": 36,
+      "image": "ansur-page-36.jpg",
+      "DESCRIPTION": "Points at the level of the maximum protrusion of the right buttock.",
+      "PROCEDURE": "Participant is in the anthropometric standing position. Stand at the right of the participant and sight the point of maximum protrusion of the right buttock (buttock point, posterior). (This landmark is not drawn.) Set the landmark transfer rod to the height of the posterior buttock landmark. Move it to the right and left sides of the participant and draw short horizontal marks on each side.",
+      "REQUIRED INSTRUMENTS": "Landmark transfer rod.",
+      "heading": "5.2.4 Buttock Point, Right Lateral and Left Lateral"
+    },
+    "cervicale": {
+      "label": "Cervicale · C7",
+      "pair": false,
+      "region": "neck",
+      "side": "center",
+      "id": "cervicale",
+      "pdfPage": 37,
+      "image": "ansur-page-37.jpg",
+      "DESCRIPTION": "The most prominent palpable point of the spine of the seventh cervical vertebra1.",
+      "PROCEDURE": "Participant is in the anthropometric standing position with the head in the Frankfurt plane. The spine of the seventh cervical vertebra is the most prominent vertebral spine of the back of the neck. It is best found by having the participant bend the head downwards. Stand behind the participant and with the pad of the index finger, palpate the most prominent spine. Have the participant slowly bring the head up to the Frankfurt plane while intermittently touching the spine. When the head is in place, locate the most prominent point of the spine of the seventh cervical vertebra. Draw a cross (+) through the landmark.",
+      "CAUTION": "A few participants will be encountered on whom no cervical spine prominence is detectable. On such participants, estimate the point as nearly as possible with respect to the neck and shoulders. A few participants will exhibit two or three equally prominent spinal processes. In such cases, mark the spine that is closest to the posterior base of the neck as established by a tape. Be sure that the head is in the Frankfurt plane when the landmark is drawn. 1 The definition used in ANSUR refers to the “superior palpable point” rather than to the most prominent point. This change was made to bring the definition into compliance with standard anatomical usage (Martin, 1914) and international practice.",
+      "heading": "5.2.5 Cervicale"
+    },
+    "chest_point": {
+      "label": "Chest Point · anterior",
+      "pair": false,
+      "region": "torso",
+      "side": "right",
+      "id": "chest_point",
+      "pdfPage": 38,
+      "image": "ansur-page-38.jpg",
+      "DESCRIPTION": "The most anterior right point on the chest.",
+      "PROCEDURE": "Participant is in the anthropometric standing position. Stand at the right of the participant and sight the most protruding right point of the chest. For women place an adhesive dot on the bra and for men draw a cross (+) on the chest. Draw a cross on the adhesive dot prior to placing it on the bra.",
+      "CAUTION": "After placing the mark move to the front of the participant and verify that the landmark is properly placed. 2 This landmark is unchanged from ANSUR for female participants. For male participants, the ANSUR Thelion landmark, at the center of the nipple (unmarked) was used. Dimensions taken at that landmark often missed the largest portion of the chest, which is needed for determining clearance as well as clothing and protection. Now, the anterior point is used for both males and females.",
+      "heading": "5.2.6 Chest point, anterior, right2"
+    },
+    "gluteal_furrow": {
+      "label": "Gluteal Furrow Point",
+      "pair": false,
+      "region": "rightThigh",
+      "side": "right",
+      "id": "gluteal_furrow",
+      "pdfPage": 47,
+      "image": "ansur-page-47.jpg",
+      "DESCRIPTION": "The lowest point of the lowest furrow or crease at the juncture of the right buttock and the thigh.",
+      "PROCEDURE": "Participant is in the anthropometric standing position. Stand behind the participant and draw a short horizontal line at the top of the thigh at the lowest point of the lowest crease. Where there is a smooth continuous curve at the juncture of the thigh and buttock, view the buttock/thigh juncture from the right side and draw the landmark where you judge it to be appropriate. Even on participants with a continuous curve, a skin crease can usually be discerned.",
+      "heading": "5.2.15 Gluteal Furrow Point"
+    },
+    "infrathyroid": {
+      "label": "Infrathyroid",
+      "pair": false,
+      "region": "neck",
+      "side": "center",
+      "id": "infrathyroid",
+      "pdfPage": 50,
+      "image": "ansur-page-50.jpg",
+      "DESCRIPTION": "The inferior point of the thyroid cartilage (Adam's apple) in the midsagittal plane.",
+      "PROCEDURE": "Participant stands with the head in the Frankfurt plane. Stand in front of the participant and palpate the smooth lateral surface of the thyroid cartilage moving downwards until you feel the space between the thyroid cartilage and the cricoid cartilage just below it. Then locate the bottom point of the thyroid cartilage in the midsagittal plane. Draw a short horizontal line through the landmark.",
+      "CAUTION": "Be sure the participant's head is in the Frankfurt plane.",
+      "heading": "5.2.18 Infrathyroid"
+    },
+    "neck_base_points": {
+      "label": "Neck Base · anterior/lateral",
+      "pair": true,
+      "region": "neck",
+      "side": "mixed",
+      "id": "neck_base_points",
+      "pdfPage": 61,
+      "image": "ansur-page-61.jpg",
+      "DESCRIPTION": "Anterior and lateral points at the base of the neck.",
+      "PROCEDURE": "Participant stands looking straight ahead. Stand behind the participant. Place a tape around the base of the neck, laying it first in front, then on the sides, and finally, across the back, as if to measure NECK CIRCUMFERENCE, BASE. The anterior landmark is at the bottom of the tape, on the front of the neck in the midsagittal plane. The participant places a finger on the tape near the anterior landmark to help hold the tape in place. Draw a short horizontal line through the landmark. The right lateral and left lateral landmarks are located at the bottom of the tape on both sides. Draw roughly 4 cm long horizontal lines through both landmarks following the bottom of the tape.",
+      "REQUIRED INSTRUMENTS": "Steel tape.",
+      "heading": "5.2.29 Neck, Anterior, Right Lateral, and Left Lateral"
+    },
+    "radiale": {
+      "label": "Radiale",
+      "pair": false,
+      "region": "rightArm",
+      "side": "right",
+      "id": "radiale",
+      "pdfPage": 65,
+      "image": "ansur-page-65.jpg",
+      "DESCRIPTION": "The superior point on the outside edge of the radius.",
+      "PROCEDURE": "Participant stands relaxed. Stand at the right of the participant and palpate the area of the landmark (the hollow on the lateral side of the elbow). When you have located the upper end of the radius, bring the forefinger toward it horizontally, and touch it gently so as not to pull the skin around it up or down. Draw a cross (+) through the point. If you have any difficulty locating this point, grasp the participant's wrist, and rotate the arm back and forth while palpating the bone in the area of the landmark.",
+      "heading": "5.2.33 Radiale"
+    },
+    "stylion": {
+      "label": "Stylion",
+      "pair": false,
+      "region": "rightArm",
+      "side": "right",
+      "id": "stylion",
+      "pdfPage": 70,
+      "image": "ansur-page-70.jpg",
+      "DESCRIPTION": "The inferior point of the bottom of the radius and the extension of this landmark on the dorsal and ventral sides of the wrist.",
+      "PROCEDURE": "Participant stands with right elbow flexed 90°. Stand in front of the participant and grasp the participant's hand. Place your thumb on the thumb side of the participant's hand and palpate up toward the wrist until you locate the end of the radius. Draw a cross (+) over the landmark. Hold the participant’s hand with the palm facing medially and look directly at the stylion landmark to eliminate errors in sighting. Draw a line across the dorsal (back) surface of the wrist, beginning below stylion. Next draw a line on the ventral (front) surface of the wrist, beginning below stylion.",
+      "CAUTION": "This area is crossed by tendons so it may be necessary to bend the hand up and down at the wrist to find the landmark. When transferring, be sure the lines are straight and that their origin is at stylion.",
+      "heading": "5.2.36 Stylion, Dorsal Stylion, and Ventral Stylion"
+    },
+    "tibiale": {
+      "label": "Tibiale",
+      "pair": false,
+      "region": "rightLeg",
+      "side": "right",
+      "id": "tibiale",
+      "pdfPage": 75,
+      "image": "ansur-page-75.jpg",
+      "DESCRIPTION": "The superior palpable point on the medial condyle of the right tibia.",
+      "PROCEDURE": "Participant stands erect on a table with the weight distributed equally on both feet. Stand in front of the participant and, with one hand, grasp the bony prominences (condyles) located on the left and right side at the top of the tibia. Have the participant flex the knee to help locate these structures. The participant then straightens the knee. When you have located the superior palpable point on the medial condyle of the tibia, use the thumb or index finger of the other hand to mark its place, and draw a cross (+) through the landmark.",
+      "CAUTION": "This landmark is difficult or impossible to locate accurately in heavily muscled participants. Use your best judgment in these cases.",
+      "heading": "5.2.41 Tibiale"
+    },
+    "trapezius": {
+      "label": "Trapezius Point",
+      "pair": true,
+      "region": "shoulder",
+      "side": "both",
+      "id": "trapezius",
+      "pdfPage": 77,
+      "image": "ansur-page-77.jpg",
+      "DESCRIPTION": "The point at which the anterior border of the trapezius muscle crosses the lateral neck landmark.",
+      "REQUIRED LANDMARKS": "Neck, right lateral and left lateral.",
+      "PROCEDURE": "Participant stands looking straight ahead. Ask the participant to place the right hand on his/her left shoulder to help outline the trapezius muscle on the right shoulder. Stand at the side of the participant. Moving from the shoulder to the neck, palpate the mass of the trapezius muscle to locate its anterior border. Draw a short line from the neck toward the shoulder at the point where the anterior border of the muscle crosses the lateral neck landmark. Repeat this procedure on the other side.",
+      "heading": "5.2.43 Trapezius Point, Right and Left"
+    },
+    "trochanterion": {
+      "label": "Trochanterion",
+      "pair": false,
+      "region": "rightThigh",
+      "side": "right",
+      "id": "trochanterion",
+      "pdfPage": 79,
+      "image": "ansur-page-79.jpg",
+      "DESCRIPTION": "The superior point of the greater trochanter of the right femur of a standing participant.",
+      "PROCEDURE": "Participant stands erect with weight distributed equally on both feet. Stand in front of the participant. Use the pads of the fingers to simultaneously locate both greater trochanters (near the hip joint). Work fingers up along the front and back of the right trochanter to find its highest point. On a number of participants it will help to have the participant move the thigh back and forth. Draw a cross (+) at the level of the landmark. On heavier participants be sure to palpate directly horizontally, and avoid moving flesh either above or below the landmark.",
+      "CAUTION": "This can be a difficult landmark to locate and you may have to use your best judgment in drawing it.",
+      "heading": "5.2.45 Trochanterion"
+    },
+    "waist_omphalion": {
+      "label": "Waist · Omphalion A/P/L/R",
+      "pair": true,
+      "region": "torso",
+      "side": "mixed",
+      "id": "waist_omphalion",
+      "pdfPage": 80,
+      "image": "ansur-page-80.jpg",
+      "DESCRIPTION": "Center of the navel and its posterior and lateral extensions.",
+      "PROCEDURE": "Participant is in the anthropometric standing position. Stand in front of the participant and locate the landmark by inspection. Draw a 4-cm horizontal line to the right side of omphalion, and using a landmark transfer rod set at the height of omphalion, draw 4-cm horizontal lines on the right and left sides and over the spine of the participant. The landmarks are drawn at the maximum point of quiet respiration. On heavy participants, the navel may point downward, instead of anteriorly. On such participants, continue to follow the procedures outlined above.",
+      "REQUIRED INSTRUMENTS": "Landmark transfer rod.",
+      "CAUTION": "The participant must not tense the abdominal muscles or change body position while these marks are drawn.",
+      "heading": "5.2.46 Waist (Omphalion), Right, Left, Anterior, and Posterior"
+    },
+    "crotch": {
+      "label": "Crotch · undrawn",
+      "pair": false,
+      "region": "pelvis",
+      "side": "center",
+      "page": 31,
+      "undrawn": true,
+      "id": "crotch",
+      "pdfPage": 31,
+      "image": "ansur-page-31.jpg",
+      "heading": "5.1 Undrawn Landmarks · Crotch",
+      "DESCRIPTION": "The point at the level of the lower edge of the pubis bone of the os coxa."
+    },
+    "vertex": {
+      "label": "Vertex · top of head",
+      "pair": false,
+      "region": "head",
+      "side": "center",
+      "page": 32,
+      "undrawn": true,
+      "id": "vertex",
+      "pdfPage": 32,
+      "image": "ansur-page-32.jpg",
+      "heading": "5.1 Undrawn Landmarks · Top of head (vertex)",
+      "DESCRIPTION": "The highest point on the head when the head is in the Frankfurt plane."
+    },
+    "buttock_posterior": {
+      "label": "Buttock Point · posterior",
+      "pair": false,
+      "region": "pelvis",
+      "side": "center",
+      "page": 31,
+      "undrawn": true,
+      "id": "buttock_posterior",
+      "pdfPage": 31,
+      "image": "ansur-page-31.jpg",
+      "heading": "5.1 Undrawn Landmarks · Buttock point, posterior",
+      "DESCRIPTION": "Point of maximum protrusion of the right buttock of a standing participant."
+    },
+    "calf_max": {
+      "label": "Calf maximum zone",
+      "pair": false,
+      "region": "rightCalf",
+      "side": "right",
+      "dynamic": true,
+      "id": "calf_max",
+      "pdfPage": null,
+      "image": null,
+      "DESCRIPTION": "No drawn landmark. ANSUR locates the maximum horizontal circumference by measuring three locations in the observed maximum calf area.",
+      "heading": "Dynamic measurement zone · Calf"
+    },
+    "ankle_min": {
+      "label": "Ankle minimum zone",
+      "pair": false,
+      "region": "rightAnkle",
+      "side": "right",
+      "dynamic": true,
+      "id": "ankle_min",
+      "pdfPage": null,
+      "image": null,
+      "DESCRIPTION": "No drawn landmark. ANSUR defines the ankle measure as the minimum horizontal circumference of the ankle.",
+      "heading": "Dynamic measurement zone · Ankle"
+    }
+  },
+  "measures": [
+    {
+      "id": "stature",
+      "label": "Stature",
+      "sourceName": "6.4.76 Stature",
+      "pdfPage": 162,
+      "image": "ansur-page-162.jpg",
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "vertex"
+      ],
+      "region": "whole",
+      "derived": null,
+      "DESCRIPTION": "The vertical distance from a standing surface to the top of the head.",
+      "UNDRAWN LANDMARK": "Top of head (vertex).",
+      "PROCEDURE": "Participant is in the anthropometric standing position with the head in the Frankfurt plane. Stand at one side of the participant, and use an anthropometer to measure the vertical distance between the standing surface and the top of the head. Move the blade of the anthropometer across the top of the head to ensure measurement of the maximum distance. Use firm pressure to compress the participant's hair. The measurement is taken at the maximum point of quiet respiration.",
+      "INSTRUMENT": "Anthropometer.",
+      "CAUTION": "Be sure that the head is in the Frankfurt plane.",
+      "heading": "6.4.76 Stature",
+      "allowableObserverErrorMm": 6,
+      "observerErrorPdfPage": 236,
+      "observerErrorReportPage": 226,
+      "observerErrorImage": "ansur-page-236.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "biacromial_breadth",
+      "label": "Biacromial Breadth",
+      "sourceName": "6.4.9 Biacromial Breadth",
+      "pdfPage": 95,
+      "image": "ansur-page-95.jpg",
+      "pose": "sitting",
+      "steps": [
+        "sitting"
+      ],
+      "landmarks": [
+        "acromion"
+      ],
+      "region": "shoulder",
+      "derived": null,
+      "DESCRIPTION": "The distance between the right and left acromion landmarks on the tips of the shoulder.",
+      "DRAWN LANDMARKS": "Acromion, right and left.",
+      "PROCEDURE": "Participant is in the anthropometric sitting position. Stand behind the participant, and use a beam caliper to measure the distance between the drawn right and left acromion landmarks at the tips of the shoulders. The beam should be parallel to the coronal plane. If the acromial landmarks cannot be seen from behind, stand in front of the participant. The measurement is taken at the maximum point of quiet respiration. Use sufficient pressure to maintain firm contact with the skin.",
+      "INSTRUMENT": "Beam caliper.",
+      "CAUTION": "The participant must not be allowed to change the position of the shoulders.",
+      "heading": "6.4.9 Biacromial Breadth",
+      "allowableObserverErrorMm": 8,
+      "observerErrorPdfPage": 235,
+      "observerErrorReportPage": 225,
+      "observerErrorImage": "ansur-page-235.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "chest_circumference",
+      "label": "Chest Circumference",
+      "sourceName": "6.4.25 Chest Circumference",
+      "pdfPage": 111,
+      "image": "ansur-page-111.jpg",
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "chest_point"
+      ],
+      "region": "torso",
+      "derived": null,
+      "DESCRIPTION": "The maximum circumference of the chest at the fullest part of the breast7.",
+      "DRAWN LANDMARK": "Chest point, anterior, right.",
+      "PROCEDURE": "Participant is in the anthropometric standing position in front of a mirror. Stand in front of the participant, and use a tape to measure the horizontal circumference of the chest at the level of the right chest point anterior landmark. On women, the landmark will be an adhesive dot on the bra. Before taking the measurement verify that this landmark has not shifted. Use the mirror to check the position of the tape as it crosses the participant’s back. This dimension will cross very soft tissue at the armpit and bust, and some compression of the tissue will inevitably occur. Be sure, however, to keep this to a minimum. Exert only enough tension on the tape to maintain contact between the tape and the skin. The tape will span body hollows in this measurement. The measurement is taken at the maximum point of quiet respiration.",
+      "INSTRUMENT": "Steel tape. 7 In ANSUR this measurement was taken (in males) at the level of Thelion (nipple). This change was made in order to capture the circumference of the chest at its maximum. It is unchanged for females.",
+      "heading": "6.4.25 Chest Circumference",
+      "allowableObserverErrorMm": 14,
+      "observerErrorPdfPage": 235,
+      "observerErrorReportPage": 225,
+      "observerErrorImage": "ansur-page-235.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "chest_breadth",
+      "label": "Chest Breadth",
+      "sourceName": "6.4.24 Chest Breadth",
+      "pdfPage": 110,
+      "image": "ansur-page-110.jpg",
+      "pose": "chest_breadth_measure",
+      "steps": [
+        "chest_breadth_prep",
+        "chest_breadth_measure"
+      ],
+      "landmarks": [
+        "chest_point"
+      ],
+      "region": "torso",
+      "derived": null,
+      "DESCRIPTION": "The maximum horizontal breadth of the chest at the level of the chest point anterior landmark6.",
+      "DRAWN LANDMARK": "Chest point, anterior, right.",
+      "PROCEDURE": "Participant stands erect looking straight ahead with the heels together and the weight distributed evenly on both feet. The participant places both hands on the hips. Stand in front of the participant, and ready the beam caliper by lining up the blades at the level of chest point anterior. Ask the participant to take a deep breath and hold it. Compress the tissue firmly to ensure contact with the rib cage, ask the participant to lower the arms, and take the measurement. The measurement is taken at maximum inspiration of the chest at the level of the chest point anterior landmark. On women, the landmark will be an adhesive dot on the bra. Before taking the measurement verify that this landmark has not shifted.",
+      "INSTRUMENT": "Beam caliper.",
+      "CAUTION": "Breast tissue should NOT be included in this measurement. This can be avoided, when necessary, by tilting the blades of the caliper upwards and approaching the bony sides of the chest from below the breasts. Additionally, unlike most other dimensions, which are measured at the maximum point of quiet respiration, this dimension is measured at full inspiration. 6 In ANSUR this measurement was taken (in males) at the level of Thelion (nipple). This change was made in order to capture the breadth of the chest at its maximum. It is unchanged for females.",
+      "heading": "6.4.24 Chest Breadth",
+      "allowableObserverErrorMm": 7,
+      "observerErrorPdfPage": 235,
+      "observerErrorReportPage": 225,
+      "observerErrorImage": "ansur-page-235.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "chest_depth",
+      "label": "Chest Depth",
+      "sourceName": "6.4.26 Chest Depth",
+      "pdfPage": 112,
+      "image": "ansur-page-112.jpg",
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "chest_point"
+      ],
+      "region": "torso",
+      "derived": null,
+      "DESCRIPTION": "The horizontal distance between the right chest point anterior landmark and the back at the same level8.",
+      "DRAWN LANDMARK": "Chest point, anterior, right.",
+      "PROCEDURE": "Participant is in the anthropometric standing position. Stand at the right of the participant, and use a beam caliper to measure the horizontal distance between the chest at the level of the right chest point anterior landmark and the back at the same level. Place the fixed blade of the caliper on the back. On women, the landmark will be an adhesive dot on the bra. Before taking the measurement verify that this landmark has not shifted. This measurement is taken at the maximum point of quiet respiration. Exert only enough pressure to maintain contact between the caliper and the skin (or bra).",
+      "INSTRUMENT": "Beam caliper.",
+      "CAUTION": "Participant must not be allowed to change the position of the shoulders. 8 In ANSUR this measurement was taken (in males) at the level of Thelion (nipple). This change was made in order to capture the depth of the chest at its maximum. It is unchanged for females.",
+      "heading": "6.4.26 Chest Depth",
+      "allowableObserverErrorMm": 4,
+      "observerErrorPdfPage": 235,
+      "observerErrorReportPage": 225,
+      "observerErrorImage": "ansur-page-235.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "waist_circumference",
+      "label": "Waist Circumference (Omphalion)",
+      "sourceName": "6.4.88 Waist Circumference (Omphalion)",
+      "pdfPage": 174,
+      "image": "ansur-page-174.jpg",
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "waist_omphalion"
+      ],
+      "region": "torso",
+      "derived": null,
+      "DESCRIPTION": "The horizontal circumference of the waist at the level of omphalion encompassing the waist (omphalion) landmarks.",
+      "DRAWN LANDMARKS": "Waist (omphalion), right, left, anterior and posterior.",
+      "PROCEDURE": "Participant is in the anthropometric standing position in front of a mirror. Stand in front of the participant, and use a tape to measure the horizontal distance around the torso at the level of the center of the navel. The tape will pass over the drawn waist (omphalion) landmarks at the front, back and sides. Use the mirror to check the position of the tape as it crosses the participant's back. Exert only enough tension on the tape to maintain contact between the tape and the body. The measurement is made at the maximum point of quiet respiration.",
+      "INSTRUMENT": "Steel tape.",
+      "CAUTION": "The participant must not tense the abdominal muscles.",
+      "heading": "6.4.88 Waist Circumference (Omphalion)",
+      "allowableObserverErrorMm": 12,
+      "observerErrorPdfPage": 237,
+      "observerErrorReportPage": 227,
+      "observerErrorImage": "ansur-page-237.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "waist_breadth",
+      "label": "Waist Breadth",
+      "sourceName": "6.4.87 Waist Breadth",
+      "pdfPage": 173,
+      "image": "ansur-page-173.jpg",
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "waist_omphalion"
+      ],
+      "region": "torso",
+      "derived": null,
+      "DESCRIPTION": "The horizontal breadth of the waist at the level of omphalion.",
+      "DRAWN LANDMARKS": "Waist (omphalion), right and left.",
+      "PROCEDURE": "Participant is in the anthropometric standing position. Stand in front of the participant, and use a beam caliper to measure the horizontal breadth of the waist from the drawn landmark at right waist (omphalion) to the drawn landmark at left waist (omphalion). Exert only enough pressure to attain contact between the caliper and the skin. The measurement is taken at the maximum point of quiet respiration.",
+      "INSTRUMENT": "Beam caliper.",
+      "CAUTION": "Care must be taken not to compress the soft tissue.",
+      "heading": "6.4.87 Waist Breadth",
+      "allowableObserverErrorMm": 6,
+      "observerErrorPdfPage": 237,
+      "observerErrorReportPage": 227,
+      "observerErrorImage": "ansur-page-237.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "waist_depth",
+      "label": "Waist Depth",
+      "sourceName": "6.4.89 Waist Depth",
+      "pdfPage": 175,
+      "image": "ansur-page-175.jpg",
+      "pose": "waist_hand_chest",
+      "steps": [
+        "waist_hand_chest"
+      ],
+      "landmarks": [
+        "waist_omphalion"
+      ],
+      "region": "torso",
+      "derived": null,
+      "DESCRIPTION": "The horizontal distance between the front and the back of the waist at the level of omphalion.",
+      "DRAWN LANDMARKS": "Waist (omphalion), anterior and posterior.",
+      "PROCEDURE": "Participant is in the anthropometric standing position, but with the right hand on the chest. Stand at the right of the participant, and use a beam caliper to measure the horizontal distance between the drawn landmarks at waist (omphalion), posterior and waist (omphalion), anterior. The fixed blade of the caliper is on the back. Exert only enough pressure to attain contact between the caliper and the skin. The measurement is taken at the maximum point of quiet respiration.",
+      "INSTRUMENT": "Beam caliper.",
+      "CAUTION": "The participant must not tense the abdominal muscles.",
+      "heading": "6.4.89 Waist Depth",
+      "allowableObserverErrorMm": 6,
+      "observerErrorPdfPage": 237,
+      "observerErrorReportPage": 227,
+      "observerErrorImage": "ansur-page-237.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "buttock_circumference",
+      "label": "Buttock Circumference",
+      "sourceName": "6.4.17 Buttock Circumference",
+      "pdfPage": 103,
+      "image": "ansur-page-103.jpg",
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "buttock_lateral",
+        "buttock_posterior"
+      ],
+      "region": "pelvis",
+      "derived": null,
+      "DESCRIPTION": "The horizontal circumference of the trunk at the level of the maximum protrusion of the right buttock.",
+      "DRAWN LANDMARKS": "Buttock point, right lateral and left lateral.",
+      "UNDRAWN LANDMARK": "Buttock point, posterior.",
+      "PROCEDURE": "Participant stands erect on a table with heels together. Ask the participant to hold up the right leg of the shorts to expose the landmark. Stand at the participant’s right, and use a tape to measure the horizontal circumference of the trunk at the level of the maximum protrusion of the right buttock. The tape should pass over the posterior buttock point (not drawn) and the buttock point landmarks drawn on the right and left hips. If necessary, ask male participants to adjust the genitalia so as to interfere as little as possible with the tape. Exert only enough tension on the tape to maintain contact between the tape and the skin.",
+      "INSTRUMENT": "Steel tape.",
+      "CAUTION": "The tape must be maintained in a horizontal plane.",
+      "heading": "6.4.17 Buttock Circumference",
+      "allowableObserverErrorMm": 12,
+      "observerErrorPdfPage": 235,
+      "observerErrorReportPage": 225,
+      "observerErrorImage": "ansur-page-235.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "hip_breadth",
+      "label": "Hip Breadth",
+      "sourceName": "6.4.51 Hip Breadth",
+      "pdfPage": 137,
+      "image": "ansur-page-137.jpg",
+      "pose": "hip_arms_away",
+      "steps": [
+        "hip_arms_away"
+      ],
+      "landmarks": [
+        "buttock_lateral"
+      ],
+      "region": "pelvis",
+      "derived": null,
+      "DESCRIPTION": "The horizontal distance between the lateral buttock landmarks on the sides of the hips.",
+      "DRAWN LANDMARKS": "Buttock point, right lateral and left lateral.",
+      "PROCEDURE": "Participant is in the anthropometric standing position with the arms held slightly away from the body. Stand in front of the participant, and use a beam caliper to measure the horizontal distance between the drawn lateral buttock landmarks. If necessary, have the participant hold the sides of the shorts above the landmarks. Exert only enough pressure to ensure that the caliper blades are on the hips.",
+      "INSTRUMENT": "Beam caliper.",
+      "CAUTION": "Make sure participants do not pull soft tissue when they hold up their shorts.",
+      "heading": "6.4.51 Hip Breadth",
+      "allowableObserverErrorMm": 6,
+      "observerErrorPdfPage": 236,
+      "observerErrorReportPage": 226,
+      "observerErrorImage": "ansur-page-236.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "crotch_height",
+      "label": "Crotch Height",
+      "sourceName": "6.4.28 Crotch Height",
+      "pdfPage": 114,
+      "image": "ansur-page-114.jpg",
+      "pose": "standing",
+      "steps": [
+        "crotch_setup",
+        "standing"
+      ],
+      "landmarks": [
+        "crotch"
+      ],
+      "region": "pelvis",
+      "derived": null,
+      "DESCRIPTION": "The vertical distance between the standing surface and the crotch.",
+      "UNDRAWN LANDMARK": "Crotch.",
+      "PROCEDURE": "Participant stands on a table in the anthropometric standing position. Stand in front of the participant. Ask the participant to spread the legs apart enough to allow placement of the blade of an anthropometer near the crotch. The participant then brings the heels back together and raises the blade until it is in firm contact with the crotch. (Place the blade to the right of the genitalia.) The measurer then exerts additional upward pressure on the slide of the anthropometer to achieve firm and uniform placement. Measure the vertical distance between the standing surface and the crotch.",
+      "INSTRUMENT": "Anthropometer.",
+      "CAUTION": "The computer will add 1 cm to the recorded dimension to account for the width of the anthropometer blade.",
+      "heading": "6.4.28 Crotch Height",
+      "allowableObserverErrorMm": 10,
+      "observerErrorPdfPage": 235,
+      "observerErrorReportPage": 225,
+      "observerErrorImage": "ansur-page-235.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "torso_height",
+      "label": "Torso Height · derived",
+      "sourceName": "DERIVED: Acromial Height - Crotch Height",
+      "pdfPage": null,
+      "image": null,
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "acromion",
+        "crotch"
+      ],
+      "region": "whole",
+      "derived": {
+        "sources": [
+          "acromial_height",
+          "crotch_height"
+        ],
+        "pages": [
+          88,
+          114
+        ]
+      },
+      "allowableObserverErrorMm": null,
+      "observerErrorKind": "derived_no_direct_ansur_limit",
+      "observerErrorSources": [
+        {
+          "id": "acromial_height",
+          "label": "Acromial Height",
+          "allowableObserverErrorMm": 7,
+          "pdfPage": 235,
+          "reportPage": 225,
+          "image": "ansur-page-235.jpg"
+        },
+        {
+          "id": "crotch_height",
+          "label": "Crotch Height",
+          "allowableObserverErrorMm": 10,
+          "pdfPage": 235,
+          "reportPage": 225,
+          "image": "ansur-page-235.jpg"
+        }
+      ],
+      "observerErrorNote": "No direct ANSUR allowable-observer-error value exists for this Sammy-derived difference. The two source dimensions are shown separately; no combined official limit is claimed."
+    },
+    {
+      "id": "neck_circumference",
+      "label": "Neck Circumference",
+      "sourceName": "6.4.63 Neck Circumference",
+      "pdfPage": 149,
+      "image": "ansur-page-149.jpg",
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "infrathyroid"
+      ],
+      "region": "neck",
+      "derived": null,
+      "DESCRIPTION": "The circumference of the neck at the level of the infrathyroid landmark (Adam’s apple).",
+      "DRAWN LANDMARK": "Infrathyroid.",
+      "PROCEDURE": "Participant is in the anthropometric standing position with the head in the Frankfurt plane. Stand at the right of the participant, and use a tape to measure the circumference of the neck at the level of the drawn infrathyroid landmark. The plane of the measurement is perpendicular to the long axis of the neck. Exert only enough tension on the tape to maintain contact between the tape and the skin.",
+      "INSTRUMENT": "Steel tape.",
+      "CAUTION": "Be sure that the participant's head is in the Frankfurt plane.",
+      "heading": "6.4.63 Neck Circumference",
+      "allowableObserverErrorMm": 6,
+      "observerErrorPdfPage": 236,
+      "observerErrorReportPage": 226,
+      "observerErrorImage": "ansur-page-236.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "neck_base_circumference",
+      "label": "Neck Circumference, Base",
+      "sourceName": "6.4.64 Neck Circumference, Base",
+      "pdfPage": 150,
+      "image": "ansur-page-150.jpg",
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "neck_base_points"
+      ],
+      "region": "neck",
+      "derived": null,
+      "DESCRIPTION": "The circumference of the base of the neck encompassing the lateral neck and anterior neck landmarks.",
+      "DRAWN LANDMARKS": "Neck, anterior, right lateral, and left lateral.",
+      "PROCEDURE": "Participant is in the anthropometric standing position with the head in the Frankfurt plane. Stand behind the participant, and use a tape to measure the circumference of the base of the neck. The tape passes over the drawn lateral and anterior neck landmarks. Exert only enough tension on the tape to maintain contact between the tape and the skin. The participant will hold the tape on the anterior neck landmark.",
+      "INSTRUMENT": "Steel tape.",
+      "CAUTION": "Be sure that the participant's head is in the Frankfurt plane.",
+      "heading": "6.4.64 Neck Circumference, Base",
+      "allowableObserverErrorMm": 8,
+      "observerErrorPdfPage": 236,
+      "observerErrorReportPage": 226,
+      "observerErrorImage": "ansur-page-236.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "wrist_circumference",
+      "label": "Wrist Circumference",
+      "sourceName": "6.4.93 Wrist Circumference",
+      "pdfPage": 179,
+      "image": "ansur-page-179.jpg",
+      "pose": "wrist_90",
+      "steps": [
+        "wrist_90"
+      ],
+      "landmarks": [
+        "stylion"
+      ],
+      "region": "rightArm",
+      "derived": null,
+      "DESCRIPTION": "The circumference of the wrist at the level of stylion and perpendicular to the long axis of the forearm.",
+      "DRAWN LANDMARK": "Stylion.",
+      "PROCEDURE": "Participant stands with the upper arm relaxed and the elbow flexed 90° with the palm up. Stand in front of the participant, and use a tape to measure the circumference of the wrist perpendicular to the long axis of the forearm. When correctly placed, the upper edge of the tape will run just below the bony prominence at stylion, and the lower edge of the tape will run just above the pisiform bone at the bottom of the little finger side of the hand. Exert only enough tension on the tape to maintain contact between the tape and the skin.",
+      "INSTRUMENT": "Steel tape.",
+      "heading": "6.4.93 Wrist Circumference",
+      "allowableObserverErrorMm": 3,
+      "observerErrorPdfPage": 237,
+      "observerErrorReportPage": 227,
+      "observerErrorImage": "ansur-page-237.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "thigh_circumference",
+      "label": "Thigh Circumference",
+      "sourceName": "6.4.79 Thigh Circumference",
+      "pdfPage": 165,
+      "image": "ansur-page-165.jpg",
+      "pose": "thigh_special",
+      "steps": [
+        "thigh_special"
+      ],
+      "landmarks": [
+        "gluteal_furrow"
+      ],
+      "region": "rightThigh",
+      "derived": null,
+      "DESCRIPTION": "The circumference of the thigh at its juncture with the buttock.",
+      "DRAWN LANDMARK": "Gluteal furrow point, right.",
+      "PROCEDURE": "Participant stands erect on a table with the weight distributed equally on both feet. The legs are spread apart just enough so that the thighs do not touch, and the right hand is on the chest. Stand at the right of the participant, and use a tape to measure the circumference of the thigh at its juncture with the buttock (gluteal furrow point). The measurement is made perpendicular to the long axis of the thigh. Exert only enough tension on the tape to maintain contact between the tape and the skin.",
+      "INSTRUMENT": "Steel tape.",
+      "CAUTION": "The participant must not tense the thigh muscles. The tape must not be placed in a furrow.",
+      "heading": "6.4.79 Thigh Circumference",
+      "allowableObserverErrorMm": 6,
+      "observerErrorPdfPage": 236,
+      "observerErrorReportPage": 226,
+      "observerErrorImage": "ansur-page-236.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "calf_circumference",
+      "label": "Calf Circumference",
+      "sourceName": "6.4.22 Calf Circumference",
+      "pdfPage": 108,
+      "image": "ansur-page-108.jpg",
+      "pose": "lowerleg_10cm",
+      "steps": [
+        "lowerleg_10cm"
+      ],
+      "landmarks": [
+        "calf_max"
+      ],
+      "region": "rightCalf",
+      "derived": null,
+      "DESCRIPTION": "The maximum horizontal circumference of the right calf. PROCEDURE5: Participant stands erect on a table with the heels approximately 10 cm apart, and the weight distributed equally on both feet. Stand at the right of the participant. With a tape held in the horizontal plane measure the circumference of the calf at three locations in the area of observed maximum circumference. Record all three values. Exert only enough tension on the tape to maintain contact between the tape and the skin.",
+      "INSTRUMENT": "Steel tape. 5 In ANSUR, the level of the circumference was found by sliding the horizontal tape up and down the thigh until the maximum was achieved. The current procedure is faster and produces equivalent results (Hotzman et al., 2010).",
+      "heading": "6.4.22 Calf Circumference",
+      "allowableObserverErrorMm": 4,
+      "observerErrorPdfPage": 235,
+      "observerErrorReportPage": 225,
+      "observerErrorImage": "ansur-page-235.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "ankle_circumference",
+      "label": "Ankle Circumference",
+      "sourceName": "6.4.5 Ankle Circumference",
+      "pdfPage": 91,
+      "image": "ansur-page-91.jpg",
+      "pose": "lowerleg_10cm",
+      "steps": [
+        "lowerleg_10cm"
+      ],
+      "landmarks": [
+        "ankle_min"
+      ],
+      "region": "rightAnkle",
+      "derived": null,
+      "DESCRIPTION": "Minimum horizontal circumference of the ankle.",
+      "PROCEDURE": "Participant stands on a table with the feet about 10 cm apart and the weight distributed equally on both feet. Stand at the right of the participant and, with a tape, measure the minimum horizontal circumference of the ankle. Exert only enough tape tension to maintain contact between the tape and the skin.",
+      "INSTRUMENT": "Steel tape.",
+      "heading": "6.4.5 Ankle Circumference",
+      "allowableObserverErrorMm": 4,
+      "observerErrorPdfPage": 235,
+      "observerErrorReportPage": 225,
+      "observerErrorImage": "ansur-page-235.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "waist_back_length",
+      "label": "Waist Back Length (Omphalion)",
+      "sourceName": "6.4.86 Waist Back Length (Omphalion)",
+      "pdfPage": 172,
+      "image": "ansur-page-172.jpg",
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "cervicale",
+        "waist_omphalion"
+      ],
+      "region": "torso",
+      "derived": null,
+      "DESCRIPTION": "The surface distance between the cervicale landmark at the back of the neck and the waist (omphalion), posterior landmark.",
+      "DRAWN LANDMARKS": "Cervicale; Waist (omphalion), posterior.",
+      "PROCEDURE": "Participant is in the anthropometric standing position with the head in the Frankfurt plane. Stand behind the participant, and use a tape to measure the vertical surface distance between the landmarks at cervicale and waist (omphalion), posterior. The tape follows body contours. For women the tape passes underneath the bra. Place the zero point of the tape on cervicale. Exert only enough pressure to prevent slack in the tape. The measurement is taken at the maximum point of quiet respiration.",
+      "INSTRUMENT": "Steel tape.",
+      "CAUTION": "Be sure that the head is in the Frankfurt plane and that the zero point of the tape is on the cervicale landmark when the measurement is made. The measurer will often have to hold the tape against the participant's back to maintain skin contact.",
+      "heading": "6.4.86 Waist Back Length (Omphalion)",
+      "allowableObserverErrorMm": 5,
+      "observerErrorPdfPage": 237,
+      "observerErrorReportPage": 227,
+      "observerErrorImage": "ansur-page-237.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "upperarm_length",
+      "label": "Acromion-Radiale Length",
+      "sourceName": "6.4.3 Acromion-Radiale Length",
+      "pdfPage": 89,
+      "image": "ansur-page-89.jpg",
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "acromion",
+        "radiale"
+      ],
+      "region": "rightArm",
+      "derived": null,
+      "DESCRIPTION": "The distance between the acromion landmark on the right shoulder and the radiale landmark on the right elbow.",
+      "DRAWN LANDMARKS": "Acromion, right; Radiale, right.",
+      "PROCEDURE": "Participant is in the anthropometric standing position. Stand to the right of the participant, and use a beam caliper to measure the distance between the drawn acromion landmark on the tip of the right shoulder and the drawn radiale landmark on the elbow. It is important that the beam of the caliper be parallel to the long axis of the arm, and that the fixed blade of the caliper remain on the acromion landmark during this measurement. Both blades of the instrument just touch the body.",
+      "INSTRUMENT": "Beam caliper.",
+      "CAUTION": "Care should be taken not to distort the skin.",
+      "heading": "6.4.3 Acromion-Radiale Length",
+      "allowableObserverErrorMm": 4,
+      "observerErrorPdfPage": 235,
+      "observerErrorReportPage": 225,
+      "observerErrorImage": "ansur-page-235.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "lowerarm_length",
+      "label": "Radiale-Stylion Length",
+      "sourceName": "6.4.68 Radiale-Stylion Length",
+      "pdfPage": 154,
+      "image": "ansur-page-154.jpg",
+      "pose": "arm_relaxed_palm_forward",
+      "steps": [
+        "arm_relaxed_palm_forward"
+      ],
+      "landmarks": [
+        "radiale",
+        "stylion"
+      ],
+      "region": "rightArm",
+      "derived": null,
+      "DESCRIPTION": "The distance between the radiale landmark on the right elbow and the stylion landmark on the right wrist.",
+      "DRAWN LANDMARKS": "Radiale; Stylion.",
+      "PROCEDURE": "Participant stands with the arms relaxed at the sides and the right palm facing forward. Stand at the right of the participant and use a beam caliper to measure the distance between the drawn radiale landmark on the elbow and the drawn stylion landmark on the wrist. Be sure that the beam of the caliper is parallel to the long axis of the arm. Place the fixed blade on radiale. Exert only enough pressure to attain contact between the caliper and the skin.",
+      "INSTRUMENT": "Beam caliper.",
+      "heading": "6.4.68 Radiale-Stylion Length",
+      "allowableObserverErrorMm": 6,
+      "observerErrorPdfPage": 236,
+      "observerErrorReportPage": 226,
+      "observerErrorImage": "ansur-page-236.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "tibiale_height",
+      "label": "Tibial Height",
+      "sourceName": "6.4.82 Tibial Height",
+      "pdfPage": 168,
+      "image": "ansur-page-168.jpg",
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "tibiale"
+      ],
+      "region": "rightLeg",
+      "derived": null,
+      "DESCRIPTION": "The vertical distance between a standing surface and the tibiale landmark.",
+      "DRAWN LANDMARK": "Tibiale, right.",
+      "PROCEDURE": "Participant stands erect on a table with the feet together and the weight distributed equally on both feet. Stand in front of the participant, and use an anthropometer to measure the vertical distance between the standing surface and the tibiale landmark below the knee on the medial side.",
+      "INSTRUMENT": "Anthropometer.",
+      "heading": "6.4.82 Tibial Height",
+      "allowableObserverErrorMm": 2,
+      "observerErrorPdfPage": 237,
+      "observerErrorReportPage": 227,
+      "observerErrorImage": "ansur-page-237.jpg",
+      "observerErrorKind": "direct_ansur"
+    },
+    {
+      "id": "upperleg_height",
+      "label": "Upperleg Height · derived",
+      "sourceName": "DERIVED: Trochanterion Height - Tibial Height",
+      "pdfPage": null,
+      "image": null,
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "trochanterion",
+        "tibiale"
+      ],
+      "region": "rightLeg",
+      "derived": {
+        "sources": [
+          "trochanterion_height",
+          "tibiale_height"
+        ],
+        "pages": [
+          170,
+          168
+        ]
+      },
+      "allowableObserverErrorMm": null,
+      "observerErrorKind": "derived_no_direct_ansur_limit",
+      "observerErrorSources": [
+        {
+          "id": "trochanterion_height",
+          "label": "Trochanterion Height",
+          "allowableObserverErrorMm": 4,
+          "pdfPage": 237,
+          "reportPage": 227,
+          "image": "ansur-page-237.jpg"
+        },
+        {
+          "id": "tibiale_height",
+          "label": "Tibial Height",
+          "allowableObserverErrorMm": 2,
+          "pdfPage": 237,
+          "reportPage": 227,
+          "image": "ansur-page-237.jpg"
+        }
+      ],
+      "observerErrorNote": "No direct ANSUR allowable-observer-error value exists for this Sammy-derived difference. The two source dimensions are shown separately; no combined official limit is claimed."
+    },
+    {
+      "id": "shoulder_length",
+      "label": "Shoulder Length",
+      "sourceName": "6.4.71 Shoulder Length",
+      "pdfPage": 157,
+      "image": "ansur-page-157.jpg",
+      "pose": "standing",
+      "steps": [
+        "standing"
+      ],
+      "landmarks": [
+        "trapezius",
+        "acromion"
+      ],
+      "region": "shoulder",
+      "derived": null,
+      "DESCRIPTION": "The surface distance between the trapezius landmark and the acromion landmark on the right shoulder.",
+      "DRAWN LANDMARKS": "Trapezius point, right; Acromion, right.",
+      "PROCEDURE": "Participant is in the anthropometric standing position. Stand at the right of the participant, and use a tape to measure the surface distance between the drawn trapezius point landmark at the base of the neck and the drawn acromion landmark on the outer border of the shoulder. The zero end of the tape is on the trapezius point.",
+      "INSTRUMENT": "Steel tape.",
+      "CAUTION": "The participant must not be allowed to change the position of the shoulders.",
+      "heading": "6.4.71 Shoulder Length",
+      "allowableObserverErrorMm": 3,
+      "observerErrorPdfPage": 236,
+      "observerErrorReportPage": 226,
+      "observerErrorImage": "ansur-page-236.jpg",
+      "observerErrorKind": "direct_ansur"
+    }
+  ],
+  "derivedSources": {
+    "acromial_height": {
+      "id": "acromial_height",
+      "pdfPage": 88,
+      "image": "ansur-page-88.jpg",
+      "DESCRIPTION": "Vertical distance from the floor to the right acromion landmark.",
+      "DRAWN LANDMARK": "Acromion, right.",
+      "PROCEDURE": "Participant is in the anthropometric standing position. Stand to the right of the participant, and use an anthropometer to measure the vertical distance between the standing surface and the drawn acromion landmark on the tip of the right shoulder. The measurement is made at the maximum point of quiet respiration.",
+      "INSTRUMENT": "Anthropometer.",
+      "CAUTION": "The participant must not be allowed to change the position of the shoulders.",
+      "heading": "6.4.2 Acromial Height"
+    },
+    "trochanterion_height": {
+      "id": "trochanterion_height",
+      "pdfPage": 170,
+      "image": "ansur-page-170.jpg",
+      "DESCRIPTION": "The vertical distance between a standing surface and the trochanterion landmark on the upper side of the right thigh.",
+      "DRAWN LANDMARK": "Trochanterion, right.",
+      "PROCEDURE": "Participant stands on a table in the anthropometric standing position. Ask the participant to hold up the right leg of the shorts to expose the landmark. Stand at the right of the participant, and use an anthropometer to measure the vertical distance between the standing surface and the drawn trochanterion landmark.",
+      "INSTRUMENT": "Anthropometer.",
+      "heading": "6.4.84 Trochanterion Height"
+    }
+  },
+  "regions": {
+    "whole": [
+      "all"
+    ],
+    "torso": [
+      "Hips",
+      "Spine1",
+      "Spine2",
+      "Chest",
+      "LeftShoulder",
+      "RightShoulder"
+    ],
+    "shoulder": [
+      "Chest",
+      "LeftShoulder",
+      "RightShoulder",
+      "LeftArm",
+      "RightArm"
+    ],
+    "neck": [
+      "Chest",
+      "Neck1",
+      "Neck2",
+      "Head"
+    ],
+    "pelvis": [
+      "Hips",
+      "LeftLeg",
+      "RightLeg"
+    ],
+    "rightArm": [
+      "RightShoulder",
+      "RightArm",
+      "RightForeArm",
+      "RightHand"
+    ],
+    "rightThigh": [
+      "Hips",
+      "RightLeg"
+    ],
+    "rightCalf": [
+      "RightShin"
+    ],
+    "rightAnkle": [
+      "RightShin",
+      "RightFoot"
+    ],
+    "rightLeg": [
+      "Hips",
+      "RightLeg",
+      "RightShin"
+    ],
+    "head": [
+      "Neck2",
+      "Head",
+      "HeadEnd"
+    ]
+  },
+  "observerErrorGuideline": {
+    "title": "Appendix G · Allowable Observer Error",
+    "description": "Allowable interobserver error for dimensions in the 2010-2011 USMC Anthropometric Survey and the U.S. Army Anthropometric Survey. These are protocol reproducibility limits, not population percentiles and not solver target residuals.",
+    "pdfPages": [
+      235,
+      236,
+      237
+    ],
+    "reportPages": [
+      225,
+      226,
+      227
+    ],
+    "images": {
+      "235": "ansur-page-235.jpg",
+      "236": "ansur-page-236.jpg",
+      "237": "ansur-page-237.jpg"
+    },
+    "unit": "mm"
+  },
+  "protocolRules": {
+    "measurementResolutionMm": 1,
+    "defaultSide": "right",
+    "defaultRespiration": "maximum point of quiet respiration unless the individual dimension states otherwise",
+    "frankfurtPlane": "When required, the right tragion-right orbitale line is horizontal.",
+    "sourcePdfPages": [
+      83,
+      85,
+      86
+    ]
+  }
+}
