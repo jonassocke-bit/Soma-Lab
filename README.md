@@ -1,38 +1,88 @@
-# Sammy v0.8.18.1 · ANSUR Protocol / Landmark Lab
+# Sammy v0.8.19.0 · ANSUR Protocol / Landmark Lab
 
-Basis: v0.8.17.1. Die bestehende MEAS-, DIMENSIONS-, R5- und ANSUR-D1/D2/D3-Logik bleibt unverändert. Neu ist eine separate PROT-Bubble, in der die 24 tatsächlich für Sammy verwendeten ANSUR-Zielmaße vor jeder weiteren Solver-Anpassung gegen das originale Messprotokoll auditiert werden.
+Basis: v0.8.18.1. MEAS, DIMENSIONS, R5 und ANSUR-D1/D2/D3 bleiben bewusst getrennt. PROT ist weiterhin der Audit-Layer für die 24 aktuell relevanten ANSUR-Zielmaße, wurde aber bei den Posen grundlegend vereinfacht.
 
-## PROT · ANSUR Protocol Lab
+## Pose-Architektur v0.8.19.0
+
+Es gibt jetzt genau **zwei echte Grundposen**:
+
+1. `ANSUR Standing` – Quelle `sammy-ansur-standing-source.fbx` (vom Nutzer bereitgestellte `Standing W_Briefcase Idle.fbx`).
+2. `ANSUR Sitting` – Quelle `sammy-ansur-sitting-source.fbx` (vom Nutzer bereitgestellte `Sitting Idle.fbx`).
+
+Die FBX-Dateien werden erst beim Öffnen des PROT-Modus geladen. Sammy liest daraus nur einen stabilen Pose-Zeitpunkt, retargetet die lokalen Rotationsdeltas auf das Public-78/SOMA-Rig und wendet danach deterministische ANSUR-Korrekturen an. Falls ein FBX auf dem Gerät nicht geladen werden kann, wird sichtbar auf das alte Euler-Startpreset zurückgefallen; der Fehler landet in der Diagnose.
+
+### Standing-Korrekturen
+
+- kleine Aufrichtung von Rumpf/Hals/Kopf;
+- Standbreite wird über einen Joint-FK-Constraint auf ca. 2 cm Fußgelenk-Abstand gelöst (ANSUR: Fersen so weit wie möglich zusammen);
+- die geschlossene rechte Briefcase-Hand wird nicht übernommen: die Fingerpose der offenen linken Hand wird gespiegelt; bei einem Mirror-Fehler werden die rechten Finger neutral geöffnet;
+- Gewicht gleichmäßig / Muskelentspannung bleiben Protokollbedingungen und werden nicht als Bone-Transformation behauptet.
+
+### Sitting-Korrekturen
+
+- Hüft-/Knie-/Fußgeometrie stammt aus `Sitting Idle.fbx`;
+- Rumpf und der vorgeschobene Kopf/Hals werden gezielt aufgerichtet;
+- die ANSUR-Ausgangsstellung der Arme wird reproduzierbar gesetzt: Oberarme seitlich, Ellenbogen ca. 90°, Unterarme nach vorn, Handflächen zueinander;
+- Sitzfläche und Fußstütze werden im PROT-Modus als transparente Prüfhilfen visualisiert;
+- realer Sitzkantenabstand (~8 cm), Kontakt, Fußstützenhöhe und Frankfurt-Ausrichtung bleiben explizite Prüfkriterien und werden nicht als physikalisch exakt simuliert ausgegeben.
+
+## Abgeleitete Messzustände statt weiterer Grundposen
+
+Alle Sonderstellungen werden aus Standing oder Sitting erzeugt. `ansur-protocol-v1.json` enthält dafür `basePoses`, `modifiers`, `poses`, `utilityPoses` und einen expliziten `poseArchitecture`-Vertrag.
+
+Aktuell verwendete Modifier:
+
+- Hände auf Hüften → Chest Breadth Setup;
+- Arme wieder locker → Chest Breadth Measurement;
+- Arme leicht vom Körper → Hip Breadth;
+- rechte Hand auf Brust → Waist Depth / Thigh setup;
+- Ellenbogen 90° + Handfläche oben → Wrist Circumference;
+- rechte Handfläche nach vorn → Radiale–Stylion / Lower Arm Length;
+- Standbreite ~10 cm → Calf / Ankle;
+- Oberschenkel gerade nicht berührend → Thigh Circumference;
+- temporäres Beinöffnen → Crotch blade setup; danach zurück zu Standing;
+- Standbreite 30 cm + Arme weg + Fäuste → WBX Scan / Region-Debug.
+
+Nicht-geometrische Bedingungen wie Atmung, Gewichtsverteilung, Muskelspannung, Instrumentendruck oder reale Kontaktabstände sind bewusst **Conditions**, keine Posen.
+
+## Zusätzliche sinnvolle Vorschauen
+
+Im PROT-Pose-Kasten gibt es jetzt eine kleine Basis-/Debug-Vorschau:
+
+- Stehen
+- Sitzen
+- WBX
+- Rig A (rein technisch, niemals zum Messen)
+- Sitz · Schoß (für spätere Buttock-Knee / Buttock-Popliteal-Protokolle)
+- Sitz · Brust (für späteres Abdominal Extension Depth, Sitting)
+
+Diese Vorschauen zählen nicht zur Messfreigabe.
+
+## PROT · Landmark- und Messaudit
 
 - Quelle: `NATICK/TR-11/017 · Measurer’s Handbook: US Army and Marine Corps Anthropometric Surveys, 2010-2011`.
-- Enthält nur die 24 ANSUR-kompatiblen Sammy-Ziele; `torso_height` und `upperleg_height` sind ausdrücklich als abgeleitete Ziele markiert.
-- 11 relevante Pose-/Protokollzustände statt einer universellen T-Pose: Anthropometric Standing, Anthropometric Sitting, Chest-Breadth Setup/Measurement, Hip-Breadth arms-away, Waist-Depth right-hand-chest, Thigh special, Calf/Ankle 10-cm stance, Wrist 90° palm-up, relaxed arm/palm-forward und Crotch blade-setup.
-- Die Pose-Referenzseite aus dem Handbook ist direkt im Inspector sichtbar. Chest Breadth weist explizit darauf hin, dass volle Inspiration eine Protokollbedingung ist und in Pose V1 noch nicht als Atemvolumen simuliert wird.
-- Für jedes relevante Maß werden nur dessen Landmark(s) bzw. dynamische Suchzone eingeblendet. Anklicken öffnet Originalseite, Beschreibung/Procedure/Caution/Instrument aus dem PDF.
-- Landmark-Offsets X/Y/Z in cm; jeder Offset wird auf die zulässige anatomische Mesh-Region zurückprojiziert.
-- Anatomische Region-Masks werden aus den Anny/SOMA-Skinweights gebildet. `torso` enthält Hips/Spine/Chest/Shoulder, aber keine Arm-/Forearm-/Hand-Vertices; analoge Masken existieren für Neck, Pelvis, Right Arm, Right Thigh, Calf, Ankle, Leg und Head.
-- Region-Mask des gewählten Landmark kann als feine Punktwolke eingeblendet werden, damit falsches Geometrie-Fangen visuell prüfbar ist.
-- Bilaterale Landmark-Gruppen (u.a. Acromion, Buttock lateral, Trapezius, Neck lateral, Omphalion lateral) sind im Protocol Lab fest gespiegelt gekoppelt. Ein Offset bewegt beide Seiten symmetrisch; Mittellinienpunkte bleiben bei lateralen Korrekturen mittig.
-- Auditstatus pro Landmark: korrekt / korrigiert / prüfen / ungeprüft; freies Kommentarfeld; Persistenz in localStorage; Export als `sammy-ansur-protocol-audit-v1` JSON.
-- Pose-Status kann pro benötigtem Pose-Schritt separat als korrekt/prüfen markiert werden; die Rig-Winkel sind reproduzierbare Startpresets und werden dort, wo reale Abstände/Atmung nicht automatisch gelöst werden, ausdrücklich als manuell zu verifizieren gekennzeichnet.
-- Auch das Messprotokoll selbst besitzt jetzt Status + Kommentar. Erst Landmark(s) + alle Pose-Schritte + Protokollfreigabe zählen ein Maß als vollständig auditiert.
-- Random / Random breit erzeugen bewusst moderate erwachsene Körper; lokale L/R-Morphs werden logisch gepaart und immer symmetrisch gesetzt. `Körper Reset` stellt den neutralen Körper der aktuellen Geschlechtsseite wieder her.
+- 24 ANSUR-kompatible Sammy-Ziele; `torso_height` und `upperleg_height` bleiben ausdrücklich abgeleitete Sammy-Ziele.
+- Original-Handbook-Seiten für Pose, Landmark, Messung und Appendix-G-Richtwert direkt im Inspector.
+- Landmark-Offsets X/Y/Z in cm; Rückprojektion auf anatomische Region-Masks aus Anny/SOMA-Skinweights.
+- Torso-Regionen besitzen keinen Whole-Body-Fallback und können dadurch nicht still Arme einfangen.
+- Bilaterale Landmark-Gruppen sind fest symmetrisch gekoppelt; Mittellinienpunkte bleiben lateral unverändert.
+- Status + Kommentar für Landmark, Pose-Schritt und Messprotokoll; erst alle drei Ebenen machen ein Maß vollständig.
+- Random / Random breit bleiben symmetrische Regressionstests innerhalb moderater erwachsener Formbereiche.
 
-## Handbook Assets
+## Appendix G
 
-`ansur-protocol-v1.json` enthält die aus dem Handbook extrahierten Protokolltexte und die Zuordnung der 24 Ziele zu Pose, Landmark(s), Geometrie-Zone und PDF-Seite. `ansur-page-*.jpg` enthält nur die hierfür benötigten Handbook-Seiten als mobile Referenzbilder (Standardposen, relevante Landmark- und Messseiten).
+Für die 22 direkten ANSUR-Ziele wird der offizielle `Allowable Observer Error` in mm angezeigt. Die zwei abgeleiteten Sammy-Ziele erhalten keinen erfundenen kombinierten Grenzwert; stattdessen werden die Quellwerte getrennt gezeigt.
 
-## v0.8.18.1 Gegencheck / Appendix-G-Richtwerte
+## Diagnosefix v0.8.19.0
 
-- Die 22 direkten ANSUR-Ziele wurden Feld für Feld gegen ihre Handbook-Seiten gegengeprüft; Beschreibung, Landmark-Bezug, Procedure, Instrument und Caution stimmen mit der Quelle überein.
-- Die zwei Sammy-Ableitungen `torso_height` und `upperleg_height` bleiben ausdrücklich **keine** direkten ANSUR-Dimensionen.
-- Appendix G ist jetzt in PROT sichtbar: pro direktem Maß wird der offizielle **Allowable Observer Error** in mm angezeigt und die zugehörige Tabellen-Seite kann geöffnet werden. Bei abgeleiteten Maßen werden nur die beiden Quell-Richtwerte gezeigt; es wird bewusst kein erfundener kombinierter ANSUR-Grenzwert ausgegeben.
-- Crotch, Buttock posterior und Vertex sind undrawn landmarks; ihre bereits vorhandenen Handbook-Seiten 31/32 sind jetzt auch tatsächlich mit dem Inspector verknüpft.
-- Bilaterale Landmark-Gruppen sind im Protocol Lab fest gespiegelt gekoppelt. Bei Gruppen mit Mittellinienpunkten (z. B. Omphalion/Neck Base) verschiebt ein lateraler Offset die Mittellinienpunkte nicht mehr versehentlich aus der Sagittalebene.
-- Region-Masks haben keinen Whole-Body-Fallback mehr: fehlen Skinweights/Regiondaten, wird die Region leer gelassen statt potenziell Arme/Beine in ein fremdes Maß einzufangen.
-- Ein Maß gilt im Fortschrittszähler erst als vollständig geprüft, wenn Landmark(s), alle nötigen Pose-Schritte und das Messprotokoll selbst freigegeben sind.
-- GitHub-Paket ist absichtlich **flach**: alle Dateien einschließlich der ANSUR-Seitenbilder liegen im Repository-Root, ohne Unterordner.
+- `sammy-diagnostics-v1.snapshot.version` verwendet jetzt die tatsächliche App-Version statt des alten hart codierten `0.7.1`.
+- Leere `<img src="">`-Zuweisungen im PROT-Inspector wurden entfernt. Safari hatte daraus einen Request auf die Repository-Root-URL erzeugt und fälschlich `Ressource konnte nicht geladen werden: https://.../Soma-Lab/` gemeldet.
+- echte Resource-Fehler enthalten jetzt Tag, Element-ID und Klasse; ein leerer/root-identischer Pseudo-Request wird nicht mehr als Fehler erfasst.
+
+## Paketstruktur
+
+Das GitHub-Paket bleibt absichtlich **flach**. Auch die beiden FBX-Posequellen liegen direkt im Repository-Root. Es gibt keine Asset-Unterordner.
 
 ## Sicherheitsgrenze
 
-PROT ist bewusst ein Audit-Layer. Die neuen Landmark-Offsets und Pose-Freigaben verändern in v0.8.18.1 **noch nicht** die 31 Produktions-MEAS-Definitionen oder R5. Erst nach manueller Freigabe sollen daraus neue ANSUR-Protocol-Measurements entstehen.
+PROT bleibt ein Audit-Layer. Die neuen FBX-Grundposen, Landmark-Offsets und Pose-Freigaben ersetzen in v0.8.19.0 noch nicht automatisch die 31 Produktions-MEAS-Definitionen oder R5. Erst nach visueller/fachlicher Freigabe werden die geprüften Protokolldefinitionen in die Produktionsmessung überführt.

@@ -4,415 +4,182 @@
     "title": "Measurer’s Handbook: US Army and Marine Corps Anthropometric Surveys, 2010-2011",
     "report": "NATICK/TR-11/017",
     "uploadedPdf": "ADA548497(patient-vacuum-cloth).pdf",
-    "note": "Only the 24 ANSUR-comparable Sammy targets, their source landmarks/poses, and Appendix-G allowable-observer-error guidance are included.",
-    "integrationVersion": "0.8.18.1"
+    "note": "24 ANSUR-comparable Sammy targets. v0.8.19.0 uses exactly two FBX-derived base poses (standing/sitting); all measure-specific states are deterministic modifiers or protocol conditions.",
+    "integrationVersion": "0.8.19.0"
   },
   "poses": {
     "standing": {
+      "id": "standing",
       "label": "Anthropometric Standing",
+      "kind": "base_pose",
+      "base": "standing",
+      "modifiers": [],
+      "conditions": [],
       "pdfPage": 83,
       "image": "ansur-page-83.jpg",
       "description": "Erect, weight even, heels together as much as possible, legs/trunk straight without stiffness, head erect, arms relaxed at sides, palms beside thighs.",
-      "joints": {
-        "LeftArm": [
-          0,
-          0,
-          -90
-        ],
-        "RightArm": [
-          0,
-          0,
-          90
-        ]
-      },
-      "editable": [
-        "LeftArm",
-        "RightArm",
-        "LeftForeArm",
-        "RightForeArm",
-        "LeftHand",
-        "RightHand",
-        "Head",
-        "Neck1"
-      ],
-      "id": "standing",
-      "implementationNote": "Rig-Preset für die ANSUR-Ausgangshaltung. Gewichtsverteilung und Muskelentspannung sind semantische Prüfbedingungen und werden nicht physikalisch simuliert.",
-      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+      "implementationNote": "FBX-derived base. Feet are solved toward ~2 cm joint separation (heels together as much as possible). Finger pose on the right is reconstructed from the open left side; if mirror reconstruction is unavailable, right fingers fall back to neutral/open.",
+      "implementationKind": "fbx_base_plus_deterministic_modifiers"
     },
     "sitting": {
+      "id": "sitting",
       "label": "Anthropometric Sitting",
+      "kind": "base_pose",
+      "base": "sitting",
+      "modifiers": [],
+      "conditions": [],
       "pdfPage": 84,
       "image": "ansur-page-84.jpg",
       "description": "Erect sitting, thighs parallel, knees 90°, feet in line with thighs, shoulders relaxed; upper arms hang at sides; before measuring elbows flex 90°, hands straight, palms inward.",
-      "joints": {
-        "LeftLeg": [
-          90,
-          0,
-          0
-        ],
-        "RightLeg": [
-          90,
-          0,
-          0
-        ],
-        "LeftShin": [
-          90,
-          0,
-          0
-        ],
-        "RightShin": [
-          90,
-          0,
-          0
-        ],
-        "LeftArm": [
-          0,
-          0,
-          -90
-        ],
-        "RightArm": [
-          0,
-          0,
-          90
-        ],
-        "LeftForeArm": [
-          0,
-          0,
-          90
-        ],
-        "RightForeArm": [
-          0,
-          0,
-          -90
-        ]
-      },
-      "editable": [
-        "LeftLeg",
-        "RightLeg",
-        "LeftShin",
-        "RightShin",
-        "LeftFoot",
-        "RightFoot",
-        "LeftArm",
-        "RightArm",
-        "LeftForeArm",
-        "RightForeArm",
-        "LeftHand",
-        "RightHand",
-        "Head"
-      ],
-      "id": "sitting",
-      "implementationNote": "90°-Hüft/Knie-Preset. Der im Handbook geforderte ca. 8-cm-Abstand zur Sitzkante sowie die exakte Fußstützen-/Landmark-Ausrichtung werden nicht automatisch gelöst und müssen visuell geprüft werden.",
-      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+      "implementationNote": "FBX-derived base. The real 8-cm seat-edge gap, foot-rest height and exact Frankfurt alignment remain protocol checks; the app visualizes a seat aid but does not claim physical contact simulation.",
+      "implementationKind": "fbx_base_plus_deterministic_modifiers"
     },
     "chest_breadth_prep": {
+      "id": "chest_breadth_prep",
       "label": "Chest Breadth · Setup",
+      "kind": "derived_pose",
+      "base": "standing",
+      "modifiers": [
+        "hands_on_hips"
+      ],
+      "conditions": [
+        "full inspiration",
+        "caliper aligned"
+      ],
       "pdfPage": 110,
       "image": "ansur-page-110.jpg",
       "description": "Standing, heels together. Both hands on hips while the caliper is aligned. Participant takes and holds a deep breath.",
-      "joints": {
-        "LeftArm": [
-          15,
-          0,
-          -55
-        ],
-        "RightArm": [
-          15,
-          0,
-          55
-        ],
-        "LeftForeArm": [
-          0,
-          0,
-          105
-        ],
-        "RightForeArm": [
-          0,
-          0,
-          -105
-        ]
-      },
-      "editable": [
-        "LeftArm",
-        "RightArm",
-        "LeftForeArm",
-        "RightForeArm",
-        "LeftHand",
-        "RightHand"
-      ],
-      "id": "chest_breadth_prep",
       "implementationNote": "Hands-on-hips ist eine Rig-Näherung. Die volle Inspiration ist eine Protokollbedingung und verändert in dieser Version das Brustvolumen nicht automatisch.",
-      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+      "implementationKind": "fbx_base_plus_deterministic_modifiers"
     },
     "chest_breadth_measure": {
+      "id": "chest_breadth_measure",
       "label": "Chest Breadth · Measurement",
+      "kind": "derived_pose",
+      "base": "standing",
+      "modifiers": [
+        "arms_relaxed"
+      ],
+      "conditions": [
+        "full inspiration held"
+      ],
       "pdfPage": 110,
       "image": "ansur-page-110.jpg",
       "description": "After full inspiration and caliper alignment, arms are lowered and breadth is measured. Full inspiration is a protocol condition; Sammy V1 pose does not simulate breathing volume.",
-      "joints": {
-        "LeftArm": [
-          0,
-          0,
-          -90
-        ],
-        "RightArm": [
-          0,
-          0,
-          90
-        ]
-      },
-      "editable": [
-        "LeftArm",
-        "RightArm",
-        "LeftForeArm",
-        "RightForeArm",
-        "Head"
-      ],
-      "id": "chest_breadth_measure",
       "implementationNote": "Arme werden nach dem Setup abgesenkt. Der Atemzustand bleibt eine nicht volumetrisch simulierte Protokollbedingung.",
-      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+      "implementationKind": "fbx_base_plus_deterministic_modifiers"
     },
     "hip_arms_away": {
+      "id": "hip_arms_away",
       "label": "Hip Breadth · arms slightly away",
+      "kind": "derived_pose",
+      "base": "standing",
+      "modifiers": [
+        "arms_slightly_away"
+      ],
+      "conditions": [],
       "pdfPage": 137,
       "image": "ansur-page-137.jpg",
       "description": "Anthropometric standing with arms held slightly away from the body.",
-      "joints": {
-        "LeftArm": [
-          0,
-          0,
-          -78
-        ],
-        "RightArm": [
-          0,
-          0,
-          78
-        ]
-      },
-      "editable": [
-        "LeftArm",
-        "RightArm"
-      ],
-      "id": "hip_arms_away",
       "implementationNote": "„Slightly away“ ist im Handbook nicht als Winkel festgelegt; der Sammy-Winkel ist deshalb ein reproduzierbarer Startwert und muss visuell freigegeben werden.",
-      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+      "implementationKind": "fbx_base_plus_deterministic_modifiers"
     },
     "waist_hand_chest": {
+      "id": "waist_hand_chest",
       "label": "Waist Depth · right hand on chest",
+      "kind": "derived_pose",
+      "base": "standing",
+      "modifiers": [
+        "right_hand_on_chest"
+      ],
+      "conditions": [],
       "pdfPage": 175,
       "image": "ansur-page-175.jpg",
       "description": "Anthropometric standing, but with the right hand on the chest.",
-      "joints": {
-        "LeftArm": [
-          0,
-          0,
-          -90
-        ],
-        "RightArm": [
-          18,
-          0,
-          55
-        ],
-        "RightForeArm": [
-          0,
-          0,
-          -115
-        ]
-      },
-      "editable": [
-        "RightArm",
-        "RightForeArm",
-        "RightHand",
-        "Head"
-      ],
-      "id": "waist_hand_chest",
       "implementationNote": "Hand-auf-Brust ist als reproduzierbarer Rig-Startwert angenähert; entscheidend ist, dass der rechte Arm die Taillenmessung nicht stört.",
-      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+      "implementationKind": "fbx_base_plus_deterministic_modifiers"
     },
     "thigh_special": {
+      "id": "thigh_special",
       "label": "Thigh Circumference · special",
+      "kind": "derived_pose",
+      "base": "standing",
+      "modifiers": [
+        "right_hand_on_chest",
+        "thighs_not_touching"
+      ],
+      "conditions": [
+        "thighs do not touch"
+      ],
       "pdfPage": 165,
       "image": "ansur-page-165.jpg",
       "description": "Standing erect, legs just far enough apart that thighs do not touch; right hand on chest.",
-      "joints": {
-        "LeftLeg": [
-          0,
-          0,
-          4
-        ],
-        "RightLeg": [
-          0,
-          0,
-          -4
-        ],
-        "LeftArm": [
-          0,
-          0,
-          -90
-        ],
-        "RightArm": [
-          18,
-          0,
-          55
-        ],
-        "RightForeArm": [
-          0,
-          0,
-          -115
-        ]
-      },
-      "editable": [
-        "LeftLeg",
-        "RightLeg",
-        "LeftArm",
-        "RightArm",
-        "RightForeArm",
-        "RightHand"
-      ],
-      "id": "thigh_special",
       "implementationNote": "Die Beinspreizung ist ein Startwinkel, kein fester ANSUR-Winkel. Pro randomisiertem Körper prüfen, dass sich die Oberschenkel gerade nicht berühren.",
-      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+      "implementationKind": "fbx_base_plus_deterministic_modifiers"
     },
     "lowerleg_10cm": {
+      "id": "lowerleg_10cm",
       "label": "Calf / Ankle · ~10 cm stance",
+      "kind": "derived_pose",
+      "base": "standing",
+      "modifiers": [
+        "feet_10cm"
+      ],
+      "conditions": [
+        "weight equally distributed"
+      ],
       "pdfPage": 108,
       "image": "ansur-page-108.jpg",
       "description": "Standing erect on table, feet/heels approximately 10 cm apart, weight equally distributed.",
-      "joints": {
-        "LeftLeg": [
-          0,
-          0,
-          3
-        ],
-        "RightLeg": [
-          0,
-          0,
-          -3
-        ],
-        "LeftArm": [
-          0,
-          0,
-          -90
-        ],
-        "RightArm": [
-          0,
-          0,
-          90
-        ]
-      },
-      "editable": [
-        "LeftLeg",
-        "RightLeg",
-        "LeftFoot",
-        "RightFoot"
-      ],
-      "id": "lowerleg_10cm",
       "implementationNote": "Die 10-cm-Vorgabe ist eine reale Distanz; der feste Hüftwinkel erzeugt je nach Beinlänge nur eine Näherung. Abstand am Mannequin visuell prüfen.",
-      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+      "implementationKind": "fbx_base_plus_deterministic_modifiers"
     },
     "wrist_90": {
+      "id": "wrist_90",
       "label": "Wrist · elbow 90°, palm up",
+      "kind": "derived_pose",
+      "base": "standing",
+      "modifiers": [
+        "right_elbow_90_palm_up"
+      ],
+      "conditions": [],
       "pdfPage": 179,
       "image": "ansur-page-179.jpg",
       "description": "Standing, upper arm relaxed, elbow flexed 90°, palm up.",
-      "joints": {
-        "LeftArm": [
-          0,
-          0,
-          -90
-        ],
-        "RightArm": [
-          0,
-          0,
-          90
-        ],
-        "RightForeArm": [
-          0,
-          0,
-          -90
-        ],
-        "RightHand": [
-          0,
-          90,
-          0
-        ]
-      },
-      "editable": [
-        "RightArm",
-        "RightForeArm",
-        "RightHand"
-      ],
-      "id": "wrist_90",
       "implementationNote": "90°-Ellenbogen und palm-up sind Rig-Presets; Hand-/Unterarmorientierung pro Körper visuell gegen die Referenz prüfen.",
-      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+      "implementationKind": "fbx_base_plus_deterministic_modifiers"
     },
     "arm_relaxed_palm_forward": {
+      "id": "arm_relaxed_palm_forward",
       "label": "Arm Length · relaxed / palm forward",
+      "kind": "derived_pose",
+      "base": "standing",
+      "modifiers": [
+        "right_palm_forward"
+      ],
+      "conditions": [],
       "pdfPage": 154,
       "image": "ansur-page-154.jpg",
       "description": "Standing with arms relaxed at sides; for Radiale-Stylion Length the right palm faces forward.",
-      "joints": {
-        "LeftArm": [
-          0,
-          0,
-          -90
-        ],
-        "RightArm": [
-          0,
-          0,
-          90
-        ],
-        "RightHand": [
-          0,
-          90,
-          0
-        ]
-      },
-      "editable": [
-        "RightArm",
-        "RightForeArm",
-        "RightHand"
-      ],
-      "id": "arm_relaxed_palm_forward",
       "implementationNote": "Palm-forward ist eine Rig-Preset-Orientierung und muss visuell geprüft werden; die Arme bleiben ansonsten entspannt an der Seite.",
-      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+      "implementationKind": "fbx_base_plus_deterministic_modifiers"
     },
     "crotch_setup": {
+      "id": "crotch_setup",
       "label": "Crotch Height · blade setup",
+      "kind": "derived_pose",
+      "base": "standing",
+      "modifiers": [
+        "crotch_blade_setup"
+      ],
+      "conditions": [
+        "setup only; return heels together for measurement"
+      ],
       "pdfPage": 114,
       "image": "ansur-page-114.jpg",
       "description": "Participant first spreads the legs only enough to place the anthropometer blade near the crotch. The heels are then brought back together before the actual height is read.",
-      "joints": {
-        "LeftArm": [
-          0,
-          0,
-          -90
-        ],
-        "RightArm": [
-          0,
-          0,
-          90
-        ],
-        "LeftLeg": [
-          0,
-          0,
-          8
-        ],
-        "RightLeg": [
-          0,
-          0,
-          -8
-        ]
-      },
-      "editable": [
-        "LeftLeg",
-        "RightLeg",
-        "LeftArm",
-        "RightArm"
-      ],
-      "id": "crotch_setup",
       "implementationNote": "Nur Setup-Schritt zum Einführen der Anthropometer-Klinge. Für die eigentliche Messung werden die Fersen wieder zusammengeführt (zweiter Pose-Schritt).",
-      "implementationKind": "sammy_rig_preset_requires_manual_approval"
+      "implementationKind": "fbx_base_plus_deterministic_modifiers"
     }
   },
   "landmarks": {
@@ -1448,6 +1215,525 @@
       83,
       85,
       86
+    ]
+  },
+  "basePoses": {
+    "standing": {
+      "id": "standing",
+      "label": "ANSUR Standing · FBX base",
+      "kind": "base_pose",
+      "sourceFbx": "sammy-ansur-standing-source.fbx",
+      "sourceFileLabel": "Standing W_Briefcase Idle.fbx",
+      "sourceTimeSec": 0.13,
+      "pdfPage": 83,
+      "image": "ansur-page-83.jpg",
+      "description": "Anthropometric standing is the standing base for Sammy. The bundled FBX supplies natural lower-body/arm posture; Sammy then removes the briefcase-hand artifact, closes the stance, and applies a small upright neck/trunk correction.",
+      "correctionJoints": {
+        "Spine1": [
+          -2,
+          0,
+          0
+        ],
+        "Spine2": [
+          -2,
+          0,
+          0
+        ],
+        "Chest": [
+          -1,
+          0,
+          0
+        ],
+        "Neck1": [
+          -4,
+          0,
+          0
+        ],
+        "Neck2": [
+          -3,
+          0,
+          0
+        ],
+        "Head": [
+          2,
+          0,
+          0
+        ]
+      },
+      "mirrorOpenLeftHandToRight": true,
+      "stanceTargetCm": 2.0,
+      "fallbackJoints": {
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ]
+      },
+      "implementationNote": "FBX-derived base. Feet are solved toward ~2 cm joint separation (heels together as much as possible). Finger pose on the right is reconstructed from the open left side; if mirror reconstruction is unavailable, right fingers fall back to neutral/open."
+    },
+    "sitting": {
+      "id": "sitting",
+      "label": "ANSUR Sitting · FBX base",
+      "kind": "base_pose",
+      "sourceFbx": "sammy-ansur-sitting-source.fbx",
+      "sourceFileLabel": "Sitting Idle.fbx",
+      "sourceTimeSec": 1.75,
+      "pdfPage": 84,
+      "image": "ansur-page-84.jpg",
+      "description": "Anthropometric sitting is the seated base for Sammy. Hip/knee/foot geometry comes from the bundled sitting FBX; trunk and forward head are corrected and the ANSUR pre-measure arm position is imposed.",
+      "correctionJoints": {
+        "Spine1": [
+          -6,
+          0,
+          0
+        ],
+        "Spine2": [
+          -5,
+          0,
+          0
+        ],
+        "Chest": [
+          -3,
+          0,
+          0
+        ],
+        "Neck1": [
+          -8,
+          0,
+          0
+        ],
+        "Neck2": [
+          -5,
+          0,
+          0
+        ],
+        "Head": [
+          4,
+          0,
+          0
+        ]
+      },
+      "overrideJoints": {
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ],
+        "LeftForeArm": [
+          0,
+          0,
+          90
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          -90
+        ]
+      },
+      "fallbackJoints": {
+        "LeftLeg": [
+          90,
+          0,
+          0
+        ],
+        "RightLeg": [
+          90,
+          0,
+          0
+        ],
+        "LeftShin": [
+          90,
+          0,
+          0
+        ],
+        "RightShin": [
+          90,
+          0,
+          0
+        ],
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ],
+        "LeftForeArm": [
+          0,
+          0,
+          90
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          -90
+        ]
+      },
+      "implementationNote": "FBX-derived base. The real 8-cm seat-edge gap, foot-rest height and exact Frankfurt alignment remain protocol checks; the app visualizes a seat aid but does not claim physical contact simulation."
+    }
+  },
+  "modifiers": {
+    "arms_relaxed": {
+      "label": "Arms relaxed at sides",
+      "kind": "pose_modifier",
+      "mode": "override",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ]
+      },
+      "description": "Returns the arms to Sammy’s reproducible relaxed-side orientation."
+    },
+    "hands_on_hips": {
+      "label": "Hands on hips",
+      "kind": "pose_modifier",
+      "mode": "override",
+      "joints": {
+        "LeftArm": [
+          15,
+          0,
+          -55
+        ],
+        "RightArm": [
+          15,
+          0,
+          55
+        ],
+        "LeftForeArm": [
+          0,
+          0,
+          105
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          -105
+        ]
+      },
+      "description": "Chest Breadth setup. Full inspiration remains a protocol condition, not a bone pose."
+    },
+    "arms_slightly_away": {
+      "label": "Arms slightly away",
+      "kind": "pose_modifier",
+      "mode": "override",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -78
+        ],
+        "RightArm": [
+          0,
+          0,
+          78
+        ]
+      },
+      "description": "Reproducible start value for “slightly away”; ANSUR does not prescribe an angle."
+    },
+    "right_hand_on_chest": {
+      "label": "Right hand on chest",
+      "kind": "pose_modifier",
+      "mode": "override",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          18,
+          0,
+          55
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          -115
+        ]
+      },
+      "description": "Keeps the right arm clear of waist/thigh measurements."
+    },
+    "right_elbow_90_palm_up": {
+      "label": "Right elbow 90° · palm up",
+      "kind": "pose_modifier",
+      "mode": "override",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightHand": [
+          0,
+          90,
+          0
+        ]
+      },
+      "description": "Wrist Circumference measurement posture."
+    },
+    "right_palm_forward": {
+      "label": "Right palm forward",
+      "kind": "pose_modifier",
+      "mode": "override",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -90
+        ],
+        "RightArm": [
+          0,
+          0,
+          90
+        ],
+        "RightHand": [
+          0,
+          90,
+          0
+        ]
+      },
+      "description": "Radiale–Stylion / lower-arm length posture."
+    },
+    "feet_10cm": {
+      "label": "Feet / heels ~10 cm apart",
+      "kind": "pose_modifier",
+      "stanceTargetCm": 10.0,
+      "description": "Real-distance target solved from the rig joints; weight distribution remains a protocol condition."
+    },
+    "thighs_not_touching": {
+      "label": "Thighs just clear",
+      "kind": "pose_modifier",
+      "stanceTargetCm": 8.0,
+      "description": "A safe reproducible starting spread. Final criterion is visual: thighs must just not touch."
+    },
+    "crotch_blade_setup": {
+      "label": "Crotch blade setup",
+      "kind": "pose_modifier",
+      "stanceTargetCm": 18.0,
+      "description": "Temporary setup only. Actual Crotch Height returns to the standing base with heels together."
+    },
+    "feet_30cm": {
+      "label": "Feet 30 cm apart",
+      "kind": "pose_modifier",
+      "stanceTargetCm": 30.0,
+      "description": "WBX scan stance distance."
+    },
+    "wbx_arms": {
+      "label": "WBX arms away",
+      "kind": "pose_modifier",
+      "mode": "override",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -62
+        ],
+        "RightArm": [
+          0,
+          0,
+          62
+        ],
+        "LeftForeArm": [
+          0,
+          0,
+          0
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          0
+        ]
+      },
+      "fingerCurl": 55,
+      "description": "Straight arms away from torso; fists clenched. Used for scan/debug, not manual target measures."
+    },
+    "rig_debug_a": {
+      "label": "Rig debug A-pose",
+      "kind": "pose_modifier",
+      "mode": "override",
+      "joints": {
+        "LeftArm": [
+          0,
+          0,
+          -45
+        ],
+        "RightArm": [
+          0,
+          0,
+          45
+        ],
+        "LeftForeArm": [
+          0,
+          0,
+          0
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          0
+        ]
+      },
+      "description": "Technical symmetry/skinning pose only; not an ANSUR measurement posture."
+    },
+    "sitting_arms_lap": {
+      "label": "Arms on lap",
+      "kind": "pose_modifier",
+      "mode": "override",
+      "joints": {
+        "LeftArm": [
+          20,
+          0,
+          -72
+        ],
+        "RightArm": [
+          20,
+          0,
+          72
+        ],
+        "LeftForeArm": [
+          0,
+          0,
+          55
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          -55
+        ]
+      },
+      "description": "Useful for seated buttock-knee / buttock-popliteal procedures outside the current 24-target set."
+    },
+    "sitting_right_hand_chest": {
+      "label": "Sitting · right hand on chest",
+      "kind": "pose_modifier",
+      "mode": "override",
+      "joints": {
+        "RightArm": [
+          22,
+          0,
+          55
+        ],
+        "RightForeArm": [
+          0,
+          0,
+          -112
+        ]
+      },
+      "description": "Useful for Abdominal Extension Depth, Sitting outside the current 24-target set."
+    }
+  },
+  "utilityPoses": {
+    "wbx_scan": {
+      "id": "wbx_scan",
+      "label": "WBX Scan / Region Debug",
+      "base": "standing",
+      "modifiers": [
+        "feet_30cm",
+        "wbx_arms"
+      ],
+      "conditions": [
+        "feet parallel",
+        "head in Frankfurt plane"
+      ],
+      "pdfPage": 28,
+      "image": null,
+      "description": "Optional scan/debug pose: feet 30 cm apart and parallel, arms straight and away from body, fists clenched. Not part of the 24 manual target measurements.",
+      "kind": "ansur_scan_debug"
+    },
+    "rig_debug_a": {
+      "id": "rig_debug_a",
+      "label": "Rig A-Pose · technical",
+      "base": "standing",
+      "modifiers": [
+        "rig_debug_a"
+      ],
+      "conditions": [
+        "not an ANSUR measurement pose"
+      ],
+      "pdfPage": null,
+      "image": null,
+      "description": "Technical skinning/symmetry pose only. Never used for anthropometric measurement.",
+      "kind": "technical_debug"
+    },
+    "sitting_arms_lap": {
+      "id": "sitting_arms_lap",
+      "label": "Sitting · arms on lap",
+      "base": "sitting",
+      "modifiers": [
+        "sitting_arms_lap"
+      ],
+      "conditions": [
+        "procedure-specific"
+      ],
+      "pdfPage": null,
+      "image": null,
+      "description": "Prepared for future seated length measures; not needed by the current 24-target subset.",
+      "kind": "future_modifier_preview"
+    },
+    "sitting_hand_chest": {
+      "id": "sitting_hand_chest",
+      "label": "Sitting · right hand on chest",
+      "base": "sitting",
+      "modifiers": [
+        "sitting_right_hand_chest"
+      ],
+      "conditions": [
+        "procedure-specific"
+      ],
+      "pdfPage": 87,
+      "image": null,
+      "description": "Prepared for Abdominal Extension Depth, Sitting; outside the current 24-target subset.",
+      "kind": "future_modifier_preview"
+    }
+  },
+  "poseArchitecture": {
+    "basePoseCount": 2,
+    "basePoseIds": [
+      "standing",
+      "sitting"
+    ],
+    "rule": "All measure-specific states are derived from exactly one base pose plus deterministic pose modifiers and non-geometric protocol conditions.",
+    "measurementConditionsAreNotBones": [
+      "respiration",
+      "weight distribution",
+      "muscle relaxation / effort",
+      "instrument pressure",
+      "seat-edge distance",
+      "support/contact"
+    ],
+    "debugOnly": [
+      "wbx_scan",
+      "rig_debug_a"
     ]
   }
 }

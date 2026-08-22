@@ -22,6 +22,11 @@ Public database information: Defense Centers for Public Health – Aberdeen, Ant
 
 `ansur-dimensions-bridge-v1.json` is **not** ANSUR source data. It is a compact derived model built from Sammy's corrected 6,000-body calibration corpus to provide seven Sammy-only/proxy dimensions needed by the frozen 31-measure R5 construction path. The bridge uses sex-specific input-domain alignment and bounded outputs to avoid edge-case extrapolation. These seven values are explicitly excluded from ANSUR truth scoring.
 
-## v0.8.18.1 · ANSUR Protocol Lab reference assets
+## v0.8.19.0 · ANSUR Protocol Lab reference assets
 
 The new `ansur-protocol-v1.json` and `ansur-page-*.jpg` assets are derived only from the user-provided copy of **NATICK/TR-11/017, Measurer’s Handbook: US Army and Marine Corps Anthropometric Surveys, 2010-2011**. The report itself states: “Approved for public release; distribution is unlimited.” Only pages needed for Sammy’s 24 current ANSUR-comparable targets and their source landmarks/standard postures are bundled. No ANSUR participant-level source rows are added by this feature.
+
+
+## v0.8.19.0 · User-provided pose-source FBX files
+
+`sammy-ansur-standing-source.fbx` and `sammy-ansur-sitting-source.fbx` are copies of the two FBX motion files supplied by the project user in this conversation. Sammy uses them only as local pose-source assets for the PROT audit layer. The app does not present them as ANSUR source material; the ANSUR posture requirements still come from NATICK/TR-11/017.
