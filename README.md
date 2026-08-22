@@ -1,109 +1,100 @@
-# Sammy v0.8.19.1 · Native Pose Rescue + PROT Measurement Overlay
 
-Basis: v0.8.19.0. Dieser Stand ist bewusst ein **Rescue-/Verifikationsstand** nach dem fehlgeschlagenen FBX-Poseversuch. MEAS, ANSUR-Protokoll, Solver und Produktionsdefinitionen bleiben getrennt.
+## v0.8.19.2 · PROT pose-first review
+- Standing/Sitting remain the two base views. Arm/leg side signs are derived from the actual SOMA rig, not assumed X directions.
+- Default standing no longer forces a foot-spacing transform; special stance modifiers use side-safe targets.
+- Floor, seat and footrest are rebuilt from the current posed mesh/joints.
+- PROT shows all measures belonging to the active base pose; the selected measure is highlighted and all protocol anchors remain pickable.
+- Measure and landmark info uses cropped ANSUR reference images instead of full pages in the default UI.
+- Body-part previews use strict skin-weight regions with separate left/right limbs and no whole-body fallback.
+# Sammy v0.8.19.0 · ANSUR Protocol / Landmark Lab
 
-## Was v0.8.19.1 ausdrücklich verwirft
+Basis: v0.8.18.1. MEAS, DIMENSIONS, R5 und ANSUR-D1/D2/D3 bleiben bewusst getrennt. PROT ist weiterhin der Audit-Layer für die 24 aktuell relevanten ANSUR-Zielmaße, wurde aber bei den Posen grundlegend vereinfacht.
 
-Der PROT-Modus retargetet die beiden Nutzer-FBX **nicht mehr** in Sammy. Ebenfalls entfernt ist der Ansatz, Posekorrekturen über geratenen lokale Euler-Achsen einzelner Bones zu erzeugen. Genau diese beiden Wege führten in v0.8.19.0 zu gekreuzten Beinen, falschen Armstellungen und unbrauchbaren Sitzposen.
+## Pose-Architektur v0.8.19.0
 
-Die Dateien `sammy-ansur-standing-source.fbx` und `sammy-ansur-sitting-source.fbx` bleiben nur als lokale Referenzassets im flachen Paket; PROT lädt sie nicht.
+Es gibt jetzt genau **zwei echte Grundposen**:
 
-## Zwei native Basisposen
+1. `ANSUR Standing` – Quelle `sammy-ansur-standing-source.fbx` (vom Nutzer bereitgestellte `Standing W_Briefcase Idle.fbx`).
+2. `ANSUR Sitting` – Quelle `sammy-ansur-sitting-source.fbx` (vom Nutzer bereitgestellte `Sitting Idle.fbx`).
 
-PROT besitzt weiterhin genau zwei kanonische Grundposen:
+Die FBX-Dateien werden erst beim Öffnen des PROT-Modus geladen. Sammy liest daraus nur einen stabilen Pose-Zeitpunkt, retargetet die lokalen Rotationsdeltas auf das Public-78/SOMA-Rig und wendet danach deterministische ANSUR-Korrekturen an. Falls ein FBX auf dem Gerät nicht geladen werden kann, wird sichtbar auf das alte Euler-Startpreset zurückgefallen; der Fehler landet in der Diagnose.
 
-1. `Anthropometric Standing`
-2. `Anthropometric Sitting`
+### Standing-Korrekturen
 
-Sie werden jetzt direkt aus der vorhandenen SOMA/Axis16-Referenzgeometrie aufgebaut. Die Poseengine beschreibt gewünschte **Welt-Richtungen** von Gelenksegmenten und wandelt sie anschließend in Public-78-Relative-Matrizen um. Die Anwendung auf den aktuellen Körper erfolgt über Sammys bereits vorhandenen exakten `Axis16 → Anny/SOMA`-Pfad.
+- kleine Aufrichtung von Rumpf/Hals/Kopf;
+- Standbreite wird über einen Joint-FK-Constraint auf ca. 2 cm Fußgelenk-Abstand gelöst (ANSUR: Fersen so weit wie möglich zusammen);
+- die geschlossene rechte Briefcase-Hand wird nicht übernommen: die Fingerpose der offenen linken Hand wird gespiegelt; bei einem Mirror-Fehler werden die rechten Finger neutral geöffnet;
+- Gewicht gleichmäßig / Muskelentspannung bleiben Protokollbedingungen und werden nicht als Bone-Transformation behauptet.
 
-### Standing
+### Sitting-Korrekturen
 
-Automatisch und numerisch prüfbar:
+- Hüft-/Knie-/Fußgeometrie stammt aus `Sitting Idle.fbx`;
+- Rumpf und der vorgeschobene Kopf/Hals werden gezielt aufgerichtet;
+- die ANSUR-Ausgangsstellung der Arme wird reproduzierbar gesetzt: Oberarme seitlich, Ellenbogen ca. 90°, Unterarme nach vorn, Handflächen zueinander;
+- Sitzfläche und Fußstütze werden im PROT-Modus als transparente Prüfhilfen visualisiert;
+- realer Sitzkantenabstand (~8 cm), Kontakt, Fußstützenhöhe und Frankfurt-Ausrichtung bleiben explizite Prüfkriterien und werden nicht als physikalisch exakt simuliert ausgegeben.
 
-- Becken-/Rumpf-/Halskette wird zur Welt-Y-Achse aufgerichtet;
-- beide Beine bleiben gerade und symmetrisch;
-- Fuß-/Knöchelabstand wird geometrisch auf das Ziel geführt (Standard ca. 2 cm als technische Annäherung an „heels together as much as possible“);
-- Arme hängen reproduzierbar an den Seiten;
-- Fuß-/Zehenorientierung bleibt in der kanonischen Axis16-Weltorientierung.
+## Abgeleitete Messzustände statt weiterer Grundposen
 
-### Sitting
+Alle Sonderstellungen werden aus Standing oder Sitting erzeugt. `ansur-protocol-v1.json` enthält dafür `basePoses`, `modifiers`, `poses`, `utilityPoses` und einen expliziten `poseArchitecture`-Vertrag.
 
-Automatisch und numerisch prüfbar:
+Aktuell verwendete Modifier:
 
-- Rumpf/Hals werden aufgerichtet;
-- Oberschenkel werden horizontal nach vorn ausgerichtet;
-- Unterschenkel werden vertikal nach unten ausgerichtet;
-- Füße/Zehen bleiben in der kanonischen flachen/forward Orientierung;
-- Oberarme hängen seitlich, Unterarme werden horizontal nach vorn geführt;
-- nach dem Skinning wird der ganze Körper auf das gleiche Bodenniveau wie die Restpose verschoben, damit die Sitzpose nicht mehr in der Luft schwebt.
+- Hände auf Hüften → Chest Breadth Setup;
+- Arme wieder locker → Chest Breadth Measurement;
+- Arme leicht vom Körper → Hip Breadth;
+- rechte Hand auf Brust → Waist Depth / Thigh setup;
+- Ellenbogen 90° + Handfläche oben → Wrist Circumference;
+- rechte Handfläche nach vorn → Radiale–Stylion / Lower Arm Length;
+- Standbreite ~10 cm → Calf / Ankle;
+- Oberschenkel gerade nicht berührend → Thigh Circumference;
+- temporäres Beinöffnen → Crotch blade setup; danach zurück zu Standing;
+- Standbreite 30 cm + Arme weg + Fäuste → WBX Scan / Region-Debug.
 
-Sitzkante, reale Kontaktkräfte, Footrest-Höhe und Frankfurt-Ebene bleiben sichtbare Prüfkriterien. Die App behauptet dafür keine physikalische Simulation.
+Nicht-geometrische Bedingungen wie Atmung, Gewichtsverteilung, Muskelspannung, Instrumentendruck oder reale Kontaktabstände sind bewusst **Conditions**, keine Posen.
 
-## Sicherheitsbremse für Sonderposen
+## Zusätzliche sinnvolle Vorschauen
 
-Bis **Standing und Sitting visuell freigegeben** sind, werden komplexe Modifier absichtlich nicht mehr automatisch geraten. Dazu gehören unter anderem:
+Im PROT-Pose-Kasten gibt es jetzt eine kleine Basis-/Debug-Vorschau:
 
-- Hände auf Hüften;
-- rechte Hand auf Brust;
-- Palm-up / Palm-forward Twist;
-- WBX-Fäuste und detaillierte Armhaltung;
-- Hände auf Schoß / Sitzkontaktziele.
+- Stehen
+- Sitzen
+- WBX
+- Rig A (rein technisch, niemals zum Messen)
+- Sitz · Schoß (für spätere Buttock-Knee / Buttock-Popliteal-Protokolle)
+- Sitz · Brust (für späteres Abdominal Extension Depth, Sitting)
 
-PROT zeigt diese Anforderungen weiterhin aus dem ANSUR-Protokoll, kennzeichnet sie aber als `AUTO AUSGESETZT`. Ein solcher Pose-Schritt kann nicht versehentlich mit `Pose ✓` freigegeben werden.
+Diese Vorschauen zählen nicht zur Messfreigabe.
 
-Numerisch sichere Standbreiten-Modifier (10 cm, Thigh-clearance-Startwert, Crotch-Setup, 30 cm) bleiben aktiv, weil sie aus echter Weltgeometrie statt lokaler Boneachsen berechnet werden.
+## PROT · Landmark- und Messaudit
 
-## PROT zeigt jetzt endlich die vorhandene MEAS-Geometrie
+- Quelle: `NATICK/TR-11/017 · Measurer’s Handbook: US Army and Marine Corps Anthropometric Surveys, 2010-2011`.
+- 24 ANSUR-kompatible Sammy-Ziele; `torso_height` und `upperleg_height` bleiben ausdrücklich abgeleitete Sammy-Ziele.
+- Original-Handbook-Seiten für Pose, Landmark, Messung und Appendix-G-Richtwert direkt im Inspector.
+- Landmark-Offsets X/Y/Z in cm; Rückprojektion auf anatomische Region-Masks aus Anny/SOMA-Skinweights.
+- Torso-Regionen besitzen keinen Whole-Body-Fallback und können dadurch nicht still Arme einfangen.
+- Bilaterale Landmark-Gruppen sind fest symmetrisch gekoppelt; Mittellinienpunkte bleiben lateral unverändert.
+- Status + Kommentar für Landmark, Pose-Schritt und Messprotokoll; erst alle drei Ebenen machen ein Maß vollständig.
+- Random / Random breit bleiben symmetrische Regressionstests innerhalb moderater erwachsener Formbereiche.
 
-Für jedes der 24 PROT-Zielmaße wird die bereits existierende Measurement-Lab-Pipeline wiederverwendet:
+## Appendix G
 
-- `sammyComputeAllMeasures()` berechnet den aktuellen Wert;
-- `sammyMeasureLinePoints()` liefert die bestehende Linie / Schleife / Breite / Tiefe / Segmentdarstellung;
-- PROT zeichnet diese Geometrie **gelb direkt auf dem Mannequin**;
-- im Panel steht der aktuelle Wert in cm als `MEAS CURRENT`;
-- `Messlinie AN/AUS` blendet nur diese bestehende MEAS-Geometrie um.
+Für die 22 direkten ANSUR-Ziele wird der offizielle `Allowable Observer Error` in mm angezeigt. Die zwei abgeleiteten Sammy-Ziele erhalten keinen erfundenen kombinierten Grenzwert; stattdessen werden die Quellwerte getrennt gezeigt.
 
-Wichtig: `MEAS CURRENT` ist bewusst **noch keine ANSUR-Freigabe**. Es zeigt den aktuellen Produktions-/Measurement-Lab-Stand als Vergleichsebene, während PDF-Definition, Landmark-Audit und Protokollfreigabe separat bleiben.
+## Diagnosefix v0.8.19.0
 
-## Audit-State v2
-
-Weil die Posearchitektur geändert wurde, verwendet PROT einen neuen Audit-State `sammy-ansur-protocol-audit-v2`. Alte Posefreigaben aus dem fehlgeschlagenen v0.8.19.0-Pfad werden nicht still weiterverwendet.
-
-## Erwarteter iPhone-Test
-
-Zuerst nur die zwei Buttons **Stehen** und **Sitzen** prüfen.
-
-Standing muss erfüllen:
-
-- keine gekreuzten Beine;
-- Füße nahe beieinander und nach vorn;
-- Rumpf senkrecht;
-- Kopf/Hals nicht deutlich nach vorne geknickt;
-- Arme ruhig seitlich.
-
-Sitting muss erfüllen:
-
-- klar erkennbare Sitzhaltung statt Knien/Schweben;
-- Oberschenkel annähernd horizontal;
-- Knie annähernd 90°;
-- Unterschenkel annähernd vertikal;
-- Füße flach/forward auf Bodenniveau;
-- Rumpf aufrecht;
-- Unterarme nach vorn.
-
-Dann drei Messvisualisierungen prüfen:
-
-1. `Acromion-Radiale Length` → gelbes Segment am rechten Oberarm;
-2. `Waist Circumference (Omphalion)` → gelbe geschlossene Umfangslinie;
-3. `Chest Depth` → gelbe Tiefenlinie + Wert in `MEAS CURRENT`.
-
-## Ehrliche Grenze dieses Builds
-
-Die JS-/JSON-/Paketstruktur kann statisch geprüft werden, aber die exakte Anny-Pose kann in dieser Arbeitsumgebung nicht mit dem produktiven extern geladenen Anny-Pack visuell gerendert werden. Daher ist v0.8.19.1 **kein behaupteter Pose-Erfolg**, sondern der erste Build, der die bekannten architektonischen Fehler beseitigt und die Posequalität mit numerischen Metriken + iPhone-Sichtprüfung verifizierbar macht.
-
-Falls auch diese zwei nativen Basen visuell falsch sind, ist die nächste sinnvolle Alternative **kein weiterer Winkelversuch**, sondern Pose-Authoring auf exakt demselben SOMA/Anny-Rig in einem externen Rig-Editor (z. B. Blender) und Import der fertigen nativen Local-Ref-Posematrizen.
+- `sammy-diagnostics-v1.snapshot.version` verwendet jetzt die tatsächliche App-Version statt des alten hart codierten `0.7.1`.
+- Leere `<img src="">`-Zuweisungen im PROT-Inspector wurden entfernt. Safari hatte daraus einen Request auf die Repository-Root-URL erzeugt und fälschlich `Ressource konnte nicht geladen werden: https://.../Soma-Lab/` gemeldet.
+- echte Resource-Fehler enthalten jetzt Tag, Element-ID und Klasse; ein leerer/root-identischer Pseudo-Request wird nicht mehr als Fehler erfasst.
 
 ## Paketstruktur
 
-Das GitHub-Paket bleibt vollständig flach. Keine Asset-Unterordner.
+Das GitHub-Paket bleibt absichtlich **flach**. Auch die beiden FBX-Posequellen liegen direkt im Repository-Root. Es gibt keine Asset-Unterordner.
+
+## Sicherheitsgrenze
+
+PROT bleibt ein Audit-Layer. Die neuen FBX-Grundposen, Landmark-Offsets und Pose-Freigaben ersetzen in v0.8.19.0 noch nicht automatisch die 31 Produktions-MEAS-Definitionen oder R5. Erst nach visueller/fachlicher Freigabe werden die geprüften Protokolldefinitionen in die Produktionsmessung überführt.
+
+
+## GitHub compact package
+Full ANSUR source-page JPGs are bundled inside `ANSUR_SOURCE_PAGES.zip` to keep the repository upload below 100 files. Runtime info cards use the `crop-*.jpg` files; Appendix-G pages 235–237 remain unpacked because they are referenced directly.

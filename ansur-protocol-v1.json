@@ -195,7 +195,8 @@
       "REQUIRED LANDMARKS": "Trapezius point; Clavicle point.",
       "PROCEDURE": "Participant is in the anthropometric standing position. Stand behind the participant and palpate the tips of both shoulders simultaneously. Draw a line along the lateral bony border of each shoulder. Then stand at the right of the participant, and lay a tape on the shoulder originating at the trapezius point (at the base of the neck), passing so that the front edge of the tape lies over the clavicle (collar bone) point, and crosses the drawn acromial border at the tip of the shoulder. Draw a short line along the front edge of the tape where it crosses the acromial border. Repeat the process for the left shoulder.",
       "REQUIRED INSTRUMENTS": "Tape.",
-      "heading": "5.2.1 Acromion, Right and Left"
+      "heading": "5.2.1 Acromion, Right and Left",
+      "cropImage": "crop-landmark-acromion.jpg"
     },
     "buttock_lateral": {
       "label": "Buttock Point · lateral",
@@ -208,7 +209,8 @@
       "DESCRIPTION": "Points at the level of the maximum protrusion of the right buttock.",
       "PROCEDURE": "Participant is in the anthropometric standing position. Stand at the right of the participant and sight the point of maximum protrusion of the right buttock (buttock point, posterior). (This landmark is not drawn.) Set the landmark transfer rod to the height of the posterior buttock landmark. Move it to the right and left sides of the participant and draw short horizontal marks on each side.",
       "REQUIRED INSTRUMENTS": "Landmark transfer rod.",
-      "heading": "5.2.4 Buttock Point, Right Lateral and Left Lateral"
+      "heading": "5.2.4 Buttock Point, Right Lateral and Left Lateral",
+      "cropImage": "crop-landmark-buttock_lateral.jpg"
     },
     "cervicale": {
       "label": "Cervicale · C7",
@@ -221,7 +223,8 @@
       "DESCRIPTION": "The most prominent palpable point of the spine of the seventh cervical vertebra1.",
       "PROCEDURE": "Participant is in the anthropometric standing position with the head in the Frankfurt plane. The spine of the seventh cervical vertebra is the most prominent vertebral spine of the back of the neck. It is best found by having the participant bend the head downwards. Stand behind the participant and with the pad of the index finger, palpate the most prominent spine. Have the participant slowly bring the head up to the Frankfurt plane while intermittently touching the spine. When the head is in place, locate the most prominent point of the spine of the seventh cervical vertebra. Draw a cross (+) through the landmark.",
       "CAUTION": "A few participants will be encountered on whom no cervical spine prominence is detectable. On such participants, estimate the point as nearly as possible with respect to the neck and shoulders. A few participants will exhibit two or three equally prominent spinal processes. In such cases, mark the spine that is closest to the posterior base of the neck as established by a tape. Be sure that the head is in the Frankfurt plane when the landmark is drawn. 1 The definition used in ANSUR refers to the “superior palpable point” rather than to the most prominent point. This change was made to bring the definition into compliance with standard anatomical usage (Martin, 1914) and international practice.",
-      "heading": "5.2.5 Cervicale"
+      "heading": "5.2.5 Cervicale",
+      "cropImage": "crop-landmark-cervicale.jpg"
     },
     "chest_point": {
       "label": "Chest Point · anterior",
@@ -234,7 +237,8 @@
       "DESCRIPTION": "The most anterior right point on the chest.",
       "PROCEDURE": "Participant is in the anthropometric standing position. Stand at the right of the participant and sight the most protruding right point of the chest. For women place an adhesive dot on the bra and for men draw a cross (+) on the chest. Draw a cross on the adhesive dot prior to placing it on the bra.",
       "CAUTION": "After placing the mark move to the front of the participant and verify that the landmark is properly placed. 2 This landmark is unchanged from ANSUR for female participants. For male participants, the ANSUR Thelion landmark, at the center of the nipple (unmarked) was used. Dimensions taken at that landmark often missed the largest portion of the chest, which is needed for determining clearance as well as clothing and protection. Now, the anterior point is used for both males and females.",
-      "heading": "5.2.6 Chest point, anterior, right2"
+      "heading": "5.2.6 Chest point, anterior, right2",
+      "cropImage": "crop-landmark-chest_point.jpg"
     },
     "gluteal_furrow": {
       "label": "Gluteal Furrow Point",
@@ -246,7 +250,8 @@
       "image": "ansur-page-47.jpg",
       "DESCRIPTION": "The lowest point of the lowest furrow or crease at the juncture of the right buttock and the thigh.",
       "PROCEDURE": "Participant is in the anthropometric standing position. Stand behind the participant and draw a short horizontal line at the top of the thigh at the lowest point of the lowest crease. Where there is a smooth continuous curve at the juncture of the thigh and buttock, view the buttock/thigh juncture from the right side and draw the landmark where you judge it to be appropriate. Even on participants with a continuous curve, a skin crease can usually be discerned.",
-      "heading": "5.2.15 Gluteal Furrow Point"
+      "heading": "5.2.15 Gluteal Furrow Point",
+      "cropImage": "crop-landmark-gluteal_furrow.jpg"
     },
     "infrathyroid": {
       "label": "Infrathyroid",
@@ -259,12 +264,13 @@
       "DESCRIPTION": "The inferior point of the thyroid cartilage (Adam's apple) in the midsagittal plane.",
       "PROCEDURE": "Participant stands with the head in the Frankfurt plane. Stand in front of the participant and palpate the smooth lateral surface of the thyroid cartilage moving downwards until you feel the space between the thyroid cartilage and the cricoid cartilage just below it. Then locate the bottom point of the thyroid cartilage in the midsagittal plane. Draw a short horizontal line through the landmark.",
       "CAUTION": "Be sure the participant's head is in the Frankfurt plane.",
-      "heading": "5.2.18 Infrathyroid"
+      "heading": "5.2.18 Infrathyroid",
+      "cropImage": "crop-landmark-infrathyroid.jpg"
     },
     "neck_base_points": {
       "label": "Neck Base · anterior/lateral",
       "pair": true,
-      "region": "neck",
+      "region": "neckBase",
       "side": "mixed",
       "id": "neck_base_points",
       "pdfPage": 61,
@@ -272,24 +278,26 @@
       "DESCRIPTION": "Anterior and lateral points at the base of the neck.",
       "PROCEDURE": "Participant stands looking straight ahead. Stand behind the participant. Place a tape around the base of the neck, laying it first in front, then on the sides, and finally, across the back, as if to measure NECK CIRCUMFERENCE, BASE. The anterior landmark is at the bottom of the tape, on the front of the neck in the midsagittal plane. The participant places a finger on the tape near the anterior landmark to help hold the tape in place. Draw a short horizontal line through the landmark. The right lateral and left lateral landmarks are located at the bottom of the tape on both sides. Draw roughly 4 cm long horizontal lines through both landmarks following the bottom of the tape.",
       "REQUIRED INSTRUMENTS": "Steel tape.",
-      "heading": "5.2.29 Neck, Anterior, Right Lateral, and Left Lateral"
+      "heading": "5.2.29 Neck, Anterior, Right Lateral, and Left Lateral",
+      "cropImage": "crop-landmark-neck_base_points.jpg"
     },
     "radiale": {
       "label": "Radiale",
       "pair": false,
-      "region": "rightArm",
+      "region": "rightUpperArm",
       "side": "right",
       "id": "radiale",
       "pdfPage": 65,
       "image": "ansur-page-65.jpg",
       "DESCRIPTION": "The superior point on the outside edge of the radius.",
       "PROCEDURE": "Participant stands relaxed. Stand at the right of the participant and palpate the area of the landmark (the hollow on the lateral side of the elbow). When you have located the upper end of the radius, bring the forefinger toward it horizontally, and touch it gently so as not to pull the skin around it up or down. Draw a cross (+) through the point. If you have any difficulty locating this point, grasp the participant's wrist, and rotate the arm back and forth while palpating the bone in the area of the landmark.",
-      "heading": "5.2.33 Radiale"
+      "heading": "5.2.33 Radiale",
+      "cropImage": "crop-landmark-radiale.jpg"
     },
     "stylion": {
       "label": "Stylion",
       "pair": false,
-      "region": "rightArm",
+      "region": "rightWrist",
       "side": "right",
       "id": "stylion",
       "pdfPage": 70,
@@ -297,7 +305,8 @@
       "DESCRIPTION": "The inferior point of the bottom of the radius and the extension of this landmark on the dorsal and ventral sides of the wrist.",
       "PROCEDURE": "Participant stands with right elbow flexed 90°. Stand in front of the participant and grasp the participant's hand. Place your thumb on the thumb side of the participant's hand and palpate up toward the wrist until you locate the end of the radius. Draw a cross (+) over the landmark. Hold the participant’s hand with the palm facing medially and look directly at the stylion landmark to eliminate errors in sighting. Draw a line across the dorsal (back) surface of the wrist, beginning below stylion. Next draw a line on the ventral (front) surface of the wrist, beginning below stylion.",
       "CAUTION": "This area is crossed by tendons so it may be necessary to bend the hand up and down at the wrist to find the landmark. When transferring, be sure the lines are straight and that their origin is at stylion.",
-      "heading": "5.2.36 Stylion, Dorsal Stylion, and Ventral Stylion"
+      "heading": "5.2.36 Stylion, Dorsal Stylion, and Ventral Stylion",
+      "cropImage": "crop-landmark-stylion.jpg"
     },
     "tibiale": {
       "label": "Tibiale",
@@ -310,7 +319,8 @@
       "DESCRIPTION": "The superior palpable point on the medial condyle of the right tibia.",
       "PROCEDURE": "Participant stands erect on a table with the weight distributed equally on both feet. Stand in front of the participant and, with one hand, grasp the bony prominences (condyles) located on the left and right side at the top of the tibia. Have the participant flex the knee to help locate these structures. The participant then straightens the knee. When you have located the superior palpable point on the medial condyle of the tibia, use the thumb or index finger of the other hand to mark its place, and draw a cross (+) through the landmark.",
       "CAUTION": "This landmark is difficult or impossible to locate accurately in heavily muscled participants. Use your best judgment in these cases.",
-      "heading": "5.2.41 Tibiale"
+      "heading": "5.2.41 Tibiale",
+      "cropImage": "crop-landmark-tibiale.jpg"
     },
     "trapezius": {
       "label": "Trapezius Point",
@@ -323,7 +333,8 @@
       "DESCRIPTION": "The point at which the anterior border of the trapezius muscle crosses the lateral neck landmark.",
       "REQUIRED LANDMARKS": "Neck, right lateral and left lateral.",
       "PROCEDURE": "Participant stands looking straight ahead. Ask the participant to place the right hand on his/her left shoulder to help outline the trapezius muscle on the right shoulder. Stand at the side of the participant. Moving from the shoulder to the neck, palpate the mass of the trapezius muscle to locate its anterior border. Draw a short line from the neck toward the shoulder at the point where the anterior border of the muscle crosses the lateral neck landmark. Repeat this procedure on the other side.",
-      "heading": "5.2.43 Trapezius Point, Right and Left"
+      "heading": "5.2.43 Trapezius Point, Right and Left",
+      "cropImage": "crop-landmark-trapezius.jpg"
     },
     "trochanterion": {
       "label": "Trochanterion",
@@ -336,7 +347,8 @@
       "DESCRIPTION": "The superior point of the greater trochanter of the right femur of a standing participant.",
       "PROCEDURE": "Participant stands erect with weight distributed equally on both feet. Stand in front of the participant. Use the pads of the fingers to simultaneously locate both greater trochanters (near the hip joint). Work fingers up along the front and back of the right trochanter to find its highest point. On a number of participants it will help to have the participant move the thigh back and forth. Draw a cross (+) at the level of the landmark. On heavier participants be sure to palpate directly horizontally, and avoid moving flesh either above or below the landmark.",
       "CAUTION": "This can be a difficult landmark to locate and you may have to use your best judgment in drawing it.",
-      "heading": "5.2.45 Trochanterion"
+      "heading": "5.2.45 Trochanterion",
+      "cropImage": "crop-landmark-trochanterion.jpg"
     },
     "waist_omphalion": {
       "label": "Waist · Omphalion A/P/L/R",
@@ -350,7 +362,8 @@
       "PROCEDURE": "Participant is in the anthropometric standing position. Stand in front of the participant and locate the landmark by inspection. Draw a 4-cm horizontal line to the right side of omphalion, and using a landmark transfer rod set at the height of omphalion, draw 4-cm horizontal lines on the right and left sides and over the spine of the participant. The landmarks are drawn at the maximum point of quiet respiration. On heavy participants, the navel may point downward, instead of anteriorly. On such participants, continue to follow the procedures outlined above.",
       "REQUIRED INSTRUMENTS": "Landmark transfer rod.",
       "CAUTION": "The participant must not tense the abdominal muscles or change body position while these marks are drawn.",
-      "heading": "5.2.46 Waist (Omphalion), Right, Left, Anterior, and Posterior"
+      "heading": "5.2.46 Waist (Omphalion), Right, Left, Anterior, and Posterior",
+      "cropImage": "crop-landmark-waist_omphalion.jpg"
     },
     "crotch": {
       "label": "Crotch · undrawn",
@@ -363,7 +376,8 @@
       "pdfPage": 31,
       "image": "ansur-page-31.jpg",
       "heading": "5.1 Undrawn Landmarks · Crotch",
-      "DESCRIPTION": "The point at the level of the lower edge of the pubis bone of the os coxa."
+      "DESCRIPTION": "The point at the level of the lower edge of the pubis bone of the os coxa.",
+      "cropImage": "crop-landmark-crotch.jpg"
     },
     "vertex": {
       "label": "Vertex · top of head",
@@ -376,7 +390,8 @@
       "pdfPage": 32,
       "image": "ansur-page-32.jpg",
       "heading": "5.1 Undrawn Landmarks · Top of head (vertex)",
-      "DESCRIPTION": "The highest point on the head when the head is in the Frankfurt plane."
+      "DESCRIPTION": "The highest point on the head when the head is in the Frankfurt plane.",
+      "cropImage": "crop-landmark-vertex.jpg"
     },
     "buttock_posterior": {
       "label": "Buttock Point · posterior",
@@ -389,7 +404,8 @@
       "pdfPage": 31,
       "image": "ansur-page-31.jpg",
       "heading": "5.1 Undrawn Landmarks · Buttock point, posterior",
-      "DESCRIPTION": "Point of maximum protrusion of the right buttock of a standing participant."
+      "DESCRIPTION": "Point of maximum protrusion of the right buttock of a standing participant.",
+      "cropImage": "crop-landmark-buttock_posterior.jpg"
     },
     "calf_max": {
       "label": "Calf maximum zone",
@@ -401,7 +417,8 @@
       "pdfPage": null,
       "image": null,
       "DESCRIPTION": "No drawn landmark. ANSUR locates the maximum horizontal circumference by measuring three locations in the observed maximum calf area.",
-      "heading": "Dynamic measurement zone · Calf"
+      "heading": "Dynamic measurement zone · Calf",
+      "cropImage": "crop-measure-calf_circumference.jpg"
     },
     "ankle_min": {
       "label": "Ankle minimum zone",
@@ -413,7 +430,8 @@
       "pdfPage": null,
       "image": null,
       "DESCRIPTION": "No drawn landmark. ANSUR defines the ankle measure as the minimum horizontal circumference of the ankle.",
-      "heading": "Dynamic measurement zone · Ankle"
+      "heading": "Dynamic measurement zone · Ankle",
+      "cropImage": "crop-measure-ankle_circumference.jpg"
     }
   },
   "measures": [
@@ -442,7 +460,8 @@
       "observerErrorPdfPage": 236,
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-stature.jpg"
     },
     {
       "id": "biacromial_breadth",
@@ -469,7 +488,8 @@
       "observerErrorPdfPage": 235,
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-biacromial_breadth.jpg"
     },
     {
       "id": "chest_circumference",
@@ -495,7 +515,8 @@
       "observerErrorPdfPage": 235,
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-chest_circumference.jpg"
     },
     {
       "id": "chest_breadth",
@@ -523,7 +544,8 @@
       "observerErrorPdfPage": 235,
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-chest_breadth.jpg"
     },
     {
       "id": "chest_depth",
@@ -550,7 +572,8 @@
       "observerErrorPdfPage": 235,
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-chest_depth.jpg"
     },
     {
       "id": "waist_circumference",
@@ -577,7 +600,8 @@
       "observerErrorPdfPage": 237,
       "observerErrorReportPage": 227,
       "observerErrorImage": "ansur-page-237.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-waist_circumference.jpg"
     },
     {
       "id": "waist_breadth",
@@ -604,7 +628,8 @@
       "observerErrorPdfPage": 237,
       "observerErrorReportPage": 227,
       "observerErrorImage": "ansur-page-237.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-waist_breadth.jpg"
     },
     {
       "id": "waist_depth",
@@ -631,7 +656,8 @@
       "observerErrorPdfPage": 237,
       "observerErrorReportPage": 227,
       "observerErrorImage": "ansur-page-237.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-waist_depth.jpg"
     },
     {
       "id": "buttock_circumference",
@@ -660,7 +686,8 @@
       "observerErrorPdfPage": 235,
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-buttock_circumference.jpg"
     },
     {
       "id": "hip_breadth",
@@ -687,7 +714,8 @@
       "observerErrorPdfPage": 236,
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-hip_breadth.jpg"
     },
     {
       "id": "crotch_height",
@@ -715,7 +743,8 @@
       "observerErrorPdfPage": 235,
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-crotch_height.jpg"
     },
     {
       "id": "torso_height",
@@ -762,7 +791,8 @@
           "image": "ansur-page-235.jpg"
         }
       ],
-      "observerErrorNote": "No direct ANSUR allowable-observer-error value exists for this Sammy-derived difference. The two source dimensions are shown separately; no combined official limit is claimed."
+      "observerErrorNote": "No direct ANSUR allowable-observer-error value exists for this Sammy-derived difference. The two source dimensions are shown separately; no combined official limit is claimed.",
+      "cropImage": "crop-measure-torso_height.jpg"
     },
     {
       "id": "neck_circumference",
@@ -789,7 +819,8 @@
       "observerErrorPdfPage": 236,
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-neck_circumference.jpg"
     },
     {
       "id": "neck_base_circumference",
@@ -804,7 +835,7 @@
       "landmarks": [
         "neck_base_points"
       ],
-      "region": "neck",
+      "region": "neckBase",
       "derived": null,
       "DESCRIPTION": "The circumference of the base of the neck encompassing the lateral neck and anterior neck landmarks.",
       "DRAWN LANDMARKS": "Neck, anterior, right lateral, and left lateral.",
@@ -816,7 +847,8 @@
       "observerErrorPdfPage": 236,
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-neck_base_circumference.jpg"
     },
     {
       "id": "wrist_circumference",
@@ -831,7 +863,7 @@
       "landmarks": [
         "stylion"
       ],
-      "region": "rightArm",
+      "region": "rightWrist",
       "derived": null,
       "DESCRIPTION": "The circumference of the wrist at the level of stylion and perpendicular to the long axis of the forearm.",
       "DRAWN LANDMARK": "Stylion.",
@@ -842,7 +874,8 @@
       "observerErrorPdfPage": 237,
       "observerErrorReportPage": 227,
       "observerErrorImage": "ansur-page-237.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-wrist_circumference.jpg"
     },
     {
       "id": "thigh_circumference",
@@ -869,7 +902,8 @@
       "observerErrorPdfPage": 236,
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-thigh_circumference.jpg"
     },
     {
       "id": "calf_circumference",
@@ -893,7 +927,8 @@
       "observerErrorPdfPage": 235,
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-calf_circumference.jpg"
     },
     {
       "id": "ankle_circumference",
@@ -918,7 +953,8 @@
       "observerErrorPdfPage": 235,
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-ankle_circumference.jpg"
     },
     {
       "id": "waist_back_length",
@@ -946,7 +982,8 @@
       "observerErrorPdfPage": 237,
       "observerErrorReportPage": 227,
       "observerErrorImage": "ansur-page-237.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-waist_back_length.jpg"
     },
     {
       "id": "upperarm_length",
@@ -962,7 +999,7 @@
         "acromion",
         "radiale"
       ],
-      "region": "rightArm",
+      "region": "rightUpperArm",
       "derived": null,
       "DESCRIPTION": "The distance between the acromion landmark on the right shoulder and the radiale landmark on the right elbow.",
       "DRAWN LANDMARKS": "Acromion, right; Radiale, right.",
@@ -974,7 +1011,8 @@
       "observerErrorPdfPage": 235,
       "observerErrorReportPage": 225,
       "observerErrorImage": "ansur-page-235.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-upperarm_length.jpg"
     },
     {
       "id": "lowerarm_length",
@@ -990,7 +1028,7 @@
         "radiale",
         "stylion"
       ],
-      "region": "rightArm",
+      "region": "rightForeArm",
       "derived": null,
       "DESCRIPTION": "The distance between the radiale landmark on the right elbow and the stylion landmark on the right wrist.",
       "DRAWN LANDMARKS": "Radiale; Stylion.",
@@ -1001,7 +1039,8 @@
       "observerErrorPdfPage": 236,
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-lowerarm_length.jpg"
     },
     {
       "id": "tibiale_height",
@@ -1027,7 +1066,8 @@
       "observerErrorPdfPage": 237,
       "observerErrorReportPage": 227,
       "observerErrorImage": "ansur-page-237.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-tibiale_height.jpg"
     },
     {
       "id": "upperleg_height",
@@ -1074,7 +1114,8 @@
           "image": "ansur-page-237.jpg"
         }
       ],
-      "observerErrorNote": "No direct ANSUR allowable-observer-error value exists for this Sammy-derived difference. The two source dimensions are shown separately; no combined official limit is claimed."
+      "observerErrorNote": "No direct ANSUR allowable-observer-error value exists for this Sammy-derived difference. The two source dimensions are shown separately; no combined official limit is claimed.",
+      "cropImage": "crop-measure-upperleg_height.jpg"
     },
     {
       "id": "shoulder_length",
@@ -1102,7 +1143,8 @@
       "observerErrorPdfPage": 236,
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
-      "observerErrorKind": "direct_ansur"
+      "observerErrorKind": "direct_ansur",
+      "cropImage": "crop-measure-shoulder_length.jpg"
     }
   ],
   "derivedSources": {
@@ -1136,22 +1178,16 @@
       "Hips",
       "Spine1",
       "Spine2",
-      "Chest",
-      "LeftShoulder",
-      "RightShoulder"
+      "Chest"
     ],
     "shoulder": [
       "Chest",
       "LeftShoulder",
-      "RightShoulder",
-      "LeftArm",
-      "RightArm"
+      "RightShoulder"
     ],
     "neck": [
-      "Chest",
       "Neck1",
-      "Neck2",
-      "Head"
+      "Neck2"
     ],
     "pelvis": [
       "Hips",
@@ -1161,29 +1197,124 @@
     "rightArm": [
       "RightShoulder",
       "RightArm",
+      "RightArmTwist1",
+      "RightArmTwist2",
       "RightForeArm",
+      "RightForeArmTwist1",
+      "RightForeArmTwist2",
       "RightHand"
     ],
     "rightThigh": [
-      "Hips",
-      "RightLeg"
+      "RightLeg",
+      "RightLegTwist1",
+      "RightLegTwist2"
     ],
     "rightCalf": [
-      "RightShin"
+      "RightShin",
+      "RightShinTwist1",
+      "RightShinTwist2"
     ],
     "rightAnkle": [
       "RightShin",
       "RightFoot"
     ],
     "rightLeg": [
-      "Hips",
       "RightLeg",
-      "RightShin"
+      "RightLegTwist1",
+      "RightLegTwist2",
+      "RightShin",
+      "RightShinTwist1",
+      "RightShinTwist2"
     ],
     "head": [
-      "Neck2",
       "Head",
       "HeadEnd"
+    ],
+    "leftUpperArm": [
+      "LeftShoulder",
+      "LeftArm",
+      "LeftArmTwist1",
+      "LeftArmTwist2"
+    ],
+    "rightUpperArm": [
+      "RightShoulder",
+      "RightArm",
+      "RightArmTwist1",
+      "RightArmTwist2"
+    ],
+    "leftForeArm": [
+      "LeftForeArm",
+      "LeftForeArmTwist1",
+      "LeftForeArmTwist2"
+    ],
+    "rightForeArm": [
+      "RightForeArm",
+      "RightForeArmTwist1",
+      "RightForeArmTwist2"
+    ],
+    "leftHand": [
+      "LeftHand"
+    ],
+    "rightHand": [
+      "RightHand"
+    ],
+    "leftThigh": [
+      "LeftLeg",
+      "LeftLegTwist1",
+      "LeftLegTwist2"
+    ],
+    "leftCalf": [
+      "LeftShin",
+      "LeftShinTwist1",
+      "LeftShinTwist2"
+    ],
+    "leftAnkle": [
+      "LeftShin",
+      "LeftFoot"
+    ],
+    "leftFoot": [
+      "LeftFoot",
+      "LeftToeBase",
+      "LeftToeEnd"
+    ],
+    "rightFoot": [
+      "RightFoot",
+      "RightToeBase",
+      "RightToeEnd"
+    ],
+    "leftLeg": [
+      "LeftLeg",
+      "LeftLegTwist1",
+      "LeftLegTwist2",
+      "LeftShin",
+      "LeftShinTwist1",
+      "LeftShinTwist2"
+    ],
+    "leftArm": [
+      "LeftShoulder",
+      "LeftArm",
+      "LeftArmTwist1",
+      "LeftArmTwist2",
+      "LeftForeArm",
+      "LeftForeArmTwist1",
+      "LeftForeArmTwist2",
+      "LeftHand"
+    ],
+    "neckBase": [
+      "Neck1",
+      "Chest"
+    ],
+    "rightWrist": [
+      "RightForeArm",
+      "RightForeArmTwist1",
+      "RightForeArmTwist2",
+      "RightHand"
+    ],
+    "leftWrist": [
+      "LeftForeArm",
+      "LeftForeArmTwist1",
+      "LeftForeArmTwist2",
+      "LeftHand"
     ]
   },
   "observerErrorGuideline": {
@@ -1467,6 +1598,7 @@
       "WBX fists/arm detail",
       "lap/chest contact targets"
     ],
-    "measurementOverlay": "Reuses Measurement Lab results via sammyComputeAllMeasures() + sammyMeasureLinePoints(); displayed as MEAS CURRENT until protocol approval."
+    "measurementOverlay": "Reuses Measurement Lab results via sammyComputeAllMeasures() + sammyMeasureLinePoints(); displayed as MEAS CURRENT until protocol approval.",
+    "regionPolicy": "strict skin-weight partitions; left/right limbs never merged; no whole-body fallback for body-part measures"
   }
 }
