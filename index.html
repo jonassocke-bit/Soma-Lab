@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.21.0</title>
-<link rel="stylesheet" href="style.css?v=0.8.21.0">
+<title>Sammy v0.8.21.1</title>
+<link rel="stylesheet" href="style.css?v=0.8.21.1">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.21.0</div>
+  <div class="sammySplashVersion">v0.8.21.1</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.21.0</div>
+<div id="sammyVersion">Sammy · v0.8.21.1</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -207,9 +207,9 @@
 
  <section id="sammySolver24Panel" class="sammyPanel sammySolver24Panel" data-panel-key="solver24">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
-  <div class="sammyPanelHead"><div><b>SOLVER 24 · V1</b><small>24 Zielmaße → lokaler Mesh-Solver</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelHead"><div><b>SOLVER 24 · V1.1</b><small>24 Zielmaße → lokaler Mesh-Solver + Form-Guard</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard"><b>Rekonstruktion auf dem echten Mesh</b><span>Deep + Addendum liefern nur Prior und Kandidatenauswahl. Jeder Optimierungsschritt wird am aktuellen Mesh neu vermessen; der lokale Jacobian wird während des Fits aktualisiert. PROT/ANSUR-24 bleibt unverändert.</span></div>
+   <div class="sammyLabIntroCard"><b>Rekonstruktion auf dem echten Mesh</b><span>Deep + Addendum liefern nur Prior und Kandidatenauswahl. Jeder Optimierungsschritt wird am aktuellen Mesh neu vermessen. V1.1 verwirft zusätzlich katastrophale Formraum-Ausreißer; PROT/ANSUR-24 bleibt unverändert.</span></div>
    <div class="sammySolver24Context">
     <div class="sammySolver24Sex" role="group" aria-label="Geschlecht"><button type="button" data-s24-sex="0" class="active">♂ Mann</button><button type="button" data-s24-sex="1">♀ Frau</button></div>
     <label><span>Alter</span><input id="sammySolver24Age" type="number" inputmode="numeric" min="19" max="70" step="1" value="35"><em>J.</em></label>
@@ -219,7 +219,7 @@
    <div class="sammyCalibrationActions"><button id="sammySolver24Blind" type="button">Blind-Test starten</button><button id="sammySolver24Pause" type="button" disabled>Pause</button></div>
    <div id="sammySolver24Status" class="sammyCalibrationStatus">Prior wird geladen …</div>
    <div class="sammyCalibrationProgress"><i id="sammySolver24Progress"></i></div>
-   <div id="sammySolver24Current" class="sammyCalibrationCurrent">Standard: 3 unterschiedliche Startkörper pro Ziel, lokaler 12-Slider-Jacobian, bis zu 6 Mesh-Refinement-Pässe. Im Blind-Test werden Zielkörper nicht angezeigt; nur die rekonstruierten Körper landen anonymisiert in AUDT.</div>
+   <div id="sammySolver24Current" class="sammyCalibrationCurrent">Standard: 3 unterschiedliche Startkörper pro Ziel, lokaler 12-Slider-Jacobian, bis zu 6 Mesh-Refinement-Pässe. Ein konservativer Mesh-Guard prüft Oberschenkel-Querschnitt, Taillen-Kontinuität, Hals-Kontinuität und Schulterlevel. Blind-AUDT enthält ausschließlich Solver24-Rekonstruktionen.</div>
    <div id="sammySolver24Live" class="sammyCalibrationLiveMeasures"></div>
    <details class="sammySolver24Targets"><summary>24 Zielmaße in cm <span>editierbar</span></summary><div id="sammySolver24Inputs" class="sammySolver24Inputs"></div></details>
    <div id="sammySolver24Results" class="sammySolver24Results"><div class="sammyInfluenceEmpty">Noch keine Rekonstruktion.</div></div>
@@ -241,9 +241,9 @@
   <div class="sammyBodyAuditMeta"><b id="sammyBodyAuditIndex">Blind Audit</b><span id="sammyBodyAuditProgress">Keine Testkörper vorhanden</span></div>
   <div id="sammyBodyAuditCommentWrap" class="sammyBodyAuditCommentWrap" hidden><textarea id="sammyBodyAuditComment" rows="3" placeholder="Optionaler Kommentar zum sichtbaren Körper …"></textarea></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard"><b>Blindes Plausibilitäts-Audit</b><span>Du siehst absichtlich weder Zielmaße noch Solverpfad. Bewerte nur offensichtliche anatomische Fehler. Mit dem Zielkreuz kannst du die konkrete Fehlstelle direkt am Mannequin markieren.</span></div>
+   <div class="sammyLabIntroCard"><b>Blindes Plausibilitäts-Audit</b><span>Du siehst absichtlich weder Zielmaße noch Zielkörper oder Solverpfad. AUDT lädt ausschließlich den neuesten Solver24-Blindlauf – keine alten D2/D3-Fälle mehr. Bewerte nur offensichtliche anatomische Fehler.</span></div>
    <div class="sammyBodyAuditLegend"><span>✓ plausibel</span><span>× unplausibel</span><span>◎ Fehlstelle</span><span>‹ / › Körper wechseln</span></div>
-   <div id="sammyBodyAuditStatus" class="sammyStatus"><span>Noch keine Testkörper geladen. Nach einem realen Solver-/ANSUR-Lauf neu laden.</span></div>
+   <div id="sammyBodyAuditStatus" class="sammyStatus"><span>Noch kein Solver24-Blindlauf geladen. Starte zuerst SOLV → Blind-Test.</span></div>
    <div class="sammyCalibrationActions"><button id="sammyBodyAuditReload" type="button">Testkörper laden</button><button id="sammyBodyAuditExport" type="button">Audit JSON</button></div>
    <div class="sammyCalibrationActions"><button id="sammyBodyAuditClear" type="button">Bewertungen löschen</button></div>
   </div>
@@ -473,7 +473,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.21.0</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.21.1</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -730,6 +730,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.21.0"></script>
+<script type="module" src="app.js?v=0.8.21.1"></script>
 </body>
 </html>

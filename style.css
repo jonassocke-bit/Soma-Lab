@@ -731,7 +731,7 @@ body.sammy-lab-hub-open #sammyLabBubble{box-shadow:0 0 0 2px rgba(255,255,255,.2
 .sammyInfluencePrior b{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#dceaff}
 .sammyInfluencePrior span{font-size:10px;color:#aeb8c8;line-height:1.3}
 
-/* v0.8.21.0 · six-spoke LAB hub + Solver24 v1 */
+/* v0.8.21.1 · Solver24 v1.1 form-guard + strict blind-audit routing */
 .sammyLabSubBubble.lab-prot{transform:translate(0,-132px)}
 .sammyLabSubBubble.lab-meas{transform:translate(114px,-66px)}
 .sammyLabSubBubble.lab-infl{transform:translate(114px,66px)}

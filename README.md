@@ -220,3 +220,10 @@ Full ANSUR source-page JPGs are bundled inside `ANSUR_SOURCE_PAGES.zip` to keep 
 - Startup now runs after all LAB/Audit declarations.
 - Geometry from v0.8.20.1 is unchanged.
 - `app.js` query version bumped to 0.8.20.2 to avoid stale GitHub Pages/iPhone Safari cache.
+
+
+## v0.8.21.1
+- Solver24 V1.1: conservative real-mesh plausibility hard guard.
+- AUDT strict to latest Solver24 blind run; legacy D2/D3 no longer silently substituted.
+- Blind target generation itself is guarded.
+- ANSUR24-PROT-v1 geometry unchanged.
