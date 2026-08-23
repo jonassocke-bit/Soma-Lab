@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.19.9</title>
-<link rel="stylesheet" href="style.css?v=0.8.19.9">
+<title>Sammy v0.8.20.1</title>
+<link rel="stylesheet" href="style.css?v=0.8.20.1">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.19.9</div>
+  <div class="sammySplashVersion">v0.8.20.1</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.19.9</div>
+<div id="sammyVersion">Sammy · v0.8.20.1</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -37,10 +37,21 @@
 <div id="sammyUi">
  <button id="sammyAnimBubble" class="sammyBubble" data-panel="sammyAnimPanel" aria-label="Animation">ANIM</button>
  <button id="sammyShapeBubble" class="sammyBubble" data-panel="sammyShapePanel" aria-label="Körperform">FORM</button>
- <button id="sammyMeasureBubble" class="sammyBubble" data-panel="sammyMeasurePanel" aria-label="Maße kalibrieren">MEAS</button>
- <button id="sammyProtocolBubble" class="sammyBubble" data-panel="sammyProtocolPanel" aria-label="ANSUR Protocol Lab">PROT</button>
- <button id="sammyAnsBubble" class="sammyBubble" data-panel="sammyAnsPanel" aria-label="ANSUR Lab">ANSR</button>
+ <button id="sammyLabBubble" class="sammyBubble" data-panel="sammyLabHub" aria-label="Body Lab öffnen">LAB</button>
+ <!-- Legacy direct-entry bubbles stay in the DOM for old state compatibility, but LAB is the only visible lab entry point. -->
+ <button id="sammyMeasureBubble" class="sammyBubble hidden" data-panel="sammyMeasurePanel" aria-hidden="true" tabindex="-1">MEAS</button>
+ <button id="sammyProtocolBubble" class="sammyBubble hidden" data-panel="sammyProtocolPanel" aria-hidden="true" tabindex="-1">PROT</button>
+ <button id="sammyAnsBubble" class="sammyBubble hidden" data-panel="sammyAnsPanel" aria-hidden="true" tabindex="-1">ANSR</button>
  <button id="sammyErrorBubble" class="sammyBubble errorBubble hidden" data-panel="sammyErrorPanel" aria-label="Fehlerdiagnose"><span>!</span><em id="sammyErrorCount">0</em></button>
+
+ <div id="sammyLabHub" class="sammyLabHub" aria-hidden="true">
+  <div class="sammyLabHubCenter"><b>LAB</b><span>Body Lab</span></div>
+  <button type="button" class="sammyLabSubBubble lab-prot" data-lab-panel="sammyProtocolPanel" aria-label="Protocol"><b>PROT</b><small>Protocol</small></button>
+  <button type="button" class="sammyLabSubBubble lab-meas" data-lab-panel="sammyMeasurePanel" aria-label="Measurement Lab"><b>MEAS</b><small>Measure</small></button>
+  <button type="button" class="sammyLabSubBubble lab-infl" data-lab-panel="sammyInfluencePanel" aria-label="Influence Lab"><b>INFL</b><small>5-Level</small></button>
+  <button type="button" class="sammyLabSubBubble lab-audt" data-lab-panel="sammyBodyAuditPanel" aria-label="Blind Body Audit"><b>AUDT</b><small>Blind</small></button>
+  <button type="button" class="sammyLabSubBubble lab-ansr" data-lab-panel="sammyAnsPanel" aria-label="ANSUR Lab"><b>ANSR</b><small>Prediction</small></button>
+ </div>
 
  <section id="sammyAnimPanel" class="sammyPanel sammyAnimPanel" data-panel-key="animation">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
@@ -178,6 +189,37 @@
    <div id="sammyMeasureList" class="sammyMeasureList"></div>
    <button id="sammyMeasureExport" type="button" class="sammyMeasureExport">Kalibrierung exportieren</button>
    <div class="sammyMeasureSource">ANSUR II · NATICK/TR-11/017 · Messnamen gemäß öffentlicher ANSUR-II-Datenbank</div>
+  </div>
+ </section>
+
+ <section id="sammyInfluencePanel" class="sammyPanel sammyInfluencePanel" data-panel-key="influence">
+  <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
+  <div class="sammyPanelHead"><div><b>INFLUENCE LAB</b><small>Maß → Sammy-Parameter</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelScroll">
+   <div class="sammyLabIntroCard"><b>5-Level Einflussanalyse</b><span>Standard testet jeden freigegebenen logischen Slider an fünf Stufen über mehrere Referenzkörper. Die Messung läuft automatisch auf der aktuellen kanonischen MEAS-Geometrie; auffällige Interaktionen werden anschließend tiefer geprüft.</span></div>
+   <div id="sammyInfluenceMount"></div>
+   <div class="sammyInfluenceFoot">Die menschliche Sichtprüfung ist hier nur ein Plausibilitäts-Guard. Richtung, Stärke, Nichtlinearität und Wechselwirkungen werden aus den real gemessenen Mesh-Zuständen berechnet und exportiert.</div>
+  </div>
+ </section>
+
+ <section id="sammyBodyAuditPanel" class="sammyPanel sammyBodyAuditPanel" data-panel-key="body-audit">
+  <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
+  <div class="sammyBodyAuditHead" role="toolbar" aria-label="Blind Body Audit Navigation">
+   <button id="sammyBodyAuditPrev" type="button" aria-label="Vorheriger Testkörper" title="Vorheriger Testkörper"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+   <button id="sammyBodyAuditCommentToggle" type="button" aria-label="Kommentar" title="Kommentar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v10H9l-4 4z"/></svg></button>
+   <button id="sammyBodyAuditOk" type="button" aria-label="Plausibel" title="Plausibel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4 10-10"/></svg></button>
+   <button id="sammyBodyAuditBad" type="button" aria-label="Unplausibel" title="Unplausibel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+   <button id="sammyBodyAuditMark" type="button" aria-label="Fehlstelle markieren" title="Fehlstelle markieren"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></button>
+   <button id="sammyBodyAuditNext" type="button" aria-label="Nächster Testkörper" title="Nächster Testkörper"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+  </div>
+  <div class="sammyBodyAuditMeta"><b id="sammyBodyAuditIndex">Blind Audit</b><span id="sammyBodyAuditProgress">Keine Testkörper vorhanden</span></div>
+  <div id="sammyBodyAuditCommentWrap" class="sammyBodyAuditCommentWrap" hidden><textarea id="sammyBodyAuditComment" rows="3" placeholder="Optionaler Kommentar zum sichtbaren Körper …"></textarea></div>
+  <div class="sammyPanelScroll">
+   <div class="sammyLabIntroCard"><b>Blindes Plausibilitäts-Audit</b><span>Du siehst absichtlich weder Zielmaße noch Solverpfad. Bewerte nur offensichtliche anatomische Fehler. Mit dem Zielkreuz kannst du die konkrete Fehlstelle direkt am Mannequin markieren.</span></div>
+   <div class="sammyBodyAuditLegend"><span>✓ plausibel</span><span>× unplausibel</span><span>◎ Fehlstelle</span><span>‹ / › Körper wechseln</span></div>
+   <div id="sammyBodyAuditStatus" class="sammyStatus"><span>Noch keine Testkörper geladen. Nach einem realen Solver-/ANSUR-Lauf neu laden.</span></div>
+   <div class="sammyCalibrationActions"><button id="sammyBodyAuditReload" type="button">Testkörper laden</button><button id="sammyBodyAuditExport" type="button">Audit JSON</button></div>
+   <div class="sammyCalibrationActions"><button id="sammyBodyAuditClear" type="button">Bewertungen löschen</button></div>
   </div>
  </section>
 
@@ -405,7 +447,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.19.9</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.20.1</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -662,6 +704,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.19.9"></script>
+<script type="module" src="app.js?v=0.8.20.0"></script>
 </body>
 </html>

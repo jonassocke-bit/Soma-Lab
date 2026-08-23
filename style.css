@@ -462,7 +462,7 @@ body.sammy-ready #sammyCameraDebugBtn{opacity:1;transition:opacity .4s ease}
 .sammyAnsModeRow button small{font-size:6.6px;color:#6f747d;font-weight:500}.sammyAnsModeRow button.active{background:#ececef!important;color:#17181b!important}.sammyAnsModeRow button.active small{color:#565a61!important}
 .sammyAnsDControls{display:grid;grid-template-columns:1.4fr .8fr .8fr;gap:5px;margin:6px 0}.sammyAnsDControls button{min-height:32px!important;padding:0 6px!important;font-size:7.6px!important}
 body.sammy-ansur-d-running #sammyAnsPanel{border-color:rgba(148,216,255,.24);background:rgba(16,18,22,.88)}
-body.sammy-ansur-d-running #sammyAnsBubble{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 0 22px rgba(185,220,255,.16)}
+body.sammy-ansur-d-running #sammyLabBubble{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 0 22px rgba(185,220,255,.16)}
 
 
 /* v0.8.17 · ANSUR D3 live visual audit; Body Space removed */
@@ -472,7 +472,7 @@ body.sammy-ansur-d-running #sammyAnsBubble{box-shadow:0 0 0 1px rgba(255,255,255
 .sammyAnsAuditHud.visible{opacity:1;visibility:visible;transform:translate(-50%,0)}
 .sammyAnsAuditHead{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:5px}.sammyAnsAuditHead b{font-size:8px;letter-spacing:.05em;color:#f0f1f4}.sammyAnsAuditHead span{font-size:7px;color:#959aa3;text-align:right}
 .sammyAnsAuditRows{display:grid;gap:2px}.sammyAnsAuditRow{display:grid;grid-template-columns:minmax(74px,1fr) 62px 62px 66px;gap:4px;align-items:center;min-height:20px;border-top:1px solid rgba(255,255,255,.045);font-size:7.3px;font-variant-numeric:tabular-nums}.sammyAnsAuditRow:first-child{border-top:0}.sammyAnsAuditRow b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e2e4e8}.sammyAnsAuditRow span{color:#a2a6ae;text-align:right}.sammyAnsAuditRow strong{text-align:right}.sammyAnsAuditRow strong.ok{color:#9ee9ae}.sammyAnsAuditRow strong.warn{color:#f2d781}.sammyAnsAuditRow strong.bad{color:#ff9b8c}.sammyAnsAuditRow.anchor{opacity:.62}
-body.sammy-ansur-d-running .sammyBubble:not(#sammyAnsBubble){opacity:.28;pointer-events:none}body.sammy-ansur-d-running #sammyAnsBubble{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 0 22px rgba(185,220,255,.16)}
+body.sammy-ansur-d-running .sammyBubble:not(#sammyLabBubble){opacity:.28;pointer-events:none}body.sammy-ansur-d-running #sammyLabBubble{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 0 22px rgba(185,220,255,.16)}
 
 /* Sammy v0.8.19.1 · ANSUR Protocol / Landmark Lab */
 .sammyProtocolPanel .sammyPanelHead>div{display:flex;flex-direction:column;gap:2px}.sammyProtocolPanel .sammyPanelHead small{font-size:9px;color:#999da6;font-weight:500;letter-spacing:.04em}
@@ -496,7 +496,7 @@ body.sammy-ansur-d-running .sammyBubble:not(#sammyAnsBubble){opacity:.28;pointer
 .sammyProtocolSourceMeasure{border:1px solid rgba(255,255,255,.09);border-radius:13px;overflow:hidden;margin-bottom:9px}.sammyProtocolSourceMeasure summary{padding:9px 10px;display:flex;justify-content:space-between}.sammyProtocolSourceMeasure summary b{font-size:9px}.sammyProtocolSourceMeasure summary span{font-size:8px;color:#93969e}.sammyProtocolSourceMeasure>div{padding:0 10px 10px;font-size:9px;color:#b5b8c0;line-height:1.45}.sammyProtocolSourceMeasure p{margin:5px 0}.sammyProtocolSourceMeasure b{color:#eee}
 .sammyProtocolExportRow{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding-bottom:5px}.sammyProtocolExportRow button{font-size:9px!important}
 .sammyProtocolImageModal{position:fixed;z-index:200;inset:0;background:rgba(0,0,0,.94);display:grid;place-items:center;padding:max(44px,env(safe-area-inset-top)) 10px max(20px,env(safe-area-inset-bottom));pointer-events:auto}.sammyProtocolImageModal.hidden{display:none}.sammyProtocolImageModal img{max-width:100%;max-height:100%;object-fit:contain;background:#fff;border-radius:8px}.sammyProtocolImageModal button{position:absolute;right:14px;top:max(10px,env(safe-area-inset-top));width:42px;height:42px;border-radius:50%;font-size:24px;border:1px solid rgba(255,255,255,.3);background:#202126;color:#fff}
-body.sammy-protocol-mode #sammyProtocolBubble{box-shadow:0 0 0 1px rgba(255,255,255,.22),0 0 25px rgba(190,220,255,.12)}
+body.sammy-protocol-mode #sammyLabBubble{box-shadow:0 0 0 1px rgba(255,255,255,.22),0 0 25px rgba(190,220,255,.12)}
 @media(max-width:600px){.sammyProtocolToolbar{grid-template-columns:1fr 1fr 1fr}.sammyProtocolDocButton img{max-height:230px}.sammyProtocolPanel{max-height:86vh}}
 
 /* v0.8.19.1 · ANSUR Appendix-G observer-error guidance + full protocol audit */
@@ -669,3 +669,46 @@ body.sammy-protocol-placement canvas{cursor:crosshair!important}
 .sammyProtocolTiltControls{grid-template-columns:1fr}
 
 /* Sammy v0.8.19.9 · focused protocol geometry; neck tilt uses existing compact controls. */
+
+
+/* Sammy v0.8.20.0 · LAB radial hub + Influence + blind BODY AUDIT */
+.sammyLabHub{position:fixed;inset:0;z-index:185;display:none;pointer-events:auto;background:radial-gradient(circle at 50% 47%,rgba(20,22,26,.16) 0 132px,rgba(8,9,11,.20) 133px,rgba(8,9,11,.08) 270px,transparent 420px);touch-action:none}
+.sammyLabHub.open{display:block}
+.sammyLabHubCenter{position:absolute;left:50%;top:47%;width:82px;height:82px;transform:translate(-50%,-50%);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:rgba(17,19,23,.86);border:1px solid rgba(255,255,255,.18);box-shadow:0 18px 50px rgba(0,0,0,.34);color:#fff;pointer-events:none}
+.sammyLabHubCenter b{font-size:17px;letter-spacing:.16em;margin-left:.16em}.sammyLabHubCenter span{font-size:9px;opacity:.55;letter-spacing:.12em;text-transform:uppercase}
+.sammyLabSubBubble{position:absolute;left:50%;top:47%;width:78px;height:78px;margin:-39px;border-radius:50%;border:1px solid rgba(255,255,255,.23);background:rgba(21,23,27,.94);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;box-shadow:0 12px 34px rgba(0,0,0,.34);-webkit-tap-highlight-color:transparent}
+.sammyLabSubBubble b{font-size:13px;letter-spacing:.12em;margin-left:.12em}.sammyLabSubBubble small{font-size:8px;opacity:.58;letter-spacing:.04em}
+.sammyLabSubBubble:active{transform:scale(.95)}
+.sammyLabSubBubble.lab-prot{transform:translate(0,-126px)}
+.sammyLabSubBubble.lab-meas{transform:translate(120px,-39px)}
+.sammyLabSubBubble.lab-infl{transform:translate(74px,105px)}
+.sammyLabSubBubble.lab-audt{transform:translate(-74px,105px)}
+.sammyLabSubBubble.lab-ansr{transform:translate(-120px,-39px)}
+.sammyLabSubBubble.lab-prot:active{transform:translate(0,-126px) scale(.95)}
+.sammyLabSubBubble.lab-meas:active{transform:translate(120px,-39px) scale(.95)}
+.sammyLabSubBubble.lab-infl:active{transform:translate(74px,105px) scale(.95)}
+.sammyLabSubBubble.lab-audt:active{transform:translate(-74px,105px) scale(.95)}
+.sammyLabSubBubble.lab-ansr:active{transform:translate(-120px,-39px) scale(.95)}
+body.sammy-lab-hub-open #sammyLabBubble{box-shadow:0 0 0 2px rgba(255,255,255,.28),0 0 30px rgba(205,225,255,.18)}
+.sammyInfluencePanel .sammyPanelHead>div{display:flex;flex-direction:column;gap:2px}.sammyInfluencePanel .sammyPanelHead small{font-size:9px;opacity:.55;font-weight:500;letter-spacing:.04em}
+.sammyLabIntroCard{display:flex;flex-direction:column;gap:6px;padding:12px 13px;margin:2px 0 12px;border:1px solid rgba(255,255,255,.09);border-radius:15px;background:rgba(255,255,255,.035)}
+.sammyLabIntroCard b{font-size:12px}.sammyLabIntroCard span{font-size:10px;line-height:1.45;opacity:.66}
+.sammyInfluenceFoot{font-size:9px;line-height:1.45;opacity:.5;padding:10px 3px 4px}
+.sammyBodyAuditPanel{--sammy-panel-h:min(47vh,410px)}
+.sammyBodyAuditHead{height:70px;padding:20px 16px 9px;display:grid;grid-template-columns:repeat(6,1fr);gap:7px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sammyBodyAuditHead button{height:43px;min-width:0;border-radius:50%;border:1px solid rgba(255,255,255,.17);background:rgba(255,255,255,.055);color:#f5f6f8;font:600 23px/1 system-ui,-apple-system,sans-serif;display:grid;place-items:center;padding:0}
+.sammyBodyAuditHead button.active{background:rgba(255,255,255,.93);color:#16181c;border-color:#fff}.sammyBodyAuditHead #sammyBodyAuditBad.active{background:rgba(211,67,76,.88);color:#fff;border-color:rgba(255,140,150,.85)}
+.sammyBodyAuditHead #sammyBodyAuditOk.active{background:rgba(55,155,105,.84);color:#fff;border-color:rgba(120,230,170,.72)}
+.sammyBodyAuditHead #sammyBodyAuditMark.marking{box-shadow:0 0 0 2px rgba(255,205,100,.75) inset;color:#ffd66f}
+.sammyBodyAuditMeta{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:11px 18px 8px}.sammyBodyAuditMeta b{font-size:13px}.sammyBodyAuditMeta span{font-size:9px;opacity:.52;text-align:right}
+.sammyBodyAuditCommentWrap{padding:0 16px 8px}.sammyBodyAuditCommentWrap textarea{width:100%;box-sizing:border-box;resize:none;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.20);color:#fff;padding:10px 11px;font:11px/1.4 system-ui,-apple-system,sans-serif;outline:none}
+.sammyBodyAuditLegend{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}.sammyBodyAuditLegend span{padding:6px 8px;border-radius:999px;background:rgba(255,255,255,.045);font-size:9px;opacity:.72}
+.sammyBodyAuditMarkSphere{pointer-events:none}
+@media(max-width:370px){.sammyLabSubBubble{width:70px;height:70px;margin:-35px}.sammyLabSubBubble.lab-meas{transform:translate(105px,-35px)}.sammyLabSubBubble.lab-ansr{transform:translate(-105px,-35px)}.sammyLabSubBubble.lab-infl{transform:translate(65px,94px)}.sammyLabSubBubble.lab-audt{transform:translate(-65px,94px)}.sammyLabSubBubble.lab-prot{transform:translate(0,-112px)}}
+
+.sammyBodyAuditHead button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* v0.8.20.0 · LAB is the sole visible entry for measurement/research tools. */
+#sammyMeasureBubble.hidden,#sammyProtocolBubble.hidden,#sammyAnsBubble.hidden{display:none!important}
+#sammyLabBubble.active{background:rgba(240,240,244,.92);color:#17181b}
+.sammyBodyAuditPanel .sammyPanelScroll{padding-top:2px}

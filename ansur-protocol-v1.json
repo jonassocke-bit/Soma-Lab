@@ -4,8 +4,8 @@
     "title": "Measurer’s Handbook: US Army and Marine Corps Anthropometric Surveys, 2010-2011",
     "report": "NATICK/TR-11/017",
     "uploadedPdf": "ADA548497(patient-vacuum-cloth).pdf",
-    "note": "24 direct ANSUR-II targets. v0.8.19.9 is a focused geometry correction: both neck circumferences have anatomically constrained plane tilt in PROT; Shoulder Length is a straight projection on the skin surface; Waist Back Length is a vertically projected surface path ending exactly at canonical Cervicale; Buttock lateral points are the exact lateral extrema of the Buttock-Circumference slice and therefore the Hip-Breadth endpoints. PROT remains the audit layer over shared MEAS geometry.",
-    "integrationVersion": "0.8.19.9"
+    "note": "24 direct ANSUR-II targets. v0.8.20.1 locks the 2026-08-23 audit corrections: Cervicale residual promoted; Trapezius is the same geometric point as lateral neck; Buttock lateral are exact Buttock-Circumference/Hip-Breadth endpoints; Shoulder Length uses bidirectional 90-degree Harness-style surface projection. Waist Back Length keeps the ANSUR surface-distance value but PROT renders a straight vertical guide beside the body ending at Cervicale height.",
+    "integrationVersion": "0.8.20.1"
   },
   "poses": {
     "standing": {
@@ -233,7 +233,8 @@
       "heading": "5.2.4 Buttock Point, Right Lateral and Left Lateral",
       "cropImage": "crop-landmark-buttock_lateral.jpg",
       "dynamicGeometry": true,
-      "implementationVersion": "0.8.19.9"
+      "implementationVersion": "0.8.20.1",
+      "mappingNote": "v0.8.20.1: the two landmarks are exact lateral extrema of the same pelvis slice used by Buttock Circumference and are therefore exactly the Hip-Breadth endpoints; independent landmark offsets are disabled."
     },
     "cervicale": {
       "label": "Cervicale · C7",
@@ -248,7 +249,8 @@
       "CAUTION": "A few participants will be encountered on whom no cervical spine prominence is detectable. On such participants, estimate the point as nearly as possible with respect to the neck and shoulders. A few participants will exhibit two or three equally prominent spinal processes. In such cases, mark the spine that is closest to the posterior base of the neck as established by a tape. Be sure that the head is in the Frankfurt plane when the landmark is drawn. 1 The definition used in ANSUR refers to the “superior palpable point” rather than to the most prominent point. This change was made to bring the definition into compliance with standard anatomical usage (Martin, 1914) and international practice.",
       "heading": "5.2.5 Cervicale",
       "cropImage": "crop-landmark-cervicale.jpg",
-      "implementationVersion": "0.8.19.9"
+      "implementationVersion": "0.8.20.1",
+      "mappingNote": "v0.8.20.1: user-audited residual [0.0025, -6.0916, +1.9026] cm relative to v0.8.19.9 was promoted into the canonical mesh landmark."
     },
     "chest_point": {
       "label": "Chest Point · anterior",
@@ -307,7 +309,7 @@
       "heading": "5.2.29 Neck, Anterior, Right Lateral, and Left Lateral",
       "cropImage": "crop-landmark-neck_base_points.jpg",
       "dynamicGeometry": true,
-      "implementationVersion": "0.8.19.8"
+      "implementationVersion": "0.8.20.1"
     },
     "radiale": {
       "label": "Radiale",
@@ -364,7 +366,8 @@
       "heading": "5.2.43 Trapezius Point, Right and Left",
       "cropImage": "crop-landmark-trapezius.jpg",
       "dynamicGeometry": true,
-      "implementationVersion": "0.8.19.8"
+      "implementationVersion": "0.8.20.1",
+      "mappingNote": "v0.8.20.1: no independent geometric proxy. Trapezius L/R aliases the corresponding lateral-neck point exactly; the separate audit offset is retired."
     },
     "trochanterion": {
       "label": "Trochanterion",
@@ -780,10 +783,10 @@
       "observerErrorImage": "ansur-page-236.jpg",
       "observerErrorKind": "direct_ansur",
       "cropImage": "crop-measure-hip_breadth.jpg",
-      "implementationVersion": "0.8.19.9",
-      "implementationNote": "Direct horizontal distance between lateral buttock landmarks at the same level as Buttock Circumference.",
+      "implementationVersion": "0.8.20.1",
+      "implementationNote": "Direct horizontal connection of the exact Buttock lateral L/R points, which are the lateral extrema of the Buttock-Circumference slice.",
       "dynamicSearch": true,
-      "mappingNote": "v0.8.19.9: Hip Breadth uses the exact left/right lateral extrema of the same horizontal pelvis slice used by Buttock Circumference; those extrema are also the dynamic Buttock lateral landmarks."
+      "mappingNote": "v0.8.20.1: PROT landmark markers and MEAS endpoints now use one shared source; Buttock lateral cannot drift away from Hip Breadth."
     },
     {
       "id": "crotch_height",
@@ -1021,9 +1024,9 @@
       "observerErrorImage": "ansur-page-237.jpg",
       "observerErrorKind": "direct_ansur",
       "cropImage": "crop-measure-waist_back_length.jpg",
-      "implementationVersion": "0.8.19.9",
-      "implementationNote": "Surface polyline from Cervicale to posterior Waist (Omphalion), following back contour.",
-      "mappingNote": "v0.8.19.9: vertical surface distance from Waist (Omphalion), posterior to canonical Cervicale. The posterior projection is straight; depth follows the back contour, preserving ANSUR surface-distance semantics."
+      "implementationVersion": "0.8.20.1",
+      "implementationNote": "Numeric value remains the ANSUR tape/surface distance Cervicale → posterior Waist (Omphalion). PROT renders a separate straight vertical guide beside the body, with its top exactly at Cervicale height.",
+      "mappingNote": "v0.8.20.1: visual audit guide follows the requested Stature-like straight presentation; the numeric 24-target variable is intentionally not converted to a vertical air-line because the ANSUR handbook defines a surface distance."
     },
     {
       "id": "upperarm_length",
@@ -1206,9 +1209,9 @@
       "observerErrorImage": "ansur-page-236.jpg",
       "observerErrorKind": "direct_ansur",
       "cropImage": "crop-measure-shoulder_length.jpg",
-      "implementationVersion": "0.8.19.9",
-      "implementationNote": "Surface polyline from right Trapezius to right Acromion.",
-      "mappingNote": "v0.8.19.9: surface distance Trapezius R to Acromion R using a mathematically straight X/Y projection laid onto the shoulder skin to eliminate mesh-vertex zig-zag."
+      "implementationVersion": "0.8.20.1",
+      "implementationNote": "Harness-style surface path from lateral neck/Trapezius R to Acromion R: straight guide subdivided into 34 samples; each sample probes the surface bidirectionally along a direction perpendicular to the guide.",
+      "mappingNote": "v0.8.20.1: replaces the v0.8.19.9 X/Y depth heuristic with the proven Harness-Lab bidirectional 90-degree projection method. Trapezius is identical to lateral neck."
     }
   ],
   "derivedSources": {
@@ -1671,7 +1674,7 @@
       "WBX fists/arm detail",
       "lap/chest contact targets"
     ],
-    "measurementOverlay": "Reuses the same canonical MEAS v0.8.19.9 geometry used by sammyComputeAllMeasures(); PROT is the audit/visualization layer, not a second measurement engine.",
+    "measurementOverlay": "Reuses the same canonical MEAS v0.8.20.1 geometry used by sammyComputeAllMeasures(); PROT remains the audit/visualization layer, not a second measurement engine.",
     "regionPolicy": "shared MEAS/PROT strict skin-weight partitions; left/right limbs never merged; no whole-body fallback for body-part measures"
   }
 }

@@ -1,4 +1,18 @@
-# Sammy / Body Lab
+# Sammy
+
+## v0.8.20.1 · Audit-locked geometry correction
+
+This build keeps the v0.8.20.0 LAB hub and fixes the geometry that the 2026-08-23 audit/screenshots showed was still not actually wired through PROT. Cervicale is lowered to the reviewed position, Trapezius aliases Neck lateral, Buttock lateral aliases the exact Hip-Breadth endpoints on the Buttock-Circumference slice, and Shoulder Length now uses the Harness-Lab bidirectional 90° projection method. Waist Back Length is shown as a clean straight vertical guide beside the body while its numeric ANSUR surface-distance target is preserved.
+
+## v0.8.20.0 · LAB hub + Influence + blind Body Audit
+
+- The top-level research entry is now one **LAB** bubble next to ANIM and FORM. MEAS, PROT, ANSR, Influence and Audit open from a centered radial LAB hub instead of filling the right edge with more permanent bubbles.
+- Existing PROT remains visually and functionally intact; the new hub only changes navigation.
+- **INFL** contains the existing Calibration Lab. Standard mode is the established 5-level slider sweep and remains the quantitative source for measure→parameter influence; Quick/Deep remain available for shorter/deeper runs.
+- **AUDT** is a deliberately blind plausibility review: the visible header is only previous, comment, ✓, ×, mark flaw, next. Target measurements and solver path are hidden from the reviewer.
+- Flaw marking raycasts directly onto the mannequin and is stored per anonymous test body together with ✓/× and the optional comment. Audit JSON can be exported separately.
+- The blind-audit queue can already consume the newest stored real-mesh D3/D2 cases and is intentionally generic so later multi-seed reconstructions of the same target can be inserted without replacing the audit UI.
+- Historical note for v0.8.20.0: that release left v0.8.19.9 measurement geometry unchanged. v0.8.20.1 above is the subsequent explicit audit-locked geometry correction.
 
 ## v0.8.19.9 · Focused protocol geometry correction
 
@@ -17,7 +31,6 @@ This is an incremental correction pass based on the v0.8.19.7 user audit. It pre
 - MEAS remains the geometric source of truth; PROT remains its review layer.
 - Flat GitHub package; no individual ANSUR crop JPGs (single atlas only).
 
-# Sammy
 ## v0.8.19.7 · Canonical ANSUR measurement pass
 
 - MEAS und PROT verwenden jetzt dieselben strikten Skin-Weight-Regionen. Körperteilmaße haben keinen Whole-Body-Fallback.

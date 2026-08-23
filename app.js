@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {unzipSync} from "https://esm.sh/fflate@0.8.2";
 
-const SAMMY_APP_VERSION="0.8.19.9";
+const SAMMY_APP_VERSION="0.8.20.1";
 
 const HF="https://huggingface.co/nvidia/SOMA-X/resolve/main/";
 const SHAPE=HF+"SOMA_neutral.npz?download=true";
@@ -5969,7 +5969,7 @@ function sammyProtocolPreview(id){const q=sammyProtocolData?.poses?.[id]||sammyP
 
 async function sammyProtocolEnter(){if(sammyProtocolSession)return;await sammyProtocolLoadData();sammyProtocolSession={euler:poseEulerDeg?Float32Array.from(poseEulerDeg):null,relative:lastAppliedRelative3?Float32Array.from(lastAppliedRelative3):null,camera:sammyCaptureCameraState()};document.body.classList.add("sammy-protocol-mode");stopPoseAnimation(false);sammyProtocolBaseView=sammyProtocolMeasureBase(sammyProtocolMeasure());sammyProtocolApplyCurrentPose();sammyCameraTo("measure",700,false);sammyProtocolRender()}
 function sammyProtocolExit(restoreCamera=true){if(!sammyProtocolSession)return;sammyProtocolHideHoldInfo();sammyProtocolHideCommentPopup();sammyProtocolHideAdjustPopup();sammyProtocolClearOverlay();if(sammyProtocolAidGroup){scene.remove(sammyProtocolAidGroup);sammyProtocolAidGroup.traverse?.(o=>{o.geometry?.dispose?.();o.material?.dispose?.()});sammyProtocolAidGroup=null}const s=sammyProtocolSession;sammyProtocolSession=null;sammyProtocolPreviewPose=null;document.body.classList.remove("sammy-protocol-mode");if(s.relative)sammyApplyMeasurementRelative(s.relative,"PROT → vorherige Pose");else if(s.euler&&poseEulerDeg){poseEulerDeg.set(s.euler);applyPoseToRest(currentDisplayRest(),true)}if(restoreCamera&&s.camera)sammyCameraTweenToState(s.camera,650,true)}
-async function sammyProtocolInitUI(){try{await sammyProtocolLoadData();await sammyProtocolLoadReferenceData();sammyProtocolLoadState();sammyProtocolMigrateV8197();sammyProtocolMigrateV8198();sammyProtocolMigrateV8199();sammyProtocolInstallPicking();sammyProtocolRender()}catch(e){sammyReportError(e,{source:"ANSUR Protocol Lab init"});return}document.querySelectorAll("[data-proto-tab]").forEach(b=>b.onclick=()=>sammyProtocolSetTab(b.dataset.protoTab));document.querySelectorAll("[data-proto-base]").forEach(b=>b.onclick=()=>sammyProtocolSelectBase(b.dataset.protoBase));const ib=$("#sammyProtocolInfoBtn");if(ib)ib.onclick=()=>sammyProtocolToggleInfo();const cb=$("#sammyProtocolCommentBtn"),cpt=$("#sammyProtocolCommentPopupText"),ab=$("#sammyProtocolAdjustBtn"),ap=$("#sammyProtocolAdjustPopup");if(cb)cb.onclick=()=>sammyProtocolToggleCommentPopup();if(cpt)cpt.oninput=e=>sammyProtocolSaveFocusedComment(e.target.value);if(ab)ab.onclick=()=>sammyProtocolToggleAdjustPopup();for(const el of [$("#sammyProtocolCommentPopup"),cpt,ap])if(el)for(const ev of ["pointerdown","pointerup","click","touchstart","touchend"])el.addEventListener(ev,e=>e.stopPropagation(),{passive:true});for(const [id,i] of [["#sammyProtocolAdjustX",0],["#sammyProtocolAdjustY",1],["#sammyProtocolAdjustZ",2]]){const el=$(id);if(el)el.oninput=e=>sammyProtocolSetFocusedOffset(i,e.target.value)}const place=$("#sammyProtocolPlaceLandmark"),adjReset=$("#sammyProtocolAdjustReset");if(place)place.onclick=()=>sammyProtocolStartPlacement();if(adjReset)adjReset.onclick=()=>sammyProtocolResetFocusedOffset();const sel=$("#sammyProtocolMeasureSelect");if(sel)sel.onchange=e=>sammyProtocolSelectMeasure(e.target.value);const prev=$("#sammyProtocolPrev"),next=$("#sammyProtocolNext");if(prev)prev.onclick=()=>sammyProtocolStepFocus(-1);if(next)next.onclick=()=>sammyProtocolStepFocus(1);const ok=$("#sammyProtocolStatusOk"),bad=$("#sammyProtocolStatusFlag");if(ok)ok.onclick=()=>sammyProtocolSetFocusedStatus("ok");if(bad)bad.onclick=()=>sammyProtocolSetFocusedStatus("flag");const mirrorBtn=$("#sammyProtocolMirror");if(mirrorBtn){mirrorBtn.disabled=true;mirrorBtn.title="Bilaterale Landmark-Gruppen sind fest gespiegelt gekoppelt."}const measureLineBtn=$("#sammyProtocolMeasureLine");if(measureLineBtn)measureLineBtn.onclick=()=>{sammyProtocolMeasureLineVisible=!sammyProtocolMeasureLineVisible;sammyProtocolRender()};const zones=$("#sammyProtocolZones");if(zones)zones.onclick=()=>{sammyProtocolRegionsVisible=!sammyProtocolRegionsVisible;sammyProtocolRender()};const labels=$("#sammyProtocolLabels");if(labels)labels.onclick=()=>{sammyProtocolLabelsVisible=!sammyProtocolLabelsVisible;sammyProtocolRender()};const rand=$("#sammyProtocolRandom");if(rand)rand.onclick=()=>sammyProtocolRandomize(false);const randWide=$("#sammyProtocolRandomWide");if(randWide)randWide.onclick=()=>sammyProtocolRandomize(true);const resetBody=$("#sammyProtocolResetBody");if(resetBody)resetBody.onclick=sammyProtocolResetBody;const lmReset=$("#sammyProtocolLandmarkReset");if(lmReset)lmReset.onclick=sammyProtocolResetLandmark;for(const [id,i] of [["#sammyProtocolX",0],["#sammyProtocolY",1],["#sammyProtocolZ",2]]){const el=$(id);if(el)el.oninput=e=>sammyProtocolAdjust(i,e.target.value)}const lc=$("#sammyProtocolComment");if(lc)lc.oninput=e=>{if(!sammyProtocolSelectedLandmark)return;sammyProtocolLandmarkState(sammyProtocolSelectedLandmark).comment=e.target.value;sammyProtocolSaveState()};const mc=$("#sammyProtocolMeasureComment");if(mc)mc.oninput=e=>{const m=sammyProtocolMeasure();if(!m)return;sammyProtocolMeasureState(m.id).comment=e.target.value;sammyProtocolSaveState()};document.querySelectorAll("[data-proto-status]").forEach(b=>b.onclick=()=>sammyProtocolSetStatus(b.dataset.protoStatus));document.querySelectorAll("[data-proto-measure-status]").forEach(b=>b.onclick=()=>sammyProtocolSetMeasureStatus(b.dataset.protoMeasureStatus));const poseOk=$("#sammyProtocolPoseOk"),poseFlag=$("#sammyProtocolPoseFlag"),poseReset=$("#sammyProtocolPoseReset");if(poseOk)poseOk.onclick=()=>sammyProtocolSetPoseStatus("ok");if(poseFlag)poseFlag.onclick=()=>sammyProtocolSetPoseStatus("flag");if(poseReset)poseReset.onclick=()=>{sammyProtocolPreviewPose=null;sammyProtocolApplyCurrentPose();sammyProtocolRender()};const doc=$("#sammyProtocolDocOpen");if(doc)doc.onclick=sammyProtocolOpenImage;const imgClose=$("#sammyProtocolImageClose");if(imgClose)imgClose.onclick=sammyProtocolCloseImage;const imgModal=$("#sammyProtocolImageModal");if(imgModal)imgModal.onclick=e=>{if(e.target.id==="sammyProtocolImageModal")sammyProtocolCloseImage()};const ex=$("#sammyProtocolExport");if(ex)ex.onclick=sammyProtocolExport;const dx=$("#sammyProtocolDiagExport");if(dx)dx.onclick=sammyDownloadDiagnostics;const reset=$("#sammyProtocolResetAudit");if(reset)reset.onclick=()=>{if(!confirm("Protocol-/Landmark-Audit wirklich löschen?"))return;localStorage.removeItem(SAMMY_PROTOCOL_KEY);sammyProtocolState=sammyProtocolBlankState();sammyProtocolRender()}}
+async function sammyProtocolInitUI(){try{await sammyProtocolLoadData();await sammyProtocolLoadReferenceData();sammyProtocolLoadState();sammyProtocolMigrateV8197();sammyProtocolMigrateV8198();sammyProtocolMigrateV8199();sammyProtocolMigrateV8201();sammyProtocolInstallPicking();sammyProtocolRender()}catch(e){sammyReportError(e,{source:"ANSUR Protocol Lab init"});return}document.querySelectorAll("[data-proto-tab]").forEach(b=>b.onclick=()=>sammyProtocolSetTab(b.dataset.protoTab));document.querySelectorAll("[data-proto-base]").forEach(b=>b.onclick=()=>sammyProtocolSelectBase(b.dataset.protoBase));const ib=$("#sammyProtocolInfoBtn");if(ib)ib.onclick=()=>sammyProtocolToggleInfo();const cb=$("#sammyProtocolCommentBtn"),cpt=$("#sammyProtocolCommentPopupText"),ab=$("#sammyProtocolAdjustBtn"),ap=$("#sammyProtocolAdjustPopup");if(cb)cb.onclick=()=>sammyProtocolToggleCommentPopup();if(cpt)cpt.oninput=e=>sammyProtocolSaveFocusedComment(e.target.value);if(ab)ab.onclick=()=>sammyProtocolToggleAdjustPopup();for(const el of [$("#sammyProtocolCommentPopup"),cpt,ap])if(el)for(const ev of ["pointerdown","pointerup","click","touchstart","touchend"])el.addEventListener(ev,e=>e.stopPropagation(),{passive:true});for(const [id,i] of [["#sammyProtocolAdjustX",0],["#sammyProtocolAdjustY",1],["#sammyProtocolAdjustZ",2]]){const el=$(id);if(el)el.oninput=e=>sammyProtocolSetFocusedOffset(i,e.target.value)}const place=$("#sammyProtocolPlaceLandmark"),adjReset=$("#sammyProtocolAdjustReset");if(place)place.onclick=()=>sammyProtocolStartPlacement();if(adjReset)adjReset.onclick=()=>sammyProtocolResetFocusedOffset();const sel=$("#sammyProtocolMeasureSelect");if(sel)sel.onchange=e=>sammyProtocolSelectMeasure(e.target.value);const prev=$("#sammyProtocolPrev"),next=$("#sammyProtocolNext");if(prev)prev.onclick=()=>sammyProtocolStepFocus(-1);if(next)next.onclick=()=>sammyProtocolStepFocus(1);const ok=$("#sammyProtocolStatusOk"),bad=$("#sammyProtocolStatusFlag");if(ok)ok.onclick=()=>sammyProtocolSetFocusedStatus("ok");if(bad)bad.onclick=()=>sammyProtocolSetFocusedStatus("flag");const mirrorBtn=$("#sammyProtocolMirror");if(mirrorBtn){mirrorBtn.disabled=true;mirrorBtn.title="Bilaterale Landmark-Gruppen sind fest gespiegelt gekoppelt."}const measureLineBtn=$("#sammyProtocolMeasureLine");if(measureLineBtn)measureLineBtn.onclick=()=>{sammyProtocolMeasureLineVisible=!sammyProtocolMeasureLineVisible;sammyProtocolRender()};const zones=$("#sammyProtocolZones");if(zones)zones.onclick=()=>{sammyProtocolRegionsVisible=!sammyProtocolRegionsVisible;sammyProtocolRender()};const labels=$("#sammyProtocolLabels");if(labels)labels.onclick=()=>{sammyProtocolLabelsVisible=!sammyProtocolLabelsVisible;sammyProtocolRender()};const rand=$("#sammyProtocolRandom");if(rand)rand.onclick=()=>sammyProtocolRandomize(false);const randWide=$("#sammyProtocolRandomWide");if(randWide)randWide.onclick=()=>sammyProtocolRandomize(true);const resetBody=$("#sammyProtocolResetBody");if(resetBody)resetBody.onclick=sammyProtocolResetBody;const lmReset=$("#sammyProtocolLandmarkReset");if(lmReset)lmReset.onclick=sammyProtocolResetLandmark;for(const [id,i] of [["#sammyProtocolX",0],["#sammyProtocolY",1],["#sammyProtocolZ",2]]){const el=$(id);if(el)el.oninput=e=>sammyProtocolAdjust(i,e.target.value)}const lc=$("#sammyProtocolComment");if(lc)lc.oninput=e=>{if(!sammyProtocolSelectedLandmark)return;sammyProtocolLandmarkState(sammyProtocolSelectedLandmark).comment=e.target.value;sammyProtocolSaveState()};const mc=$("#sammyProtocolMeasureComment");if(mc)mc.oninput=e=>{const m=sammyProtocolMeasure();if(!m)return;sammyProtocolMeasureState(m.id).comment=e.target.value;sammyProtocolSaveState()};document.querySelectorAll("[data-proto-status]").forEach(b=>b.onclick=()=>sammyProtocolSetStatus(b.dataset.protoStatus));document.querySelectorAll("[data-proto-measure-status]").forEach(b=>b.onclick=()=>sammyProtocolSetMeasureStatus(b.dataset.protoMeasureStatus));const poseOk=$("#sammyProtocolPoseOk"),poseFlag=$("#sammyProtocolPoseFlag"),poseReset=$("#sammyProtocolPoseReset");if(poseOk)poseOk.onclick=()=>sammyProtocolSetPoseStatus("ok");if(poseFlag)poseFlag.onclick=()=>sammyProtocolSetPoseStatus("flag");if(poseReset)poseReset.onclick=()=>{sammyProtocolPreviewPose=null;sammyProtocolApplyCurrentPose();sammyProtocolRender()};const doc=$("#sammyProtocolDocOpen");if(doc)doc.onclick=sammyProtocolOpenImage;const imgClose=$("#sammyProtocolImageClose");if(imgClose)imgClose.onclick=sammyProtocolCloseImage;const imgModal=$("#sammyProtocolImageModal");if(imgModal)imgModal.onclick=e=>{if(e.target.id==="sammyProtocolImageModal")sammyProtocolCloseImage()};const ex=$("#sammyProtocolExport");if(ex)ex.onclick=sammyProtocolExport;const dx=$("#sammyProtocolDiagExport");if(dx)dx.onclick=sammyDownloadDiagnostics;const reset=$("#sammyProtocolResetAudit");if(reset)reset.onclick=()=>{if(!confirm("Protocol-/Landmark-Audit wirklich löschen?"))return;localStorage.removeItem(SAMMY_PROTOCOL_KEY);sammyProtocolState=sammyProtocolBlankState();sammyProtocolRender()}}
 
 
 // ---------------------------------------------------------------------------
@@ -5979,7 +5979,7 @@ async function sammyProtocolInitUI(){try{await sammyProtocolLoadData();await sam
 // ---------------------------------------------------------------------------
 const SAMMY_PROTOCOL_DYNAMIC_LANDMARKS_V8197=new Set(["buttock_lateral","buttock_posterior","calf_max","ankle_min","biceps_point","neck_base_points","trapezius","gluteal_furrow"]);
 const SAMMY_PROTOCOL_REAUDIT_MEASURES_V8197=["biacromial_breadth","neck_circumference","buttock_circumference","hip_breadth","wrist_circumference","thigh_circumference","calf_circumference","ankle_circumference","waist_back_length","upperarm_length","lowerarm_length","tibiale_height","shoulder_length","upperarm_circumference","forearm_circumference"];
-function sammyProtocolMigrateV8197(){const s=sammyProtocolLoadState();if(["0.8.19.7","0.8.19.8","0.8.19.9"].includes(s.measureAlgorithmVersion))return;if(s.measures){delete s.measures.torso_height;delete s.measures.upperleg_height}s.measureAlgorithmVersion="0.8.19.7";s.migrationNote="v0.8.19.7 compatibility migration; existing calibration offsets/comments preserved.";sammyProtocolSaveState()}
+function sammyProtocolMigrateV8197(){const s=sammyProtocolLoadState();if(["0.8.19.7","0.8.19.8","0.8.19.9","0.8.20.1"].includes(s.measureAlgorithmVersion))return;if(s.measures){delete s.measures.torso_height;delete s.measures.upperleg_height}s.measureAlgorithmVersion="0.8.19.7";s.migrationNote="v0.8.19.7 compatibility migration; existing calibration offsets/comments preserved.";sammyProtocolSaveState()}
 function sammyProtocolDynamicLandmarkV8197(id){return SAMMY_PROTOCOL_DYNAMIC_LANDMARKS_V8197.has(id)}
 // PROT and MEAS now use exactly the same skin-weight partitions.
 sammyProtocolRegionIndices=function(region){return sammyMeasureRegionIndicesV8197(region)};
@@ -6179,6 +6179,8 @@ async function sammyAnsD3Export(summaryOnly=false){const run=sammyAnsLab.d3Run;i
 function sammyAnsInitUI(){const s=sammyAnsStored();sammyAnsLab.runA=s.runA||null;sammyAnsLab.runB=s.runB||null;sammyAnsLab.runC=s.runC||null;const mini=$("#sammyAnsMiniPlayPause"),visual=$("#sammyAnsD3Visual"),a=$("#sammyAnsRunA"),b=$("#sammyAnsRunB"),c=$("#sammyAnsRunC"),sum=$("#sammyAnsSummaryExport"),full=$("#sammyAnsFullExport"),reset=$("#sammyAnsReset"),close=$("#sammyAnsClose"),ds=$("#sammyAnsDStart"),dp=$("#sammyAnsDPause"),dr=$("#sammyAnsDReset"),dSum=$("#sammyAnsDSummary"),dFull=$("#sammyAnsDFull"),d2s=$("#sammyAnsD2Start"),d2p=$("#sammyAnsD2Pause"),d2r=$("#sammyAnsD2Reset"),d2Sum=$("#sammyAnsD2Summary"),d2Full=$("#sammyAnsD2Full"),d3s=$("#sammyAnsD3Start"),d3p=$("#sammyAnsD3Pause"),d3r=$("#sammyAnsD3Reset"),d3Sum=$("#sammyAnsD3Summary"),d3Full=$("#sammyAnsD3Full");if(mini)mini.onclick=sammyAnsMiniTransport;if(visual)visual.onclick=sammyAnsD3ToggleVisual;if(a)a.onclick=sammyAnsRunA;if(b)b.onclick=sammyAnsRunB;if(c)c.onclick=sammyAnsRunC;if(sum)sum.onclick=()=>sammyAnsExport(true);if(full)full.onclick=()=>sammyAnsExport(false);if(reset)reset.onclick=sammyAnsReset;if(close)close.onclick=sammyClosePanels;document.querySelectorAll("[data-ans-d-mode]").forEach(x=>x.onclick=()=>sammyAnsDSetMode(x.dataset.ansDMode));if(ds)ds.onclick=sammyAnsDStartOrResume;if(dp)dp.onclick=sammyAnsDPause;if(dr)dr.onclick=sammyAnsDReset;if(dSum)dSum.onclick=()=>sammyAnsDExport(true);if(dFull)dFull.onclick=()=>sammyAnsDExport(false);document.querySelectorAll("[data-ans-d2-mode]").forEach(x=>x.onclick=()=>sammyAnsD2SetMode(x.dataset.ansD2Mode));if(d2s)d2s.onclick=sammyAnsD2StartOrResume;if(d2p)d2p.onclick=sammyAnsD2Pause;if(d2r)d2r.onclick=sammyAnsD2Reset;if(d2Sum)d2Sum.onclick=()=>sammyAnsD2Export(true);if(d2Full)d2Full.onclick=()=>sammyAnsD2Export(false);document.querySelectorAll("[data-ans-d3-mode]").forEach(x=>x.onclick=()=>sammyAnsD3SetMode(x.dataset.ansD3Mode));if(d3s)d3s.onclick=sammyAnsD3StartOrResume;if(d3p)d3p.onclick=sammyAnsD3Pause;if(d3r)d3r.onclick=sammyAnsD3Reset;if(d3Sum)d3Sum.onclick=()=>sammyAnsD3Export(true);if(d3Full)d3Full.onclick=()=>sammyAnsD3Export(false);sammyAnsDLoadLatest();sammyAnsD2LoadLatest();sammyAnsD3LoadLatest();sammyAnsRefreshUi()}
 
 function sammyOpenPanel(id){
+ if(id==="sammyLabHub"){sammyLabToggleHub();return}
+ sammyLabCloseHub();
  if((sammyAnsLab.dRunning||sammyAnsLab.d2Running||sammyAnsLab.d3Running)&&id!=="sammyAnsPanel")return;
  const before=document.querySelector(".sammyPanel.open")?.id||null;
  if(before===id)return;
@@ -6187,8 +6189,10 @@ function sammyOpenPanel(id){
  if(before==="sammyAnimPanel"&&id!=="sammyAnimPanel"&&sammyPreAnimationCamera){
   const state=sammyPreAnimationCamera;sammyPreAnimationCamera=null;sammyCameraTweenToState(state,0,true)
  }
- if(before==="sammyMeasurePanel"&&id!=="sammyMeasurePanel")sammyExitMeasureMode(true);
+ const beforeMeasureLike=before==="sammyMeasurePanel"||before==="sammyInfluencePanel", nextMeasureLike=id==="sammyMeasurePanel"||id==="sammyInfluencePanel";
+ if(beforeMeasureLike&&!nextMeasureLike)sammyExitMeasureMode(true);
  if(before==="sammyProtocolPanel"&&id!=="sammyProtocolPanel")sammyProtocolExit(true);
+ if(before==="sammyBodyAuditPanel"&&id!=="sammyBodyAuditPanel")sammyBodyAuditExit();
  if(id==="sammyAnimPanel"&&before!=="sammyAnimPanel"&&!sammyIntroActive)sammyPreAnimationCamera=sammyCaptureCameraState();
  document.querySelectorAll(".sammyPanel").forEach(p=>p.classList.toggle("open",p.id===id));
  document.querySelectorAll(".sammyBubble").forEach(b=>b.classList.toggle("active",b.dataset.panel===id));
@@ -6199,16 +6203,21 @@ function sammyOpenPanel(id){
   if(h){p.style.setProperty("--sammy-panel-h",`${h}px`);if(key==="animation"||key==="ansur"||key==="protocol")p.classList.toggle("compact",h<138)}
  }
  if(id==="sammyAnimPanel"&&!sammyIntroActive)sammyCameraTo("anim-panel",820,false);
- if(id==="sammyMeasurePanel"&&!sammyIntroActive)sammyEnterMeasureMode()
+ if(nextMeasureLike&&!beforeMeasureLike&&!sammyIntroActive)sammyEnterMeasureMode()
  if(id==="sammyProtocolPanel"&&!sammyIntroActive)sammyProtocolEnter().catch(e=>sammyReportError(e,{source:"ANSUR Protocol Lab"}))
+ if(id==="sammyBodyAuditPanel"&&!sammyIntroActive)sammyBodyAuditEnter().catch(e=>sammyReportError(e,{source:"Body Audit"}))
+ sammyLabSyncActive(id)
 }
 function sammyClosePanels(){
+ sammyLabCloseHub();
  const before=document.querySelector(".sammyPanel.open")?.id||null;
  document.querySelectorAll(".sammyPanel").forEach(p=>p.classList.remove("open"));
  document.querySelectorAll(".sammyBubble").forEach(b=>b.classList.remove("active"));
  if(before==="sammyAnimPanel"&&!sammyIntroActive)sammyRestorePreAnimationCamera();
- if(before==="sammyMeasurePanel"&&!sammyIntroActive)sammyExitMeasureMode()
+ if((before==="sammyMeasurePanel"||before==="sammyInfluencePanel")&&!sammyIntroActive)sammyExitMeasureMode()
  if(before==="sammyProtocolPanel"&&!sammyIntroActive)sammyProtocolExit()
+ if(before==="sammyBodyAuditPanel")sammyBodyAuditExit()
+ sammyLabSyncActive(null)
 }
 function sammyInstallBubbleDrag(el,defaultX,defaultY){
  const state=sammyUiLoadState(),saved=state.bubbles?.[el.id];
@@ -6820,19 +6829,19 @@ function sammyInitUi(){
  sammyMountShapeControls();sammyRenderAnimationLibrary();
 
  const w=innerWidth,h=innerHeight,uiState=sammyUiLoadState();
- if(uiState.bubblePreset!=="right-stack-v8193")sammyUiSaveState({bubbles:{},bubblePreset:"right-stack-v8193"});
+ if(uiState.bubblePreset!=="lab-hub-v8200")sammyUiSaveState({bubbles:{},bubblePreset:"lab-hub-v8200"});
  const bubbleTop=Math.max(72,Math.min(96,h*.10)),bubbleStep=62,bubbleX=w-66;
  sammyInstallBubbleDrag($("#sammyAnimBubble"),bubbleX,bubbleTop);
  sammyInstallBubbleDrag($("#sammyShapeBubble"),bubbleX,bubbleTop+bubbleStep);
- sammyInstallBubbleDrag($("#sammyMeasureBubble"),bubbleX,bubbleTop+bubbleStep*2);
- sammyInstallBubbleDrag($("#sammyProtocolBubble"),bubbleX,bubbleTop+bubbleStep*3);
- sammyInstallBubbleDrag($("#sammyAnsBubble"),bubbleX,bubbleTop+bubbleStep*4);
+ sammyInstallBubbleDrag($("#sammyLabBubble"),bubbleX,bubbleTop+bubbleStep*2);
+ // MEAS / PROT / ANSR remain hidden compatibility entry points; LAB owns navigation.
  // error bubble starts hidden but still receives a persisted/default position
  sammyInstallBubbleDrag($("#sammyErrorBubble"),8,Math.max(220,h*.62));
  document.querySelectorAll(".sammyPanel").forEach(sammyInstallPanelResize);
  document.querySelectorAll(".sammyPanelClose").forEach(b=>b.onclick=sammyClosePanels);
  sammyAnsInitUI();
  sammyProtocolInitUI();
+ sammyLabInitUI();
 
  $("#sammyAnimFile").disabled=true;
  $("#sammyAnimFile").onchange=e=>{if(e.target.files?.length)sammyImportAnimationFiles(e.target.files)};
@@ -7077,7 +7086,7 @@ const sammyProtocolLandmarkStateV8197=sammyProtocolLandmarkState;
 sammyProtocolLandmarkState=function(id){const st=sammyProtocolLandmarkStateV8197(id);if(!Number.isFinite(Number(st.lineOffsetCm)))st.lineOffsetCm=0;return st};
 
 function sammyProtocolMigrateV8198(){
- const s=sammyProtocolLoadState();if(["0.8.19.8","0.8.19.9"].includes(s.measureAlgorithmVersion))return;const from=s.measureAlgorithmVersion||"legacy";
+ const s=sammyProtocolLoadState();if(["0.8.19.8","0.8.19.9","0.8.20.1"].includes(s.measureAlgorithmVersion))return;const from=s.measureAlgorithmVersion||"legacy";
  if(s.measures){delete s.measures.torso_height;delete s.measures.upperleg_height}
  // Preserve every existing manual offset/comment. Only reopen geometry that
  // actually changed in this pass so the user's prior audit remains meaningful.
@@ -7287,7 +7296,7 @@ sammyProtocolRenderAdjustPopup=function(){
 };
 
 function sammyProtocolMigrateV8199(){
- const s=sammyProtocolLoadState();if(s.measureAlgorithmVersion==="0.8.19.9")return;const from=s.measureAlgorithmVersion||"legacy";
+ const s=sammyProtocolLoadState();if(["0.8.19.9","0.8.20.1"].includes(s.measureAlgorithmVersion))return;const from=s.measureAlgorithmVersion||"legacy";
  if(s.measures){delete s.measures.torso_height;delete s.measures.upperleg_height}
  // Cervicale's approved 0.8.19.7 calibration is now canonical. Convert any
  // existing local offset to a residual rather than double-applying it.
@@ -7304,6 +7313,236 @@ function sammyProtocolMigrateV8199(){
 }
 
 
+
+// ---------------------------------------------------------------------------
+// v0.8.20.1 · audit-locked geometry correction
+// Source: user PROT audit 2026-08-23 + annotated screenshots.
+// Narrow scope:
+// 1) Trapezius is the lateral-neck point (one shared landmark, no independent proxy).
+// 2) Cervicale receives the user's residual downward/posterior correction.
+// 3) Buttock lateral markers are literally the Hip-Breadth endpoints on the
+//    Buttock-Circumference slice (no independent landmark offset).
+// 4) Shoulder Length uses the proven Harness-Lab projection recipe: a straight
+//    Trapezius→Acromion guide, subdivided, with bidirectional 90° surface probes.
+// 5) Waist Back Length gets a straight off-body vertical guide terminating at
+//    Cervicale height. The numeric ANSUR value remains the tape/surface distance
+//    so the 24-value statistical interface is not silently changed into a
+//    different anthropometric variable.
+// ---------------------------------------------------------------------------
+
+const SAMMY_CERVICALE_RESIDUAL_CM_V8201=[0.0024884167942218482,-6.091606616973877,1.9025582820177078];
+const sammyMeasureCervicaleV8199BaseV8201=sammyMeasureCervicaleV8197;
+sammyMeasureCervicaleV8197=function(){
+ const base=sammyMeasureCervicaleV8199BaseV8201();if(!base)return null;
+ const t=[base[0]+SAMMY_CERVICALE_RESIDUAL_CM_V8201[0]/100,base[1]+SAMMY_CERVICALE_RESIDUAL_CM_V8201[1]/100,base[2]+SAMMY_CERVICALE_RESIDUAL_CM_V8201[2]/100];
+ return sammyMeasureRegionNearestV8197(t,"neck")||sammyMeasureRegionNearestV8197(t,"neckBase")||base
+};
+
+// ANSUR definition: Trapezius point is where the anterior trapezius border
+// crosses the lateral-neck landmark. For Sammy calibration they are therefore
+// one geometric point, not two independently drifting proxies.
+sammyMeasureTrapeziusV8197=function(side="right"){return sammyMeasureNeckBasePointV8197(side)};
+
+function sammyMeasureLocalRayHitV8201(sample,dir,range,allowedRegions){
+ if(!mesh||!sample||!dir)return null;mesh.updateMatrixWorld?.(true);
+ const d=sammyVecNorm(dir),scale=new THREE.Vector3(1,1,1);mesh.getWorldScale?.(scale);const worldScale=Math.max(.001,scale.x,scale.y,scale.z),far=range*2.2*worldScale;
+ const candidates=[];
+ for(const sign of [1,-1]){
+  const oLocal=[sample[0]+d[0]*range*sign,sample[1]+d[1]*range*sign,sample[2]+d[2]*range*sign],eLocal=[oLocal[0]-d[0]*sign,oLocal[1]-d[1]*sign,oLocal[2]-d[2]*sign];
+  const ow=new THREE.Vector3(...oLocal),ew=new THREE.Vector3(...eLocal);mesh.localToWorld?.(ow);mesh.localToWorld?.(ew);const dw=ew.sub(ow).normalize();
+  const ray=new THREE.Raycaster(ow,dw,0,far),hits=ray.intersectObject(mesh,true);
+  for(const hit of hits.slice(0,8)){
+   const q=hit.point.clone();mesh.worldToLocal?.(q);const p=[q.x,q.y,q.z];
+   let regionDist=0;
+   if(allowedRegions?.length){const near=sammyMeasureNearestUnionV8198(p,allowedRegions);if(!near)continue;regionDist=Math.hypot(p[0]-near[0],p[1]-near[1],p[2]-near[2]);if(regionDist>.045)continue}
+   const ds=Math.hypot(p[0]-sample[0],p[1]-sample[1],p[2]-sample[2]);candidates.push({p,sign,ds,regionDist});break
+  }
+ }
+ if(!candidates.length)return null;
+ // Prefer the + projection side (the superior/outer shoulder surface); the
+ // opposite ray is a fallback exactly as in the Harness-Lab two-direction test.
+ candidates.sort((a,b)=>(a.sign===1?0:1)-(b.sign===1?0:1)||a.ds-b.ds||a.regionDist-b.regionDist);
+ return candidates[0].p
+}
+
+function sammyMeasureShoulderHarnessPathV8201(){
+ const a=sammyMeasureTrapeziusV8197("right"),b=sammyMeasureAcromionV8197("right"),box=sammyMeasureBBox();if(!a||!b||!box)return null;
+ const guide=sammyVecNorm(sammyVecSub(b,a));let probe=[0,1,0],dot=sammyVecDot(probe,guide);probe=[probe[0]-guide[0]*dot,probe[1]-guide[1]*dot,probe[2]-guide[2]*dot];
+ if(Math.hypot(...probe)<.15){probe=[0,0,sammyMeasureFrontSignV8197()],dot=sammyVecDot(probe,guide);probe=[probe[0]-guide[0]*dot,probe[1]-guide[1]*dot,probe[2]-guide[2]*dot]}
+ probe=sammyVecNorm(probe);const N=34,range=Math.min(.24,Math.max(.105,box.height*.085)),pts=[a.slice()];
+ for(let i=1;i<N;i++){
+  const t=i/N,s=sammyMeasureLerp(a,b,t),hit=sammyMeasureLocalRayHitV8201(s,probe,range,["neckBase","shoulder"]);
+  if(hit)pts.push(hit);else{const q=sammyMeasureNearestUnionV8198(s,["neckBase","shoulder"]);pts.push(q||s)}
+ }
+ pts.push(b.slice());return pts
+}
+sammyMeasureShoulderSurfacePathV8197=sammyMeasureShoulderHarnessPathV8201;
+
+// Keep the true ANSUR tape path for the numeric value, but render a clean
+// Stature-like vertical guide beside the body. This satisfies the requested
+// audit visualization without corrupting the ANSUR-II predictor interface.
+const sammyMeasureBackSurfacePathANSURV8201=sammyMeasureBackSurfacePathV8197;
+function sammyMeasureBackVerticalGuideV8201(){
+ const box=sammyMeasureBBox(),top=sammyMeasureCervicaleV8197(),wy=sammyMeasureSharedPlaneY("waist");if(!box||!top||!Number.isFinite(wy))return null;
+ const x=box.minX-Math.max(.035,box.height*.028),z=box.cz;return [[x,wy,z],[x,top[1],z]]
+}
+
+// PROT auto-landmarks must use the same canonical geometry as MEAS. v0.8.19.9
+// fixed MEAS but left several legacy PROT landmark heuristics in place, which
+// is why the screenshots still showed unsnapped points.
+const sammyProtocolAutoPointsV8200Base=sammyProtocolAutoPoints;
+sammyProtocolAutoPoints=function(id){
+ if(id==="cervicale"){const q=sammyMeasureCervicaleV8197();return q?[{name:"Cervicale",side:"center",point:q}]:[]}
+ if(id==="buttock_lateral"){
+  const l=sammyMeasureButtockLateralV8197("left"),r=sammyMeasureButtockLateralV8197("right"),out=[];
+  if(l)out.push({name:"Buttock lateral L",side:"left",point:l});if(r)out.push({name:"Buttock lateral R",side:"right",point:r});return out
+ }
+ if(id==="neck_base_points"){
+  const base=sammyProtocolAutoPointsV8200Base(id),an=base.find(q=>q.side==="center"),l=sammyMeasureNeckBasePointV8197("left"),r=sammyMeasureNeckBasePointV8197("right"),out=[];
+  if(an)out.push(an);if(l)out.push({name:"Neck lateral L / Trapezius L",side:"left",point:l});if(r)out.push({name:"Neck lateral R / Trapezius R",side:"right",point:r});return out
+ }
+ if(id==="trapezius"){
+  const n=sammyProtocolAutoPoints("neck_base_points");return n.filter(q=>q.side==="left"||q.side==="right").map(q=>({...q,name:q.side==="left"?"Trapezius / Neck lateral L":"Trapezius / Neck lateral R"}))
+ }
+ return sammyProtocolAutoPointsV8200Base(id)
+};
+
+const sammyProtocolLandmarkPointsV8200Base=sammyProtocolLandmarkPoints;
+sammyProtocolLandmarkPoints=function(id){
+ if(id==="buttock_lateral")return sammyProtocolAutoPoints(id); // exact Hip-Breadth endpoints; never drift off the circumference slice
+ if(id==="trapezius"){
+  // Share the *displayed/audited* Neck-Lateral point including its current
+  // neck-base calibration, rather than maintaining a second offset state.
+  return sammyProtocolLandmarkPointsV8200Base("neck_base_points").filter(q=>q.side==="left"||q.side==="right").map(q=>({...q,name:q.side==="left"?"Trapezius / Neck lateral L":"Trapezius / Neck lateral R"}))
+ }
+ return sammyProtocolLandmarkPointsV8200Base(id)
+};
+
+// Preserve existing v0.8.19.9 compute behavior except where the visual guide
+// must differ from the numeric ANSUR path.
+const sammyComputeMeasureV8200Base=sammyComputeMeasure;
+sammyComputeMeasure=function(def,sectionCache=null){
+ if(def?.id==="waist_back_length"){
+  const surface=sammyMeasureBackSurfacePathANSURV8201(),guide=sammyMeasureBackVerticalGuideV8201();
+  return surface?.length>1&&guide?.length>1?{valueCm:sammyMeasurePolylineLengthCmV8197(surface),line:{kind:"polyline",points:guide},measurementPath:{kind:"polyline",points:surface},semanticAnchor:"waistPosteriorToCervicale"}:{valueCm:NaN}
+ }
+ if(def?.id==="shoulder_length"){
+  const pts=sammyMeasureShoulderHarnessPathV8201();return pts?.length>1?{valueCm:sammyMeasurePolylineLengthCmV8197(pts),line:{kind:"polyline",points:pts},semanticAnchor:"neckLateralTrapeziusToAcromionHarnessProjection"}:{valueCm:NaN}
+ }
+ return sammyComputeMeasureV8200Base(def,sectionCache)
+};
+
+for(const [id,txt] of Object.entries({
+ hip_breadth:"Direkte horizontale Verbindung der exakten Buttock-Lateral-L/R-Punkte; beide Punkte sind die linken/rechten Extrema des Buttock-Circumference-Schnitts.",
+ waist_back_length:"ANSUR-Wert bleibt die Oberflächen-/Banddistanz Cervicale → Waist (Omphalion), posterior. PROT zeigt dafür bewusst eine gerade vertikale Referenzlinie neben dem Körper; deren obere Höhe ist exakt Cervicale.",
+ shoulder_length:"Harness-Projektion: Neck lateral/Trapezius R → Acromion R als gerade Referenz; 34 Samples suchen jeweils in 90° zur Referenzlinie in beide Richtungen die Schulteroberfläche und werden anschließend verbunden."
+})){const d=SAMMY_MEASURE_DEFS.find(x=>x.id===id);if(d)d.implementation=txt}
+
+function sammyProtocolMigrateV8201(){
+ const s=sammyProtocolLoadState();if(s.measureAlgorithmVersion==="0.8.20.1")return;
+ // The current audit's Cervicale residual is now part of canonical MEAS. Only
+ // consume it when the stored correction actually matches the reviewed value;
+ // unrelated manual edits are preserved.
+ const cv=s.landmarks?.cervicale;if(cv&&Array.isArray(cv.offsetCm)){
+  const d=cv.offsetCm.map((v,i)=>Number(v||0)-SAMMY_CERVICALE_RESIDUAL_CM_V8201[i]);
+  if(Math.max(...d.map(Math.abs))<.75){cv.previousOffsetCmV8199=cv.offsetCm.slice();cv.offsetCm=[0,0,0]}
+  cv.status="unchecked"
+ }
+ // Trapezius is no longer independently adjustable: archive the old proxy
+ // correction, then alias it to Neck lateral. Buttock lateral is likewise a
+ // derived endpoint and may not retain an offset that pulls it off Hip Breadth.
+ const tr=s.landmarks?.trapezius;if(tr){if(Array.isArray(tr.offsetCm)&&tr.offsetCm.some(v=>Math.abs(Number(v||0))>.01))tr.previousIndependentOffsetCmV8199=tr.offsetCm.slice();if(Math.abs(Number(tr.lineOffsetCm||0))>.01)tr.previousIndependentLineOffsetCmV8199=Number(tr.lineOffsetCm);tr.offsetCm=[0,0,0];tr.lineOffsetCm=0;tr.status="unchecked";tr.comment=((tr.comment||"").trim()+"\n\nv0.8.20.1: geometrisch identisch mit Neck lateral; separater Trapezius-Offset deaktiviert.").trim()}
+ const bl=s.landmarks?.buttock_lateral;if(bl){if(Array.isArray(bl.offsetCm)&&bl.offsetCm.some(v=>Math.abs(Number(v||0))>.01))bl.previousOffsetCmV8199=bl.offsetCm.slice();if(Math.abs(Number(bl.lineOffsetCm||0))>.01)bl.previousLineOffsetCmV8199=Number(bl.lineOffsetCm);bl.offsetCm=[0,0,0];bl.lineOffsetCm=0;bl.status="unchecked"}
+ for(const id of ["hip_breadth","waist_back_length","shoulder_length"]){const st=s.measures?.[id];if(st&&st.status!=="unchecked")st.status="unchecked"}
+ s.measureAlgorithmVersion="0.8.20.1";
+ s.migrationNote="v0.8.20.1 audit-locked geometry: Cervicale residual promoted; Trapezius aliases Neck lateral; Buttock lateral aliases exact Buttock-Circumference/Hip-Breadth extrema; Shoulder Length uses bidirectional 90-degree Harness projection; Waist Back Length displays a straight Cervicale-height guide while retaining the ANSUR surface-distance value.";
+ sammyProtocolSaveState()
+}
+
+
 // Sammy v0.7.1: production shell + automatic runtime.
 sammyInitUi();
 setTimeout(()=>autoStartRuntime(),0);
+
+
+// -----------------------------------------------------------------------------
+// Sammy v0.8.20.0 LAB HUB
+// Keeps the compact top-level UI (ANIM / FORM / LAB). LAB opens a centered
+// radial launcher for PROT, MEAS, ANSR, INFL and blind BODY AUDIT.
+// -----------------------------------------------------------------------------
+const SAMMY_LAB_PANEL_IDS=new Set(["sammyProtocolPanel","sammyMeasurePanel","sammyAnsPanel","sammyInfluencePanel","sammyBodyAuditPanel"]);
+function sammyLabSyncActive(panelId=null){const b=$("#sammyLabBubble");if(b)b.classList.toggle("active",!!panelId&&SAMMY_LAB_PANEL_IDS.has(panelId))}
+function sammyLabCloseHub(){const h=$("#sammyLabHub");if(h){h.classList.remove("open");h.setAttribute("aria-hidden","true")}document.body.classList.remove("sammy-lab-hub-open")}
+function sammyLabToggleHub(force=null){
+ if(sammyAnsLab?.dRunning||sammyAnsLab?.d2Running||sammyAnsLab?.d3Running)return;
+ const h=$("#sammyLabHub");if(!h)return;const open=force==null?!h.classList.contains("open"):!!force;
+ if(open){const before=document.querySelector(".sammyPanel.open")?.id;if(before)sammyClosePanels();h.classList.add("open");h.setAttribute("aria-hidden","false");document.body.classList.add("sammy-lab-hub-open");sammyLabSyncActive(null)}
+ else{sammyLabCloseHub();sammyLabSyncActive(document.querySelector(".sammyPanel.open")?.id||null)}
+}
+function sammyLabMountInfluence(){const src=$("#sammyCalibrationLab"),mount=$("#sammyInfluenceMount");if(src&&mount&&src.parentElement!==mount){mount.appendChild(src);src.open=true}}
+function sammyLabInitUI(){
+ const hub=$("#sammyLabHub");if(hub){hub.addEventListener("pointerup",e=>{if(e.target===hub)sammyLabToggleHub(false)});hub.querySelectorAll("[data-lab-panel]").forEach(b=>b.addEventListener("pointerup",e=>{e.stopPropagation();const id=b.dataset.labPanel;sammyLabCloseHub();sammyOpenPanel(id)}))}
+ sammyLabMountInfluence();
+ sammyBodyAuditInitUI();
+}
+
+// -----------------------------------------------------------------------------
+// Blind BODY AUDIT v1
+// Currently consumes the newest completed/available D3 real-mesh cases. The
+// queue format is deliberately generic so multi-seed target reconstructions can
+// be appended by the next solver phase without changing the human-review UI.
+// -----------------------------------------------------------------------------
+const SAMMY_BODY_AUDIT_KEY="sammy-body-audit-v1";
+let sammyBodyAudit={run:null,cases:[],index:0,ratings:{},marking:false,markerGroup:null,restoreShape:null};
+function sammyBodyAuditLoadRatings(){try{return JSON.parse(localStorage.getItem(SAMMY_BODY_AUDIT_KEY)||"{}")||{}}catch{return {}}}
+function sammyBodyAuditSave(){try{localStorage.setItem(SAMMY_BODY_AUDIT_KEY,JSON.stringify(sammyBodyAudit.ratings))}catch{}}
+function sammyBodyAuditCase(){return sammyBodyAudit.cases[sammyBodyAudit.index]||null}
+function sammyBodyAuditRating(id){if(!sammyBodyAudit.ratings[id])sammyBodyAudit.ratings[id]={status:"unchecked",comment:"",flaws:[]};return sammyBodyAudit.ratings[id]}
+function sammyBodyAuditHash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+async function sammyBodyAuditBuildQueue(){
+ const all=(await sammySolverGetRuns()).sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")));
+ let run=all.find(r=>r?.schema===SAMMY_ANS_D3_SCHEMA)||null,stage="ansur-d3";
+ if(!run){run=all.find(r=>r?.schema===SAMMY_ANS_D2_SCHEMA)||null;stage="ansur-d2"}
+ sammyBodyAudit.run=run;if(!run){sammyBodyAudit.cases=[];return}
+ const recs=(await sammySolverGetRecords(run.runId)).filter(r=>r?.stage===stage&&Array.isArray(r?.result?.solutionDs));
+ // Stable blind order: unrelated to person/test/solver ordering shown elsewhere.
+ sammyBodyAudit.cases=recs.map(r=>({id:r.id,record:r,sourceStage:stage})).sort((a,b)=>sammyBodyAuditHash(a.id)-sammyBodyAuditHash(b.id));
+ sammyBodyAudit.index=Math.max(0,Math.min(sammyBodyAudit.index,sammyBodyAudit.cases.length-1));
+}
+function sammyBodyAuditClearMarkers(){if(sammyBodyAudit.markerGroup){sammyBodyAudit.markerGroup.removeFromParent?.();sammyBodyAudit.markerGroup=null}}
+function sammyBodyAuditShowMarkers(){
+ sammyBodyAuditClearMarkers();const c=sammyBodyAuditCase();if(!c||!mesh)return;const st=sammyBodyAuditRating(c.id),g=new THREE.Group();g.name="SammyBlindAuditFlaws";
+ const b=sammyMeasureBBox(),r=Math.max(.006,(b?.height||1.75)*.0065);
+ for(const q of st.flaws||[]){if(!Array.isArray(q)||q.length<3)continue;const local=new THREE.Vector3(Number(q[0]),Number(q[1]),Number(q[2])),world=local.clone();mesh.localToWorld?.(world);const m=new THREE.Mesh(new THREE.SphereGeometry(r,14,10),new THREE.MeshBasicMaterial({color:0xffc857,depthTest:false,transparent:true,opacity:.96}));m.position.copy(world);m.renderOrder=999;g.add(m)}
+ scene.add(g);sammyBodyAudit.markerGroup=g
+}
+async function sammyBodyAuditApplyCurrent(){
+ const c=sammyBodyAuditCase();if(!c||!sammyBodyAudit.run)return sammyBodyAuditRender();
+ const r=c.record,runtime=c.sourceStage==="ansur-d2"?sammyAnsD2Runtime(sammyBodyAudit.run):sammyAnsD3Runtime(sammyBodyAudit.run),context={core:{gender:Number(r.sex)||0,age:sammyDimensionsYearsToShapeAge(Number(r.ageYears)||35,Number(r.sex)||0)},local:{}},shape=sammySolverDsToShape(runtime,r.result.solutionDs,Number(r.sex)||0,context);
+ await sammySolverApplyShape(shape);sammyClearMeasureOverlay?.();sammyBodyAuditShowMarkers();sammyBodyAuditRender();if(!sammyIntroActive)sammyCameraTo("edit",520,false)
+}
+function sammyBodyAuditRender(){
+ const n=sammyBodyAudit.cases.length,c=sammyBodyAuditCase(),idx=$("#sammyBodyAuditIndex"),prog=$("#sammyBodyAuditProgress"),ok=$("#sammyBodyAuditOk"),bad=$("#sammyBodyAuditBad"),mark=$("#sammyBodyAuditMark"),ta=$("#sammyBodyAuditComment");
+ if(!c){if(idx)idx.textContent="Blind Audit";if(prog)prog.textContent="Keine Testkörper vorhanden";if(ok)ok.classList.remove("active");if(bad)bad.classList.remove("active");return}
+ const st=sammyBodyAuditRating(c.id),done=Object.values(sammyBodyAudit.ratings).filter(x=>x?.status==="ok"||x?.status==="flag").length;
+ if(idx)idx.textContent=`Testkörper ${String(sammyBodyAudit.index+1).padStart(2,"0")}`;if(prog)prog.textContent=`${sammyBodyAudit.index+1} / ${n} · ${done} bewertet`;
+ if(ok)ok.classList.toggle("active",st.status==="ok");if(bad)bad.classList.toggle("active",st.status==="flag");if(mark)mark.classList.toggle("marking",sammyBodyAudit.marking);if(ta&&document.activeElement!==ta)ta.value=st.comment||""
+}
+async function sammyBodyAuditMove(delta){if(!sammyBodyAudit.cases.length)return;sammyBodyAudit.marking=false;sammyBodyAudit.index=(sammyBodyAudit.index+delta+sammyBodyAudit.cases.length)%sammyBodyAudit.cases.length;await sammyBodyAuditApplyCurrent()}
+function sammyBodyAuditSetStatus(status){const c=sammyBodyAuditCase();if(!c)return;sammyBodyAuditRating(c.id).status=status;sammyBodyAuditSave();sammyBodyAuditRender()}
+function sammyBodyAuditToggleMark(){if(!sammyBodyAuditCase())return;sammyBodyAudit.marking=!sammyBodyAudit.marking;sammyBodyAuditRender();const st=$("#sammyBodyAuditStatus");if(st&&sammyBodyAudit.marking)st.querySelector("span").textContent="Markiermodus aktiv: Tippe direkt auf die auffällige Stelle am Mannequin. Mehrere Punkte sind möglich."}
+function sammyBodyAuditPickFlaw(x,y){
+ if(!sammyBodyAudit.marking||!document.getElementById("sammyBodyAuditPanel")?.classList.contains("open")||!mesh)return false;const c=sammyBodyAuditCase();if(!c)return false;
+ const rect=renderer.domElement.getBoundingClientRect(),mx=((x-rect.left)/rect.width)*2-1,my=-((y-rect.top)/rect.height)*2+1,ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2(mx,my),cam);mesh.updateMatrixWorld?.(true);const hit=ray.intersectObject(mesh,true)?.[0];if(!hit)return false;
+ const local=hit.point.clone();mesh.worldToLocal?.(local);const st=sammyBodyAuditRating(c.id);st.flaws=st.flaws||[];st.flaws.push([Number(local.x.toFixed(6)),Number(local.y.toFixed(6)),Number(local.z.toFixed(6))]);sammyBodyAuditSave();sammyBodyAuditShowMarkers();sammyBodyAudit.marking=false;sammyBodyAuditRender();return true
+}
+async function sammyBodyAuditReload(){const s=$("#sammyBodyAuditStatus");if(s)s.querySelector("span").textContent="Testkörper werden aus dem neuesten realen Mesh-Audit geladen …";await sammyBodyAuditBuildQueue();if(s)s.querySelector("span").textContent=sammyBodyAudit.cases.length?`${sammyBodyAudit.cases.length} Körper anonymisiert geladen. Zielmaße und Solverpfade bleiben im Audit verborgen.`:"Noch keine geeigneten realen Testkörper vorhanden. Nach dem nächsten Solver-/D3-Lauf hier erneut laden.";if(sammyBodyAudit.cases.length)await sammyBodyAuditApplyCurrent();else sammyBodyAuditRender()}
+function sammyBodyAuditExport(){const payload={schema:"sammy-body-plausibility-audit-v1",app:"Sammy",version:"0.8.20.1",generated:new Date().toISOString(),blind:true,sourceRunId:sammyBodyAudit.run?.runId||null,totalCases:sammyBodyAudit.cases.length,ratings:sammyBodyAudit.cases.map((c,i)=>({caseId:c.id,blindIndex:i+1,...sammyBodyAuditRating(c.id)}))};const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Sammy_BODY_AUDIT_${new Date().toISOString().replace(/[:.]/g,"-")}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200)}
+function sammyBodyAuditClear(){if(!confirm("Nur die Blind-Audit-Bewertungen und Fehlstellen löschen? Testläufe bleiben erhalten."))return;sammyBodyAudit.ratings={};sammyBodyAuditSave();sammyBodyAuditShowMarkers();sammyBodyAuditRender()}
+async function sammyBodyAuditEnter(){if(!sammyBodyAudit.restoreShape)sammyBodyAudit.restoreShape={core:{...annyParams},local:{...(annyLocalValues||{})}};if(!sammyBodyAudit.cases.length)await sammyBodyAuditReload();else await sammyBodyAuditApplyCurrent()}
+function sammyBodyAuditExit(){sammyBodyAudit.marking=false;sammyBodyAuditClearMarkers();const r=sammyBodyAudit.restoreShape;sammyBodyAudit.restoreShape=null;if(r){annyParams={...annyParams,...r.core};for(const k of Object.keys(annyLocalValues||{}))annyLocalValues[k]=Number(r.local?.[k]||0);applyAnnyParams();sammyMeasureSyncLocalUiV3?.()}}
+function sammyBodyAuditInitUI(){
+ sammyBodyAudit.ratings=sammyBodyAuditLoadRatings();const bind=(id,fn)=>{const e=$(id);if(e)e.onclick=fn};bind("#sammyBodyAuditPrev",()=>sammyBodyAuditMove(-1));bind("#sammyBodyAuditNext",()=>sammyBodyAuditMove(1));bind("#sammyBodyAuditOk",()=>sammyBodyAuditSetStatus("ok"));bind("#sammyBodyAuditBad",()=>sammyBodyAuditSetStatus("flag"));bind("#sammyBodyAuditMark",sammyBodyAuditToggleMark);bind("#sammyBodyAuditReload",()=>sammyBodyAuditReload().catch(e=>sammyReportError(e,{source:"Body Audit Load"})));bind("#sammyBodyAuditExport",sammyBodyAuditExport);bind("#sammyBodyAuditClear",sammyBodyAuditClear);
+ const ct=$("#sammyBodyAuditCommentToggle"),wrap=$("#sammyBodyAuditCommentWrap"),ta=$("#sammyBodyAuditComment");if(ct&&wrap)ct.onclick=()=>{wrap.hidden=!wrap.hidden;ct.classList.toggle("active",!wrap.hidden);if(!wrap.hidden)setTimeout(()=>ta?.focus(),40)};if(ta)ta.oninput=e=>{const c=sammyBodyAuditCase();if(!c)return;sammyBodyAuditRating(c.id).comment=e.target.value;sammyBodyAuditSave()};
+ renderer?.domElement?.addEventListener("pointerup",e=>{if(sammyBodyAuditPickFlaw(e.clientX,e.clientY)){e.preventDefault();e.stopPropagation()}},true);sammyBodyAuditRender()
+}
