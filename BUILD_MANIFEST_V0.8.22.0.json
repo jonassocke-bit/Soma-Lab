@@ -1,0 +1,37 @@
+{
+  "schema": "sammy-build-manifest-v1",
+  "app": "Sammy",
+  "version": "0.8.22.0",
+  "build": "ANSUR24-PROT-v2",
+  "baseArchive": "SAMMY_V0.8.21.3_ANTHRO24-CONDITIONAL-PRIOR_ANSUR-DIAGNOSTIC_COMPACT-GITHUB.zip",
+  "measurementSchema": "ANSUR24-PROT-v2",
+  "checks": {
+    "nodeSyntax": "passed",
+    "jsonParse": "passed",
+    "measurementStates": 10,
+    "solverMeasures": 24,
+    "uniqueStateIds": true,
+    "uniqueMeasureIds": true,
+    "measurementSchema": "ANSUR24-PROT-v2",
+    "solverSchema": "sammy-solver24-local-mesh-v2",
+    "chestBreadthStatus": "provisional_protocol_mismatch",
+    "crotchPostCorrectionCm": 1.0
+  },
+  "compatibility": {
+    "legacyInfluencePrior": "retained as historical/candidate-ranking input only; not relabeled as v2",
+    "legacyPriorKick": "disabled after measurement schema change",
+    "localJacobian": "remeasured on ANSUR24-PROT-v2 states",
+    "oldSolverRuns": "isolated by solver schema v2"
+  },
+  "scientificBoundaries": {
+    "chestBreadth": "full-inspiration state implemented; exterior-surface breadth is explicitly provisional because rib-cage compression/breast exclusion cannot be inferred from the exterior mesh alone",
+    "flexedArm": "pose geometry implemented; max-effort muscle bulging/fist deformation not simulated",
+    "observerError": "used as engineering protocol units / relative row weights, not as statistical sigma",
+    "weightMassPrior": "deferred until protocol-v2 validation"
+  },
+  "runtimeValidation": {
+    "static": "passed",
+    "interactiveBrowserInContainer": "not completed; local Chromium navigation was blocked by the execution environment policy, not by a detected app error",
+    "requiredNext": "real browser smoke test (desktop and iPhone/Safari) plus short Solver24 Stress 8x2 diagnostic"
+  }
+}

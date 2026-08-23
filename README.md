@@ -1,3 +1,7 @@
+# Sammy v0.8.22.0 — ANSUR24-PROT-v2
+
+State-aware Solver24 measurement pipeline; see `ANSUR24_PROT_V2_V0.8.22.0.md` and `ANSUR24_PROTOCOL_V2.json`. Legacy ANSUR24-PROT-v1 Influence data remains historical and is not silently relabeled.
+
 
 ## v0.8.21.2 — Solver24 Moderate Stress Audit
 

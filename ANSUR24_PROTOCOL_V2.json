@@ -1,0 +1,518 @@
+{
+  "schema": "sammy-ansur24-protocol-v2",
+  "measurementSchema": "ANSUR24-PROT-v2",
+  "appVersion": "0.8.22.0",
+  "source": {
+    "title": "Measurer’s Handbook: US Army and Marine Corps Anthropometric Surveys, 2010-2011",
+    "report": "NATICK/TR-11/017",
+    "uploadedPdf": "ADA548497(patient-vacuum-cloth).pdf",
+    "note": "24 direct ANSUR-II targets. v0.8.20.1 locks the 2026-08-23 audit corrections: Cervicale residual promoted; Trapezius is the same geometric point as lateral neck; Buttock lateral are exact Buttock-Circumference/Hip-Breadth endpoints; Shoulder Length uses bidirectional 90-degree Harness-style surface projection. Waist Back Length keeps the ANSUR surface-distance value but PROT renders a straight vertical guide beside the body ending at Cervicale height.",
+    "integrationVersion": "0.8.20.1"
+  },
+  "stateCount": 10,
+  "states": [
+    {
+      "id": "standing",
+      "basePose": "standing",
+      "rigModifiers": [],
+      "conditions": [],
+      "measureIds": [
+        "stature",
+        "chest_circumference",
+        "chest_depth",
+        "waist_circumference",
+        "waist_breadth",
+        "buttock_circumference",
+        "crotch_height",
+        "neck_circumference",
+        "neck_base_circumference",
+        "waist_back_length",
+        "upperarm_length",
+        "tibiale_height",
+        "shoulder_length"
+      ]
+    },
+    {
+      "id": "sitting",
+      "basePose": "sitting",
+      "rigModifiers": [],
+      "conditions": [],
+      "measureIds": [
+        "biacromial_breadth"
+      ]
+    },
+    {
+      "id": "chest_breadth_measure",
+      "basePose": "standing",
+      "rigModifiers": [
+        "arms_relaxed"
+      ],
+      "conditions": [
+        "full inspiration held"
+      ],
+      "measureIds": [
+        "chest_breadth"
+      ]
+    },
+    {
+      "id": "waist_hand_chest",
+      "basePose": "standing",
+      "rigModifiers": [
+        "right_hand_on_chest"
+      ],
+      "conditions": [],
+      "measureIds": [
+        "waist_depth"
+      ]
+    },
+    {
+      "id": "hip_arms_away",
+      "basePose": "standing",
+      "rigModifiers": [
+        "arms_slightly_away"
+      ],
+      "conditions": [],
+      "measureIds": [
+        "hip_breadth"
+      ]
+    },
+    {
+      "id": "wrist_90",
+      "basePose": "standing",
+      "rigModifiers": [
+        "right_elbow_90_palm_up"
+      ],
+      "conditions": [],
+      "measureIds": [
+        "wrist_circumference"
+      ]
+    },
+    {
+      "id": "thigh_special",
+      "basePose": "standing",
+      "rigModifiers": [
+        "right_hand_on_chest",
+        "thighs_not_touching"
+      ],
+      "conditions": [
+        "thighs do not touch"
+      ],
+      "measureIds": [
+        "thigh_circumference"
+      ]
+    },
+    {
+      "id": "lowerleg_10cm",
+      "basePose": "standing",
+      "rigModifiers": [
+        "feet_10cm"
+      ],
+      "conditions": [
+        "weight equally distributed"
+      ],
+      "measureIds": [
+        "calf_circumference",
+        "ankle_circumference"
+      ]
+    },
+    {
+      "id": "arm_relaxed_palm_forward",
+      "basePose": "standing",
+      "rigModifiers": [
+        "right_palm_forward"
+      ],
+      "conditions": [],
+      "measureIds": [
+        "lowerarm_length"
+      ]
+    },
+    {
+      "id": "arm_flexed_forward",
+      "basePose": "standing",
+      "rigModifiers": [
+        "right_arm_flexed_forward"
+      ],
+      "conditions": [
+        "right upper arm horizontal",
+        "elbow 90°",
+        "fist tightly clenched"
+      ],
+      "measureIds": [
+        "upperarm_circumference",
+        "forearm_circumference"
+      ]
+    }
+  ],
+  "measures": [
+    {
+      "id": "stature",
+      "label": "Stature",
+      "poseState": "standing",
+      "steps": [
+        "standing"
+      ],
+      "allowableObserverErrorMm": 6,
+      "instrument": "Anthropometer.",
+      "region": "whole",
+      "sourcePdfPage": 162,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "biacromial_breadth",
+      "label": "Biacromial Breadth",
+      "poseState": "sitting",
+      "steps": [
+        "sitting"
+      ],
+      "allowableObserverErrorMm": 8,
+      "instrument": "Beam caliper.",
+      "region": "shoulder",
+      "sourcePdfPage": 95,
+      "postCorrectionCm": 0,
+      "surfaceRule": "acromion_coronal_projection"
+    },
+    {
+      "id": "chest_circumference",
+      "label": "Chest Circumference",
+      "poseState": "standing",
+      "steps": [
+        "standing"
+      ],
+      "allowableObserverErrorMm": 14,
+      "instrument": "Steel tape. 7 In ANSUR this measurement was taken (in males) at the level of Thelion (nipple). This change was made in order to capture the circumference of the chest at its maximum. It is unchanged for females.",
+      "region": "torso",
+      "sourcePdfPage": 111,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "chest_breadth",
+      "label": "Chest Breadth",
+      "poseState": "chest_breadth_measure",
+      "steps": [
+        "chest_breadth_prep",
+        "chest_breadth_measure"
+      ],
+      "allowableObserverErrorMm": 7,
+      "instrument": "Beam caliper.",
+      "region": "torso",
+      "sourcePdfPage": 110,
+      "postCorrectionCm": 0,
+      "surfaceRule": "outer_surface_width_pending_rib_cage_model",
+      "respirationState": "full_inspiration",
+      "conditionSimulation": "respiration_not_volumetrically_simulated",
+      "unresolved": [
+        "rib_cage_compression_not_observable_from_surface_mesh",
+        "breast_tissue_exclusion_not_yet_calibrated",
+        "full_inspiration_volume_not_simulated"
+      ],
+      "operatorStatus": "provisional_protocol_mismatch"
+    },
+    {
+      "id": "chest_depth",
+      "label": "Chest Depth",
+      "poseState": "standing",
+      "steps": [
+        "standing"
+      ],
+      "allowableObserverErrorMm": 4,
+      "instrument": "Beam caliper.",
+      "region": "torso",
+      "sourcePdfPage": 112,
+      "postCorrectionCm": 0,
+      "surfaceRule": "right_chest_point_to_back_same_level",
+      "respirationState": "quiet_respiration"
+    },
+    {
+      "id": "waist_circumference",
+      "label": "Waist Circumference (Omphalion)",
+      "poseState": "standing",
+      "steps": [
+        "standing"
+      ],
+      "allowableObserverErrorMm": 12,
+      "instrument": "Steel tape.",
+      "region": "torso",
+      "sourcePdfPage": 174,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "waist_breadth",
+      "label": "Waist Breadth",
+      "poseState": "standing",
+      "steps": [
+        "standing"
+      ],
+      "allowableObserverErrorMm": 6,
+      "instrument": "Beam caliper.",
+      "region": "torso",
+      "sourcePdfPage": 173,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "waist_depth",
+      "label": "Waist Depth",
+      "poseState": "waist_hand_chest",
+      "steps": [
+        "waist_hand_chest"
+      ],
+      "allowableObserverErrorMm": 6,
+      "instrument": "Beam caliper.",
+      "region": "torso",
+      "sourcePdfPage": 175,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "buttock_circumference",
+      "label": "Buttock Circumference",
+      "poseState": "standing",
+      "steps": [
+        "standing"
+      ],
+      "allowableObserverErrorMm": 12,
+      "instrument": "Steel tape.",
+      "region": "pelvis",
+      "sourcePdfPage": 103,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "hip_breadth",
+      "label": "Hip Breadth",
+      "poseState": "hip_arms_away",
+      "steps": [
+        "hip_arms_away"
+      ],
+      "allowableObserverErrorMm": 6,
+      "instrument": "Beam caliper.",
+      "region": "pelvis",
+      "sourcePdfPage": 137,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "crotch_height",
+      "label": "Crotch Height",
+      "poseState": "standing",
+      "steps": [
+        "crotch_setup",
+        "standing"
+      ],
+      "allowableObserverErrorMm": 10,
+      "instrument": "Anthropometer.",
+      "region": "pelvis",
+      "sourcePdfPage": 114,
+      "postCorrectionCm": 1.0,
+      "surfaceRule": "crotch_to_floor_plus_blade_correction"
+    },
+    {
+      "id": "neck_circumference",
+      "label": "Neck Circumference",
+      "poseState": "standing",
+      "steps": [
+        "standing"
+      ],
+      "allowableObserverErrorMm": 6,
+      "instrument": "Steel tape.",
+      "region": "neck",
+      "sourcePdfPage": 149,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "neck_base_circumference",
+      "label": "Neck Circumference, Base",
+      "poseState": "standing",
+      "steps": [
+        "standing"
+      ],
+      "allowableObserverErrorMm": 8,
+      "instrument": "Steel tape.",
+      "region": "neckBase",
+      "sourcePdfPage": 150,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "wrist_circumference",
+      "label": "Wrist Circumference",
+      "poseState": "wrist_90",
+      "steps": [
+        "wrist_90"
+      ],
+      "allowableObserverErrorMm": 3,
+      "instrument": "Steel tape.",
+      "region": "rightWrist",
+      "sourcePdfPage": 179,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden",
+      "conditionSimulation": "elbow geometry yes; exact palm-up twist not simulated"
+    },
+    {
+      "id": "thigh_circumference",
+      "label": "Thigh Circumference",
+      "poseState": "thigh_special",
+      "steps": [
+        "thigh_special"
+      ],
+      "allowableObserverErrorMm": 6,
+      "instrument": "Steel tape.",
+      "region": "rightThigh",
+      "sourcePdfPage": 165,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "calf_circumference",
+      "label": "Calf Circumference",
+      "poseState": "lowerleg_10cm",
+      "steps": [
+        "lowerleg_10cm"
+      ],
+      "allowableObserverErrorMm": 4,
+      "instrument": "Steel tape. 5 In ANSUR, the level of the circumference was found by sliding the horizontal tape up and down the thigh until the maximum was achieved. The current procedure is faster and produces equivalent results (Hotzman et al., 2010).",
+      "region": "rightCalf",
+      "sourcePdfPage": 108,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "ankle_circumference",
+      "label": "Ankle Circumference",
+      "poseState": "lowerleg_10cm",
+      "steps": [
+        "lowerleg_10cm"
+      ],
+      "allowableObserverErrorMm": 4,
+      "instrument": "Steel tape.",
+      "region": "rightAnkle",
+      "sourcePdfPage": 91,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "waist_back_length",
+      "label": "Waist Back Length (Omphalion)",
+      "poseState": "standing",
+      "steps": [
+        "standing"
+      ],
+      "allowableObserverErrorMm": 5,
+      "instrument": "Steel tape.",
+      "region": "torso",
+      "sourcePdfPage": 172,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "upperarm_length",
+      "label": "Acromion-Radiale Length",
+      "poseState": "standing",
+      "steps": [
+        "standing"
+      ],
+      "allowableObserverErrorMm": 4,
+      "instrument": "Beam caliper.",
+      "region": "rightUpperArm",
+      "sourcePdfPage": 89,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "lowerarm_length",
+      "label": "Radiale-Stylion Length",
+      "poseState": "arm_relaxed_palm_forward",
+      "steps": [
+        "arm_relaxed_palm_forward"
+      ],
+      "allowableObserverErrorMm": 6,
+      "instrument": "Beam caliper.",
+      "region": "rightForeArm",
+      "sourcePdfPage": 154,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden",
+      "conditionSimulation": "relaxed arm yes; exact palm-forward twist not simulated"
+    },
+    {
+      "id": "upperarm_circumference",
+      "label": "Biceps Circumference, Flexed",
+      "poseState": "arm_flexed_forward",
+      "steps": [
+        "arm_flexed_forward"
+      ],
+      "allowableObserverErrorMm": 6,
+      "instrument": "Steel tape.",
+      "region": "rightUpperArm",
+      "sourcePdfPage": 96,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden",
+      "muscleState": "max_effort",
+      "conditionSimulation": "pose yes; muscle bulging/fist deformation not simulated"
+    },
+    {
+      "id": "forearm_circumference",
+      "label": "Forearm Circumference, Flexed",
+      "poseState": "arm_flexed_forward",
+      "steps": [
+        "arm_flexed_forward"
+      ],
+      "allowableObserverErrorMm": 5,
+      "instrument": "Steel tape.",
+      "region": "rightForeArm",
+      "sourcePdfPage": 125,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden",
+      "muscleState": "max_effort",
+      "conditionSimulation": "pose yes; muscle bulging/fist deformation not simulated"
+    },
+    {
+      "id": "tibiale_height",
+      "label": "Tibial Height",
+      "poseState": "standing",
+      "steps": [
+        "standing"
+      ],
+      "allowableObserverErrorMm": 2,
+      "instrument": "Anthropometer.",
+      "region": "rightLeg",
+      "sourcePdfPage": 168,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    },
+    {
+      "id": "shoulder_length",
+      "label": "Shoulder Length",
+      "poseState": "standing",
+      "steps": [
+        "standing"
+      ],
+      "allowableObserverErrorMm": 3,
+      "instrument": "Steel tape.",
+      "region": "shoulder",
+      "sourcePdfPage": 157,
+      "postCorrectionCm": 0,
+      "surfaceRule": "canonical_v0.8.20.1_operator_unless_overridden"
+    }
+  ],
+  "compatibility": {
+    "ANSUR24-PROT-v1": "historical measurement/influence evidence only; not relabeled",
+    "solver24PriorV1": "candidate-ranking hint only; prior kick disabled",
+    "anthro24ConditionalPriorV1": "retained for ANSUR target-vector consistency, not mesh geometry"
+  },
+  "scientificBoundary": [
+    "respiration is metadata unless a volumetric breathing model exists",
+    "max-effort muscle contraction is metadata unless a validated deformation model exists",
+    "instrument pressure is represented only by explicitly documented proxy operators",
+    "palm-up/palm-forward twist remains unresolved where exact forearm roll is not validated"
+  ],
+  "solverWeighting": {
+    "method": "relative allowable-observer-error normalization",
+    "formula": "rowWeight = medianAllowableErrorCm / allowableObserverErrorCm",
+    "statisticalInterpretation": "engineering protocol weighting only; allowable observer errors are not sigma or variances",
+    "acceptance": "cm RMSE remains reported; protocol units are also gated/exported"
+  }
+}
