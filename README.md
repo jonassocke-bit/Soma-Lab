@@ -1,3 +1,8 @@
+
+## v0.8.21.2 — Solver24 Moderate Stress Audit
+
+Neuer `Stress`-Modus: 8 randnahe, aber absichtlich noch menschlich bewertbare Zielkörper × 2 kanonisch weit auseinanderliegende Seeds = 16 Blind-Audit-Körper. Form-Guard erweitert um Thigh↔Hip und Multi-Slice-Torso-Metriken; numerischer Messfit wird zusätzlich über ein separates Fit-Gate beurteilt. `ANSUR24-PROT-v1` bleibt unverändert.
+
 # SAMMY / BODY LAB
 
 ## v0.8.21.0 · SOLVER 24 V1 · lokaler Real-Mesh-Jacobian
