@@ -1,5 +1,19 @@
 # SAMMY / BODY LAB
 
+## v0.8.21.0 · SOLVER 24 V1 · lokaler Real-Mesh-Jacobian
+
+- Neues **LAB → SOLV**: 24 eingefrorene `ANSUR24-PROT-v1` Zielmaße werden zu einem Sammy-Körper rekonstruiert.
+- Deep (19.632 Records) + Addendum (672 Records) wurden zu `solver24-prior-v1.json` verdichtet. Dieser Prior dient nur der Kandidatenauswahl/Initialisierung; akzeptierte Schritte werden immer am echten aktuellen Mesh neu gemessen.
+- Der Solver baut pro Iteration einen lokalen Finite-Difference-Jacobian, löst regularisiert, testet mehrere Schrittweiten und re-linearisiert nach jedem akzeptierten Schritt.
+- Geschlecht und Alter bleiben Kontext; semantische Maß-Morphs werden gegenüber reinen Translationen bevorzugt.
+- Quick / Standard / Deep testen 2 / 3 / 4 unabhängige Startkörper pro Ziel.
+- `Aktueller Körper → 24 Ziele` ermöglicht eine kontrollierte Rekonstruktion eines bekannten Körpers inklusive Seed-, Parameter- und Nicht-Ziel-Maß-Stabilität.
+- `Blind-Test starten` erzeugt versteckte Zielkörper; die Rekonstruktionen gehen anonymisiert in **AUDT**. Zielvektor und Solverpfad bleiben dort verborgen.
+- SOLV zeigt ausschließlich das PROT/ANSUR-24-Overlay. Beim Verlassen eines laufenden Solvers wird automatisch pausiert; der SOLV→AUDT-Wechsel lädt den Auditkörper erst nach dem Measurement-Restore.
+- Fehlende temporäre Mesh-Maße werden nicht als 0-cm-Werte gewertet; Blind-Läufe stellen vor dem Audit den vorherigen Körper ohne Messlinien wieder her.
+- Mess-/Landmark-Geometrie bleibt unverändert und als `ANSUR24-PROT-v1` eingefroren.
+- Siehe `SOLVER24_V1_V0.8.21.0.md`.
+
 ## v0.8.20.4 · PROT-24 overlay + targeted Influence addendum
 
 - INFL now draws **only the 24 frozen PROT/ANSUR target geometries** instead of the generic 31-measure Measurement-Lab overlay.

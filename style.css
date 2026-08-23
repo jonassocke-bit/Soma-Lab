@@ -730,3 +730,24 @@ body.sammy-lab-hub-open #sammyLabBubble{box-shadow:0 0 0 2px rgba(255,255,255,.2
 .sammyInfluencePrior{padding:9px 10px;border:1px solid rgba(118,180,255,.22);border-radius:11px;background:rgba(118,180,255,.07);display:grid;gap:2px}
 .sammyInfluencePrior b{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#dceaff}
 .sammyInfluencePrior span{font-size:10px;color:#aeb8c8;line-height:1.3}
+
+/* v0.8.21.0 · six-spoke LAB hub + Solver24 v1 */
+.sammyLabSubBubble.lab-prot{transform:translate(0,-132px)}
+.sammyLabSubBubble.lab-meas{transform:translate(114px,-66px)}
+.sammyLabSubBubble.lab-infl{transform:translate(114px,66px)}
+.sammyLabSubBubble.lab-solv{transform:translate(0,132px)}
+.sammyLabSubBubble.lab-audt{transform:translate(-114px,66px)}
+.sammyLabSubBubble.lab-ansr{transform:translate(-114px,-66px)}
+.sammyLabSubBubble.lab-prot:active{transform:translate(0,-132px) scale(.95)}
+.sammyLabSubBubble.lab-meas:active{transform:translate(114px,-66px) scale(.95)}
+.sammyLabSubBubble.lab-infl:active{transform:translate(114px,66px) scale(.95)}
+.sammyLabSubBubble.lab-solv:active{transform:translate(0,132px) scale(.95)}
+.sammyLabSubBubble.lab-audt:active{transform:translate(-114px,66px) scale(.95)}
+.sammyLabSubBubble.lab-ansr:active{transform:translate(-114px,-66px) scale(.95)}
+.sammySolver24Panel{--sammy-panel-h:min(63vh,640px)}
+.sammySolver24Panel .sammyPanelHead>div{display:flex;flex-direction:column;gap:2px}.sammySolver24Panel .sammyPanelHead small{font-size:9px;opacity:.55;font-weight:500;letter-spacing:.04em}
+.sammySolver24Context{display:grid;grid-template-columns:1fr 112px;gap:8px;margin:0 0 9px}.sammySolver24Sex{display:grid;grid-template-columns:1fr 1fr;gap:5px}.sammySolver24Sex button,.sammySolver24Context label{height:38px;border:1px solid rgba(255,255,255,.10);border-radius:11px;background:rgba(255,255,255,.035);color:#eceef2}.sammySolver24Sex button.active{background:rgba(255,255,255,.91);color:#15171a;border-color:#fff}.sammySolver24Context label{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px;padding:0 9px;font-size:9px}.sammySolver24Context input{width:45px;background:transparent;border:0;color:#fff;text-align:right;font:600 12px/1 system-ui,-apple-system,sans-serif;outline:none}.sammySolver24Context em{font-style:normal;opacity:.52}
+.sammySolver24Targets{margin-top:9px;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.02)}.sammySolver24Targets summary{list-style:none;cursor:pointer;padding:10px 11px;display:flex;justify-content:space-between;gap:8px;font-size:10px}.sammySolver24Targets summary::-webkit-details-marker{display:none}.sammySolver24Targets summary span{opacity:.48}.sammySolver24Inputs{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:0 8px 9px}.sammySolver24Input{display:grid;grid-template-columns:minmax(0,1fr) 62px;gap:5px;align-items:center;padding:5px 6px;border-radius:8px;background:rgba(255,255,255,.035)}.sammySolver24Input span{font-size:8.5px;line-height:1.15;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sammySolver24Input input{width:100%;box-sizing:border-box;border:0;border-bottom:1px solid rgba(255,255,255,.12);background:transparent;color:#fff;text-align:right;font:600 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;outline:none;padding:3px 2px}
+.sammySolver24Results{display:grid;gap:6px;margin-top:9px}.sammySolver24Result{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;align-items:center;padding:8px 9px;border:1px solid rgba(255,255,255,.075);border-radius:10px;background:rgba(255,255,255,.025)}.sammySolver24Result b{font-size:10px}.sammySolver24Result span{font-size:9px;opacity:.58}.sammySolver24Result strong{font:700 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace}.sammySolver24Result.best{border-color:rgba(104,220,160,.3);background:rgba(104,220,160,.06)}
+.sammySolver24Modes{margin-bottom:8px}
+@media(max-width:370px){.sammyLabSubBubble.lab-prot{transform:translate(0,-116px)}.sammyLabSubBubble.lab-meas{transform:translate(100px,-58px)}.sammyLabSubBubble.lab-infl{transform:translate(100px,58px)}.sammyLabSubBubble.lab-solv{transform:translate(0,116px)}.sammyLabSubBubble.lab-audt{transform:translate(-100px,58px)}.sammyLabSubBubble.lab-ansr{transform:translate(-100px,-58px)}.sammyLabSubBubble.lab-prot:active{transform:translate(0,-116px) scale(.95)}.sammyLabSubBubble.lab-meas:active{transform:translate(100px,-58px) scale(.95)}.sammyLabSubBubble.lab-infl:active{transform:translate(100px,58px) scale(.95)}.sammyLabSubBubble.lab-solv:active{transform:translate(0,116px) scale(.95)}.sammyLabSubBubble.lab-audt:active{transform:translate(-100px,58px) scale(.95)}.sammyLabSubBubble.lab-ansr:active{transform:translate(-100px,-58px) scale(.95)}.sammySolver24Inputs{grid-template-columns:1fr}.sammySolver24Context{grid-template-columns:1fr 100px}}
