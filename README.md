@@ -1,6 +1,6 @@
 # Sammy
 
-## v0.8.20.1 · Audit-locked geometry correction
+## v0.8.20.2 · Audit-locked geometry correction
 
 This build keeps the v0.8.20.0 LAB hub and fixes the geometry that the 2026-08-23 audit/screenshots showed was still not actually wired through PROT. Cervicale is lowered to the reviewed position, Trapezius aliases Neck lateral, Buttock lateral aliases the exact Hip-Breadth endpoints on the Buttock-Circumference slice, and Shoulder Length now uses the Harness-Lab bidirectional 90° projection method. Waist Back Length is shown as a clean straight vertical guide beside the body while its numeric ANSUR surface-distance target is preserved.
 
@@ -12,7 +12,7 @@ This build keeps the v0.8.20.0 LAB hub and fixes the geometry that the 2026-08-2
 - **AUDT** is a deliberately blind plausibility review: the visible header is only previous, comment, ✓, ×, mark flaw, next. Target measurements and solver path are hidden from the reviewer.
 - Flaw marking raycasts directly onto the mannequin and is stored per anonymous test body together with ✓/× and the optional comment. Audit JSON can be exported separately.
 - The blind-audit queue can already consume the newest stored real-mesh D3/D2 cases and is intentionally generic so later multi-seed reconstructions of the same target can be inserted without replacing the audit UI.
-- Historical note for v0.8.20.0: that release left v0.8.19.9 measurement geometry unchanged. v0.8.20.1 above is the subsequent explicit audit-locked geometry correction.
+- Historical note for v0.8.20.0: that release left v0.8.19.9 measurement geometry unchanged. v0.8.20.2 above is the subsequent explicit audit-locked geometry correction.
 
 ## v0.8.19.9 · Focused protocol geometry correction
 
@@ -179,3 +179,9 @@ PROT bleibt ein Audit-Layer. Die neuen FBX-Grundposen, Landmark-Offsets und Pose
 
 ## GitHub compact package
 Full ANSUR source-page JPGs are bundled inside `ANSUR_SOURCE_PAGES.zip` to keep the repository upload below 100 files. Runtime info cards use the `crop-*.jpg` files; Appendix-G pages 235–237 remain unpacked because they are referenced directly.
+
+## v0.8.20.2 boot hotfix
+- Fixes a startup-order regression introduced with LAB/Blind Audit: `sammyInitUi()` ran before `sammyBodyAudit` lexical state was initialized.
+- Startup now runs after all LAB/Audit declarations.
+- Geometry from v0.8.20.1 is unchanged.
+- `app.js` query version bumped to 0.8.20.2 to avoid stale GitHub Pages/iPhone Safari cache.

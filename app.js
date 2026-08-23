@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {unzipSync} from "https://esm.sh/fflate@0.8.2";
 
-const SAMMY_APP_VERSION="0.8.20.1";
+const SAMMY_APP_VERSION="0.8.20.2";
 
 const HF="https://huggingface.co/nvidia/SOMA-X/resolve/main/";
 const SHAPE=HF+"SOMA_neutral.npz?download=true";
@@ -7461,8 +7461,9 @@ function sammyProtocolMigrateV8201(){
 
 
 // Sammy v0.7.1: production shell + automatic runtime.
-sammyInitUi();
-setTimeout(()=>autoStartRuntime(),0);
+// Startup is intentionally deferred until all LAB/Blind-Audit lexical state
+// below has been initialized. v0.8.20.0/1 invoked sammyInitUi() too early,
+// causing a TDZ ReferenceError in sammyBodyAuditInitUI on fresh page load.
 
 
 // -----------------------------------------------------------------------------
@@ -7537,7 +7538,7 @@ function sammyBodyAuditPickFlaw(x,y){
  const local=hit.point.clone();mesh.worldToLocal?.(local);const st=sammyBodyAuditRating(c.id);st.flaws=st.flaws||[];st.flaws.push([Number(local.x.toFixed(6)),Number(local.y.toFixed(6)),Number(local.z.toFixed(6))]);sammyBodyAuditSave();sammyBodyAuditShowMarkers();sammyBodyAudit.marking=false;sammyBodyAuditRender();return true
 }
 async function sammyBodyAuditReload(){const s=$("#sammyBodyAuditStatus");if(s)s.querySelector("span").textContent="Testkörper werden aus dem neuesten realen Mesh-Audit geladen …";await sammyBodyAuditBuildQueue();if(s)s.querySelector("span").textContent=sammyBodyAudit.cases.length?`${sammyBodyAudit.cases.length} Körper anonymisiert geladen. Zielmaße und Solverpfade bleiben im Audit verborgen.`:"Noch keine geeigneten realen Testkörper vorhanden. Nach dem nächsten Solver-/D3-Lauf hier erneut laden.";if(sammyBodyAudit.cases.length)await sammyBodyAuditApplyCurrent();else sammyBodyAuditRender()}
-function sammyBodyAuditExport(){const payload={schema:"sammy-body-plausibility-audit-v1",app:"Sammy",version:"0.8.20.1",generated:new Date().toISOString(),blind:true,sourceRunId:sammyBodyAudit.run?.runId||null,totalCases:sammyBodyAudit.cases.length,ratings:sammyBodyAudit.cases.map((c,i)=>({caseId:c.id,blindIndex:i+1,...sammyBodyAuditRating(c.id)}))};const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Sammy_BODY_AUDIT_${new Date().toISOString().replace(/[:.]/g,"-")}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200)}
+function sammyBodyAuditExport(){const payload={schema:"sammy-body-plausibility-audit-v1",app:"Sammy",version:"0.8.20.2",generated:new Date().toISOString(),blind:true,sourceRunId:sammyBodyAudit.run?.runId||null,totalCases:sammyBodyAudit.cases.length,ratings:sammyBodyAudit.cases.map((c,i)=>({caseId:c.id,blindIndex:i+1,...sammyBodyAuditRating(c.id)}))};const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Sammy_BODY_AUDIT_${new Date().toISOString().replace(/[:.]/g,"-")}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200)}
 function sammyBodyAuditClear(){if(!confirm("Nur die Blind-Audit-Bewertungen und Fehlstellen löschen? Testläufe bleiben erhalten."))return;sammyBodyAudit.ratings={};sammyBodyAuditSave();sammyBodyAuditShowMarkers();sammyBodyAuditRender()}
 async function sammyBodyAuditEnter(){if(!sammyBodyAudit.restoreShape)sammyBodyAudit.restoreShape={core:{...annyParams},local:{...(annyLocalValues||{})}};if(!sammyBodyAudit.cases.length)await sammyBodyAuditReload();else await sammyBodyAuditApplyCurrent()}
 function sammyBodyAuditExit(){sammyBodyAudit.marking=false;sammyBodyAuditClearMarkers();const r=sammyBodyAudit.restoreShape;sammyBodyAudit.restoreShape=null;if(r){annyParams={...annyParams,...r.core};for(const k of Object.keys(annyLocalValues||{}))annyLocalValues[k]=Number(r.local?.[k]||0);applyAnnyParams();sammyMeasureSyncLocalUiV3?.()}}
@@ -7546,3 +7547,8 @@ function sammyBodyAuditInitUI(){
  const ct=$("#sammyBodyAuditCommentToggle"),wrap=$("#sammyBodyAuditCommentWrap"),ta=$("#sammyBodyAuditComment");if(ct&&wrap)ct.onclick=()=>{wrap.hidden=!wrap.hidden;ct.classList.toggle("active",!wrap.hidden);if(!wrap.hidden)setTimeout(()=>ta?.focus(),40)};if(ta)ta.oninput=e=>{const c=sammyBodyAuditCase();if(!c)return;sammyBodyAuditRating(c.id).comment=e.target.value;sammyBodyAuditSave()};
  renderer?.domElement?.addEventListener("pointerup",e=>{if(sammyBodyAuditPickFlaw(e.clientX,e.clientY)){e.preventDefault();e.stopPropagation()}},true);sammyBodyAuditRender()
 }
+
+
+// v0.8.20.2 boot-order hotfix: run only after every LAB/Body-Audit const/let is initialized.
+sammyInitUi();
+setTimeout(()=>autoStartRuntime(),0);
