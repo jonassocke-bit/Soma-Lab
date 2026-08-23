@@ -1,4 +1,16 @@
-# Sammy
+# SAMMY / BODY LAB
+
+## v0.8.20.3 · Frozen-24 Influence start + iPhone double-tap guard
+
+- Accepted PROT/MEAS measurement geometry is unchanged from v0.8.20.2.
+- LAB → INFL now runs against exactly the 24 canonical ANSUR-compatible measures.
+- Quick, Standard and Deep all use five slider levels; depth changes reference bodies, interaction depth and holdout count.
+- Phase 3 creates a per-measure influence ranking (Primary / Secondary / Minor), signed slope and non-linearity marker.
+- Legacy Measurement-Lab runs are compared as prior evidence, never silently merged with current measurements.
+- Standard uses four reference bodies, adaptive pair screening, multi-body samples and holdout validation; pause/resume remains stored in IndexedDB.
+- Turbo no longer redraws full measurement overlays every generated body, which materially reduces iPhone/Safari overhead.
+- Accidental browser double-tap page zoom is disabled; the Three.js canvas keeps its own touch controls.
+- See `INFLUENCE_LAB_V0.8.20.3.md`.
 
 ## v0.8.20.2 · Audit-locked geometry correction
 

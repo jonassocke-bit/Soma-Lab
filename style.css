@@ -1,3 +1,4 @@
+html,body{touch-action:manipulation;-webkit-text-size-adjust:100%;}
 :root{--safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px)}
 
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d0e10;color:#f2f2f3;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
@@ -712,3 +713,20 @@ body.sammy-lab-hub-open #sammyLabBubble{box-shadow:0 0 0 2px rgba(255,255,255,.2
 #sammyMeasureBubble.hidden,#sammyProtocolBubble.hidden,#sammyAnsBubble.hidden{display:none!important}
 #sammyLabBubble.active{background:rgba(240,240,244,.92);color:#17181b}
 .sammyBodyAuditPanel .sammyPanelScroll{padding-top:2px}
+
+/* v0.8.20.3 Influence summary */
+.sammyInfluenceMatrix{display:grid;gap:6px;margin-top:8px}
+.sammyInfluenceEmpty{padding:10px 12px;border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#969aa3;font-size:12px;line-height:1.35}
+.sammyInfluenceRow{display:grid;grid-template-columns:minmax(112px,.8fr) minmax(0,1.7fr);gap:8px;align-items:start;padding:8px 9px;border:1px solid rgba(255,255,255,.075);border-radius:11px;background:rgba(255,255,255,.025)}
+.sammyInfluenceRow>b{font-size:11px;line-height:1.25;color:#f0f1f3}
+.sammyInfluenceRow>span{display:flex;flex-wrap:wrap;gap:4px}
+.sammyInfluenceRow i{font-style:normal;font-size:9.5px;line-height:1.2;padding:3px 5px;border-radius:7px;border:1px solid rgba(255,255,255,.08);color:#a8abb2}
+.sammyInfluenceRow i.primary{color:#f4f5f7;background:rgba(110,214,157,.14);border-color:rgba(110,214,157,.28)}
+.sammyInfluenceRow i.secondary{color:#d8dbe0;background:rgba(255,222,114,.08);border-color:rgba(255,222,114,.20)}
+.sammyInfluenceRow i.nonlinear:after{content:" ↝";color:#ffcb70}
+.sammyInfluenceRow em{font-style:normal;opacity:.72;margin-left:3px}
+@media(max-width:520px){.sammyInfluenceRow{grid-template-columns:1fr}.sammyInfluenceRow>span{margin-top:1px}}
+
+.sammyInfluencePrior{padding:9px 10px;border:1px solid rgba(118,180,255,.22);border-radius:11px;background:rgba(118,180,255,.07);display:grid;gap:2px}
+.sammyInfluencePrior b{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#dceaff}
+.sammyInfluencePrior span{font-size:10px;color:#aeb8c8;line-height:1.3}

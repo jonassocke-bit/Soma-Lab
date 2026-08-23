@@ -2,10 +2,10 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.20.1</title>
-<link rel="stylesheet" href="style.css?v=0.8.20.1">
+<title>Sammy v0.8.20.3</title>
+<link rel="stylesheet" href="style.css?v=0.8.20.3">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.20.1</div>
+  <div class="sammySplashVersion">v0.8.20.3</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.20.1</div>
+<div id="sammyVersion">Sammy · v0.8.20.3</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -131,17 +131,18 @@
    </div>
    <div id="sammyMeasureRandomStatus" class="sammyMeasureRandomStatus">Random-Test: bereit.</div>
    <details class="sammyCalibrationLab" id="sammyCalibrationLab" open>
-    <summary><b>CALIBRATION LAB</b><span>LIVE · logisch L/R · adaptives Pair-Screening</span></summary>
+    <summary><b>24-MAß INFLUENCE</b><span>5-Level · logisch L/R · Multi-Body</span></summary>
     <div class="sammyCalibrationBody">
      <div class="sammyCalibrationModes" role="group" aria-label="Kalibrierungstiefe">
-      <button type="button" data-cal-mode="quick">Quick</button><button type="button" data-cal-mode="standard" class="active">Standard</button><button type="button" data-cal-mode="deep">Deep</button>
+      <button type="button" data-cal-mode="quick">Quick · 5L</button><button type="button" data-cal-mode="standard" class="active">Standard · 5L</button><button type="button" data-cal-mode="deep">Deep · 5L</button>
      </div>
-     <div class="sammyCalibrationActions"><button id="sammyCalibrationStart" type="button">Neue Kalibrierung</button><button id="sammyCalibrationPause" type="button" disabled>Pause</button></div>
+     <div class="sammyCalibrationActions"><button id="sammyCalibrationStart" type="button">Neue 24er Analyse</button><button id="sammyCalibrationPause" type="button" disabled>Pause</button></div>
      <div class="sammyCalibrationActions"><button id="sammyCalibrationTurbo" type="button">LIVE · Standard</button><button id="sammyCalibrationReset" type="button">Lauf löschen</button></div>
      <div id="sammyCalibrationStatus" class="sammyCalibrationStatus">Noch kein Calibration-Lauf.</div>
      <div class="sammyCalibrationProgress"><i id="sammyCalibrationProgressBar"></i></div>
-     <div id="sammyCalibrationCurrent" class="sammyCalibrationCurrent">Live-Test zeigt jeden erzeugten Körper. v0.8.7.1 nutzt die Solver-Whitelist (61 statt 202 logische Slider): Kopf/Gesicht, Hände, Füße, Unterschenkel/Knie sowie Manual/Special/Redundanz-Morphs werden übersprungen. Standard screent danach alle plausiblen verbleibenden Paare; nur auffällige Paare werden tief vermessen. Fortschritt wird nach jedem Test gesichert.</div>
+     <div id="sammyCalibrationCurrent" class="sammyCalibrationCurrent">Standard: 4 Referenzkörper × 5 Stufen je freigegebenem logischen Slider. Danach werden nur überlappende Einflusspaare vertieft und auf weiteren Mehrkörper-/Holdout-Zuständen geprüft. Zielraum sind ausschließlich die 24 eingefrorenen PROT/ANSUR-Maße. Fortschritt wird nach jedem Test gesichert.</div>
      <div id="sammyCalibrationLiveMeasures" class="sammyCalibrationLiveMeasures"></div>
+     <div id="sammyInfluenceMatrix" class="sammyInfluenceMatrix"><div class="sammyInfluenceEmpty">Nach Phase 3 erscheint hier die 24 × Slider-Einflussübersicht.</div></div>
      <div class="sammyCalibrationActions"><button id="sammyCalibrationSummaryExport" type="button">Summary JSON</button><button id="sammyCalibrationExport" type="button">FULL JSON</button></div>
     </div>
    </details>
@@ -447,7 +448,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.20.1</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.20.3</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -704,6 +705,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.20.2"></script>
+<script type="module" src="app.js?v=0.8.20.3"></script>
 </body>
 </html>
