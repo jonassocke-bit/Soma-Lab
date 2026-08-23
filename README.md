@@ -232,3 +232,8 @@ Full ANSUR source-page JPGs are bundled inside `ANSUR_SOURCE_PAGES.zip` to keep 
 - AUDT strict to latest Solver24 blind run; legacy D2/D3 no longer silently substituted.
 - Blind target generation itself is guarded.
 - ANSUR24-PROT-v1 geometry unchanged.
+
+
+## v0.8.21.3
+
+Solver24 v1.3 adds `anthro24-conditional-prior-v1.json`: sex-specific leave-one-measure-out ANSUR conditional diagnostics for every frozen target measure. Direct measurements remain hard targets. Stress mode now uses eight observed ANSUR donor vectors (16 reconstructions with two seeds), including broad-shoulder male diagnostics.
