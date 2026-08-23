@@ -1,0 +1,671 @@
+{
+  "schema": "sammy-ansur-ii-94-mapping-v1",
+  "source": "NATICK/TR-11/017 Table G-1 / ANSUR II 2010-2011",
+  "count": 94,
+  "items": [
+    {
+      "ansurName": "Abdominal Extension Depth, Sitting",
+      "allowableObserverError": "10",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Acromial Height",
+      "allowableObserverError": "7",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Acromion-Radiale Length",
+      "allowableObserverError": "4",
+      "sammyMeasureId": "upperarm_length",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Acromion-Wall Depth",
+      "allowableObserverError": "8",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Ankle Circumference",
+      "allowableObserverError": "4",
+      "sammyMeasureId": "ankle_circumference",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Axilla Height",
+      "allowableObserverError": "7",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Ball of Foot Circumference",
+      "allowableObserverError": "4",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Ball of Foot Length",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Biacromial Breadth",
+      "allowableObserverError": "8",
+      "sammyMeasureId": "biacromial_breadth",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Biceps Circumference, Flexed",
+      "allowableObserverError": "6",
+      "sammyMeasureId": "upperarm_circumference",
+      "mappingQuality": "protocol_geometry_pose_partial",
+      "inProt": true
+    },
+    {
+      "ansurName": "Bicristal Breadth",
+      "allowableObserverError": "8",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Bideltoid Breadth",
+      "allowableObserverError": "8",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Bimalleolar Breadth",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Bitragion Chin Arc",
+      "allowableObserverError": "8",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Bitragion Submandibular Arc",
+      "allowableObserverError": "6",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Bizygomatic Breadth",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Buttock Circumference",
+      "allowableObserverError": "12",
+      "sammyMeasureId": "buttock_circumference",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Buttock Depth",
+      "allowableObserverError": "8",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Buttock Height",
+      "allowableObserverError": "4",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Buttock-Knee Length",
+      "allowableObserverError": "6",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Buttock-Popliteal Length",
+      "allowableObserverError": "7",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Calf Circumference",
+      "allowableObserverError": "4",
+      "sammyMeasureId": "calf_circumference",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Cervicale Height",
+      "allowableObserverError": "7",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Chest Breadth",
+      "allowableObserverError": "7",
+      "sammyMeasureId": "chest_breadth",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Chest Circumference",
+      "allowableObserverError": "14",
+      "sammyMeasureId": "chest_circumference",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Chest Depth",
+      "allowableObserverError": "4",
+      "sammyMeasureId": "chest_depth",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Chest Height",
+      "allowableObserverError": "9",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Crotch Height",
+      "allowableObserverError": "10",
+      "sammyMeasureId": "crotch_height",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Crotch Length (Omphalion)",
+      "allowableObserverError": "18",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Crotch Length, Posterior (Omphalion)",
+      "allowableObserverError": "11",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Ear Breadth",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Ear Length",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Ear Protrusion",
+      "allowableObserverError": "3",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Elbow Rest Height",
+      "allowableObserverError": "10",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Eye Height, Sitting",
+      "allowableObserverError": "8",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Foot Breadth, Horizontal",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Foot Length",
+      "allowableObserverError": "3",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Forearm-Center of Grip Length",
+      "allowableObserverError": "7",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Forearm Circumference, Flexed",
+      "allowableObserverError": "5",
+      "sammyMeasureId": "forearm_circumference",
+      "mappingQuality": "protocol_geometry_pose_partial",
+      "inProt": true
+    },
+    {
+      "ansurName": "Forearm-Forearm Breadth",
+      "allowableObserverError": "17",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Forearm-Hand Length",
+      "allowableObserverError": "4",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Functional Leg Length",
+      "allowableObserverError": "17",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Hand Breadth",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Hand Circumference",
+      "allowableObserverError": "3",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Hand Length",
+      "allowableObserverError": "3",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Head Breadth",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Head Circumference",
+      "allowableObserverError": "3",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Head Length",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Heel Ankle Circumference",
+      "allowableObserverError": "4",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Heel Breadth",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Hip Breadth",
+      "allowableObserverError": "6",
+      "sammyMeasureId": "hip_breadth",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Hip Breadth, Sitting",
+      "allowableObserverError": "6",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Iliocristale Height",
+      "allowableObserverError": "5",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Interpupillary Breadth",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Interscye I",
+      "allowableObserverError": "10",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Interscye II",
+      "allowableObserverError": "13",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Knee Height, Midpatella",
+      "allowableObserverError": "6",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Knee Height, Sitting",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Lateral Femoral Epicondyle Height",
+      "allowableObserverError": "3",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Lateral Malleolus Height",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Lower Thigh Circumference",
+      "allowableObserverError": "4",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Menton-Sellion Length",
+      "allowableObserverError": "3",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Neck Circumference",
+      "allowableObserverError": "6",
+      "sammyMeasureId": "neck_circumference",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Neck Circumference, Base",
+      "allowableObserverError": "8",
+      "sammyMeasureId": "neck_base_circumference",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Overhead Fingertip Reach, Sitting",
+      "allowableObserverError": "20",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Palm Length",
+      "allowableObserverError": "2",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Popliteal Height",
+      "allowableObserverError": "6",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Radiale-Stylion Length",
+      "allowableObserverError": "6",
+      "sammyMeasureId": "lowerarm_length",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Shoulder Circumference",
+      "allowableObserverError": "12",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Shoulder-Elbow Length",
+      "allowableObserverError": "6",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Shoulder Length",
+      "allowableObserverError": "3",
+      "sammyMeasureId": "shoulder_length",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Sitting Height",
+      "allowableObserverError": "6",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Sleeve Length: Spine-Wrist",
+      "allowableObserverError": "9",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Sleeve Outseam",
+      "allowableObserverError": "6",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Span",
+      "allowableObserverError": "10",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Stature",
+      "allowableObserverError": "6",
+      "sammyMeasureId": "stature",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Suprasternale Height",
+      "allowableObserverError": "5",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Tenth Rib Height",
+      "allowableObserverError": "5",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Thigh Circumference",
+      "allowableObserverError": "6",
+      "sammyMeasureId": "thigh_circumference",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Thigh Clearance",
+      "allowableObserverError": "3",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Thumbtip Reach",
+      "allowableObserverError": "20",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Tibial Height",
+      "allowableObserverError": "2",
+      "sammyMeasureId": "tibiale_height",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Tragion-Top of Head",
+      "allowableObserverError": "4",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Trochanterion Height",
+      "allowableObserverError": "4",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Vertical Trunk Circumference (USA)",
+      "allowableObserverError": "24",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Waist Back Length (Omphalion)",
+      "allowableObserverError": "5",
+      "sammyMeasureId": "waist_back_length",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Waist Breadth",
+      "allowableObserverError": "6",
+      "sammyMeasureId": "waist_breadth",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Waist Circumference (Omphalion)",
+      "allowableObserverError": "12",
+      "sammyMeasureId": "waist_circumference",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Waist Depth",
+      "allowableObserverError": "6",
+      "sammyMeasureId": "waist_depth",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Waist Front Length, Sitting",
+      "allowableObserverError": "7",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Waist Height (Omphalion)",
+      "allowableObserverError": "7",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Weight",
+      "allowableObserverError": "0.3 kg",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    },
+    {
+      "ansurName": "Wrist Circumference",
+      "allowableObserverError": "3",
+      "sammyMeasureId": "wrist_circumference",
+      "mappingQuality": "direct",
+      "inProt": true
+    },
+    {
+      "ansurName": "Wrist Height",
+      "allowableObserverError": "11",
+      "sammyMeasureId": null,
+      "mappingQuality": "not_implemented",
+      "inProt": false
+    }
+  ],
+  "notes": [
+    "PROT includes only direct ANSUR II dimensions that currently have a canonical MEAS implementation or an explicit protocol-geometry approximation.",
+    "v0.8.19.7 shares strict body-region geometry between MEAS and PROT. Biceps/Forearm Flexed use the prescribed arm/elbow pose and region, but max-effort soft-tissue contraction is not modeled and therefore remains approximate.",
+    "Sammy-only derived/internal dimensions are excluded from the 24-target PROT set.",
+    "v0.8.19.9 focused protocol geometry: Shoulder Length and Waist Back Length use straight projected surface paths; Buttock lateral/Hip Breadth share the Buttock-Circumference slice; both neck circumference planes are auditable around the anatomical left-right tilt axis."
+  ]
+}

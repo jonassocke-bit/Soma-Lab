@@ -667,3 +667,5 @@ body.sammy-protocol-placement canvas{cursor:crosshair!important}
 .sammyProtocolAdjustExtra input[type=range]{width:100%;min-width:0}
 .sammyProtocolAdjustExtra output{text-align:right;font-variant-numeric:tabular-nums;color:#f3f5f7}
 .sammyProtocolTiltControls{grid-template-columns:1fr}
+
+/* Sammy v0.8.19.9 · focused protocol geometry; neck tilt uses existing compact controls. */

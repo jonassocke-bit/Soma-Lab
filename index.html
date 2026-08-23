@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.19.8</title>
-<link rel="stylesheet" href="style.css?v=0.8.19.8">
+<title>Sammy v0.8.19.9</title>
+<link rel="stylesheet" href="style.css?v=0.8.19.9">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.19.8</div>
+  <div class="sammySplashVersion">v0.8.19.9</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.19.8</div>
+<div id="sammyVersion">Sammy · v0.8.19.9</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -259,8 +259,8 @@
   </div>
   <div id="sammyProtocolLineAdjustRow" class="sammyProtocolAdjustExtra" hidden><label title="Landmark entlang der aktuell verknüpften Messlinie verschieben"><span>Linie</span><input id="sammyProtocolLineAdjust" type="range" min="-8" max="8" step="0.1" value="0"><output id="sammyProtocolLineAdjustOut">0.0</output></label></div>
   <div id="sammyProtocolTiltControls" class="sammyProtocolAdjustExtra sammyProtocolTiltControls" hidden>
-   <label title="Messebene um die erste lokale Ebenenachse kippen"><span>Kipp A</span><input id="sammyProtocolTiltA" type="range" min="-25" max="25" step="0.5" value="0"><output id="sammyProtocolTiltAOut">0.0°</output></label>
-   <label title="Messebene um die zweite lokale Ebenenachse kippen"><span>Kipp B</span><input id="sammyProtocolTiltB" type="range" min="-25" max="25" step="0.5" value="0"><output id="sammyProtocolTiltBOut">0.0°</output></label>
+   <label title="Messebene um die erste lokale Ebenenachse kippen"><span id="sammyProtocolTiltALabel">Kipp A</span><input id="sammyProtocolTiltA" type="range" min="-25" max="25" step="0.5" value="0"><output id="sammyProtocolTiltAOut">0.0°</output></label>
+   <label id="sammyProtocolTiltBRow" title="Messebene um die zweite lokale Ebenenachse kippen"><span>Kipp B</span><input id="sammyProtocolTiltB" type="range" min="-25" max="25" step="0.5" value="0"><output id="sammyProtocolTiltBOut">0.0°</output></label>
   </div>
   <div class="sammyProtocolAdjustPopupActions"><button id="sammyProtocolPlaceLandmark" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="10" r="3"/><path d="M12 3v3M12 14v7M5 10h3M16 10h3"/></svg><span>auf Körper setzen</span></button><button id="sammyProtocolAdjustReset" type="button" aria-label="Position zurücksetzen" title="Zurücksetzen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8H3V4M3.5 8a8 8 0 1 1 .4 8.6"/></svg></button></div>
  </div>
@@ -405,7 +405,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.19.8</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.19.9</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -662,6 +662,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.19.8"></script>
+<script type="module" src="app.js?v=0.8.19.9"></script>
 </body>
 </html>

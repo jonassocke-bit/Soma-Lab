@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {unzipSync} from "https://esm.sh/fflate@0.8.2";
 
-const SAMMY_APP_VERSION="0.8.19.8";
+const SAMMY_APP_VERSION="0.8.19.9";
 
 const HF="https://huggingface.co/nvidia/SOMA-X/resolve/main/";
 const SHAPE=HF+"SOMA_neutral.npz?download=true";
@@ -5969,7 +5969,7 @@ function sammyProtocolPreview(id){const q=sammyProtocolData?.poses?.[id]||sammyP
 
 async function sammyProtocolEnter(){if(sammyProtocolSession)return;await sammyProtocolLoadData();sammyProtocolSession={euler:poseEulerDeg?Float32Array.from(poseEulerDeg):null,relative:lastAppliedRelative3?Float32Array.from(lastAppliedRelative3):null,camera:sammyCaptureCameraState()};document.body.classList.add("sammy-protocol-mode");stopPoseAnimation(false);sammyProtocolBaseView=sammyProtocolMeasureBase(sammyProtocolMeasure());sammyProtocolApplyCurrentPose();sammyCameraTo("measure",700,false);sammyProtocolRender()}
 function sammyProtocolExit(restoreCamera=true){if(!sammyProtocolSession)return;sammyProtocolHideHoldInfo();sammyProtocolHideCommentPopup();sammyProtocolHideAdjustPopup();sammyProtocolClearOverlay();if(sammyProtocolAidGroup){scene.remove(sammyProtocolAidGroup);sammyProtocolAidGroup.traverse?.(o=>{o.geometry?.dispose?.();o.material?.dispose?.()});sammyProtocolAidGroup=null}const s=sammyProtocolSession;sammyProtocolSession=null;sammyProtocolPreviewPose=null;document.body.classList.remove("sammy-protocol-mode");if(s.relative)sammyApplyMeasurementRelative(s.relative,"PROT → vorherige Pose");else if(s.euler&&poseEulerDeg){poseEulerDeg.set(s.euler);applyPoseToRest(currentDisplayRest(),true)}if(restoreCamera&&s.camera)sammyCameraTweenToState(s.camera,650,true)}
-async function sammyProtocolInitUI(){try{await sammyProtocolLoadData();await sammyProtocolLoadReferenceData();sammyProtocolLoadState();sammyProtocolMigrateV8197();sammyProtocolMigrateV8198();sammyProtocolInstallPicking();sammyProtocolRender()}catch(e){sammyReportError(e,{source:"ANSUR Protocol Lab init"});return}document.querySelectorAll("[data-proto-tab]").forEach(b=>b.onclick=()=>sammyProtocolSetTab(b.dataset.protoTab));document.querySelectorAll("[data-proto-base]").forEach(b=>b.onclick=()=>sammyProtocolSelectBase(b.dataset.protoBase));const ib=$("#sammyProtocolInfoBtn");if(ib)ib.onclick=()=>sammyProtocolToggleInfo();const cb=$("#sammyProtocolCommentBtn"),cpt=$("#sammyProtocolCommentPopupText"),ab=$("#sammyProtocolAdjustBtn"),ap=$("#sammyProtocolAdjustPopup");if(cb)cb.onclick=()=>sammyProtocolToggleCommentPopup();if(cpt)cpt.oninput=e=>sammyProtocolSaveFocusedComment(e.target.value);if(ab)ab.onclick=()=>sammyProtocolToggleAdjustPopup();for(const el of [$("#sammyProtocolCommentPopup"),cpt,ap])if(el)for(const ev of ["pointerdown","pointerup","click","touchstart","touchend"])el.addEventListener(ev,e=>e.stopPropagation(),{passive:true});for(const [id,i] of [["#sammyProtocolAdjustX",0],["#sammyProtocolAdjustY",1],["#sammyProtocolAdjustZ",2]]){const el=$(id);if(el)el.oninput=e=>sammyProtocolSetFocusedOffset(i,e.target.value)}const place=$("#sammyProtocolPlaceLandmark"),adjReset=$("#sammyProtocolAdjustReset");if(place)place.onclick=()=>sammyProtocolStartPlacement();if(adjReset)adjReset.onclick=()=>sammyProtocolResetFocusedOffset();const sel=$("#sammyProtocolMeasureSelect");if(sel)sel.onchange=e=>sammyProtocolSelectMeasure(e.target.value);const prev=$("#sammyProtocolPrev"),next=$("#sammyProtocolNext");if(prev)prev.onclick=()=>sammyProtocolStepFocus(-1);if(next)next.onclick=()=>sammyProtocolStepFocus(1);const ok=$("#sammyProtocolStatusOk"),bad=$("#sammyProtocolStatusFlag");if(ok)ok.onclick=()=>sammyProtocolSetFocusedStatus("ok");if(bad)bad.onclick=()=>sammyProtocolSetFocusedStatus("flag");const mirrorBtn=$("#sammyProtocolMirror");if(mirrorBtn){mirrorBtn.disabled=true;mirrorBtn.title="Bilaterale Landmark-Gruppen sind fest gespiegelt gekoppelt."}const measureLineBtn=$("#sammyProtocolMeasureLine");if(measureLineBtn)measureLineBtn.onclick=()=>{sammyProtocolMeasureLineVisible=!sammyProtocolMeasureLineVisible;sammyProtocolRender()};const zones=$("#sammyProtocolZones");if(zones)zones.onclick=()=>{sammyProtocolRegionsVisible=!sammyProtocolRegionsVisible;sammyProtocolRender()};const labels=$("#sammyProtocolLabels");if(labels)labels.onclick=()=>{sammyProtocolLabelsVisible=!sammyProtocolLabelsVisible;sammyProtocolRender()};const rand=$("#sammyProtocolRandom");if(rand)rand.onclick=()=>sammyProtocolRandomize(false);const randWide=$("#sammyProtocolRandomWide");if(randWide)randWide.onclick=()=>sammyProtocolRandomize(true);const resetBody=$("#sammyProtocolResetBody");if(resetBody)resetBody.onclick=sammyProtocolResetBody;const lmReset=$("#sammyProtocolLandmarkReset");if(lmReset)lmReset.onclick=sammyProtocolResetLandmark;for(const [id,i] of [["#sammyProtocolX",0],["#sammyProtocolY",1],["#sammyProtocolZ",2]]){const el=$(id);if(el)el.oninput=e=>sammyProtocolAdjust(i,e.target.value)}const lc=$("#sammyProtocolComment");if(lc)lc.oninput=e=>{if(!sammyProtocolSelectedLandmark)return;sammyProtocolLandmarkState(sammyProtocolSelectedLandmark).comment=e.target.value;sammyProtocolSaveState()};const mc=$("#sammyProtocolMeasureComment");if(mc)mc.oninput=e=>{const m=sammyProtocolMeasure();if(!m)return;sammyProtocolMeasureState(m.id).comment=e.target.value;sammyProtocolSaveState()};document.querySelectorAll("[data-proto-status]").forEach(b=>b.onclick=()=>sammyProtocolSetStatus(b.dataset.protoStatus));document.querySelectorAll("[data-proto-measure-status]").forEach(b=>b.onclick=()=>sammyProtocolSetMeasureStatus(b.dataset.protoMeasureStatus));const poseOk=$("#sammyProtocolPoseOk"),poseFlag=$("#sammyProtocolPoseFlag"),poseReset=$("#sammyProtocolPoseReset");if(poseOk)poseOk.onclick=()=>sammyProtocolSetPoseStatus("ok");if(poseFlag)poseFlag.onclick=()=>sammyProtocolSetPoseStatus("flag");if(poseReset)poseReset.onclick=()=>{sammyProtocolPreviewPose=null;sammyProtocolApplyCurrentPose();sammyProtocolRender()};const doc=$("#sammyProtocolDocOpen");if(doc)doc.onclick=sammyProtocolOpenImage;const imgClose=$("#sammyProtocolImageClose");if(imgClose)imgClose.onclick=sammyProtocolCloseImage;const imgModal=$("#sammyProtocolImageModal");if(imgModal)imgModal.onclick=e=>{if(e.target.id==="sammyProtocolImageModal")sammyProtocolCloseImage()};const ex=$("#sammyProtocolExport");if(ex)ex.onclick=sammyProtocolExport;const dx=$("#sammyProtocolDiagExport");if(dx)dx.onclick=sammyDownloadDiagnostics;const reset=$("#sammyProtocolResetAudit");if(reset)reset.onclick=()=>{if(!confirm("Protocol-/Landmark-Audit wirklich löschen?"))return;localStorage.removeItem(SAMMY_PROTOCOL_KEY);sammyProtocolState=sammyProtocolBlankState();sammyProtocolRender()}}
+async function sammyProtocolInitUI(){try{await sammyProtocolLoadData();await sammyProtocolLoadReferenceData();sammyProtocolLoadState();sammyProtocolMigrateV8197();sammyProtocolMigrateV8198();sammyProtocolMigrateV8199();sammyProtocolInstallPicking();sammyProtocolRender()}catch(e){sammyReportError(e,{source:"ANSUR Protocol Lab init"});return}document.querySelectorAll("[data-proto-tab]").forEach(b=>b.onclick=()=>sammyProtocolSetTab(b.dataset.protoTab));document.querySelectorAll("[data-proto-base]").forEach(b=>b.onclick=()=>sammyProtocolSelectBase(b.dataset.protoBase));const ib=$("#sammyProtocolInfoBtn");if(ib)ib.onclick=()=>sammyProtocolToggleInfo();const cb=$("#sammyProtocolCommentBtn"),cpt=$("#sammyProtocolCommentPopupText"),ab=$("#sammyProtocolAdjustBtn"),ap=$("#sammyProtocolAdjustPopup");if(cb)cb.onclick=()=>sammyProtocolToggleCommentPopup();if(cpt)cpt.oninput=e=>sammyProtocolSaveFocusedComment(e.target.value);if(ab)ab.onclick=()=>sammyProtocolToggleAdjustPopup();for(const el of [$("#sammyProtocolCommentPopup"),cpt,ap])if(el)for(const ev of ["pointerdown","pointerup","click","touchstart","touchend"])el.addEventListener(ev,e=>e.stopPropagation(),{passive:true});for(const [id,i] of [["#sammyProtocolAdjustX",0],["#sammyProtocolAdjustY",1],["#sammyProtocolAdjustZ",2]]){const el=$(id);if(el)el.oninput=e=>sammyProtocolSetFocusedOffset(i,e.target.value)}const place=$("#sammyProtocolPlaceLandmark"),adjReset=$("#sammyProtocolAdjustReset");if(place)place.onclick=()=>sammyProtocolStartPlacement();if(adjReset)adjReset.onclick=()=>sammyProtocolResetFocusedOffset();const sel=$("#sammyProtocolMeasureSelect");if(sel)sel.onchange=e=>sammyProtocolSelectMeasure(e.target.value);const prev=$("#sammyProtocolPrev"),next=$("#sammyProtocolNext");if(prev)prev.onclick=()=>sammyProtocolStepFocus(-1);if(next)next.onclick=()=>sammyProtocolStepFocus(1);const ok=$("#sammyProtocolStatusOk"),bad=$("#sammyProtocolStatusFlag");if(ok)ok.onclick=()=>sammyProtocolSetFocusedStatus("ok");if(bad)bad.onclick=()=>sammyProtocolSetFocusedStatus("flag");const mirrorBtn=$("#sammyProtocolMirror");if(mirrorBtn){mirrorBtn.disabled=true;mirrorBtn.title="Bilaterale Landmark-Gruppen sind fest gespiegelt gekoppelt."}const measureLineBtn=$("#sammyProtocolMeasureLine");if(measureLineBtn)measureLineBtn.onclick=()=>{sammyProtocolMeasureLineVisible=!sammyProtocolMeasureLineVisible;sammyProtocolRender()};const zones=$("#sammyProtocolZones");if(zones)zones.onclick=()=>{sammyProtocolRegionsVisible=!sammyProtocolRegionsVisible;sammyProtocolRender()};const labels=$("#sammyProtocolLabels");if(labels)labels.onclick=()=>{sammyProtocolLabelsVisible=!sammyProtocolLabelsVisible;sammyProtocolRender()};const rand=$("#sammyProtocolRandom");if(rand)rand.onclick=()=>sammyProtocolRandomize(false);const randWide=$("#sammyProtocolRandomWide");if(randWide)randWide.onclick=()=>sammyProtocolRandomize(true);const resetBody=$("#sammyProtocolResetBody");if(resetBody)resetBody.onclick=sammyProtocolResetBody;const lmReset=$("#sammyProtocolLandmarkReset");if(lmReset)lmReset.onclick=sammyProtocolResetLandmark;for(const [id,i] of [["#sammyProtocolX",0],["#sammyProtocolY",1],["#sammyProtocolZ",2]]){const el=$(id);if(el)el.oninput=e=>sammyProtocolAdjust(i,e.target.value)}const lc=$("#sammyProtocolComment");if(lc)lc.oninput=e=>{if(!sammyProtocolSelectedLandmark)return;sammyProtocolLandmarkState(sammyProtocolSelectedLandmark).comment=e.target.value;sammyProtocolSaveState()};const mc=$("#sammyProtocolMeasureComment");if(mc)mc.oninput=e=>{const m=sammyProtocolMeasure();if(!m)return;sammyProtocolMeasureState(m.id).comment=e.target.value;sammyProtocolSaveState()};document.querySelectorAll("[data-proto-status]").forEach(b=>b.onclick=()=>sammyProtocolSetStatus(b.dataset.protoStatus));document.querySelectorAll("[data-proto-measure-status]").forEach(b=>b.onclick=()=>sammyProtocolSetMeasureStatus(b.dataset.protoMeasureStatus));const poseOk=$("#sammyProtocolPoseOk"),poseFlag=$("#sammyProtocolPoseFlag"),poseReset=$("#sammyProtocolPoseReset");if(poseOk)poseOk.onclick=()=>sammyProtocolSetPoseStatus("ok");if(poseFlag)poseFlag.onclick=()=>sammyProtocolSetPoseStatus("flag");if(poseReset)poseReset.onclick=()=>{sammyProtocolPreviewPose=null;sammyProtocolApplyCurrentPose();sammyProtocolRender()};const doc=$("#sammyProtocolDocOpen");if(doc)doc.onclick=sammyProtocolOpenImage;const imgClose=$("#sammyProtocolImageClose");if(imgClose)imgClose.onclick=sammyProtocolCloseImage;const imgModal=$("#sammyProtocolImageModal");if(imgModal)imgModal.onclick=e=>{if(e.target.id==="sammyProtocolImageModal")sammyProtocolCloseImage()};const ex=$("#sammyProtocolExport");if(ex)ex.onclick=sammyProtocolExport;const dx=$("#sammyProtocolDiagExport");if(dx)dx.onclick=sammyDownloadDiagnostics;const reset=$("#sammyProtocolResetAudit");if(reset)reset.onclick=()=>{if(!confirm("Protocol-/Landmark-Audit wirklich löschen?"))return;localStorage.removeItem(SAMMY_PROTOCOL_KEY);sammyProtocolState=sammyProtocolBlankState();sammyProtocolRender()}}
 
 
 // ---------------------------------------------------------------------------
@@ -5979,7 +5979,7 @@ async function sammyProtocolInitUI(){try{await sammyProtocolLoadData();await sam
 // ---------------------------------------------------------------------------
 const SAMMY_PROTOCOL_DYNAMIC_LANDMARKS_V8197=new Set(["buttock_lateral","buttock_posterior","calf_max","ankle_min","biceps_point","neck_base_points","trapezius","gluteal_furrow"]);
 const SAMMY_PROTOCOL_REAUDIT_MEASURES_V8197=["biacromial_breadth","neck_circumference","buttock_circumference","hip_breadth","wrist_circumference","thigh_circumference","calf_circumference","ankle_circumference","waist_back_length","upperarm_length","lowerarm_length","tibiale_height","shoulder_length","upperarm_circumference","forearm_circumference"];
-function sammyProtocolMigrateV8197(){const s=sammyProtocolLoadState();if(s.measureAlgorithmVersion==="0.8.19.7"||s.measureAlgorithmVersion==="0.8.19.8")return;if(s.measures){delete s.measures.torso_height;delete s.measures.upperleg_height}s.measureAlgorithmVersion="0.8.19.7";s.migrationNote="v0.8.19.7 compatibility migration; existing calibration offsets/comments preserved.";sammyProtocolSaveState()}
+function sammyProtocolMigrateV8197(){const s=sammyProtocolLoadState();if(["0.8.19.7","0.8.19.8","0.8.19.9"].includes(s.measureAlgorithmVersion))return;if(s.measures){delete s.measures.torso_height;delete s.measures.upperleg_height}s.measureAlgorithmVersion="0.8.19.7";s.migrationNote="v0.8.19.7 compatibility migration; existing calibration offsets/comments preserved.";sammyProtocolSaveState()}
 function sammyProtocolDynamicLandmarkV8197(id){return SAMMY_PROTOCOL_DYNAMIC_LANDMARKS_V8197.has(id)}
 // PROT and MEAS now use exactly the same skin-weight partitions.
 sammyProtocolRegionIndices=function(region){return sammyMeasureRegionIndicesV8197(region)};
@@ -7077,7 +7077,7 @@ const sammyProtocolLandmarkStateV8197=sammyProtocolLandmarkState;
 sammyProtocolLandmarkState=function(id){const st=sammyProtocolLandmarkStateV8197(id);if(!Number.isFinite(Number(st.lineOffsetCm)))st.lineOffsetCm=0;return st};
 
 function sammyProtocolMigrateV8198(){
- const s=sammyProtocolLoadState();if(s.measureAlgorithmVersion==="0.8.19.8")return;const from=s.measureAlgorithmVersion||"legacy";
+ const s=sammyProtocolLoadState();if(["0.8.19.8","0.8.19.9"].includes(s.measureAlgorithmVersion))return;const from=s.measureAlgorithmVersion||"legacy";
  if(s.measures){delete s.measures.torso_height;delete s.measures.upperleg_height}
  // Preserve every existing manual offset/comment. Only reopen geometry that
  // actually changed in this pass so the user's prior audit remains meaningful.
@@ -7173,6 +7173,135 @@ sammyProtocolResetFocusedOffset=function(){const st=sammyProtocolFocusOffsetStat
 // Bind controls after the original UI initializer has installed its handlers.
 const sammyProtocolInitUIV8197=sammyProtocolInitUI;
 sammyProtocolInitUI=async function(){await sammyProtocolInitUIV8197();const l=$("#sammyProtocolLineAdjust"),a=$("#sammyProtocolTiltA"),b=$("#sammyProtocolTiltB");if(l)l.oninput=e=>sammyProtocolSetLineOffsetV8198(e.target.value);if(a)a.oninput=e=>sammyProtocolSetTiltV8198(0,e.target.value);if(b)b.oninput=e=>sammyProtocolSetTiltV8198(1,e.target.value)};
+
+
+// ---------------------------------------------------------------------------
+// v0.8.19.9 · focused final protocol-geometry correction pass
+// Scope is intentionally narrow: neck-plane tilt, projected shoulder tape,
+// vertical-projected Waist Back Length, and one-source buttock lateral/hip breadth.
+// ---------------------------------------------------------------------------
+const SAMMY_CERVICALE_BIAS_CM_V8199=[0,8,-10.941081866621971];
+const sammyMeasureCervicaleV8198Base=sammyMeasureCervicaleV8197;
+sammyMeasureCervicaleV8197=function(){
+ const base=sammyMeasureCervicaleV8198Base();if(!base)return null;
+ const target=[base[0]+SAMMY_CERVICALE_BIAS_CM_V8199[0]/100,base[1]+SAMMY_CERVICALE_BIAS_CM_V8199[1]/100,base[2]+SAMMY_CERVICALE_BIAS_CM_V8199[2]/100];
+ // Promote the user's approved Cervicale calibration into the canonical mesh
+ // landmark so MEAS and PROT terminate at the same anatomical point.
+ return sammyMeasureRegionNearestV8197(target,"neck")||base
+};
+
+function sammyMeasureButtockSliceV8199(){
+ const post=sammyMeasureButtockPosteriorV8197();if(!post)return null;
+ const s=sammyMeasureSliceYRegionV8197(post[1],"pelvis");if(s)s.semanticAnchor="buttockPosteriorLevel";return s
+}
+sammyMeasureButtockLateralV8197=function(side="right"){
+ // The lateral points are not an independent search any more: they are the
+ // exact left/right extrema of the SAME horizontal slice used for Buttock Circ.
+ const s=sammyMeasureButtockSliceV8199();return s?sammyMeasureSliceWorldExtremumV8197(s,side):null
+};
+
+function sammyMeasureSurfaceProjectedPathV8199(a,b,regions,opts={}){
+ if(!a||!b)return null;const ids=sammyMeasureRegionUnionV8197(regions),N=Math.max(8,Number(opts.steps||28));if(!ids.length)return [a,b];
+ const front=sammyMeasureFrontSignV8197(),expectedSide=Number(opts.surfaceSign||0),pts=[a.slice()];
+ for(let i=1;i<N;i++){
+  const t=i/N,tx=a[0]+(b[0]-a[0])*t,ty=a[1]+(b[1]-a[1])*t,tz=a[2]+(b[2]-a[2])*t;let best=null,bs=Infinity;
+  for(const v of ids){const q=sammyMeasureVertexV8197(v),dx=q[0]-tx,dy=q[1]-ty;if(Math.abs(dx)>.045||Math.abs(dy)>.045)continue;const dz=q[2]-tz;
+   // Keep the 2-D projection exactly straight while choosing the matching skin
+   // depth. A weak surface-side term prevents front/back jumps at the shoulder.
+   const sidePenalty=expectedSide?Math.max(0,-expectedSide*front*(q[2]-tz))*.04:0,score=(dx*dx+dy*dy)*80+dz*dz*.45+sidePenalty;
+   if(score<bs){bs=score;best=q}
+  }
+  if(!best){let bd=Infinity;for(const v of ids){const q=sammyMeasureVertexV8197(v),d=(q[0]-tx)**2+(q[1]-ty)**2+(q[2]-tz)**2;if(d<bd){bd=d;best=q}}}
+  pts.push([tx,ty,best?best[2]:tz])
+ }
+ pts.push(b.slice());
+ // Only smooth depth. X/Y remain mathematically collinear between landmarks.
+ for(let pass=0;pass<2;pass++){const z=pts.map(q=>q[2]);for(let i=1;i<pts.length-1;i++)pts[i][2]=(z[i-1]+2*z[i]+z[i+1])/4}
+ pts[0]=a.slice();pts[pts.length-1]=b.slice();return pts
+}
+
+sammyMeasureShoulderSurfacePathV8197=function(){
+ const a=sammyMeasureTrapeziusV8197("right"),b=sammyMeasureAcromionV8197("right");
+ // Straight Trapezius→Acromion projection, laid onto the skin surface. This
+ // avoids the previous nearest-vertex zig-zag while retaining surface distance.
+ return sammyMeasureSurfaceProjectedPathV8199(a,b,["neckBase","shoulder"],{steps:30})
+};
+
+sammyMeasureBackSurfacePathV8197=function(){
+ const box=sammyMeasureBBox(),top=sammyMeasureCervicaleV8197(),wy=sammyMeasureSharedPlaneY("waist");if(!box||!top)return null;
+ const back=-sammyMeasureFrontSignV8197(),bottom=sammyMeasureRegionAtLevelV8197("torso",wy,p=>back*(p[2]-box.cz)-Math.abs(p[0]-top[0])*10,.025);if(!bottom)return null;
+ // ANSUR calls this a *vertical surface distance*: its posterior projection is
+ // a straight line, while depth follows body contours. Cervicale is exact top.
+ return sammyMeasureSurfaceProjectedPathV8199(bottom,top,["torso","neckBase","neck"],{steps:34,surfaceSign:-1})
+};
+
+// Make Buttock Circumference and Hip Breadth literally share one geometric slice.
+const sammyComputeMeasureV8198=sammyComputeMeasure;
+sammyComputeMeasure=function(def,sectionCache=null){
+ const id=def?.id;
+ if(id==="buttock_circumference"||id==="hip_circumference")return sammyMeasureCanonicalSliceResultV8197(sammyMeasureButtockSliceV8199());
+ if(id==="hip_breadth"){
+  const s=sammyMeasureButtockSliceV8199(),l=s?sammyMeasureSliceWorldExtremumV8197(s,"left"):null,r=s?sammyMeasureSliceWorldExtremumV8197(s,"right"):null;if(!l||!r)return {valueCm:NaN};
+  return {valueCm:Math.abs(r[0]-l[0])*100,line:{kind:"segment",a:l.slice(),b:r.slice()},anchors:{left:l,right:r},semanticAnchor:"buttockCircumferenceExtrema"}
+ }
+ return sammyComputeMeasureV8198(def,sectionCache)
+};
+
+// Correct the Measurement-Lab descriptions to the now-frozen geometric intent.
+for(const [id,txt] of Object.entries({
+ hip_breadth:"Horizontale Distanz zwischen den exakten linken/rechten Extrema desselben Pelvis-Schnitts wie Buttock Circumference; die Buttock-Lateral-Landmarks sind diese Endpunkte.",
+ waist_back_length:"Vertikale, in der Rückenansicht gerade projizierte Oberflächendistanz Waist (Omphalion) posterior → Cervicale; Tiefe folgt der Rückenoberfläche, Cervicale ist der exakte Endpunkt.",
+ shoulder_length:"Gerade Trapezius-R→Acromion-R-Projektion auf die Schulteroberfläche; X/Y bleiben kollinear, die Tiefe folgt der Hautoberfläche."
+})){const d=SAMMY_MEASURE_DEFS.find(x=>x.id===id);if(d)d.implementation=txt}
+
+function sammyProtocolNeckTiltPlaneV8199(slice,off,deg){
+ let origin,normal,radius=Number.isFinite(slice?.maxRadius)?slice.maxRadius:Infinity;
+ if(slice.axis==="P"){origin=(slice.origin||[0,0,0]).slice();normal=(slice.normal||[0,1,0]).slice()}
+ else {origin=sammySliceCenterWorldV3(slice);normal=slice.axis==="X"?[1,0,0]:[0,1,0]}
+ origin=origin.map((v,i)=>v+Number(off?.[i]||0)/100);normal=sammyVecNorm(normal);
+ const la=sammyMeasureJoint("LeftArm"),ra=sammyMeasureJoint("RightArm");let lateral=(la&&ra)?sammyVecNorm(sammyVecSub(ra,la)):[1,0,0];
+ // Remove any component parallel to the ring normal: the rotation axis is the
+ // anatomical left-right axis through the neck/body centre, not an arbitrary plane basis.
+ lateral=sammyVecSub(lateral,normal.map(v=>v*sammyVecDot(lateral,normal)));if(Math.hypot(...lateral)<1e-6)lateral=[1,0,0];lateral=sammyVecNorm(lateral);
+ const a=Number(deg||0)*Math.PI/180;if(Math.abs(a)>1e-9)normal=sammyRotateVectorV8198(normal,lateral,a);
+ return {origin,normal:sammyVecNorm(normal),radius}
+}
+
+const sammyProtocolStrictMeasureGeometryV8198=sammyProtocolStrictMeasureGeometry;
+sammyProtocolStrictMeasureGeometry=function(m,result){
+ const id=m?.id;
+ if((id==="neck_circumference"||id==="neck_base_circumference")&&result?.line?.slice){
+  const st=sammyProtocolMeasureState(id),off=st.offsetCm||[0,0,0],deg=Number(st.tiltDeg?.[0]||0),p=sammyProtocolNeckTiltPlaneV8199(result.line.slice,off,deg),region=m?.region,strict=!!region&&region!=="whole"&&region!=="shoulder",ss=strict?sammyProtocolSlicePlaneRegion(p.origin,p.normal,region,p.radius):sammyPlaneSliceArbitraryV3(p.origin,p.normal,p.radius);
+  if(!ss||ss.hull?.length<3)return {lp:null,valueCm:NaN,strict,blocked:true,offsetApplied:true,tiltApplied:Math.abs(deg)>.001};ss.maxRadius=p.radius;ss.region=region;
+  return {lp:sammyMeasureLinePoints({line:{kind:"loopP",slice:ss}}),valueCm:ss.circ,strict,offsetApplied:(off||[]).some(v=>Math.abs(Number(v||0))>1e-8),tiltApplied:Math.abs(deg)>.001,slice:ss}
+ }
+ return sammyProtocolStrictMeasureGeometryV8198(m,result)
+};
+
+const sammyProtocolRenderAdjustPopupV8198=sammyProtocolRenderAdjustPopup;
+sammyProtocolRenderAdjustPopup=function(){
+ sammyProtocolRenderAdjustPopupV8198();if(!sammyProtocolAdjustVisible||sammyProtocolFocusKind!=="measure")return;
+ const m=sammyProtocolMeasure(),neck=!!m&&["neck_circumference","neck_base_circumference"].includes(m.id),labA=$("#sammyProtocolTiltALabel"),rowB=$("#sammyProtocolTiltBRow"),hint=$("#sammyProtocolAdjustPopupHint");
+ if(labA)labA.textContent=neck?"Neigung":"Kipp A";if(rowB)rowB.hidden=neck?true:$("#sammyProtocolTiltControls")?.hidden||false;
+ if(neck&&hint)hint.textContent="Halsumfang · Neigung um anatomische Links-Rechts-Achse · °"
+};
+
+function sammyProtocolMigrateV8199(){
+ const s=sammyProtocolLoadState();if(s.measureAlgorithmVersion==="0.8.19.9")return;const from=s.measureAlgorithmVersion||"legacy";
+ if(s.measures){delete s.measures.torso_height;delete s.measures.upperleg_height}
+ // Cervicale's approved 0.8.19.7 calibration is now canonical. Convert any
+ // existing local offset to a residual rather than double-applying it.
+ const cv=s.landmarks?.cervicale;if(cv&&Array.isArray(cv.offsetCm)){cv.offsetCm=[Number(cv.offsetCm[0]||0)-SAMMY_CERVICALE_BIAS_CM_V8199[0],Number(cv.offsetCm[1]||0)-SAMMY_CERVICALE_BIAS_CM_V8199[1],Number(cv.offsetCm[2]||0)-SAMMY_CERVICALE_BIAS_CM_V8199[2]]}
+ // Old Hip-Breadth display offsets deliberately compensated the wrong geometry;
+ // keep them in the audit JSON for traceability but do not apply them again.
+ const hb=s.measures?.hip_breadth;if(hb&&Array.isArray(hb.offsetCm)&&hb.offsetCm.some(v=>Math.abs(Number(v||0))>.01)){hb.previousOffsetCmV8198=hb.offsetCm.slice();hb.offsetCm=[0,0,0]}
+ for(const id of ["neck_circumference","neck_base_circumference"]){const st=s.measures?.[id];if(st){if(!Array.isArray(st.tiltDeg))st.tiltDeg=[0,0];if(Math.abs(Number(st.tiltDeg[1]||0))>.001)st.previousTiltBV8198=Number(st.tiltDeg[1]);st.tiltDeg=[Number(st.tiltDeg[0]||0),0]}}
+ const bl=s.landmarks?.buttock_lateral;if(bl){if(Array.isArray(bl.offsetCm)&&bl.offsetCm.some(v=>Math.abs(Number(v||0))>.01))bl.previousOffsetCmV8198=bl.offsetCm.slice();bl.offsetCm=[0,0,0];if(Math.abs(Number(bl.lineOffsetCm||0))>.01)bl.previousLineOffsetCmV8198=Number(bl.lineOffsetCm);bl.lineOffsetCm=0;if(bl.status!=="unchecked")bl.status="unchecked"}
+ for(const id of ["hip_breadth","waist_back_length","shoulder_length","neck_circumference","neck_base_circumference"]){const st=s.measures?.[id];if(st&&st.status!=="unchecked")st.status="unchecked"}
+ s.measureAlgorithmVersion="0.8.19.9";
+ s.migrationNote="v0.8.19.9 focused geometry pass: Cervicale calibration promoted to MEAS; Buttock L/R are exact Buttock-Circumference extrema and Hip-Breadth endpoints; Shoulder Length is straight-projected on skin; Waist Back Length is vertical-projected surface distance to Cervicale; neck rings use a single anatomical sagittal tilt control.";
+ sammyProtocolSaveState()
+}
 
 
 // Sammy v0.7.1: production shell + automatic runtime.

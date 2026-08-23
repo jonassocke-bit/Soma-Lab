@@ -1,16 +1,19 @@
-# SAMMY / BODY LAB
+# Sammy / Body Lab
 
-## v0.8.19.8 · Audit correction + constrained editing
+## v0.8.19.9 · Focused protocol geometry correction
+
+This build is a narrow follow-up to the v0.8.19.7/8 audit: both neck rings use one anatomical tilt axis, Shoulder Length is straight-projected on skin, Waist Back Length is vertically projected on the posterior surface and terminates at canonical Cervicale, and Buttock lateral / Hip Breadth share the exact Buttock-Circumference slice. Existing comments, status state, linked-line editing and compact GitHub packaging are preserved.
+
 
 This is an incremental correction pass based on the v0.8.19.7 user audit. It preserves approved geometry and manual calibration instead of resetting dynamic points.
 
 - PROT measure-list taps no longer auto-scroll.
 - Dynamic landmark = auto mesh anchor + persistent user calibration bias.
 - Linked landmarks can move along the associated measurement line.
-- Circumference planes can be tilted in two axes for audit.
+- Generic circumference planes keep the two-axis audit controls; the two neck circumferences use one anatomical left-right tilt axis in v0.8.19.9.
 - Upper-arm region masks exclude shoulder/torso spill.
 - The audited +1.6 cm neck-base correction is promoted into shared MEAS geometry.
-- Buttock lateral, trapezius, waist-back path and shoulder surface path were corrected/reopened.
+- v0.8.19.9 further locks Buttock lateral to the Buttock-Circumference extrema, makes Shoulder Length a straight surface projection, and makes Waist Back Length a vertical surface projection ending at Cervicale.
 - MEAS remains the geometric source of truth; PROT remains its review layer.
 - Flat GitHub package; no individual ANSUR crop JPGs (single atlas only).
 

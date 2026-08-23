@@ -4,8 +4,8 @@
     "title": "Measurer’s Handbook: US Army and Marine Corps Anthropometric Surveys, 2010-2011",
     "report": "NATICK/TR-11/017",
     "uploadedPdf": "ADA548497(patient-vacuum-cloth).pdf",
-    "note": "24 direct ANSUR-II targets. v0.8.19.8 preserves reviewed calibration biases while correcting flagged canonical geometry: strict upper-arm isolation, buttock lateral level, separate trapezius proxy, smoother surface paths, linked-landmark line editing and auditable circumference-plane tilt. PROT remains the audit layer over shared MEAS geometry.",
-    "integrationVersion": "0.8.19.8"
+    "note": "24 direct ANSUR-II targets. v0.8.19.9 is a focused geometry correction: both neck circumferences have anatomically constrained plane tilt in PROT; Shoulder Length is a straight projection on the skin surface; Waist Back Length is a vertically projected surface path ending exactly at canonical Cervicale; Buttock lateral points are the exact lateral extrema of the Buttock-Circumference slice and therefore the Hip-Breadth endpoints. PROT remains the audit layer over shared MEAS geometry.",
+    "integrationVersion": "0.8.19.9"
   },
   "poses": {
     "standing": {
@@ -233,7 +233,7 @@
       "heading": "5.2.4 Buttock Point, Right Lateral and Left Lateral",
       "cropImage": "crop-landmark-buttock_lateral.jpg",
       "dynamicGeometry": true,
-      "implementationVersion": "0.8.19.8"
+      "implementationVersion": "0.8.19.9"
     },
     "cervicale": {
       "label": "Cervicale · C7",
@@ -247,7 +247,8 @@
       "PROCEDURE": "Participant is in the anthropometric standing position with the head in the Frankfurt plane. The spine of the seventh cervical vertebra is the most prominent vertebral spine of the back of the neck. It is best found by having the participant bend the head downwards. Stand behind the participant and with the pad of the index finger, palpate the most prominent spine. Have the participant slowly bring the head up to the Frankfurt plane while intermittently touching the spine. When the head is in place, locate the most prominent point of the spine of the seventh cervical vertebra. Draw a cross (+) through the landmark.",
       "CAUTION": "A few participants will be encountered on whom no cervical spine prominence is detectable. On such participants, estimate the point as nearly as possible with respect to the neck and shoulders. A few participants will exhibit two or three equally prominent spinal processes. In such cases, mark the spine that is closest to the posterior base of the neck as established by a tape. Be sure that the head is in the Frankfurt plane when the landmark is drawn. 1 The definition used in ANSUR refers to the “superior palpable point” rather than to the most prominent point. This change was made to bring the definition into compliance with standard anatomical usage (Martin, 1914) and international practice.",
       "heading": "5.2.5 Cervicale",
-      "cropImage": "crop-landmark-cervicale.jpg"
+      "cropImage": "crop-landmark-cervicale.jpg",
+      "implementationVersion": "0.8.19.9"
     },
     "chest_point": {
       "label": "Chest Point · anterior",
@@ -779,9 +780,10 @@
       "observerErrorImage": "ansur-page-236.jpg",
       "observerErrorKind": "direct_ansur",
       "cropImage": "crop-measure-hip_breadth.jpg",
-      "implementationVersion": "0.8.19.8",
+      "implementationVersion": "0.8.19.9",
       "implementationNote": "Direct horizontal distance between lateral buttock landmarks at the same level as Buttock Circumference.",
-      "dynamicSearch": true
+      "dynamicSearch": true,
+      "mappingNote": "v0.8.19.9: Hip Breadth uses the exact left/right lateral extrema of the same horizontal pelvis slice used by Buttock Circumference; those extrema are also the dynamic Buttock lateral landmarks."
     },
     {
       "id": "crotch_height",
@@ -839,8 +841,9 @@
       "observerErrorImage": "ansur-page-236.jpg",
       "observerErrorKind": "direct_ansur",
       "cropImage": "crop-measure-neck_circumference.jpg",
-      "implementationVersion": "0.8.19.8",
-      "implementationNote": "Strict neck slice at the Infrathyroid landmark level, perpendicular to the local neck axis."
+      "implementationVersion": "0.8.19.9",
+      "implementationNote": "Strict neck slice at the Infrathyroid landmark level, perpendicular to the local neck axis.",
+      "mappingNote": "v0.8.19.9: PROT exposes one sagittal plane-tilt control about the anatomical left-right axis; the base definition remains at Infrathyroid and perpendicular to the local neck axis before audit tilt."
     },
     {
       "id": "neck_base_circumference",
@@ -868,7 +871,9 @@
       "observerErrorReportPage": 226,
       "observerErrorImage": "ansur-page-236.jpg",
       "observerErrorKind": "direct_ansur",
-      "cropImage": "crop-measure-neck_base_circumference.jpg"
+      "cropImage": "crop-measure-neck_base_circumference.jpg",
+      "implementationVersion": "0.8.19.9",
+      "mappingNote": "v0.8.19.9: PROT exposes one sagittal plane-tilt control about the anatomical left-right axis so the tape plane can be aligned to the anterior/lateral neck landmarks."
     },
     {
       "id": "wrist_circumference",
@@ -1016,8 +1021,9 @@
       "observerErrorImage": "ansur-page-237.jpg",
       "observerErrorKind": "direct_ansur",
       "cropImage": "crop-measure-waist_back_length.jpg",
-      "implementationVersion": "0.8.19.8",
-      "implementationNote": "Surface polyline from Cervicale to posterior Waist (Omphalion), following back contour."
+      "implementationVersion": "0.8.19.9",
+      "implementationNote": "Surface polyline from Cervicale to posterior Waist (Omphalion), following back contour.",
+      "mappingNote": "v0.8.19.9: vertical surface distance from Waist (Omphalion), posterior to canonical Cervicale. The posterior projection is straight; depth follows the back contour, preserving ANSUR surface-distance semantics."
     },
     {
       "id": "upperarm_length",
@@ -1200,8 +1206,9 @@
       "observerErrorImage": "ansur-page-236.jpg",
       "observerErrorKind": "direct_ansur",
       "cropImage": "crop-measure-shoulder_length.jpg",
-      "implementationVersion": "0.8.19.8",
-      "implementationNote": "Surface polyline from right Trapezius to right Acromion."
+      "implementationVersion": "0.8.19.9",
+      "implementationNote": "Surface polyline from right Trapezius to right Acromion.",
+      "mappingNote": "v0.8.19.9: surface distance Trapezius R to Acromion R using a mathematically straight X/Y projection laid onto the shoulder skin to eliminate mesh-vertex zig-zag."
     }
   ],
   "derivedSources": {
@@ -1664,7 +1671,7 @@
       "WBX fists/arm detail",
       "lap/chest contact targets"
     ],
-    "measurementOverlay": "Reuses the same canonical MEAS v0.8.19.8 geometry used by sammyComputeAllMeasures(); PROT is the audit/visualization layer, not a second measurement engine.",
+    "measurementOverlay": "Reuses the same canonical MEAS v0.8.19.9 geometry used by sammyComputeAllMeasures(); PROT is the audit/visualization layer, not a second measurement engine.",
     "regionPolicy": "shared MEAS/PROT strict skin-weight partitions; left/right limbs never merged; no whole-body fallback for body-part measures"
   }
 }
