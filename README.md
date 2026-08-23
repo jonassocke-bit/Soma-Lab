@@ -1,5 +1,14 @@
 # SAMMY / BODY LAB
 
+## v0.8.20.4 · PROT-24 overlay + targeted Influence addendum
+
+- INFL now draws **only the 24 frozen PROT/ANSUR target geometries** instead of the generic 31-measure Measurement-Lab overlay.
+- Four direct target morphs accidentally excluded in v0.8.20.3 are explicitly restored to the automatic solver whitelist: Wrist Circ, Ankle Circ, Calf Circ, and Lowerleg Height.
+- New **Addendum · 4 Ziel-Slider** run reuses the completed Deep base and measures only those four sliders plus interactions that touch them; no three-hour full rerun is required.
+- Addendum runs are linked to the base and are deliberately not treated as standalone Production-Solver calibration data.
+- Accepted `ANSUR24-PROT-v1` geometry is unchanged.
+- See `INFLUENCE_ADDENDUM_V0.8.20.4.md`.
+
 ## v0.8.20.3 · Frozen-24 Influence start + iPhone double-tap guard
 
 - Accepted PROT/MEAS measurement geometry is unchanged from v0.8.20.2.
