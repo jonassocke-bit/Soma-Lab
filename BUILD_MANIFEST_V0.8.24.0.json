@@ -1,0 +1,45 @@
+{
+  "schema": "sammy-build-manifest-v1",
+  "app": "Sammy",
+  "version": "0.8.24.0",
+  "build": "SOLVER24-CALIBRATION-PROPORTION-STABILITY-v1",
+  "baseVersion": "0.8.23.0",
+  "measurementSchema": "ANSUR24-PROT-v2",
+  "massCompositionSchema": "sammy-mass-composition-v1",
+  "solverSummarySchema": "sammy-solver24-summary-v4",
+  "calibrationPassSchema": "sammy-solver24-calibration-pass-v1",
+  "baselineStressRun": "solver24-2026-08-24T06-19-47-714Z-y323m",
+  "baselineFindings": {
+    "forearmCircumference": {"meanSignedErrorCm": -7.2348, "sameSign": "8/8 too small"},
+    "chestBreadth": {"meanSignedErrorCm": 3.9179, "sameSign": "8/8 too large", "status": "PROT-v2 provisional"},
+    "stature": {"meanSignedErrorCm": 5.8746, "sameSign": "7/8 too large"},
+    "ankleCircumference": {"meanSignedErrorCm": 1.7149, "sameSign": "8/8 too large"}
+  },
+  "changes": {
+    "semanticCandidateFloor": [
+      "forearm circumference keeps existing lowerarm fat/muscle/depth/vertical DOFs in the local Jacobian",
+      "upperarm, leg-height, neck, ankle, thigh and torso direct semantic controls are retained while their residual is material"
+    ],
+    "adaptiveRows": "target residuals receive conservative hierarchy boosts only when the current real-mesh Jacobian has usable sensitivity; under-actuated rows are suppressed instead of distorting unrelated anatomy",
+    "heightConservation": "once stature is within 1.0 cm, later line-search steps may not worsen it by more than 0.22 cm",
+    "armRatioGuard": "target-relative upperarm/forearm/wrist ratios may not materially regress while forearm remains unresolved",
+    "chestBreadth": "explicitly provisional ANSUR24-PROT-v2 surface/compression row is down-weighted to protect torso form; no hidden target offset is applied",
+    "stallRecovery": "one bounded rescue attempt for seeds with <=1 accepted pass or <0.08 cm improvement while still above mode-specific RMSE threshold",
+    "diagnostics": "summary-v4 adds signed measurement bias, same-sign frequency, calibration-suspect flags, slider saturation, under-actuation, rescue results and best-fit vs best-objective seed comparison"
+  },
+  "checks": {
+    "patchNodeSyntax": "passed",
+    "patchTopLevelMockEvaluation": "passed",
+    "newMorphIdsInvented": false,
+    "targetsSilentlyModified": false,
+    "massConstraintRetained": true,
+    "ansurProtocolWeightingRetained": true
+  },
+  "scientificBoundaries": {
+    "chestBreadth": "rib-cage compression / breast-tissue exclusion remains unvalidated from the exterior mesh and is not calibration-offset automatically",
+    "flexedArm": "max-effort muscle bulging remains unmodeled; forearm changes use existing Anny local morphology only",
+    "biasAudit": "diagnostic only; systematic bias never rewrites the supplied target vector",
+    "mass": "v0.8.23 exterior-volume mass architecture remains soft and experimental"
+  },
+  "requiredNext": "Run Solver24 Stress 8x2 and the blind BODY AUDIT again. Compare forearm MAE/sign, stature/crotch residuals, torso visual flags, rescue frequency, under-actuated rows, mass residuals and objective-vs-fit seed gaps against the v0.8.23.0 baseline."
+}

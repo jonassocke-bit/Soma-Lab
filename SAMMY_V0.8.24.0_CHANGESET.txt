@@ -1,0 +1,39 @@
+Sammy v0.8.24.0 changeset
+===========================
+
+Runtime version changes
+-----------------------
+app.js:
+  const SAMMY_APP_VERSION="0.8.23.0";
+  -> const SAMMY_APP_VERSION="0.8.24.0";
+
+  ./solver24-prior-v1.json?v=0.8.23.0
+  -> ./solver24-prior-v1.json?v=0.8.24.0
+
+  ./anthro24-conditional-prior-v1.json?v=0.8.23.0
+  -> ./anthro24-conditional-prior-v1.json?v=0.8.24.0
+
+  ./mass-composition-v1.json?v=0.8.23.0
+  -> ./mass-composition-v1.json?v=0.8.24.0
+
+Append at EOF of app.js, after the v0.8.23 MASS late-UI override:
+  SOLVER24_V0.8.24_PATCH.js
+
+index.html:
+  replace runtime/display/cache occurrences of 0.8.23.0 with 0.8.24.0
+
+Add:
+  BUILD_MANIFEST_V0.8.24.0.json
+
+Validation performed
+--------------------
+- node --check SOLVER24_V0.8.24_PATCH.js: passed
+- python JSON parse manifest: passed
+- apply script compile: passed
+- synthetic v0.8.23 base -> v0.8.24 application: passed
+- applied synthetic app.js node --check: passed
+- duplicate application guard: passed
+
+The GitHub connector was able to read jonassocke-bit/Soma-Lab but GitHub denied
+both branch creation and repository Contents writes with HTTP 403
+"Resource not accessible by integration". No repository write is claimed.
