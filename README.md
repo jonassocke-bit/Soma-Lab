@@ -1,3 +1,7 @@
+# Sammy v0.8.23.0 — MASS + COMPOSITION v1
+
+Solver24 erweitert ANSUR24-PROT-v2 um optionales bekanntes Gewicht, ein separat validiertes ANSUR-Gewichtsmodell, Mesh-Volumen/Massendiagnostik und einen schwachen objektiven RFM/FFMI-Kompositions-Prior. `weightkg` bleibt Kontext, kein 25. ANSUR-Maß. Siehe `MASS_COMPOSITION_V0.8.23.0.md` und `mass-composition-v1.json`.
+
 # Sammy v0.8.22.0 — ANSUR24-PROT-v2
 
 State-aware Solver24 measurement pipeline; see `ANSUR24_PROT_V2_V0.8.22.0.md` and `ANSUR24_PROTOCOL_V2.json`. Legacy ANSUR24-PROT-v1 Influence data remains historical and is not silently relabeled.

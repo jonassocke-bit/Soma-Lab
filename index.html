@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.22.0</title>
-<link rel="stylesheet" href="style.css?v=0.8.22.0">
+<title>Sammy v0.8.23.0</title>
+<link rel="stylesheet" href="style.css?v=0.8.23.0">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.22.0</div>
+  <div class="sammySplashVersion">v0.8.23.0</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.22.0</div>
+<div id="sammyVersion">Sammy · v0.8.23.0</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -207,12 +207,13 @@
 
  <section id="sammySolver24Panel" class="sammyPanel sammySolver24Panel" data-panel-key="solver24">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
-  <div class="sammyPanelHead"><div><b>SOLVER 24 · V2.0</b><small>24 Zielmaße → 10 ANSUR-MeasurementStates · Form + Fit + Protocol Error</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelHead"><div><b>SOLVER 24 · V2.1</b><small>24 Zielmaße + Gewicht → ANSUR States · Mass + Composition</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard"><b>Rekonstruktion auf dem echten Mesh</b><span>V2.0 misst die 24 Zielmaße nicht mehr in einem gemeinsamen Pose-Zustand, sondern gebündelt in 10 ANSUR-MeasurementStates. Der lokale Jacobian wird auf diesen Zuständen am echten Mesh neu vermessen; Residuen werden zusätzlich in ANSUR-Allowable-Observer-Error-Einheiten bewertet. Der bestehende Conditional Prior bleibt als diagnostischer Zielvektor-Check erhalten. Gewicht/Masse und ein echter konditionaler 3D-Shape-Prior sind bewusst noch nicht Teil dieses Builds.</span></div>
+   <div class="sammyLabIntroCard"><b>Rekonstruktion auf dem echten Mesh</b><span>V2.0 misst die 24 Zielmaße nicht mehr in einem gemeinsamen Pose-Zustand, sondern gebündelt in 10 ANSUR-MeasurementStates. Der lokale Jacobian wird auf diesen Zuständen am echten Mesh neu vermessen; Residuen werden zusätzlich in ANSUR-Allowable-Observer-Error-Einheiten bewertet. Der bestehende Conditional Prior bleibt als diagnostischer Zielvektor-Check erhalten. MASS v1 ergänzt optionales bekanntes Gewicht bzw. eine ANSUR-Schätzung, Mesh-Volumen-Diagnostik und einen schwachen objektiven RFM/FFMI-Kompositions-Prior. Der rohe Anny-Muscle-Slider wird dabei ausdrücklich nicht als Muskelprozent interpretiert.</span></div>
    <div class="sammySolver24Context">
     <div class="sammySolver24Sex" role="group" aria-label="Geschlecht"><button type="button" data-s24-sex="0" class="active">♂ Mann</button><button type="button" data-s24-sex="1">♀ Frau</button></div>
     <label><span>Alter</span><input id="sammySolver24Age" type="number" inputmode="numeric" min="19" max="70" step="1" value="35"><em>J.</em></label>
+    <label><span>Gewicht</span><input id="sammySolver24Weight" type="number" inputmode="decimal" min="30" max="300" step="0.1" placeholder="optional"><em>kg</em></label>
    </div>
    <div class="sammyCalibrationModes sammySolver24Modes" role="group" aria-label="Solver Tiefe"><button type="button" data-s24-mode="quick">Quick</button><button type="button" data-s24-mode="standard" class="active">Standard</button><button type="button" data-s24-mode="deep">Deep</button><button type="button" data-s24-mode="stress">Stress</button></div>
    <div class="sammyCalibrationActions"><button id="sammySolver24Capture" type="button">Aktueller Körper → 24 Ziele</button><button id="sammySolver24Solve" type="button">Rekonstruieren</button></div>
@@ -223,6 +224,7 @@
    <div id="sammySolver24Live" class="sammyCalibrationLiveMeasures"></div>
    <details class="sammySolver24Targets"><summary>24 Zielmaße in cm <span>editierbar</span></summary><div id="sammySolver24Inputs" class="sammySolver24Inputs"></div></details>
    <details class="sammySolver24Anthro"><summary>Anthropometrischer Prior <span>ANSUR · diagnostisch</span></summary><div id="sammySolver24AnthroStatus" class="sammySolver24AnthroStatus">24 Zielwerte vervollständigen …</div><div id="sammySolver24AnthroRows" class="sammySolver24AnthroRows"></div></details>
+   <details class="sammySolver24Anthro" open><summary>Masse &amp; Komposition <span>kg · Volumen · objektiver Proxy</span></summary><div id="sammySolver24MassStatus" class="sammySolver24AnthroStatus">Mass/Composition Modell wird geladen …</div><div id="sammySolver24MassRows" class="sammySolver24AnthroRows"></div></details>
    <div id="sammySolver24Results" class="sammySolver24Results"><div class="sammyInfluenceEmpty">Noch keine Rekonstruktion.</div></div>
    <div class="sammyCalibrationActions"><button id="sammySolver24ShowBest" type="button" disabled>Beste Lösung zeigen</button><button id="sammySolver24Audit" type="button" disabled>Blind Audit öffnen</button></div>
    <div class="sammyCalibrationActions"><button id="sammySolver24Summary" type="button">Summary JSON</button><button id="sammySolver24Full" type="button">FULL JSON</button></div>
@@ -474,7 +476,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.22.0</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.23.0</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -731,6 +733,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.22.0"></script>
+<script type="module" src="app.js?v=0.8.23.0"></script>
 </body>
 </html>

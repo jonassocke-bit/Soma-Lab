@@ -1,0 +1,36 @@
+{
+  "schema": "sammy-build-manifest-v1",
+  "app": "Sammy",
+  "version": "0.8.23.0",
+  "build": "MASS-COMPOSITION-v1",
+  "baseArchive": "SAMMY_V0.8.22.0_ANSUR24-PROT-v2.zip",
+  "measurementSchema": "ANSUR24-PROT-v2",
+  "massCompositionSchema": "sammy-mass-composition-v1",
+  "checks": {
+    "nodeSyntax": "passed",
+    "jsonParse": "passed",
+    "solverMeasures": 24,
+    "weightIs25thMeasure": false,
+    "weightPredictorTraining": "ANSUR train split only",
+    "weightPredictorValidation": "ANSUR validation split only",
+    "reservedTestSplit": "untouched",
+    "maleWeightValidationRmseKg": 1.6764,
+    "femaleWeightValidationRmseKg": 1.3005
+  },
+  "massArchitecture": {
+    "observedWeight": "preferred when supplied",
+    "predictedWeight": "fallback from age + 24 measurements + sex",
+    "meshVolume": "signed tetrahedral low-rest-mesh volume guarded by topology audit",
+    "massConstraint": "soft; auto-disabled when topology is unreliable",
+    "composition": "RFM + FFMI weak proxy; never direct muscle percentage",
+    "coreWeightMuscle": "always included in local candidate set when mass context exists",
+    "fitProtection": "mass line search may worsen 24-measure RMSE by at most 0.12 cm"
+  },
+  "scientificBoundaries": {
+    "surfaceVsPhysiologicalVolume": "requires later empirical calibration",
+    "RFM": "population estimator, not individual DXA truth",
+    "AnnyMuscle": "raw artist morph, not physiological muscle mass",
+    "flexedArm": "max-effort muscle bulging remains unmodeled"
+  },
+  "requiredNext": "Run the same Solver24 Stress 8x2 + blind AUDT; export FULL and Audit JSON. Compare mass residuals, male arm flags, forearm/biceps residuals and chest/waist regressions against v0.8.22.0."
+}

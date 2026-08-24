@@ -1,0 +1,366 @@
+{
+  "schema": "sammy-mass-composition-v1",
+  "version": "0.8.23.0",
+  "measurementSchema": "ANSUR24-PROT-v2",
+  "source": {
+    "dataset": "ANSUR II public anthropometric data",
+    "file": "ansur-prediction-trainval-v1.json",
+    "trainingPartition": "train only",
+    "validationPartition": "validation only",
+    "testPartition": "untouched",
+    "populationNote": "Military reference population; weight predictor is context/regularization, not a civilian truth model."
+  },
+  "weightPrediction": {
+    "featureIds": [
+      "ageYears",
+      "stature",
+      "biacromial_breadth",
+      "chest_circumference",
+      "chest_breadth",
+      "chest_depth",
+      "waist_circumference",
+      "waist_breadth",
+      "waist_depth",
+      "buttock_circumference",
+      "hip_breadth",
+      "crotch_height",
+      "neck_circumference",
+      "neck_base_circumference",
+      "wrist_circumference",
+      "thigh_circumference",
+      "calf_circumference",
+      "ankle_circumference",
+      "waist_back_length",
+      "upperarm_length",
+      "lowerarm_length",
+      "upperarm_circumference",
+      "forearm_circumference",
+      "tibiale_height",
+      "shoulder_length"
+    ],
+    "method": "sex-specific standardized ridge linear regression",
+    "sexModels": {
+      "male": {
+        "sexCode": 0,
+        "featureMean": {
+          "ageYears": 30.048652,
+          "stature": 175.659608,
+          "biacromial_breadth": 41.586524,
+          "chest_circumference": 105.839167,
+          "chest_breadth": 28.924711,
+          "chest_depth": 25.386559,
+          "waist_circumference": 93.993315,
+          "waist_breadth": 32.622646,
+          "waist_depth": 23.755268,
+          "buttock_circumference": 101.925971,
+          "hip_breadth": 34.569198,
+          "crotch_height": 84.617921,
+          "neck_circumference": 39.769408,
+          "neck_base_circumference": 43.459328,
+          "wrist_circumference": 17.59839,
+          "thigh_circumference": 62.516696,
+          "calf_circumference": 39.222646,
+          "ankle_circumference": 22.927021,
+          "waist_back_length": 47.727966,
+          "upperarm_length": 33.541442,
+          "lowerarm_length": 26.789289,
+          "upperarm_circumference": 35.822891,
+          "forearm_circumference": 31.00917,
+          "tibiale_height": 46.841162,
+          "shoulder_length": 14.984809
+        },
+        "featureSd": {
+          "ageYears": 8.724585,
+          "stature": 6.929731,
+          "biacromial_breadth": 1.940473,
+          "chest_circumference": 8.75021,
+          "chest_breadth": 1.820485,
+          "chest_depth": 2.63506,
+          "waist_circumference": 11.157052,
+          "waist_breadth": 3.478939,
+          "waist_depth": 3.436055,
+          "buttock_circumference": 7.685019,
+          "hip_breadth": 2.431907,
+          "crotch_height": 4.711217,
+          "neck_circumference": 2.574129,
+          "neck_base_circumference": 2.572714,
+          "wrist_circumference": 0.898514,
+          "thigh_circumference": 5.876397,
+          "calf_circumference": 2.98762,
+          "ankle_circumference": 1.469686,
+          "waist_back_length": 2.748344,
+          "upperarm_length": 1.769996,
+          "lowerarm_length": 1.548505,
+          "upperarm_circumference": 3.494425,
+          "forearm_circumference": 2.208194,
+          "tibiale_height": 2.694301,
+          "shoulder_length": 1.056003
+        },
+        "betaStd": {
+          "ageYears": -0.3548134,
+          "stature": 2.81207581,
+          "biacromial_breadth": 0.26673095,
+          "chest_circumference": 2.32999477,
+          "chest_breadth": 0.14303986,
+          "chest_depth": 0.54349891,
+          "waist_circumference": 2.08794363,
+          "waist_breadth": -0.33977893,
+          "waist_depth": 1.39489389,
+          "buttock_circumference": 2.3420649,
+          "hip_breadth": -0.56966157,
+          "crotch_height": 0.19004246,
+          "neck_circumference": 0.8574486,
+          "neck_base_circumference": -0.01416631,
+          "wrist_circumference": 0.37705138,
+          "thigh_circumference": 2.02862134,
+          "calf_circumference": 1.26318626,
+          "ankle_circumference": 0.45599397,
+          "waist_back_length": 0.09240568,
+          "upperarm_length": 0.29434397,
+          "lowerarm_length": 0.22463161,
+          "upperarm_circumference": 1.15949907,
+          "forearm_circumference": 0.4411466,
+          "tibiale_height": -0.55990854,
+          "shoulder_length": -0.02063342
+        },
+        "interceptKg": 85.50602,
+        "ridgeLambda": 10.0,
+        "trainingCount": 2857,
+        "validation": {
+          "count": 612,
+          "rmseKg": 1.6764,
+          "maeKg": 1.2849,
+          "r2": 0.985905,
+          "p68AbsErrorKg": 1.5017,
+          "p90AbsErrorKg": 2.6058,
+          "p95AbsErrorKg": 3.2462,
+          "within5Kg": 0.986928
+        },
+        "rfmFfmiPrior": {
+          "quantiles": {
+            "2": 16.5929,
+            "5": 17.1166,
+            "10": 17.8368,
+            "25": 18.9492,
+            "50": 20.2058,
+            "75": 21.522,
+            "90": 22.8179,
+            "95": 23.5491,
+            "98": 24.4904
+          }
+        }
+      },
+      "female": {
+        "sexCode": 1,
+        "featureMean": {
+          "ageYears": 28.94964,
+          "stature": 162.800144,
+          "biacromial_breadth": 36.545755,
+          "chest_circumference": 94.795827,
+          "chest_breadth": 26.955324,
+          "chest_depth": 24.758129,
+          "waist_circumference": 86.177482,
+          "waist_breadth": 30.02777,
+          "waist_depth": 21.321942,
+          "buttock_circumference": 102.251439,
+          "hip_breadth": 35.441871,
+          "crotch_height": 78.171511,
+          "neck_circumference": 32.982734,
+          "neck_base_circumference": 37.109281,
+          "wrist_circumference": 15.483453,
+          "thigh_circumference": 61.674317,
+          "calf_circumference": 37.328058,
+          "ankle_circumference": 21.578489,
+          "waist_back_length": 42.564604,
+          "upperarm_length": 31.128489,
+          "lowerarm_length": 24.123885,
+          "upperarm_circumference": 30.546115,
+          "forearm_circumference": 26.403597,
+          "tibiale_height": 43.766475,
+          "shoulder_length": 13.535036
+        },
+        "featureSd": {
+          "ageYears": 8.236717,
+          "stature": 6.464304,
+          "biacromial_breadth": 1.853985,
+          "chest_circumference": 8.30024,
+          "chest_breadth": 1.838046,
+          "chest_depth": 2.738621,
+          "waist_circumference": 10.078298,
+          "waist_breadth": 3.322371,
+          "waist_depth": 3.174861,
+          "buttock_circumference": 7.678933,
+          "hip_breadth": 2.713381,
+          "crotch_height": 4.514096,
+          "neck_circumference": 1.924751,
+          "neck_base_circumference": 1.988903,
+          "wrist_circumference": 0.796096,
+          "thigh_circumference": 5.619876,
+          "calf_circumference": 2.867411,
+          "ankle_circumference": 1.496689,
+          "waist_back_length": 2.701374,
+          "upperarm_length": 1.722415,
+          "lowerarm_length": 1.533723,
+          "upperarm_circumference": 3.108134,
+          "forearm_circumference": 1.867072,
+          "tibiale_height": 2.5323,
+          "shoulder_length": 1.032781
+        },
+        "betaStd": {
+          "ageYears": -0.11137199,
+          "stature": 1.97778886,
+          "biacromial_breadth": 0.1616532,
+          "chest_circumference": 1.02874099,
+          "chest_breadth": 0.34711489,
+          "chest_depth": 0.90043909,
+          "waist_circumference": 0.10253657,
+          "waist_breadth": 0.21083632,
+          "waist_depth": 1.27891177,
+          "buttock_circumference": 2.38169714,
+          "hip_breadth": -0.57416906,
+          "crotch_height": 0.36915873,
+          "neck_circumference": 0.72949762,
+          "neck_base_circumference": 0.12850796,
+          "wrist_circumference": 0.39886404,
+          "thigh_circumference": 1.67702344,
+          "calf_circumference": 1.61771654,
+          "ankle_circumference": 0.05951546,
+          "waist_back_length": -0.04146378,
+          "upperarm_length": 0.28350579,
+          "lowerarm_length": 0.06870556,
+          "upperarm_circumference": 1.08385253,
+          "forearm_circumference": 0.09202266,
+          "tibiale_height": -0.26993964,
+          "shoulder_length": 0.07834983
+        },
+        "interceptKg": 67.856403,
+        "ridgeLambda": 0.0,
+        "trainingCount": 1390,
+        "validation": {
+          "count": 297,
+          "rmseKg": 1.3005,
+          "maeKg": 1.0166,
+          "r2": 0.984039,
+          "p68AbsErrorKg": 1.194,
+          "p90AbsErrorKg": 2.1752,
+          "p95AbsErrorKg": 2.7062,
+          "within5Kg": 1.0
+        },
+        "rfmFfmiPrior": {
+          "quantiles": {
+            "2": 13.2757,
+            "5": 13.7089,
+            "10": 14.1018,
+            "25": 14.8529,
+            "50": 15.7084,
+            "75": 16.5975,
+            "90": 17.5889,
+            "95": 18.1283,
+            "98": 18.8424
+          }
+        }
+      }
+    },
+    "fallbackUncertaintyKg": 5.0,
+    "note": "Predicted weight is a soft context estimate when observed weight is unavailable. It is not a 25th ANSUR measurement."
+  },
+  "compositionProxy": {
+    "method": "RFM + FFMI proxy",
+    "rfmFormula": "64 - 20*(stature/waist_circumference) + 12*sex",
+    "sexCoding": {
+      "male": 0,
+      "female": 1
+    },
+    "rfmClampPct": [
+      3,
+      55
+    ],
+    "musclePriorRawRange": [
+      0.25,
+      0.75
+    ],
+    "musclePriorSigmaRaw": 0.22,
+    "note": "Weak objective proxy only. RFM estimates adiposity from stature/waist; FFMI is derived from target weight and RFM. Neither is a direct measurement of muscle mass, and raw Anny core:muscle is not interpreted as a physiological percentage."
+  },
+  "meshMass": {
+    "volumeMethod": "signed tetrahedral volume of current low-res rest mesh; enabled as a solver constraint only when topology audit is closed/manifold enough",
+    "densityModel": "two-component target-composition density proxy",
+    "fatDensityKgPerL": 0.9007,
+    "fatFreeDensityKgPerL": 1.1,
+    "predictedWeightSigmaFloorKg": 5.0,
+    "observedWeightSigmaFloorKg": 4.0,
+    "solverRowScale": 0.75,
+    "maxMeasureRmseDeteriorationCm": 0.12,
+    "note": "External-surface volume and physiological body volume are not identical; the mass row is deliberately soft and diagnostics export topology, volume, density proxy, residual and source."
+  },
+  "diagnosticDonorWeights": {
+    "1546": {
+      "weightKg": 88.9,
+      "sex": 0,
+      "ageYears": 26.0,
+      "statureCm": 182.7
+    },
+    "303": {
+      "weightKg": 86.7,
+      "sex": 0,
+      "ageYears": 32.0,
+      "statureCm": 175.1
+    },
+    "3259": {
+      "weightKg": 75.7,
+      "sex": 0,
+      "ageYears": 24.0,
+      "statureCm": 192.4
+    },
+    "1704": {
+      "weightKg": 100.0,
+      "sex": 0,
+      "ageYears": 41.0,
+      "statureCm": 183.8
+    },
+    "4776": {
+      "weightKg": 60.1,
+      "sex": 1,
+      "ageYears": 25.0,
+      "statureCm": 167.6
+    },
+    "3595": {
+      "weightKg": 80.5,
+      "sex": 1,
+      "ageYears": 35.0,
+      "statureCm": 166.6
+    },
+    "3574": {
+      "weightKg": 74.5,
+      "sex": 1,
+      "ageYears": 43.0,
+      "statureCm": 155.2
+    },
+    "3858": {
+      "weightKg": 68.8,
+      "sex": 1,
+      "ageYears": 24.0,
+      "statureCm": 182.9
+    }
+  },
+  "externalEvidence": [
+    {
+      "id": "RFM-2018",
+      "title": "Relative fat mass as a new estimator of whole-body fat percentage",
+      "pmcid": "PMC6054651",
+      "use": "weak composition proxy only"
+    },
+    {
+      "id": "3DPS-2017",
+      "title": "Validity and reliability of total body volume and relative body fat mass from a 3-dimensional photonic body surface scanner",
+      "pmcid": "PMC5495384",
+      "use": "supports calibrated 3D surface volume as a body-volume proxy; scanner offsets exist"
+    },
+    {
+      "id": "3DO-2017",
+      "title": "Clinical anthropometrics and body composition from 3D whole-body surface scans",
+      "pmcid": "PMC5466169",
+      "use": "supports strong relation of 3D body volume/shape to criterion body composition"
+    }
+  ]
+}
