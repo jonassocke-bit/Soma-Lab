@@ -1,21 +1,26 @@
-# SAMMY v0.8.24.8 · Atlas Rest-Delta Hotfix
+SAMMY v0.8.24.10 PATCH
 
-Basis: v0.8.24.7 (Profile/Section Hotfix bleibt vollständig erhalten).
+Basis: v0.8.24.9
+Geänderte Dateien:
+- app.js
+- index.html
 
-Geändert:
-- Atlas v2.4 bestimmt Rot/Blau jetzt ausschließlich aus dem ungeskinnten Rest-Mesh-Delta gegenüber der Referenz.
-- Rot = signed normal displacement nach außen, Blau = nach innen.
-- Die so ausgewählten Face-IDs werden anschließend auf dem pose-synchronen Display-Mesh gerendert.
-- Kleine Rig-/Skinning-Mitbewegungen können dadurch nicht mehr großflächig als Surface-Expansion erscheinen.
-- Front/Side/Back, feste Bodenreferenz, Skelett-Inset rechts unten, 8-mm-Rig-Schwelle und Bulk-Atlas-ZIP bleiben erhalten.
-- Bulk-Atlas-Manifest und Dateinamen sind auf Atlas v2.4 aktualisiert.
+MORPH OBSERVATORY v1.3 · PROFILE/SECTION FIX v2
+- 25/50/75-%-Querschnitte werden nicht mehr über SOMA-Rig-Head-Positionen im Rest-Mesh zentriert.
+- Stattdessen wird pro Extremitätenregion die tatsächliche Low-LOD-Mesh-Ausdehnung verwendet:
+  - Ober-/Unterarm entlang der T-Pose-X-Achse
+  - Ober-/Unterschenkel entlang der Y-Achse
+- Schnittkanten müssen zur jeweiligen Mesh-/Skin-Region gehören; dadurch sollen andere Körpersegmente nicht mehr als Ersatzquerschnitt einspringen.
+- Adaptiver Region-Slab bleibt nur als Fallback.
+- topSection wird nur noch aus dem semantisch passenden Segment des Morphs gewählt (z. B. lowerarm-Morph -> lowerarm, calf/lowerleg -> lowerleg).
+- profileCoverage zählt jetzt nur Morphs, für die ein Profil semantisch erwartet wird, und weist Coverage zusätzlich pro Segment aus.
+- Pair sectionInteraction wird auf die zum Paar passenden Extremitätensegmente begrenzt.
+- Alte 0.8.24.8/0.8.24.9 Observatory-Runs werden nicht als aktuelle v1.3-Analyse fortgesetzt; für die neuen Section-Werte ist ein neuer Quick nötig.
 
-Nicht geändert:
-- Solver24 / PROT-v2 / Messdefinitionen.
-- Profile-/Section-Algorithmus aus v0.8.24.7.
+ATLAS
+- Atlas v2.5 Display-Rest-Delta-Hotfix aus v0.8.24.9 bleibt enthalten.
 
-Testfälle:
-1. Buttocks Volume Incr: Farbe sollte primär Gesäß/Becken/oberer Oberschenkel betreffen, nicht Rücken und ganze Beine.
-2. Breast Dist / Cupsize: lokale Brustfärbung; Rig praktisch neutral.
-3. Height: Surface-Farbe zurückhaltender als bei lokalen Volumenmorphs; strukturelle Änderung primär im Rig sichtbar.
-4. FULL JSON: profileCoverage/topSection separat kontrollieren, um den v0.8.24.7 Section-Fix zu validieren.
+Nicht verändert:
+- Solver24
+- PROT-v2
+- ANSUR24-Messdefinitionen
