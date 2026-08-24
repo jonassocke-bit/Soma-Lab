@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {unzipSync,zipSync,strToU8} from "https://esm.sh/fflate@0.8.2";
 
-const SAMMY_APP_VERSION="0.8.24.10";
+const SAMMY_APP_VERSION="0.8.24.11";
 
 const HF="https://huggingface.co/nvidia/SOMA-X/resolve/main/";
 const SHAPE=HF+"SOMA_neutral.npz?download=true";
@@ -7738,11 +7738,9 @@ function sammyBodyAuditInitUI(){
 }
 
 
-// v0.8.24.10: keep the proven v0.8.24.0 bootstrap position.
-// The prior 0.8.24.1/2 startup failure was a module parse error in the later
-// MORPH cross-sex comparator, not a TDZ/boot-order failure.
-sammyInitUi();
-setTimeout(()=>autoStartRuntime(),0);
+// v0.8.24.11: startup is intentionally deferred to the absolute end of the
+// ES module. No UI/runtime function is invoked here. This prevents any future
+// late LAB const/let declaration from creating a fresh-load TDZ startup trap.
 
 
 // ---------------------------------------------------------------------------
@@ -7912,7 +7910,7 @@ for(const [id,txt] of Object.entries({
 // exterior mesh-volume diagnostics, a soft mass row, and a weak objective
 // composition proxy. Raw Anny core:muscle is NOT interpreted as muscle %.
 // -----------------------------------------------------------------------------
-const SAMMY_MASS_V1_URL="./mass-composition-v1.json?v=0.8.24.10";
+const SAMMY_MASS_V1_URL="./mass-composition-v1.json?v=0.8.24.11";
 sammySolver24.massModel=null;sammySolver24.massPromise=null;sammySolver24.massActiveTarget=null;sammySolver24.massJacobian=null;sammySolver24.massTopology=null;
 async function sammyMassLoadModel(){
  if(sammySolver24.massModel)return sammySolver24.massModel;if(sammySolver24.massPromise)return sammySolver24.massPromise;
@@ -7985,7 +7983,7 @@ sammySolver24TargetSummary=function(target,solutions){const q=sammySolver24Targe
 })();
 
 // -----------------------------------------------------------------------------
-// Sammy v0.8.24.10 · MORPH OBSERVATORY v1.2 · ATLAS DISPLAY-REST DELTA HOTFIX
+// Sammy v0.8.24.11 · MORPH OBSERVATORY v1.3 · PROFILE SECTION v2 + ATLAS v2.5
 // Purpose: map Anny's morph space before a new hierarchical solver is built.
 // This lab is deliberately observational. It does NOT change Solver24 policy.
 // Per sample we capture four layers: exact shape-dependent SOMA rig, low-res
@@ -8249,5 +8247,22 @@ async function sammyMorphObsExportAtlasZip(){
 }
 function sammyMorphObsInstallUi(){document.querySelectorAll("[data-mobs-mode]").forEach(b=>b.onclick=()=>sammyMorphObsSetMode(b.dataset.mobsMode));document.querySelectorAll("[data-mobs-track]").forEach(b=>b.onclick=()=>sammyMorphObsSetResultTrack(b.dataset.mobsTrack));const start=$("#sammyMorphObsStart"),pause=$("#sammyMorphObsPause"),reset=$("#sammyMorphObsReset"),sum=$("#sammyMorphObsSummary"),full=$("#sammyMorphObsFull"),atlas=$("#sammyMorphObsAtlasMake"),atlasEx=$("#sammyMorphObsAtlasExport"),atlasBulk=$("#sammyMorphObsAtlasBulk"),atlasTrack=$("#sammyMorphObsAtlasTrack");if(start)start.onclick=sammyMorphObsStart;if(pause)pause.onclick=sammyMorphObsPause;if(reset)reset.onclick=sammyMorphObsReset;if(sum)sum.onclick=()=>sammyMorphObsExport(true);if(full)full.onclick=()=>sammyMorphObsExport(false);if(atlas)atlas.onclick=sammyMorphObsMakeAtlas;if(atlasEx)atlasEx.onclick=sammyMorphObsExportAtlas;if(atlasBulk)atlasBulk.onclick=sammyMorphObsExportAtlasZip;if(atlasTrack)atlasTrack.onchange=()=>{sammyMorphObs.atlasTrack=atlasTrack.value;sammyMorphObs.atlasBlob=null;if(atlasEx)atlasEx.disabled=true};sammyMorphObsLoadLatest()}
 
-// MORPH UI can only be installed after all Observatory declarations exist.
-sammyMorphObsInstallUi();
+// -----------------------------------------------------------------------------
+// v0.8.24.11 · FINAL MODULE BOOTSTRAP
+// This MUST remain the final executable block in app.js. By this point every
+// late LAB/solver/mass/morph lexical declaration has been initialized.
+// UI failures are isolated from the model bootstrap so the splash can never
+// remain indefinitely at "Körpermodell wird vorbereitet …" just because a
+// secondary LAB binding fails.
+// -----------------------------------------------------------------------------
+function sammyBootstrapAfterModuleReady(){
+ let uiError=null,morphUiError=null;
+ try{sammyInitUi()}catch(e){uiError=e;console.error("Sammy UI bootstrap failed",e)}
+ try{sammyMorphObsInstallUi()}catch(e){morphUiError=e;console.error("Morph Observatory UI bootstrap failed",e)}
+ setTimeout(()=>{
+  autoStartRuntime().catch?.(e=>console.error("Sammy runtime bootstrap rejected",e));
+  if(uiError)setTimeout(()=>sammyReportError?.(uiError,{source:"UI bootstrap v0.8.24.11"}),0);
+  if(morphUiError)setTimeout(()=>sammyReportError?.(morphUiError,{source:"MORF UI bootstrap v0.8.24.11"}),0);
+ },0);
+}
+sammyBootstrapAfterModuleReady();
