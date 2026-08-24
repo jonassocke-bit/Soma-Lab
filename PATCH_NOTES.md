@@ -1,24 +1,23 @@
-SAMMY v0.8.24.6 PATCH
-Basis: v0.8.24.5 FULL
+# SAMMY v0.8.24.7 · MORPH OBSERVATORY PROFILE HOTFIX
+
+Basis: v0.8.24.6
 
 Geänderte Dateien:
-- app.js
-- index.html
+- `app.js`
+- `index.html`
 
-MORPH OBSERVATORY v1.2
-- Rig-Klassifikation nutzt jetzt parent-relative Joint/Bone-Änderung, Segmentlängen und Schulter-/Hüftgelenk-Breite statt maxJoint-Drift allein.
-- Kleine Joint-Drifts werden als incidental behandelt; lokal dominante Morphs werden nicht mehr wegen ~5 mm Drift automatisch structural/rig.
-- Quick/Standard: Kontextabhängigkeit = nicht geprüft (statt irreführend 0).
-- Neutral/Mid-Shape bleibt Mesh/Rig/Profile/Atlas-Diagnostik; keine ANSUR24-Auswertung, keine Pair-/Interaktionshypothesen.
-- Limb-Profile 25/50/75 %: Vertex-Selektion auf anatomische Region + Seite umgestellt; der bisher zu strikte dominant-bone==start-joint Filter wurde entfernt.
+## Zweck
+Reparatur der im v0.8.24.6-Quick weiterhin vollständig leeren Morph-Observatory-Querschnitte (`topSection: null`, Sections 25/50/75 % = null).
 
-ATLAS v2.3
-- Signed Mesh Delta direkt auf sichtbaren Meshflächen: Rot = entlang Referenz-Normale nach außen, Blau = nach innen.
-- Alte rote Projektions-/Kontur-Heatmap wird nicht mehr verwendet.
-- Front/Side/Back verwenden denselben Darstellungsmaßstab; Side wird nicht mehr separat größer gefittet.
-- Feste gemeinsame Bodenreferenz bleibt erhalten.
-- Rig-Inset rechts unten; Rot erst ab 8 mm parent-relativer Strukturänderung. Absolute Joint-Drift wird separat nur als Zahl gezeigt.
-- Neuer Export „Alle Atlanten ZIP“: alle verfügbaren Mann/Frau/Neutral-Atlas-JPEGs + manifest.json in einer ZIP; Abbruch durch erneuten Klick möglich.
-- Atlasbilder bleiben außerhalb der FULL-JSON.
+## Änderungen
+- Section-Extractor arbeitet primär mit echter Low-LOD-Triangle/Plane-Intersection an der SOMA-Segmentachse statt nur mit Vertices in einem breiten Slice.
+- Anatomischer Segmentfilter + geometrischer Zylinder um die jeweilige Arm-/Beinachse verhindern, dass gegenüberliegende Extremität oder Rumpf in den Schnitt geraten.
+- Adaptive Slab-Fallback nur dann, wenn die Low-LOD-Triangulierung an einer Schnittebene zu wenige Schnittpunkte liefert.
+- Kompakte Fehlerdiagnostik wird nur bei weiterhin fehlgeschlagenen Sections unter `raw.sections.<segment>._debug` persistiert.
+- `profileCoverage` wird pro male/female/neutral Track in die Taxonomie geschrieben, damit nach einem Quick sofort sichtbar ist, ob der Extractor tatsächlich arbeitet.
+- Section-Delta und Pair-Interaction ignorieren Debug-Metadaten explizit.
 
-Solver24/PROT-v2 wurden nicht verändert.
+## Erwarteter Quick-Test
+Nach einem neuen Quick sollte `analysis.byTrack.<track>.profileCoverage.morphsWithSection` deutlich > 0 sein; bei funktionierender Geometrie im Regelfall für fast alle Morphs. `topSection` sollte insbesondere bei Lower/Upper Arm/Leg Morphs nicht mehr `null` sein.
+
+Solver24, PROT-v2, Atlas v2.3 und Solver-Policies wurden nicht verändert.
