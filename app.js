@@ -3,7 +3,8 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {unzipSync,zipSync,strToU8} from "https://esm.sh/fflate@0.8.2";
 
-const SAMMY_APP_VERSION="0.8.24.11";
+const SAMMY_APP_VERSION="0.8.24.12";
+if(typeof window!=="undefined")window.__sammyModuleStarted=true;
 
 const HF="https://huggingface.co/nvidia/SOMA-X/resolve/main/";
 const SHAPE=HF+"SOMA_neutral.npz?download=true";
@@ -7738,9 +7739,11 @@ function sammyBodyAuditInitUI(){
 }
 
 
-// v0.8.24.11: startup is intentionally deferred to the absolute end of the
-// ES module. No UI/runtime function is invoked here. This prevents any future
-// late LAB const/let declaration from creating a fresh-load TDZ startup trap.
+// v0.8.24.12: keep the proven v0.8.24.0 bootstrap position. Section v2 is lazy-loaded and cannot block startup.
+// The prior 0.8.24.1/2 startup failure was a module parse error in the later
+// MORPH cross-sex comparator, not a TDZ/boot-order failure.
+sammyInitUi();
+setTimeout(()=>autoStartRuntime(),0);
 
 
 // ---------------------------------------------------------------------------
@@ -7910,7 +7913,7 @@ for(const [id,txt] of Object.entries({
 // exterior mesh-volume diagnostics, a soft mass row, and a weak objective
 // composition proxy. Raw Anny core:muscle is NOT interpreted as muscle %.
 // -----------------------------------------------------------------------------
-const SAMMY_MASS_V1_URL="./mass-composition-v1.json?v=0.8.24.11";
+const SAMMY_MASS_V1_URL="./mass-composition-v1.json?v=0.8.24.12";
 sammySolver24.massModel=null;sammySolver24.massPromise=null;sammySolver24.massActiveTarget=null;sammySolver24.massJacobian=null;sammySolver24.massTopology=null;
 async function sammyMassLoadModel(){
  if(sammySolver24.massModel)return sammySolver24.massModel;if(sammySolver24.massPromise)return sammySolver24.massPromise;
@@ -7983,7 +7986,7 @@ sammySolver24TargetSummary=function(target,solutions){const q=sammySolver24Targe
 })();
 
 // -----------------------------------------------------------------------------
-// Sammy v0.8.24.11 · MORPH OBSERVATORY v1.3 · PROFILE SECTION v2 + ATLAS v2.5
+// Sammy v0.8.24.12 · MORPH OBSERVATORY v1.3 · LAZY PROFILE ENGINE + ATLAS v2.5
 // Purpose: map Anny's morph space before a new hierarchical solver is built.
 // This lab is deliberately observational. It does NOT change Solver24 policy.
 // Per sample we capture four layers: exact shape-dependent SOMA rig, low-res
@@ -8067,28 +8070,25 @@ function sammyMorphObsBoneRegion(name){if(name==="Root")return "root";if(name===
 function sammyMorphObsEnsureVertexMap(){if(sammyMorphObs.regionMap&&sammyMorphObs.regionMap.length===currentRestLow?.length/3)return;const n=currentRestLow?.length/3||0,idx=annyLowPack?.vertex_bone_indices?.data,w=annyLowPack?.vertex_bone_weights?.data,K=annyMeta?.skinning_topk||0;if(!n||!idx||!w)return;const region=new Array(n),dom=new Int16Array(n);for(let v=0;v<n;v++){let bi=0,bw=-1;for(let k=0;k<K;k++){const q=Number(idx[v*K+k]),ww=Number(w[v*K+k]||0);if(q>=0&&ww>bw){bw=ww;bi=q}}dom[v]=bi;region[v]=sammyMorphObsBoneRegion(PUBLIC_JOINT_NAMES[bi]||"")}sammyMorphObs.regionMap=region;sammyMorphObs.dominantBone=dom}
 function sammyMorphObsBBox(rest){let minX=Infinity,minY=Infinity,minZ=Infinity,maxX=-Infinity,maxY=-Infinity,maxZ=-Infinity;for(let i=0;i<rest.length;i+=3){const x=rest[i],y=rest[i+1],z=rest[i+2];if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y;if(z<minZ)minZ=z;if(z>maxZ)maxZ=z}return {min:[minX,minY,minZ],max:[maxX,maxY,maxZ],sizeCm:[(maxX-minX)*100,(maxY-minY)*100,(maxZ-minZ)*100],center:[(minX+maxX)/2,(minY+maxY)/2,(minZ+maxZ)/2]}}
 function sammyMorphObsHull2D(points){if(points.length<3)return points.slice();const p=points.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]),cross=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]),lo=[],hi=[];for(const q of p){while(lo.length>=2&&cross(lo[lo.length-2],lo[lo.length-1],q)<=0)lo.pop();lo.push(q)}for(let i=p.length-1;i>=0;i--){const q=p[i];while(hi.length>=2&&cross(hi[hi.length-2],hi[hi.length-1],q)<=0)hi.pop();hi.push(q)}lo.pop();hi.pop();return lo.concat(hi)}
-function sammyMorphObsSectionOne(rest,heads,startName,endName,q){
- sammyMorphObsEnsureVertexMap();
- const si=PUBLIC_JOINT_NAMES.indexOf(startName),ei=PUBLIC_JOINT_NAMES.indexOf(endName),tri=trianglesLow?.data,box=sammyMorphObsBBox(rest);if(si<0||ei<0||!rest?.length||!tri?.length||!box)return {valid:false,reason:"missing-rig-or-topology",count:0,aCm:null,bCm:null,perimeterCm:null};
- const targetRegion=sammyMorphObsBoneRegion(startName),isArm=targetRegion==="upperarm"||targetRegion==="lowerarm",isLeg=targetRegion==="upperleg"||targetRegion==="lowerleg";if(!isArm&&!isLeg)return {valid:false,reason:"unsupported-segment",count:0,aCm:null,bCm:null,perimeterCm:null};
- const centerX=(box.min[0]+box.max[0])*.5,headX=Number(heads?.[si*3]),sideSign=Number.isFinite(headX)&&Math.abs(headX-centerX)>.004?Math.sign(headX-centerX):(startName.startsWith("Left")?-1:1),allowed=[];
- for(let vi=0;vi<rest.length/3;vi++){if(sammyMorphObs.regionMap?.[vi]!==targetRegion)continue;const x=rest[vi*3];if((x-centerX)*sideSign<-.002)continue;allowed.push(vi)}
- if(allowed.length<16)return {valid:false,reason:"insufficient-region-vertices",count:allowed.length,targetRegion,sideSign,aCm:null,bCm:null,perimeterCm:null};
- const pct=(arr,t)=>{const z=arr.slice().sort((a,b)=>a-b),u=(z.length-1)*t,i=Math.floor(u),f=u-i;return z[i]*(1-f)+z[Math.min(z.length-1,i+1)]*f};
- let planeCoord,axisSpan,project,planeD;
- if(isArm){const radial=allowed.map(i=>Math.abs(rest[i*3]-centerX)),lo=pct(radial,.04),hi=pct(radial,.96);axisSpan=hi-lo;if(!(axisSpan>.015))return {valid:false,reason:"degenerate-region-axis",count:allowed.length,targetRegion,aCm:null,bCm:null,perimeterCm:null};const rr=lo+axisSpan*q;planeCoord=centerX+sideSign*rr;planeD=(x,y,z)=>x-planeCoord;project=p=>[p[1],p[2]]}
- else{const yy=allowed.map(i=>rest[i*3+1]),distal=pct(yy,.04),proximal=pct(yy,.96);axisSpan=proximal-distal;if(!(axisSpan>.02))return {valid:false,reason:"degenerate-region-axis",count:allowed.length,targetRegion,aCm:null,bCm:null,perimeterCm:null};planeCoord=proximal-axisSpan*q;planeD=(x,y,z)=>y-planeCoord;project=p=>[p[0],p[2]]}
- const allowedSet=new Set(allowed),pts=[],keys=new Set(),eps=1e-8;let triangleHits=0,candidateTriangles=0;
- const add2=p=>{const z=project(p),key=`${Math.round(z[0]*1e5)}:${Math.round(z[1]*1e5)}`;if(keys.has(key))return;keys.add(key);pts.push(z)};
- for(let ti=0;ti+2<tri.length;ti+=3){const ids=[Number(tri[ti]),Number(tri[ti+1]),Number(tri[ti+2])];if(ids.some(i=>i<0||i*3+2>=rest.length))continue;if(ids.filter(i=>allowedSet.has(i)).length<2)continue;candidateTriangles++;const P=ids.map(i=>[rest[i*3],rest[i*3+1],rest[i*3+2]]),D=P.map(p=>planeD(...p));if(Math.min(...D)>eps||Math.max(...D)<-eps)continue;const local=[],lkeys=new Set(),ladd=p=>{const k=`${Math.round(p[0]*1e6)}:${Math.round(p[1]*1e6)}:${Math.round(p[2]*1e6)}`;if(!lkeys.has(k)){lkeys.add(k);local.push(p)}};for(const [i,j] of [[0,1],[1,2],[2,0]]){if(!allowedSet.has(ids[i])||!allowedSet.has(ids[j]))continue;const di=D[i],dj=D[j],pi=P[i],pj=P[j];if(Math.abs(di)<=eps)ladd(pi);if(di*dj<-(eps*eps)){const t=di/(di-dj);ladd([pi[0]+(pj[0]-pi[0])*t,pi[1]+(pj[1]-pi[1])*t,pi[2]+(pj[2]-pi[2])*t])}}if(local.length>=2){triangleHits++;for(const z of local)add2(z)}}
- let method="region-triangle-plane",slabCm=null;
- if(pts.length<6){method="region-adaptive-slab";for(const frac of [.018,.03,.05,.08]){pts.length=0;keys.clear();const slab=Math.max(.0025,axisSpan*frac);for(const vi of allowed){const p0=[rest[vi*3],rest[vi*3+1],rest[vi*3+2]];if(Math.abs(planeD(...p0))>slab)continue;add2(p0)}if(pts.length>=8){slabCm=Number((slab*100).toFixed(3));break}}}
- if(pts.length<6)return {valid:false,reason:"insufficient-cross-section",method,count:pts.length,regionVertices:allowed.length,triangleHits,candidateTriangles,targetRegion,sideSign,axisSpanCm:Number((axisSpan*100).toFixed(3)),planeCoord:Number(planeCoord.toFixed(6)),aCm:null,bCm:null,perimeterCm:null};
- const hull=sammyMorphObsHull2D(pts);if(hull.length<3)return {valid:false,reason:"degenerate-hull",method,count:pts.length,regionVertices:allowed.length,triangleHits,candidateTriangles,targetRegion,axisSpanCm:Number((axisSpan*100).toFixed(3)),aCm:null,bCm:null,perimeterCm:null};
- let minA=Infinity,maxA=-Infinity,minB=Infinity,maxB=-Infinity,per=0;for(const z of hull){minA=Math.min(minA,z[0]);maxA=Math.max(maxA,z[0]);minB=Math.min(minB,z[1]);maxB=Math.max(maxB,z[1])}for(let i=0;i<hull.length;i++){const r=hull[(i+1)%hull.length];per+=Math.hypot(r[0]-hull[i][0],r[1]-hull[i][1])}
- return {valid:true,reason:null,method,count:pts.length,hullPoints:hull.length,regionVertices:allowed.length,triangleHits,candidateTriangles,targetRegion,sideSign,axisSpanCm:Number((axisSpan*100).toFixed(3)),planeCoord:Number(planeCoord.toFixed(6)),slabCm,aCm:Number(((maxA-minA)*100).toFixed(3)),bCm:Number(((maxB-minB)*100).toFixed(3)),perimeterCm:Number((per*100).toFixed(3))}
+let sammyMorphObsSectionEngine=null,sammyMorphObsSectionEnginePromise=null;
+async function sammyMorphObsEnsureSectionEngine(){
+ if(sammyMorphObsSectionEngine)return sammyMorphObsSectionEngine;
+ if(!sammyMorphObsSectionEnginePromise)sammyMorphObsSectionEnginePromise=import("./morph-sections-v2.js?v=0.8.24.12").then(m=>{
+  if(typeof m?.computeLimbProfiles!=="function")throw new Error("Profile-Engine export computeLimbProfiles fehlt");
+  sammyMorphObsSectionEngine=m;return m
+ }).catch(e=>{sammyMorphObsSectionEnginePromise=null;throw e});
+ return sammyMorphObsSectionEnginePromise
 }
-function sammyMorphObsSectionProfiles(rest,heads){const segs={upperarm:[["LeftArm","LeftForeArm"],["RightArm","RightForeArm"]],lowerarm:[["LeftForeArm","LeftHand"],["RightForeArm","RightHand"]],upperleg:[["LeftLeg","LeftShin"],["RightLeg","RightShin"]],lowerleg:[["LeftShin","LeftFoot"],["RightShin","RightFoot"]]},out={};for(const [seg,sides] of Object.entries(segs)){out[seg]={};const debug={};for(const q of [.25,.5,.75]){const raw=sides.map(([a,b])=>sammyMorphObsSectionOne(rest,heads,a,b,q)),good=raw.filter(x=>x?.valid&&Number.isFinite(x.perimeterCm));if(!good.length){out[seg][String(q)]=null;debug[String(q)]=raw.map(x=>({reason:x?.reason||"unknown",method:x?.method||null,count:x?.count||0,regionVertices:x?.regionVertices||0,triangleHits:x?.triangleHits||0,candidateTriangles:x?.candidateTriangles||0,axisSpanCm:x?.axisSpanCm??null}));continue}out[seg][String(q)]={count:good.reduce((n,x)=>n+x.count,0),sideCount:good.length,method:[...new Set(good.map(x=>x.method))].join("+"),triangleHits:good.reduce((n,x)=>n+(x.triangleHits||0),0),aCm:Number((good.reduce((n,x)=>n+x.aCm,0)/good.length).toFixed(3)),bCm:Number((good.reduce((n,x)=>n+x.bCm,0)/good.length).toFixed(3)),perimeterCm:Number((good.reduce((n,x)=>n+x.perimeterCm,0)/good.length).toFixed(3)),axisSpanCm:Number((good.reduce((n,x)=>n+(x.axisSpanCm||0),0)/good.length).toFixed(3))}}if(Object.keys(debug).length)out[seg]._debug=debug}return out}
+function sammyMorphObsSectionProfiles(rest,heads){
+ sammyMorphObsEnsureVertexMap();
+ const engine=sammyMorphObsSectionEngine,tri=trianglesLow?.data,regionMap=sammyMorphObs.regionMap;
+ if(!engine||!rest?.length||!tri?.length||!regionMap?.length){
+  const reason=!engine?"profile-engine-not-loaded":!tri?.length?"missing-low-topology":"missing-region-map",out={};
+  for(const seg of ["upperarm","lowerarm","upperleg","lowerleg"])out[seg]={"0.25":null,"0.5":null,"0.75":null,_debug:{engine:{reason}}};
+  return out
+ }
+ return engine.computeLimbProfiles({rest,heads,triangles:tri,regionMap,jointNames:PUBLIC_JOINT_NAMES})
+}
 function sammyMorphObsSkeletonAbsolute(heads){const ji=n=>PUBLIC_JOINT_NAMES.indexOf(n),dist=(a,b)=>{const ia=ji(a),ib=ji(b);if(ia<0||ib<0)return null;return Math.hypot(heads[ia*3]-heads[ib*3],heads[ia*3+1]-heads[ib*3+1],heads[ia*3+2]-heads[ib*3+2])*1000};const segments={torso1:dist("Hips","Spine1"),torso2:dist("Spine1","Spine2"),torso3:dist("Spine2","Chest"),neck:dist("Chest","Head"),upperarm:((dist("LeftArm","LeftForeArm")||0)+(dist("RightArm","RightForeArm")||0))/2,lowerarm:((dist("LeftForeArm","LeftHand")||0)+(dist("RightForeArm","RightHand")||0))/2,upperleg:((dist("LeftLeg","LeftShin")||0)+(dist("RightLeg","RightShin")||0))/2,lowerleg:((dist("LeftShin","LeftFoot")||0)+(dist("RightShin","RightFoot")||0))/2};return {segmentsMm:Object.fromEntries(Object.entries(segments).map(([k,v])=>[k,Number(v.toFixed(3))])),shoulderJointBreadthMm:Number((dist("LeftArm","RightArm")||0).toFixed(3)),hipJointBreadthMm:Number((dist("LeftLeg","RightLeg")||0).toFixed(3))}}
 function sammyMorphObsRegionalDelta(base,cur){sammyMorphObsEnsureVertexMap();const acc={};for(let v=0;v<sammyMorphObs.regionMap.length;v++){const r=sammyMorphObs.regionMap[v]||"other",q=acc[r]||(acc[r]={n:0,ss:0,sx:0,sy:0,sz:0,ax:0,ay:0,az:0,max:0,moved:0}),dx=cur[v*3]-base[v*3],dy=cur[v*3+1]-base[v*3+1],dz=cur[v*3+2]-base[v*3+2],d=Math.hypot(dx,dy,dz);q.n++;q.ss+=d*d;q.sx+=dx;q.sy+=dy;q.sz+=dz;q.ax+=Math.abs(dx);q.ay+=Math.abs(dy);q.az+=Math.abs(dz);q.max=Math.max(q.max,d);if(d>.0005)q.moved++}const out={};for(const [r,q] of Object.entries(acc))out[r]={vertices:q.n,rmsMm:Number((Math.sqrt(q.ss/q.n)*1000).toFixed(3)),maxMm:Number((q.max*1000).toFixed(3)),meanSignedMm:[q.sx/q.n*1000,q.sy/q.n*1000,q.sz/q.n*1000].map(x=>Number(x.toFixed(3))),meanAbsMm:[q.ax/q.n*1000,q.ay/q.n*1000,q.az/q.n*1000].map(x=>Number(x.toFixed(3))),movedPct:Number((100*q.moved/q.n).toFixed(2))};return out}
 function sammyMorphObsSkeletonDelta(baseHeads,heads){
@@ -8182,7 +8182,7 @@ async function sammyMorphObsStepSingle(run){const item=run.plan[run.cursor],d=sa
 async function sammyMorphObsStepAnalysis(run){const records=await sammyMorphObsGetRecords(run.runId);run.analysis=sammyMorphObsAnalyzeRecords(run,records);run.pairCandidates=run.analysis.pairCandidates;run.interactionPlan=sammyMorphObsBuildInteractionPlan(run);run.stage=run.interactionPlan.length?"interaction":"complete";run.cursor=0;sammyMorphObsRenderResults();if(run.stage==="complete"){run.summary=sammyMorphObsFinalizeSummary(run);run.completedAt=new Date().toISOString()}sammyMorphObsLive("Taxonomie berechnet",[["Morphs",run.analysis.sliderCount],["Paar-Kandidaten",run.pairCandidates.length],["Interaktionschecks",run.interactionPlan.length]])}
 async function sammyMorphObsStepInteraction(run){const item=run.interactionPlan[run.cursor],q=await sammyMorphObsInteraction(run,item),rec=sammyMorphObsRecord(run,"interaction",`${item.a} × ${item.b} · ${item.referenceId}`,q);await sammyMorphObsPutRecord(rec);run.interactions.push(q);sammyMorphObsLive(`${item.relation} · ${item.a} × ${item.b}`,[['Maß-Interaktion',`${q.measureInteractionRmseCm?.toFixed?.(3)??'—'} cm`],['Profil max',`${q.sectionInteraction?.maxPerimeterCm?.toFixed?.(3)??'—'} cm`],['RIG max',`${q.skeletonInteraction?.maxMm?.toFixed?.(2)??'—'} mm`],['Volumen',`${q.volumeInteractionL>=0?'+':''}${q.volumeInteractionL.toFixed(2)} L`]]);run.cursor++;if(run.cursor>=run.interactionPlan.length){run.stage="complete";run.cursor=0;run.summary=sammyMorphObsFinalizeSummary(run);run.completedAt=new Date().toISOString();sammyMorphObsRenderResults()}}
 async function sammyMorphObsRunner(){const run=sammyMorphObs.run;if(!run)return;sammyMorphObs.running=true;sammyMorphObs.paused=false;sammyMorphObs.restore=sammyMorphObsCaptureState();sammyMorphObs.baselines.clear();sammyMorphObsStatus("Observatory startet …");try{if(!sammyMeasureSession)sammyEnterMeasureMode();if(sammyMeasureOverlayGroup)sammyMeasureOverlayGroup.visible=false;while(sammyMorphObs.running&&!sammyMorphObs.paused&&run.stage!=="complete"){if(run.stage==="reference")await sammyMorphObsStepReference(run);else if(run.stage==="single")await sammyMorphObsStepSingle(run);else if(run.stage==="analysis")await sammyMorphObsStepAnalysis(run);else if(run.stage==="interaction")await sammyMorphObsStepInteraction(run);else throw new Error(`Unbekannte Observatory-Stage ${run.stage}`);await sammyMorphObsPutRun(run);sammyMorphObsStatus()}if(run.stage==="complete"){run.summary=run.summary||sammyMorphObsFinalizeSummary(run);await sammyMorphObsPutRun(run);sammyMorphObs.lastRun=run;sammyMorphObsStatus("Observatory abgeschlossen");sammyMorphObsLive("Fertig",[["Morphs",run.summary.sliderCount],["Interaktionen",run.summary.interactionsTested],["Kontext",run.summary.contextDependenceEvaluated?`${run.summary.contextDependentMorphs} auffällig`:"nicht geprüft"]])}}catch(e){console.error("Morph Observatory",e);sammyMorphObs.paused=true;sammyMorphObsStatus(`FEHLER: ${e?.message||e}`);sammyReportError?.(e,{source:"Morph Observatory"})}finally{sammyMorphObs.running=false;await sammyMorphObsRestoreState();sammyMorphObsStatus();sammyMorphObsRenderResults()}}
-async function sammyMorphObsStart(){if(sammyMorphObs.running)return;if(!annyPackLoaded){sammyMorphObsStatus("Anny-Pack ist noch nicht bereit.");return}if(sammyCalibration?.running||sammySolver24?.running||sammyAnsLab?.dRunning||sammyAnsLab?.d2Running||sammyAnsLab?.d3Running){sammyMorphObsStatus("Ein anderer LAB-Lauf ist aktiv. Erst diesen beenden/pausieren.");return}let run=sammyMorphObs.run;if(!run||run.schema!==SAMMY_MORPH_OBS_SCHEMA||run.stage==="complete"){run=sammyMorphObsNewRun(sammyMorphObs.mode);sammyMorphObs.run=run;sammyMorphObs.lastRun=run;await sammyMorphObsPutRun(run)}sammyMorphObsRunner()}
+async function sammyMorphObsStart(){if(sammyMorphObs.running)return;if(!annyPackLoaded){sammyMorphObsStatus("Anny-Pack ist noch nicht bereit.");return}try{sammyMorphObsStatus("Profile/Section v2 wird geladen …");await sammyMorphObsEnsureSectionEngine()}catch(e){console.error("Profile engine load",e);sammyMorphObsStatus(`Profile/Section v2 konnte nicht geladen werden: ${e?.message||e}`);return}if(sammyCalibration?.running||sammySolver24?.running||sammyAnsLab?.dRunning||sammyAnsLab?.d2Running||sammyAnsLab?.d3Running){sammyMorphObsStatus("Ein anderer LAB-Lauf ist aktiv. Erst diesen beenden/pausieren.");return}let run=sammyMorphObs.run;if(!run||run.schema!==SAMMY_MORPH_OBS_SCHEMA||run.stage==="complete"){run=sammyMorphObsNewRun(sammyMorphObs.mode);sammyMorphObs.run=run;sammyMorphObs.lastRun=run;await sammyMorphObsPutRun(run)}sammyMorphObsRunner()}
 function sammyMorphObsPause(){if(!sammyMorphObs.running)return;sammyMorphObs.paused=true;sammyMorphObsStatus("Pause nach dem aktuellen Zustand; letzter vollständiger Record bleibt gespeichert.")}
 async function sammyMorphObsReset(){const run=sammyMorphObs.run;if(sammyMorphObs.running||!run)return;if(!confirm("Morph-Observatory Lauf löschen? SOLV/INFL/ANSR bleiben unverändert."))return;await sammyMorphObsDeleteRun(run.runId);sammyMorphObs.run=null;sammyMorphObs.lastRun=null;sammyMorphObs.baselines.clear();sammyMorphObsStatus("Observatory gelöscht.");sammyMorphObsRenderResults();const b=$("#sammyMorphObsProgress");if(b)b.style.width="0%"}
 async function sammyMorphObsLoadLatest(){try{const compatibleVersions=new Set([SAMMY_APP_VERSION]),runs=(await sammyMorphObsGetRuns()).filter(r=>r?.schema===SAMMY_MORPH_OBS_SCHEMA&&compatibleVersions.has(r?.appVersion)).sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||""))),r=runs.find(x=>x.stage!=="complete")||runs[0]||null;sammyMorphObs.run=r;sammyMorphObs.lastRun=r;if(r){sammyMorphObs.mode=r.mode||"quick";document.querySelectorAll("[data-mobs-mode]").forEach(b=>b.classList.toggle("active",b.dataset.mobsMode===sammyMorphObs.mode));sammyMorphObsRenderResults();sammyMorphObsStatus()}else{sammyMorphObs.mode="quick";document.querySelectorAll("[data-mobs-mode]").forEach(b=>b.classList.toggle("active",b.dataset.mobsMode==="quick"));sammyMorphObsStatus("Quick bereit · getrennte ♂ / ♀ Taxonomie + neutraler Mid-Shape-Diagnose-Track.")}}catch(e){console.warn("Morph Observatory resume",e)}}
@@ -8247,22 +8247,5 @@ async function sammyMorphObsExportAtlasZip(){
 }
 function sammyMorphObsInstallUi(){document.querySelectorAll("[data-mobs-mode]").forEach(b=>b.onclick=()=>sammyMorphObsSetMode(b.dataset.mobsMode));document.querySelectorAll("[data-mobs-track]").forEach(b=>b.onclick=()=>sammyMorphObsSetResultTrack(b.dataset.mobsTrack));const start=$("#sammyMorphObsStart"),pause=$("#sammyMorphObsPause"),reset=$("#sammyMorphObsReset"),sum=$("#sammyMorphObsSummary"),full=$("#sammyMorphObsFull"),atlas=$("#sammyMorphObsAtlasMake"),atlasEx=$("#sammyMorphObsAtlasExport"),atlasBulk=$("#sammyMorphObsAtlasBulk"),atlasTrack=$("#sammyMorphObsAtlasTrack");if(start)start.onclick=sammyMorphObsStart;if(pause)pause.onclick=sammyMorphObsPause;if(reset)reset.onclick=sammyMorphObsReset;if(sum)sum.onclick=()=>sammyMorphObsExport(true);if(full)full.onclick=()=>sammyMorphObsExport(false);if(atlas)atlas.onclick=sammyMorphObsMakeAtlas;if(atlasEx)atlasEx.onclick=sammyMorphObsExportAtlas;if(atlasBulk)atlasBulk.onclick=sammyMorphObsExportAtlasZip;if(atlasTrack)atlasTrack.onchange=()=>{sammyMorphObs.atlasTrack=atlasTrack.value;sammyMorphObs.atlasBlob=null;if(atlasEx)atlasEx.disabled=true};sammyMorphObsLoadLatest()}
 
-// -----------------------------------------------------------------------------
-// v0.8.24.11 · FINAL MODULE BOOTSTRAP
-// This MUST remain the final executable block in app.js. By this point every
-// late LAB/solver/mass/morph lexical declaration has been initialized.
-// UI failures are isolated from the model bootstrap so the splash can never
-// remain indefinitely at "Körpermodell wird vorbereitet …" just because a
-// secondary LAB binding fails.
-// -----------------------------------------------------------------------------
-function sammyBootstrapAfterModuleReady(){
- let uiError=null,morphUiError=null;
- try{sammyInitUi()}catch(e){uiError=e;console.error("Sammy UI bootstrap failed",e)}
- try{sammyMorphObsInstallUi()}catch(e){morphUiError=e;console.error("Morph Observatory UI bootstrap failed",e)}
- setTimeout(()=>{
-  autoStartRuntime().catch?.(e=>console.error("Sammy runtime bootstrap rejected",e));
-  if(uiError)setTimeout(()=>sammyReportError?.(uiError,{source:"UI bootstrap v0.8.24.11"}),0);
-  if(morphUiError)setTimeout(()=>sammyReportError?.(morphUiError,{source:"MORF UI bootstrap v0.8.24.11"}),0);
- },0);
-}
-sammyBootstrapAfterModuleReady();
+// MORPH UI can only be installed after all Observatory declarations exist.
+sammyMorphObsInstallUi();
