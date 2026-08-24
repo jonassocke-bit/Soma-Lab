@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {unzipSync} from "https://esm.sh/fflate@0.8.2";
 
-const SAMMY_APP_VERSION="0.8.24.1";
+const SAMMY_APP_VERSION="0.8.24.2";
 
 const HF="https://huggingface.co/nvidia/SOMA-X/resolve/main/";
 const SHAPE=HF+"SOMA_neutral.npz?download=true";
@@ -7539,8 +7539,8 @@ function sammyLabInitUI(){
 // re-linearized on the CURRENT REAL MESH with a local finite-difference Jacobian.
 // -----------------------------------------------------------------------------
 const SAMMY_SOLVER24_SCHEMA="sammy-solver24-local-mesh-v2";
-const SAMMY_SOLVER24_PRIOR_URL="./solver24-prior-v1.json?v=0.8.24.1";
-const SAMMY_SOLVER24_ANTHRO_URL="./anthro24-conditional-prior-v1.json?v=0.8.24.1";
+const SAMMY_SOLVER24_PRIOR_URL="./solver24-prior-v1.json?v=0.8.24.2";
+const SAMMY_SOLVER24_ANTHRO_URL="./anthro24-conditional-prior-v1.json?v=0.8.24.2";
 const SAMMY_SOLVER24_CONFIG={
  quick:{label:"Quick",seeds:2,candidates:8,iterations:4,blindTargets:1,deltaCore:.040,deltaLocal:.060,maxCoreStep:.10,maxLocalStep:.18,lambda:.42,stopRmse:.30,guardMaxScore:10,fitWarnRmse:.75,fitHardRmse:1.25,fitWarnWorst:2.0,fitHardWorst:4.0},
  standard:{label:"Standard",seeds:3,candidates:12,iterations:6,blindTargets:3,deltaCore:.035,deltaLocal:.050,maxCoreStep:.085,maxLocalStep:.15,lambda:.50,stopRmse:.22,guardMaxScore:8,fitWarnRmse:.55,fitHardRmse:.90,fitWarnWorst:1.5,fitHardWorst:3.0},
@@ -7738,9 +7738,9 @@ function sammyBodyAuditInitUI(){
 }
 
 
-// v0.8.20.2 boot-order hotfix: run only after every LAB/Body-Audit const/let is initialized.
-sammyInitUi();
-setTimeout(()=>autoStartRuntime(),0);
+// Boot is intentionally deferred to the absolute end of this module.
+// v0.8.24.2 restores the v0.8.20.2 invariant: no UI/bootstrap code may run
+// before every later LAB lexical declaration (including MORPH OBSERVATORY) exists.
 
 
 // ---------------------------------------------------------------------------
@@ -7910,7 +7910,7 @@ for(const [id,txt] of Object.entries({
 // exterior mesh-volume diagnostics, a soft mass row, and a weak objective
 // composition proxy. Raw Anny core:muscle is NOT interpreted as muscle %.
 // -----------------------------------------------------------------------------
-const SAMMY_MASS_V1_URL="./mass-composition-v1.json?v=0.8.24.1";
+const SAMMY_MASS_V1_URL="./mass-composition-v1.json?v=0.8.24.2";
 sammySolver24.massModel=null;sammySolver24.massPromise=null;sammySolver24.massActiveTarget=null;sammySolver24.massJacobian=null;sammySolver24.massTopology=null;
 async function sammyMassLoadModel(){
  if(sammySolver24.massModel)return sammySolver24.massModel;if(sammySolver24.massPromise)return sammySolver24.massPromise;
@@ -8154,4 +8154,13 @@ function sammyMorphObsDrawSkeleton(ctx,baseHeads,heads,ox,oy,w,h){const ndc=[];f
 function sammyMorphObsAtlasTrackLabel(track){return track==="female"?"♀ FRAU":track==="neutral"?"◇ NEUTRAL / MID":"♂ MANN"}
 async function sammyMorphObsMakeAtlas(){const run=sammyMorphObs.run||sammyMorphObs.lastRun,id=$("#sammyMorphObsAtlasSlider")?.value,track=$("#sammyMorphObsAtlasTrack")?.value||sammyMorphObs.atlasTrack||"male";if(!run?.analysis||!id)return;const d=sammyMorphObsDescriptor(run,id);if(!d)return;sammyMorphObs.atlasTrack=track;const ref=sammyMorphObsAtlasRef(d,track),canvas=$("#sammyMorphObsAtlasCanvas"),hint=$("#sammyMorphObsAtlasHint");if(!canvas)return;if(!ref){if(hint)hint.textContent="Dieser Morph ist absichtlich weiblich-spezifisch; Neutral/Mann wird dafür nicht erzeugt.";return}const levels=[Number(d.min),sammyMorphObsNeutralFor(d,ref),Number(d.max)],labels=["MIN","REFERENZ","MAX"],views=["front","side","back"],restore=sammyMorphObsCaptureState(),camState=sammyMorphObsCameraSnapshot(),oldOverlay=sammyMeasureOverlayGroup?.visible??false,bodyW=250,skelW=110,contentH=393,headH=27,cellW=bodyW+skelW,cellH=headH+contentH;if(hint)hint.textContent=`Atlas v2 wird erzeugt · ${d.label} · ${sammyMorphObsAtlasTrackLabel(track)} …`;try{if(sammyMeasureOverlayGroup)sammyMeasureOverlayGroup.visible=false;renderer.setPixelRatio(1);renderer.setSize(bodyW,contentH,false);cam.aspect=bodyW/contentH;cam.updateProjectionMatrix();const states=[];for(const value of levels){await sammyMorphObsApplyShape(sammyMorphObsShape(ref,d,value));const rig=reconstructExactAnnyRestRig(annyLastCoeffs);states.push({value,rest:new Float32Array(currentRestLow),heads:new Float32Array(rig.heads)})}const frameBox=sammyMorphObsUnionBBox(states.map(x=>x.rest)),base=states[1];canvas.width=cellW*3;canvas.height=cellH*3+38;const ctx=canvas.getContext("2d");ctx.fillStyle="#050505";ctx.fillRect(0,0,canvas.width,canvas.height);for(let r=0;r<states.length;r++){await sammyMorphObsApplyShape(sammyMorphObsShape(ref,d,states[r].value));for(let c=0;c<views.length;c++){const view=views[c],x=c*cellW,y=r*cellH;sammyMorphObsCaptureView(view,frameBox,bodyW,contentH);const shot=sammyMorphObsQuantizedCanvas(renderer.domElement,bodyW,contentH,20);ctx.drawImage(shot,x,y+headH,bodyW,contentH);ctx.fillStyle="#050505";ctx.fillRect(x+bodyW,y+headH,skelW,contentH);ctx.fillStyle="rgba(0,0,0,.78)";ctx.fillRect(x,y,cellW,headH);ctx.fillStyle="#f2f2f2";ctx.font="bold 13px system-ui";ctx.fillText(`${labels[r]} · ${view.toUpperCase()} · ${states[r].value.toFixed(2)}`,x+9,y+18);const surf=sammyMorphObsSurfaceContour(ctx,base.rest,states[r].rest,x,y+headH,bodyW,contentH),sk=sammyMorphObsDrawSkeleton(ctx,base.heads,states[r].heads,x+bodyW,y+headH,skelW,contentH);if(surf.thresholdMm){ctx.font="8px system-ui";ctx.fillStyle="#ff6b63";ctx.fillText(`Surface Δ≥${surf.thresholdMm.toFixed(1)} mm`,x+7,y+cellH-7)}ctx.strokeStyle="rgba(255,255,255,.08)";ctx.strokeRect(x+.5,y+.5,cellW-1,cellH-1)}}const tq=run.analysis?.byTrack?.[track]?.sliders?.find(x=>x.id===d.id),footerY=cellH*3;ctx.fillStyle="rgba(0,0,0,.92)";ctx.fillRect(0,footerY,canvas.width,38);ctx.fillStyle="#fff";ctx.font="bold 14px system-ui";ctx.fillText(`${d.label} · ${d.id} · ${sammyMorphObsAtlasTrackLabel(track)}`,10,footerY+16);ctx.font="9px system-ui";ctx.fillStyle="rgba(235,235,235,.70)";ctx.fillText(`${tq?.role||"diagnostic"} · 20 Graustufen · Rot = geometrische Änderung gegenüber Referenz · SOMA-Rig separat`,10,footerY+31);canvas.hidden=false;sammyMorphObs.atlasBlob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",.80));const ex=$("#sammyMorphObsAtlasExport");if(ex)ex.disabled=!sammyMorphObs.atlasBlob;if(hint)hint.textContent="Atlas v2 fertig · Mannequin + SOMA-Skelett · rote Delta-Kontur · 20 Graustufen. JPEG bleibt außerhalb des JSON."}catch(e){console.error("Morph atlas v2",e);if(hint)hint.textContent=`Atlas-Fehler: ${e.message}`}finally{annyParams={...restore.core};for(const k of Object.keys(annyLocalValues||{}))annyLocalValues[k]=Number(restore.local?.[k]||0);applyAnnyParams();sammyMeasureSyncLocalUiV3?.();if(restore.relative)sammyApplyMeasurementRelative(new Float32Array(restore.relative),"Morph Atlas v2 → previous pose");if(sammyMeasureOverlayGroup)sammyMeasureOverlayGroup.visible=oldOverlay;sammyMorphObsCameraRestore(camState)}}
 function sammyMorphObsExportAtlas(){if(!sammyMorphObs.atlasBlob)return;const id=$("#sammyMorphObsAtlasSlider")?.value||"morph",track=$("#sammyMorphObsAtlasTrack")?.value||sammyMorphObs.atlasTrack||"male",a=document.createElement("a");a.href=URL.createObjectURL(sammyMorphObs.atlasBlob);a.download=`Sammy_MorphAtlas_v2_${track}_${id.replace(/[^a-z0-9_-]+/gi,"_")}.jpg`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
-(function sammyMorphObsInstallUi(){document.querySelectorAll("[data-mobs-mode]").forEach(b=>b.onclick=()=>sammyMorphObsSetMode(b.dataset.mobsMode));document.querySelectorAll("[data-mobs-track]").forEach(b=>b.onclick=()=>sammyMorphObsSetResultTrack(b.dataset.mobsTrack));const start=$("#sammyMorphObsStart"),pause=$("#sammyMorphObsPause"),reset=$("#sammyMorphObsReset"),sum=$("#sammyMorphObsSummary"),full=$("#sammyMorphObsFull"),atlas=$("#sammyMorphObsAtlasMake"),atlasEx=$("#sammyMorphObsAtlasExport"),atlasTrack=$("#sammyMorphObsAtlasTrack");if(start)start.onclick=sammyMorphObsStart;if(pause)pause.onclick=sammyMorphObsPause;if(reset)reset.onclick=sammyMorphObsReset;if(sum)sum.onclick=()=>sammyMorphObsExport(true);if(full)full.onclick=()=>sammyMorphObsExport(false);if(atlas)atlas.onclick=sammyMorphObsMakeAtlas;if(atlasEx)atlasEx.onclick=sammyMorphObsExportAtlas;if(atlasTrack)atlasTrack.onchange=()=>{sammyMorphObs.atlasTrack=atlasTrack.value;sammyMorphObs.atlasBlob=null;if(atlasEx)atlasEx.disabled=true};sammyMorphObsLoadLatest()})();
+function sammyMorphObsInstallUi(){document.querySelectorAll("[data-mobs-mode]").forEach(b=>b.onclick=()=>sammyMorphObsSetMode(b.dataset.mobsMode));document.querySelectorAll("[data-mobs-track]").forEach(b=>b.onclick=()=>sammyMorphObsSetResultTrack(b.dataset.mobsTrack));const start=$("#sammyMorphObsStart"),pause=$("#sammyMorphObsPause"),reset=$("#sammyMorphObsReset"),sum=$("#sammyMorphObsSummary"),full=$("#sammyMorphObsFull"),atlas=$("#sammyMorphObsAtlasMake"),atlasEx=$("#sammyMorphObsAtlasExport"),atlasTrack=$("#sammyMorphObsAtlasTrack");if(start)start.onclick=sammyMorphObsStart;if(pause)pause.onclick=sammyMorphObsPause;if(reset)reset.onclick=sammyMorphObsReset;if(sum)sum.onclick=()=>sammyMorphObsExport(true);if(full)full.onclick=()=>sammyMorphObsExport(false);if(atlas)atlas.onclick=sammyMorphObsMakeAtlas;if(atlasEx)atlasEx.onclick=sammyMorphObsExportAtlas;if(atlasTrack)atlasTrack.onchange=()=>{sammyMorphObs.atlasTrack=atlasTrack.value;sammyMorphObs.atlasBlob=null;if(atlasEx)atlasEx.disabled=true};sammyMorphObsLoadLatest()}
+
+// -----------------------------------------------------------------------------
+// Sammy v0.8.24.2 · BOOT ORDER HOTFIX
+// Absolute-end bootstrap. Keep these calls as the final executable statements
+// in app.js so a newly appended LAB can never reintroduce a TDZ startup abort.
+// -----------------------------------------------------------------------------
+sammyInitUi();
+sammyMorphObsInstallUi();
+setTimeout(()=>autoStartRuntime(),0);
