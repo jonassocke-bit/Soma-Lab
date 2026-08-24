@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {unzipSync} from "https://esm.sh/fflate@0.8.2";
 
-const SAMMY_APP_VERSION="0.8.24.2";
+const SAMMY_APP_VERSION="0.8.24.3";
 
 const HF="https://huggingface.co/nvidia/SOMA-X/resolve/main/";
 const SHAPE=HF+"SOMA_neutral.npz?download=true";
@@ -7539,8 +7539,8 @@ function sammyLabInitUI(){
 // re-linearized on the CURRENT REAL MESH with a local finite-difference Jacobian.
 // -----------------------------------------------------------------------------
 const SAMMY_SOLVER24_SCHEMA="sammy-solver24-local-mesh-v2";
-const SAMMY_SOLVER24_PRIOR_URL="./solver24-prior-v1.json?v=0.8.24.2";
-const SAMMY_SOLVER24_ANTHRO_URL="./anthro24-conditional-prior-v1.json?v=0.8.24.2";
+const SAMMY_SOLVER24_PRIOR_URL="./solver24-prior-v1.json?v=0.8.24.3";
+const SAMMY_SOLVER24_ANTHRO_URL="./anthro24-conditional-prior-v1.json?v=0.8.24.3";
 const SAMMY_SOLVER24_CONFIG={
  quick:{label:"Quick",seeds:2,candidates:8,iterations:4,blindTargets:1,deltaCore:.040,deltaLocal:.060,maxCoreStep:.10,maxLocalStep:.18,lambda:.42,stopRmse:.30,guardMaxScore:10,fitWarnRmse:.75,fitHardRmse:1.25,fitWarnWorst:2.0,fitHardWorst:4.0},
  standard:{label:"Standard",seeds:3,candidates:12,iterations:6,blindTargets:3,deltaCore:.035,deltaLocal:.050,maxCoreStep:.085,maxLocalStep:.15,lambda:.50,stopRmse:.22,guardMaxScore:8,fitWarnRmse:.55,fitHardRmse:.90,fitWarnWorst:1.5,fitHardWorst:3.0},
@@ -7738,9 +7738,11 @@ function sammyBodyAuditInitUI(){
 }
 
 
-// Boot is intentionally deferred to the absolute end of this module.
-// v0.8.24.2 restores the v0.8.20.2 invariant: no UI/bootstrap code may run
-// before every later LAB lexical declaration (including MORPH OBSERVATORY) exists.
+// v0.8.24.3: restore the proven v0.8.24.0 bootstrap position.
+// The prior 0.8.24.1/2 startup failure was a module parse error in the later
+// MORPH cross-sex comparator, not a TDZ/boot-order failure.
+sammyInitUi();
+setTimeout(()=>autoStartRuntime(),0);
 
 
 // ---------------------------------------------------------------------------
@@ -7910,7 +7912,7 @@ for(const [id,txt] of Object.entries({
 // exterior mesh-volume diagnostics, a soft mass row, and a weak objective
 // composition proxy. Raw Anny core:muscle is NOT interpreted as muscle %.
 // -----------------------------------------------------------------------------
-const SAMMY_MASS_V1_URL="./mass-composition-v1.json?v=0.8.24.2";
+const SAMMY_MASS_V1_URL="./mass-composition-v1.json?v=0.8.24.3";
 sammySolver24.massModel=null;sammySolver24.massPromise=null;sammySolver24.massActiveTarget=null;sammySolver24.massJacobian=null;sammySolver24.massTopology=null;
 async function sammyMassLoadModel(){
  if(sammySolver24.massModel)return sammySolver24.massModel;if(sammySolver24.massPromise)return sammySolver24.massPromise;
@@ -8105,7 +8107,7 @@ function sammyMorphObsAnalyzeTrack(run,records,track){
 function sammyMorphObsCrossSex(byTrack){
  const tracks=["male","female","neutral"],maps=Object.fromEntries(tracks.map(t=>[t,new Map((byTrack[t]?.sliders||[]).map(x=>[x.id,x]))])),ids=new Set([...maps.male.keys(),...maps.female.keys(),...maps.neutral.keys()]),sliders=[];
  for(const id of ids){const m=maps.male.get(id),f=maps.female.get(id),n=maps.neutral.get(id),label=m?.label||f?.label||n?.label||id;if(!m||!f){sliders.push({id,label,status:"sex-specific",maleRole:m?.role||null,femaleRole:f?.role||null,neutralRole:n?.role||null,measureCosine:null,rigStrengthRatio:null,topMeasureAgreement:false});continue}const cos=sammyMorphObsCos(m.vector,f.vector),hi=Math.max(m.maxJointMm,f.maxJointMm),lo=Math.min(m.maxJointMm,f.maxJointMm),ratio=hi<.5?1:hi/Math.max(.5,lo),roleAgreement=m.role===f.role,topMeasureAgreement=m.topMeasures?.[0]?.id===f.topMeasures?.[0]?.id,status=roleAgreement&&cos>=.85&&ratio<=2.2?"stable":"divergent";sliders.push({id,label,status,maleRole:m.role,femaleRole:f.role,neutralRole:n?.role||null,measureCosine:Number(cos.toFixed(3)),rigStrengthRatio:Number(ratio.toFixed(2)),topMeasureAgreement,maleMaxJointMm:m.maxJointMm,femaleMaxJointMm:f.maxJointMm,maleTopMeasure:m.topMeasures?.[0]||null,femaleTopMeasure:f.topMeasures?.[0]||null})}
- const stableCount=sliders.filter(x=>x.status==="stable").length,divergentCount=sliders.filter(x=>x.status==="divergent").length,sexSpecificCount=sliders.filter(x=>x.status==="sex-specific").length;return {schema:"sammy-morph-cross-sex-v1",generated:new Date().toISOString(),stableCount,divergentCount,sexSpecificCount,sliders:sliders.sort((a,b)=>({divergent:0,"sex-specific":1,stable:2}[a.status]-({divergent:0,"sex-specific":1,stable:2}[b.status])||a.label.localeCompare(b.label)),interpretation:"Male and female classifications are computed independently. Cross-sex is comparison only; neutral is a diagnostic mid-shape and is not averaged into either sex."}
+ const stableCount=sliders.filter(x=>x.status==="stable").length,divergentCount=sliders.filter(x=>x.status==="divergent").length,sexSpecificCount=sliders.filter(x=>x.status==="sex-specific").length,order={divergent:0,"sex-specific":1,stable:2};return {schema:"sammy-morph-cross-sex-v1",generated:new Date().toISOString(),stableCount,divergentCount,sexSpecificCount,sliders:sliders.sort((a,b)=>(order[a.status]-order[b.status])||a.label.localeCompare(b.label)),interpretation:"Male and female classifications are computed independently. Cross-sex is comparison only; neutral is a diagnostic mid-shape and is not averaged into either sex."}
 }
 function sammyMorphObsAnalyzeRecords(run,records){const byTrack={male:sammyMorphObsAnalyzeTrack(run,records,"male"),female:sammyMorphObsAnalyzeTrack(run,records,"female"),neutral:sammyMorphObsAnalyzeTrack(run,records,"neutral")},pairCandidates=[...byTrack.male.pairCandidates,...byTrack.female.pairCandidates,...byTrack.neutral.pairCandidates],crossSex=sammyMorphObsCrossSex(byTrack);return {schema:"sammy-morph-taxonomy-v1.1",generated:new Date().toISOString(),sliderCount:run.sliders.length,tracks:["male","female","neutral"],byTrack,crossSex,pairCandidateCount:pairCandidates.length,pairCandidates,interpretation:"Sex split first: male/female are independent taxonomies; neutral is an interpolated diagnostic. Pair hypotheses are generated inside each track, never from a male/female average. Visual Atlas v2 remains the human semantic confirmation layer."}}
 function sammyMorphObsPairValue(d,ref){const b=sammyMorphObsNeutralFor(d,ref),hi=Number(d.max);return Number((b+(hi-b)*.55).toFixed(6))}
@@ -8156,11 +8158,5 @@ async function sammyMorphObsMakeAtlas(){const run=sammyMorphObs.run||sammyMorphO
 function sammyMorphObsExportAtlas(){if(!sammyMorphObs.atlasBlob)return;const id=$("#sammyMorphObsAtlasSlider")?.value||"morph",track=$("#sammyMorphObsAtlasTrack")?.value||sammyMorphObs.atlasTrack||"male",a=document.createElement("a");a.href=URL.createObjectURL(sammyMorphObs.atlasBlob);a.download=`Sammy_MorphAtlas_v2_${track}_${id.replace(/[^a-z0-9_-]+/gi,"_")}.jpg`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
 function sammyMorphObsInstallUi(){document.querySelectorAll("[data-mobs-mode]").forEach(b=>b.onclick=()=>sammyMorphObsSetMode(b.dataset.mobsMode));document.querySelectorAll("[data-mobs-track]").forEach(b=>b.onclick=()=>sammyMorphObsSetResultTrack(b.dataset.mobsTrack));const start=$("#sammyMorphObsStart"),pause=$("#sammyMorphObsPause"),reset=$("#sammyMorphObsReset"),sum=$("#sammyMorphObsSummary"),full=$("#sammyMorphObsFull"),atlas=$("#sammyMorphObsAtlasMake"),atlasEx=$("#sammyMorphObsAtlasExport"),atlasTrack=$("#sammyMorphObsAtlasTrack");if(start)start.onclick=sammyMorphObsStart;if(pause)pause.onclick=sammyMorphObsPause;if(reset)reset.onclick=sammyMorphObsReset;if(sum)sum.onclick=()=>sammyMorphObsExport(true);if(full)full.onclick=()=>sammyMorphObsExport(false);if(atlas)atlas.onclick=sammyMorphObsMakeAtlas;if(atlasEx)atlasEx.onclick=sammyMorphObsExportAtlas;if(atlasTrack)atlasTrack.onchange=()=>{sammyMorphObs.atlasTrack=atlasTrack.value;sammyMorphObs.atlasBlob=null;if(atlasEx)atlasEx.disabled=true};sammyMorphObsLoadLatest()}
 
-// -----------------------------------------------------------------------------
-// Sammy v0.8.24.2 · BOOT ORDER HOTFIX
-// Absolute-end bootstrap. Keep these calls as the final executable statements
-// in app.js so a newly appended LAB can never reintroduce a TDZ startup abort.
-// -----------------------------------------------------------------------------
-sammyInitUi();
+// MORPH UI can only be installed after all Observatory declarations exist.
 sammyMorphObsInstallUi();
-setTimeout(()=>autoStartRuntime(),0);
