@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {unzipSync} from "https://esm.sh/fflate@0.8.2";
 
-const SAMMY_APP_VERSION="0.8.24.4";
+const SAMMY_APP_VERSION="0.8.24.5";
 
 const HF="https://huggingface.co/nvidia/SOMA-X/resolve/main/";
 const SHAPE=HF+"SOMA_neutral.npz?download=true";
@@ -7539,8 +7539,8 @@ function sammyLabInitUI(){
 // re-linearized on the CURRENT REAL MESH with a local finite-difference Jacobian.
 // -----------------------------------------------------------------------------
 const SAMMY_SOLVER24_SCHEMA="sammy-solver24-local-mesh-v2";
-const SAMMY_SOLVER24_PRIOR_URL="./solver24-prior-v1.json?v=0.8.24.4";
-const SAMMY_SOLVER24_ANTHRO_URL="./anthro24-conditional-prior-v1.json?v=0.8.24.4";
+const SAMMY_SOLVER24_PRIOR_URL="./solver24-prior-v1.json?v=0.8.24.5";
+const SAMMY_SOLVER24_ANTHRO_URL="./anthro24-conditional-prior-v1.json?v=0.8.24.5";
 const SAMMY_SOLVER24_CONFIG={
  quick:{label:"Quick",seeds:2,candidates:8,iterations:4,blindTargets:1,deltaCore:.040,deltaLocal:.060,maxCoreStep:.10,maxLocalStep:.18,lambda:.42,stopRmse:.30,guardMaxScore:10,fitWarnRmse:.75,fitHardRmse:1.25,fitWarnWorst:2.0,fitHardWorst:4.0},
  standard:{label:"Standard",seeds:3,candidates:12,iterations:6,blindTargets:3,deltaCore:.035,deltaLocal:.050,maxCoreStep:.085,maxLocalStep:.15,lambda:.50,stopRmse:.22,guardMaxScore:8,fitWarnRmse:.55,fitHardRmse:.90,fitWarnWorst:1.5,fitHardWorst:3.0},
@@ -7738,7 +7738,7 @@ function sammyBodyAuditInitUI(){
 }
 
 
-// v0.8.24.4: restore the proven v0.8.24.0 bootstrap position.
+// v0.8.24.5: restore the proven v0.8.24.0 bootstrap position.
 // The prior 0.8.24.1/2 startup failure was a module parse error in the later
 // MORPH cross-sex comparator, not a TDZ/boot-order failure.
 sammyInitUi();
@@ -7912,7 +7912,7 @@ for(const [id,txt] of Object.entries({
 // exterior mesh-volume diagnostics, a soft mass row, and a weak objective
 // composition proxy. Raw Anny core:muscle is NOT interpreted as muscle %.
 // -----------------------------------------------------------------------------
-const SAMMY_MASS_V1_URL="./mass-composition-v1.json?v=0.8.24.4";
+const SAMMY_MASS_V1_URL="./mass-composition-v1.json?v=0.8.24.5";
 sammySolver24.massModel=null;sammySolver24.massPromise=null;sammySolver24.massActiveTarget=null;sammySolver24.massJacobian=null;sammySolver24.massTopology=null;
 async function sammyMassLoadModel(){
  if(sammySolver24.massModel)return sammySolver24.massModel;if(sammySolver24.massPromise)return sammySolver24.massPromise;
