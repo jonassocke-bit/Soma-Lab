@@ -1,0 +1,47 @@
+{
+  "schema": "sammy-build-manifest-v1",
+  "app": "Sammy",
+  "version": "0.8.24.1",
+  "name": "MORPH OBSERVATORY v1.1 · SEX SPLIT + ATLAS v2",
+  "base": "0.8.24.0 MORPH OBSERVATORY v1",
+  "measurementSchema": "ANSUR24-PROT-v2",
+  "newLab": "MORF",
+  "solverChanged": false,
+  "observatoryLayers": [
+    "sex-separated-taxonomy",
+    "neutral-midshape-diagnostic",
+    "rig",
+    "mesh",
+    "limb-sections",
+    "ansur24",
+    "track-specific-pair-interaction",
+    "cross-sex-comparison",
+    "atlas-v2-body-plus-skeleton"
+  ],
+  "quickDefault": true,
+  "quick": {
+    "levels": 3,
+    "tracks": ["male", "female", "neutral"],
+    "pairMaxPerTrack": 6
+  },
+  "deep": {
+    "levels": 5,
+    "additionalMaleFemaleContexts": true
+  },
+  "atlas": {
+    "layout": "3x3 min/reference/max x front/side/back",
+    "grayscaleLevels": 20,
+    "surfaceDelta": "red binary contour from vertex displacement",
+    "skeleton": "compact SOMA; moved joints/bones red",
+    "skeletonThresholdMm": 0.75,
+    "storedInJson": false,
+    "format": "JPEG"
+  },
+  "notes": [
+    "Male and female are analysed independently before cross-sex comparison.",
+    "Neutral gender=0.5 is diagnostic only and never averaged into male/female effects.",
+    "Breast/Cupsize/Firmness remain female-only.",
+    "Depth/Horizontal raw DOFs remain separate while coupled-axis hypotheses are tested per track.",
+    "Solver24 policy remains unchanged in this build."
+  ]
+}
