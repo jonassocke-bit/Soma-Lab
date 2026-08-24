@@ -1,23 +1,21 @@
-# SAMMY v0.8.24.7 · MORPH OBSERVATORY PROFILE HOTFIX
+# SAMMY v0.8.24.8 · Atlas Rest-Delta Hotfix
 
-Basis: v0.8.24.6
+Basis: v0.8.24.7 (Profile/Section Hotfix bleibt vollständig erhalten).
 
-Geänderte Dateien:
-- `app.js`
-- `index.html`
+Geändert:
+- Atlas v2.4 bestimmt Rot/Blau jetzt ausschließlich aus dem ungeskinnten Rest-Mesh-Delta gegenüber der Referenz.
+- Rot = signed normal displacement nach außen, Blau = nach innen.
+- Die so ausgewählten Face-IDs werden anschließend auf dem pose-synchronen Display-Mesh gerendert.
+- Kleine Rig-/Skinning-Mitbewegungen können dadurch nicht mehr großflächig als Surface-Expansion erscheinen.
+- Front/Side/Back, feste Bodenreferenz, Skelett-Inset rechts unten, 8-mm-Rig-Schwelle und Bulk-Atlas-ZIP bleiben erhalten.
+- Bulk-Atlas-Manifest und Dateinamen sind auf Atlas v2.4 aktualisiert.
 
-## Zweck
-Reparatur der im v0.8.24.6-Quick weiterhin vollständig leeren Morph-Observatory-Querschnitte (`topSection: null`, Sections 25/50/75 % = null).
+Nicht geändert:
+- Solver24 / PROT-v2 / Messdefinitionen.
+- Profile-/Section-Algorithmus aus v0.8.24.7.
 
-## Änderungen
-- Section-Extractor arbeitet primär mit echter Low-LOD-Triangle/Plane-Intersection an der SOMA-Segmentachse statt nur mit Vertices in einem breiten Slice.
-- Anatomischer Segmentfilter + geometrischer Zylinder um die jeweilige Arm-/Beinachse verhindern, dass gegenüberliegende Extremität oder Rumpf in den Schnitt geraten.
-- Adaptive Slab-Fallback nur dann, wenn die Low-LOD-Triangulierung an einer Schnittebene zu wenige Schnittpunkte liefert.
-- Kompakte Fehlerdiagnostik wird nur bei weiterhin fehlgeschlagenen Sections unter `raw.sections.<segment>._debug` persistiert.
-- `profileCoverage` wird pro male/female/neutral Track in die Taxonomie geschrieben, damit nach einem Quick sofort sichtbar ist, ob der Extractor tatsächlich arbeitet.
-- Section-Delta und Pair-Interaction ignorieren Debug-Metadaten explizit.
-
-## Erwarteter Quick-Test
-Nach einem neuen Quick sollte `analysis.byTrack.<track>.profileCoverage.morphsWithSection` deutlich > 0 sein; bei funktionierender Geometrie im Regelfall für fast alle Morphs. `topSection` sollte insbesondere bei Lower/Upper Arm/Leg Morphs nicht mehr `null` sein.
-
-Solver24, PROT-v2, Atlas v2.3 und Solver-Policies wurden nicht verändert.
+Testfälle:
+1. Buttocks Volume Incr: Farbe sollte primär Gesäß/Becken/oberer Oberschenkel betreffen, nicht Rücken und ganze Beine.
+2. Breast Dist / Cupsize: lokale Brustfärbung; Rig praktisch neutral.
+3. Height: Surface-Farbe zurückhaltender als bei lokalen Volumenmorphs; strukturelle Änderung primär im Rig sichtbar.
+4. FULL JSON: profileCoverage/topSection separat kontrollieren, um den v0.8.24.7 Section-Fix zu validieren.
