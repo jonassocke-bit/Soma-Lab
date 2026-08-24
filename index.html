@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.23.0</title>
-<link rel="stylesheet" href="style.css?v=0.8.23.0">
+<title>Sammy v0.8.24.0</title>
+<link rel="stylesheet" href="style.css?v=0.8.24.0">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.23.0</div>
+  <div class="sammySplashVersion">v0.8.24.0</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.23.0</div>
+<div id="sammyVersion">Sammy · v0.8.24.0</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -50,6 +50,7 @@
   <button type="button" class="sammyLabSubBubble lab-meas" data-lab-panel="sammyMeasurePanel" aria-label="Measurement Lab"><b>MEAS</b><small>Measure</small></button>
   <button type="button" class="sammyLabSubBubble lab-infl" data-lab-panel="sammyInfluencePanel" aria-label="Influence Lab"><b>INFL</b><small>5-Level</small></button>
   <button type="button" class="sammyLabSubBubble lab-solv" data-lab-panel="sammySolver24Panel" aria-label="24 Maß Solver"><b>SOLV</b><small>24 → Body</small></button>
+  <button type="button" class="sammyLabSubBubble lab-morf" data-lab-panel="sammyMorphObsPanel" aria-label="Morph Observatory"><b>MORF</b><small>Observatory</small></button>
   <button type="button" class="sammyLabSubBubble lab-audt" data-lab-panel="sammyBodyAuditPanel" aria-label="Blind Body Audit"><b>AUDT</b><small>Blind</small></button>
   <button type="button" class="sammyLabSubBubble lab-ansr" data-lab-panel="sammyAnsPanel" aria-label="ANSUR Lab"><b>ANSR</b><small>Prediction</small></button>
  </div>
@@ -202,6 +203,24 @@
    <div class="sammyLabIntroCard"><b>5-Level Einflussanalyse</b><span>Standard testet jeden freigegebenen logischen Slider an fünf Stufen über mehrere Referenzkörper. Die Messung läuft automatisch auf der aktuellen kanonischen MEAS-Geometrie; auffällige Interaktionen werden anschließend tiefer geprüft.</span></div>
    <div id="sammyInfluenceMount"></div>
    <div class="sammyInfluenceFoot">Die menschliche Sichtprüfung ist hier nur ein Plausibilitäts-Guard. Richtung, Stärke, Nichtlinearität und Wechselwirkungen werden aus den real gemessenen Mesh-Zuständen berechnet und exportiert.</div>
+  </div>
+ </section>
+
+ <section id="sammyMorphObsPanel" class="sammyPanel sammyMorphObsPanel" data-panel-key="morph-observatory">
+  <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
+  <div class="sammyPanelHead"><div><b>MORPH OBSERVATORY · v1</b><small>Rig + Mesh + Maß + Interaktionen</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelScroll">
+   <div class="sammyLabIntroCard"><b>Was macht ein Anny-Regler wirklich?</b><span>Automatischer Morph-Sweep auf dem echten Anny/SOMA-Restmesh. Pro Zustand werden Skeleton-Signatur, regionale Meshbewegung, Querschnittsprofile, Volumen und die 24 ANSUR-PROT-v2-Maße erfasst. Ähnliche, gekoppelte und konkurrierende Morphs werden anschließend als Wirkungsfamilien vorgeschlagen. Der bestehende SOLV bleibt unverändert.</span></div>
+   <div class="sammyCalibrationModes sammyMorphObsModes" role="group" aria-label="Observatory Tiefe"><button type="button" data-mobs-mode="quick">Quick</button><button type="button" data-mobs-mode="standard" class="active">Standard</button><button type="button" data-mobs-mode="deep">Deep</button></div>
+   <div class="sammyCalibrationActions"><button id="sammyMorphObsStart" type="button">Neues Observatory</button><button id="sammyMorphObsPause" type="button" disabled>Pause</button></div>
+   <div class="sammyCalibrationActions"><button id="sammyMorphObsReset" type="button">Lauf löschen</button><button id="sammyMorphObsSummary" type="button">Summary JSON</button><button id="sammyMorphObsFull" type="button">FULL JSON</button></div>
+   <div id="sammyMorphObsStatus" class="sammyCalibrationStatus">Bereit · SOLV wird nicht verändert.</div>
+   <div class="sammyCalibrationProgress"><i id="sammyMorphObsProgress"></i></div>
+   <div id="sammyMorphObsCurrent" class="sammyCalibrationCurrent">Standard: Körperrelevante Core- und Local-Morphs × mehrere Weight/Muscle-Kontexte × 3 Levels. Danach werden nur morphologisch ähnliche Kandidatenpaare auf echte Nichtadditivität geprüft.</div>
+   <div id="sammyMorphObsLive" class="sammyCalibrationLiveMeasures"></div>
+   <details class="sammyMorphObsExplain" open><summary><b>Erfasste Ebenen</b><span>keine Rohvertex-Dateien</span></summary><div class="sammyMorphObsExplainGrid"><div><b>RIG</b><small>78 Joint-Positionen, Segmentlängen, Schulter-/Hüftgelenk-Breite</small></div><div><b>MESH</b><small>regionale RMS/XYZ-Verschiebung, Bounding-Box, geschlossenes Volumen</small></div><div><b>PROFILE</b><small>25/50/75 %-Querschnitte an Ober-/Unterarm und Ober-/Unterschenkel</small></div><div><b>ANSUR</b><small>24 PROT-v2-Maße inkl. State-Operatoren</small></div></div></details>
+   <div id="sammyMorphObsResults" class="sammyMorphObsResults"><div class="sammyInfluenceEmpty">Nach dem Lauf erscheinen hier Morph-Klassen, Reinheit, Kontextabhängigkeit und Wirkungsfamilien; gezielte Paarchecks messen Maß-, Profil-, Rig- und Volumen-Nichtadditivität.</div></div>
+   <details class="sammyMorphObsAtlas" open><summary><b>Visueller Morph-Atlas</b><span>nur bei Bedarf · keine Bildflut</span></summary><div class="sammyMorphObsAtlasTools"><select id="sammyMorphObsAtlasSlider"><option value="">Nach Lauf Slider wählen …</option></select><button id="sammyMorphObsAtlasMake" type="button">3 × 3 Atlas erzeugen</button><button id="sammyMorphObsAtlasExport" type="button" disabled>Atlas JPEG</button></div><canvas id="sammyMorphObsAtlasCanvas" width="900" height="1260" hidden></canvas><div id="sammyMorphObsAtlasHint" class="sammyCalibrationCurrent">Erzeugt Min / Referenz / Max jeweils von vorn, Seite und hinten. Bilder werden nicht im FULL-JSON gespeichert.</div></details>
   </div>
  </section>
 
@@ -476,7 +495,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.23.0</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.24.0</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -733,6 +752,6 @@
   <div id="decisionInfo" class="info">v0.7.1 prüft jetzt den eigentlichen Integrationsnachweis: Anny erzeugt Form UND das dazugehörige shape-abhängige SOMA-Rest-Rig; Mixamo liefert nur die Pose-Deltas. Wenn dieser Pfad stabil ist, kann der Measurement-Fit beginnen.</div>
  </section>
 </main>
-<script type="module" src="app.js?v=0.8.23.0"></script>
+<script type="module" src="app.js?v=0.8.24.0"></script>
 </body>
 </html>

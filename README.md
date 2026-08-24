@@ -1,3 +1,7 @@
+# Sammy v0.8.24.0 — MORPH OBSERVATORY v1
+
+Neues **LAB → MORF** als isoliertes Shape-Space-Labor vor dem geplanten hierarchischen Solver. Es vermisst Anny-Morphs nicht nur über Zielmaße, sondern gleichzeitig über **exaktes shape-abhängiges SOMA-Rig, regionale Low-Mesh-Bewegung, Limb-Querschnittsprofile, geschlossenes Meshvolumen und ANSUR24-PROT-v2**. Danach werden nur plausible Wirkungsfamilien/Paare auf echte Nichtadditivität geprüft. Ein 3×3 Morph-Atlas (Min / Referenz / Max × Front / Seite / Rücken) wird nur auf Anforderung erzeugt und nicht im JSON gespeichert. Solver24 bleibt in diesem Build absichtlich unverändert, damit MORF zuerst die Morph-Taxonomie belastbar macht. Siehe `MORPH_OBSERVATORY_V0.8.24.0.md`.
+
 # Sammy v0.8.23.0 — MASS + COMPOSITION v1
 
 Solver24 erweitert ANSUR24-PROT-v2 um optionales bekanntes Gewicht, ein separat validiertes ANSUR-Gewichtsmodell, Mesh-Volumen/Massendiagnostik und einen schwachen objektiven RFM/FFMI-Kompositions-Prior. `weightkg` bleibt Kontext, kein 25. ANSUR-Maß. Siehe `MASS_COMPOSITION_V0.8.23.0.md` und `mass-composition-v1.json`.
