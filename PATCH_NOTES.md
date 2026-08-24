@@ -1,26 +1,21 @@
-SAMMY v0.8.24.12 · BOOT-SAFE PROFILE ENGINE + ATLAS v2.5
+SAMMY v0.8.24.13 — BOOT ROLLBACK + PROFILE SECTION v2.1 + ATLAS v2.5
 
-Basis/Strategie:
-- Bootstrap-Position auf die nachweislich funktionierende v0.8.24.9/v0.8.24.0-Struktur zurückgesetzt.
-- Der Profile/Section-v2-Code liegt nicht mehr im großen app.js-Startmodul, sondern in morph-sections-v2.js.
-- morph-sections-v2.js wird erst beim Klick auf MORF Start dynamisch geladen. Ein Profile-Fehler kann den normalen Sammy-Start daher nicht mehr blockieren.
-
-Profile/Sections:
-- 25/50/75%-Schnitte aus realen Low-LOD-Regionsextents.
-- Armsegmente entlang der T-Pose-X-Achse, Beinsegmente entlang Y.
-- Nur regionseigene Dreieckskanten tragen zum Schnitt bei.
-- Left/Right werden separat geschnitten und danach gemittelt.
-- Adaptive Slab-Fallbacks + kompakte Debugdaten bei Fehlschlag.
-- topSection/Pair-Section-Auswertung aus v1.3 bleibt auf semantisch passende Segmente begrenzt.
-
-Atlas:
+Basis:
+- app.js wurde bewusst auf den pre-Section-Stand v0.8.24.9 zurückgesetzt (v0.8.24.8 war auf iPhone/Safari nachweislich startfähig).
 - Atlas v2.5 Display-Rest-Delta bleibt enthalten.
-- Rot = Rest-Mesh nach außen, Blau = nach innen; pose-synchron auf demselben Displaymesh.
 
-Boot-Diagnose:
-- index.html markiert Import/Parse/Promise-Startfehler direkt im Splash, statt endlos nur „Körpermodell wird vorbereitet …“ zu zeigen.
+Boot-Sicherheit:
+- Kein dynamic import und kein neuer Section-Code wird beim App-Start geparst/ausgeführt.
+- Profile Section v2.1 ist eine separate klassische JS-Datei und wird erst beim Klick auf MORF Start nachgeladen.
+- index.html zeigt bei einem echten Startfehler zusätzlich Dateiname + Zeile + Spalte.
+
+Profile Section v2.1:
+- 25/50/75% aus realer Low-LOD Meshregion-Ausdehnung.
+- Arme entlang T-Pose-X, Beine entlang Y.
+- Nur region-eigene Triangles/Vertices dürfen in den Schnitt eingehen.
+- topSection wird auf das semantisch passende Segment beschränkt.
+- profileCoverage enthält expected/complete + bySegment.
+- Pair sectionInteraction wird auf die zu den beiden Morphs passenden Segmente beschränkt.
 
 Unverändert:
-- Solver24
-- ANSUR24-PROT-v2
-- Mass/Composition
+- Solver24 / PROT-v2 / ANSUR-Messoperatoren.

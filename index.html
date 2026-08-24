@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.24.12</title>
-<link rel="stylesheet" href="style.css?v=0.8.24.12">
+<title>Sammy v0.8.24.13</title>
+<link rel="stylesheet" href="style.css?v=0.8.24.13">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.24.12</div>
+  <div class="sammySplashVersion">v0.8.24.13</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.24.12</div>
+<div id="sammyVersion">Sammy · v0.8.24.13</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -495,7 +495,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.24.12</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.24.13</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -753,20 +753,14 @@
  </section>
 </main>
 <script>
-window.__sammyModuleStarted=false;
 window.addEventListener("error",function(e){
- const s=document.getElementById("sammySplashStage");
- if(s && !document.body.classList.contains("sammy-ready"))s.textContent="JS-Startfehler: "+(e.message||"Modul konnte nicht geladen werden");
+ var stage=document.getElementById("sammySplashStage");
+ if(!stage||document.body.classList.contains("sammy-ready"))return;
+ var src=e.filename?String(e.filename).split("/").pop():"JS";
+ var loc=e.lineno?(" · "+src+":"+e.lineno+(e.colno?(":"+e.colno):"")):"";
+ stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
-window.addEventListener("unhandledrejection",function(e){
- const s=document.getElementById("sammySplashStage"),m=e.reason&&e.reason.message?e.reason.message:String(e.reason||"Promise-Fehler");
- if(s && !document.body.classList.contains("sammy-ready"))s.textContent="JS-Startfehler: "+m;
-});
-setTimeout(function(){
- const s=document.getElementById("sammySplashStage");
- if(s && !window.__sammyModuleStarted && /Körpermodell wird vorbereitet/.test(s.textContent||""))s.textContent="App-Modul wurde nicht initialisiert · Import/Parse prüfen";
-},5000);
 </script>
-<script type="module" src="app.js?v=0.8.24.12"></script>
+<script type="module" src="app.js?v=0.8.24.13"></script>
 </body>
 </html>
