@@ -1,0 +1,320 @@
+{
+  "app": "Sammy",
+  "version": "0.8.24.17",
+  "buildType": "full",
+  "atlasVersion": "2.9",
+  "generated": "2026-08-25T15:59:00+02:00",
+  "fileCount": 62,
+  "files": [
+    {
+      "path": "ANNY_PACK_WORKFLOW.yml",
+      "bytes": 2508,
+      "sha256": "80935f8942060eba02c1ff76b3a45967c19e6c8af9b29949526e68ef252ff4ae"
+    },
+    {
+      "path": "ANSUR24_PROTOCOL_V2.json",
+      "bytes": 15384,
+      "sha256": "50dc60ad63246599f07f3c38fca869a3ceca8f1c68f3c6e9acfd7ef981507bb6"
+    },
+    {
+      "path": "ANSUR24_PROT_V2_V0.8.22.0.md",
+      "bytes": 2048,
+      "sha256": "70da692a2dadfcc5ea387eaa28190d3cc34ecc5a3abd7f091c4374fe3340e2cc"
+    },
+    {
+      "path": "ANSUR_II_94_MEASURE_MAPPING_V0.8.19.9.md",
+      "bytes": 4700,
+      "sha256": "2d4352f19388f8d77d7d88dc25513e5a663d24d254c5ed9124b61bc066d46538"
+    },
+    {
+      "path": "ANSUR_II_94_MEASURE_MAPPING_V0.8.20.1.json",
+      "bytes": 18695,
+      "sha256": "d108cb372d9d0eef5b8fc6b84ca1fc86d264f368e4045dc9f3c825a225ef18f4"
+    },
+    {
+      "path": "ANSUR_II_94_MEASURE_MAPPING_V0.8.20.1.md",
+      "bytes": 5623,
+      "sha256": "01b58446e53312e566c8334adf9c35790264daa3d01e60fba7e32314fce61517"
+    },
+    {
+      "path": "ANSUR_PROTOCOL_AUDIT_V0.8.19.9.md",
+      "bytes": 2526,
+      "sha256": "01ab97b9d5ea2833b162dc2b118f0740e578bca3cd96bf1c611e24a7f519ca2b"
+    },
+    {
+      "path": "ANSUR_PROTOCOL_AUDIT_V0.8.20.1.md",
+      "bytes": 1930,
+      "sha256": "86176a1125a248c654e8f3c232f340ee2be4d63c7db3f75027f5926677bdaa0d"
+    },
+    {
+      "path": "ANSUR_SOURCE_PAGES.zip",
+      "bytes": 2978509,
+      "sha256": "052a788f7e8f4cec0703879730393d847119ff9c469e6e2ffe8a8fa2a69067e5"
+    },
+    {
+      "path": "ANSUR_SOURCE_PAGES_MANIFEST.json",
+      "bytes": 1406,
+      "sha256": "0cde38f131c922473b49f25ef76c2c306e2777cdf37062da2683971231e24ad0"
+    },
+    {
+      "path": "BOOT_HOTFIX_V0.8.20.2.md",
+      "bytes": 634,
+      "sha256": "d1f75dee6fe002c86aef0767fc19b51094e9effc94c9e2d1bda066d49e6f08b8"
+    },
+    {
+      "path": "BOOT_HOTFIX_V0.8.24.2.md",
+      "bytes": 1064,
+      "sha256": "a649c4aa29c09e808ee7cedd888463a07d16330ff94db639979f86cc3c451b22"
+    },
+    {
+      "path": "BUILD_MANIFEST_V0.8.23.0.json",
+      "bytes": 1720,
+      "sha256": "58020349bfbeefbaef1676f86ddb3da9833ea399cb195dafa7e85c3ff67dde69"
+    },
+    {
+      "path": "BUILD_MANIFEST_V0.8.24.0.json",
+      "bytes": 955,
+      "sha256": "d301b400a3710a5f47b453a09dc1b6174f71687e95fd816f43ef58c0275f5f4f"
+    },
+    {
+      "path": "BUILD_MANIFEST_V0.8.24.1.json",
+      "bytes": 1435,
+      "sha256": "d6134b285e453e586aa469e1890e9b45caac62bdd6f8f2ad6e9599aaf7df7afd"
+    },
+    {
+      "path": "BUILD_MANIFEST_V0.8.24.2.json",
+      "bytes": 1555,
+      "sha256": "6266e5a45f4d6fa63cf2d0055e46fcf5d184e7212ebccf4c3da70850c663479e"
+    },
+    {
+      "path": "EXACT_ANNY_SOMA_RIG.md",
+      "bytes": 1827,
+      "sha256": "8f6793715f05643c2d55d637eb3f9ac0d448fec829db2f7cdc38ad8ac656178e"
+    },
+    {
+      "path": "INFLUENCE_ADDENDUM_V0.8.20.4.md",
+      "bytes": 2530,
+      "sha256": "cf34eb2009e00621e821834f7e418adda9f9edad0693040e0eb373a53325357d"
+    },
+    {
+      "path": "INFLUENCE_LAB_V0.8.20.3.md",
+      "bytes": 1884,
+      "sha256": "512198cfed0bcd9601cd6c87ad662eac45939b148205e1f118efbff59682a959"
+    },
+    {
+      "path": "LAB_HUB_AUDIT_V0.8.20.0.md",
+      "bytes": 1426,
+      "sha256": "edca9ec84cc8be7d15ad2a5e0808afe02f8b9b0054d11efc1f68397ccda17e54"
+    },
+    {
+      "path": "MASS_COMPOSITION_V0.8.23.0.md",
+      "bytes": 3927,
+      "sha256": "28244ac614be384a898cd93f3768a41b57d08099298384a23d7aa0824fe1a9cf"
+    },
+    {
+      "path": "MEASUREMENT_SCHEMA_LOCK_V0.8.20.3.md",
+      "bytes": 621,
+      "sha256": "f42120a7cf20650085e510fc2c362c593bd169b258c2049927d136bcc524e56d"
+    },
+    {
+      "path": "MIXAMO_RIG_AUDIT_V0514.json",
+      "bytes": 14633,
+      "sha256": "9e89fd7265283b4092b15c0a0c012b77834efb0b01485d9a1ac6a3779d7f821f"
+    },
+    {
+      "path": "MIXAMO_XBOT_ANALYSIS.json",
+      "bytes": 9066,
+      "sha256": "befe919b4f90478cdd2f0bd8fcf2f3a4fc5a35bbbba376d3d98980ec053119ff"
+    },
+    {
+      "path": "MORPH_OBSERVATORY_V0.8.24.0.md",
+      "bytes": 5509,
+      "sha256": "052036e20173ee198bea3c4d605aea94503900edabc01f9637c19c45162a2cdc"
+    },
+    {
+      "path": "MORPH_OBSERVATORY_V0.8.24.1.md",
+      "bytes": 4424,
+      "sha256": "5806cb066d9acb18b49ffd1e84466a82b148a30c5c37db4092a799b3fae55519"
+    },
+    {
+      "path": "MOTION_IMPORT.md",
+      "bytes": 968,
+      "sha256": "65c1c206d8eb7fd08b621576dae6b24d25c0b61553182c379c9cba77509803df"
+    },
+    {
+      "path": "NEXT_PHASE_MEASURE_SLIDER_INFLUENCE.md",
+      "bytes": 1082,
+      "sha256": "bba6d2ac216fff44a381e8626db95852efe801d177ee3b36fe652eb2a6b4e7de"
+    },
+    {
+      "path": "PATCH_NOTES.md",
+      "bytes": 1818,
+      "sha256": "7197a7f9023d06930bf709f3a197838347513c37652cc3eff8e9ce51c1e0ecda"
+    },
+    {
+      "path": "POSE_ORACLE_WORKFLOW.yml",
+      "bytes": 1294,
+      "sha256": "e4c9a184f438a1d9b59c009a9500f08b45b9503243b31a9800176a53cac6f1cc"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1622,
+      "sha256": "6b6e4f6018c1a4cabf3a5876bb72162d3fab20bfc209c071e88afc3cd016bb12"
+    },
+    {
+      "path": "RELEASE_NOTES_V0.8.24.17.md",
+      "bytes": 596,
+      "sha256": "1e11c96ca4a937b5bc0d8695cfa00c53761f73b838eecf971a139cbb0a7e9ccf"
+    },
+    {
+      "path": "RELEASE_NOTES_V0.8.24.5.md",
+      "bytes": 400,
+      "sha256": "21d11ce64ab66b9c88c4dcbf3e13aad118a6472a020eda0f92b46d2b9f0b5098"
+    },
+    {
+      "path": "RIGPACK_WORKFLOW.yml",
+      "bytes": 1532,
+      "sha256": "6e07cfec6671b430add1be4f8a65e5c143a6a67fdbb7bf5701cee236e24c5906"
+    },
+    {
+      "path": "SOLVER24_V1.1_V0.8.21.1.md",
+      "bytes": 2393,
+      "sha256": "355048c3dd38e719a632743438c44d84255526d69e55cbc031468f801291950e"
+    },
+    {
+      "path": "SOLVER24_V1.2_V0.8.21.2.md",
+      "bytes": 2327,
+      "sha256": "9152f42c129403adcfbb50f73c6471cd11079bda9e958ec9bf9a141e05ac51b7"
+    },
+    {
+      "path": "SOLVER24_V1.3_V0.8.21.3.md",
+      "bytes": 3622,
+      "sha256": "86c7f83a9e2f2c0dbc8a27ecd600bc59cb466da5405be83e3967f5f9260e6283"
+    },
+    {
+      "path": "SOLVER24_V1_V0.8.21.0.md",
+      "bytes": 5145,
+      "sha256": "7ef69c26d443edd54065db17465302fbfa7f297f599b9b6f38ba66cd9a0769c1"
+    },
+    {
+      "path": "THIRD_PARTY.md",
+      "bytes": 2757,
+      "sha256": "4bd49607f07e1291b37440b5499d986f8b4fbb00daa54d0078cf58df6ec5d917"
+    },
+    {
+      "path": "anny-pack-setup.html",
+      "bytes": 4936,
+      "sha256": "ac752b534ceb3a762cda748e61bad0412b7e7cc0b680532278d6a50d6be4460c"
+    },
+    {
+      "path": "ansur-crops-atlas.jpg",
+      "bytes": 1439077,
+      "sha256": "00841e3b4d84633f89fb9fa942693de81d67c3b2a79cc495e273f0c3e258d10f"
+    },
+    {
+      "path": "ansur-crops-atlas.json",
+      "bytes": 4817,
+      "sha256": "a5e0c526916f76fc3f89353c118d9ba2b444caedc47f0cd3093dc0ef0f071d0e"
+    },
+    {
+      "path": "ansur-dimensions-bridge-v1.json",
+      "bytes": 13687,
+      "sha256": "33c3497e1f2003f3aed24b2a5c37b4e123d8e3d78faecd4a09f4d413494a85e8"
+    },
+    {
+      "path": "ansur-lab-worker.js",
+      "bytes": 27052,
+      "sha256": "706ea842c3bc3368cafc83916fbc9b012cd7eadcd43bf50123f89f8904e3bf95"
+    },
+    {
+      "path": "ansur-prediction-test-v1.json",
+      "bytes": 142634,
+      "sha256": "733359b48d5e317a6aa6e13bead18114e9d40ee37db8bae6276abd57ad2ca9d2"
+    },
+    {
+      "path": "ansur-prediction-trainval-v1.json",
+      "bytes": 772827,
+      "sha256": "88cc5e04b7808c1b8626790adffcc325050a37699b92b6717aedd35fecc6de14"
+    },
+    {
+      "path": "ansur-protocol-v1.json",
+      "bytes": 86057,
+      "sha256": "19604d8495887ab768ee4e3f9aeb0fa7c9b4665b5b3861d7e3d72737543542a1"
+    },
+    {
+      "path": "anthro24-conditional-prior-v1.json",
+      "bytes": 51095,
+      "sha256": "3a9597d06eed7eb160648ec6bd5a015ee42ad848ad42cf36ea8e4e4f99f68265"
+    },
+    {
+      "path": "app.js",
+      "bytes": 1064881,
+      "sha256": "bc16fe6e651e92337750c73084f0c2073e56c489cf53442d290a87fe1d60bdde"
+    },
+    {
+      "path": "extract_anny_soma_pack.py",
+      "bytes": 13227,
+      "sha256": "dae529ab4163715eaa6234e053c99d86a8af1cfbdc54399a8d3254d4c1cc1a5a"
+    },
+    {
+      "path": "extract_current_rig_pack.py",
+      "bytes": 12996,
+      "sha256": "1d8e5f2cf01f2677f19bc25348330adfc802829f367e08524a19659571b2fda2"
+    },
+    {
+      "path": "index.html",
+      "bytes": 72089,
+      "sha256": "a780577569c83de9f99bba2aa8794796d22551c2be15404cb61e36ff8dad799c"
+    },
+    {
+      "path": "mass-composition-v1.json",
+      "bytes": 12185,
+      "sha256": "2e7928fe1e29debcf581cdf454fdd95c108ff5c3d1ba4315565cbecba4334194"
+    },
+    {
+      "path": "morph-sections-v2.1.js",
+      "bytes": 7915,
+      "sha256": "fba3d7cff3fe27fbcdbcb109d57b0d8a537c9a3572b8c95cfe01b1d20f56d423"
+    },
+    {
+      "path": "pose-oracle-setup.html",
+      "bytes": 2054,
+      "sha256": "55ae9d2410362d786b5c5ec3eaf6d36958944e9b5e12f55fbaba165d2f5558c3"
+    },
+    {
+      "path": "pose_oracle.py",
+      "bytes": 3098,
+      "sha256": "81e12b765d1a6dc8101c0b0da1c55eb96a50b7a21d163e2a48774a52a7f39e18"
+    },
+    {
+      "path": "rigpack-setup.html",
+      "bytes": 4362,
+      "sha256": "8036656ac9ec013869c77e04d5811fb70dc32512e169c822bdfc6b6033be2e6a"
+    },
+    {
+      "path": "sammy-ansur-sitting-source.fbx",
+      "bytes": 1030928,
+      "sha256": "90bf0eea2b0a1a2f028d6c9bb7c316c96ef6b0db9d78e712ec79c805c146bbe4"
+    },
+    {
+      "path": "sammy-ansur-standing-source.fbx",
+      "bytes": 833776,
+      "sha256": "5d26b2716f77e10d974c3de97bab6c82f8d24b2c878da67a19ee96aa156893a4"
+    },
+    {
+      "path": "solver24-prior-v1.json",
+      "bytes": 56011,
+      "sha256": "727dc02bf066d16f07f39a292083fad4c62f56a6cb9a4e8b5db3a9a81fe3566f"
+    },
+    {
+      "path": "standing-greeting.fbx",
+      "bytes": 1209120,
+      "sha256": "9df375e95fb052dc31c5bbf0914b4c530fec7d88ed555af0b93326972ae9c985"
+    },
+    {
+      "path": "style.css",
+      "bytes": 89717,
+      "sha256": "f4933f5b1a89492fd1b00a215ed2e8e476536de5e130b4e1227dde8876d8df55"
+    }
+  ]
+}

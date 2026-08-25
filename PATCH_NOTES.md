@@ -1,45 +1,26 @@
-SAMMY v0.8.24.17 PATCH
-Atlas v2.9 · PROT anatomical zoom + Deep metadata cleanup
+SAMMY v0.8.24.18 · MORPH OBSERVATORY v1.4 · DEEP GATE
 
-Basis
-- v0.8.24.16
-- Boot-/MORF-Startpfad unverändert.
-- Profile Section v2.1 und Atlas-Bein-Pose-Sync aus v0.8.24.16 bleiben unverändert.
-- Solver24 / PROT-v2 Definitionen / ANSUR-Messoperatoren werden nicht verändert.
+Basis: v0.8.24.17 FULL / Atlas v2.9
 
-Geänderte Dateien
+Geänderte Dateien:
 - app.js
 - index.html
 
-Änderungen
-1. PROT-Streifen als anatomischer Zoom
-- Der PROT-Snapshot wird weiterhin im echten ANSUR24-PROT-v2 MeasurementState erzeugt.
-- Statt des kleinen Ganzkörpers wird automatisch um die tatsächlich gemessene Linie / den Messring gecroppt.
-- Limb-Maße bekommen ausreichend Segmentkontext; Chest-Maße einen breiteren Thorax-Kontext.
-- Messlinie wird nach dem Crop neu in den Zoom transformiert und stärker gezeichnet.
+Deep-Gate-Korrekturen:
+1. Deep verwendet für lokale Morphs alle vier Kontexte je Geschlecht: neutral, heavy/soft, heavy/muscular, light/low-muscle; Neutral-Mid bleibt reiner Diagnose-Track.
+2. Weiblich-spezifische Brust/Cupsize/Firmness-Morphs verwenden im Deep alle vier weiblichen Kontexte.
+3. Deep-Paarinteraktionen werden in allen vier Kontexten je Geschlecht geprüft (pairRefs 4 statt 2).
+4. topSection/profileSegments werden für Morphs ohne semantisch erwartete Extremitäten-Section korrekt als N/A/null geführt.
+5. Pair-sectionInteraction liefert bei Paaren ohne relevantes Extremitätensegment N/A statt zufällige Arm-/Bein-Sections (z.B. Torso Depth × Horizontal).
+6. Cross-Sex Minimum-Effect-Gate: <0.10 cm maximale Messwirkung und <2 mm strukturelle Rigwirkung => weak/inconclusive statt künstlich divergent.
+7. Taxonomie-Schema auf v1.4 / Cross-Sex v1.3 angehoben.
 
-2. Section-N/A statt False-Fail
-- Für Morphs ohne semantisch erwartete Extremitäten-Section gilt jetzt:
-  sectionPoseSyncApplicable = false
-  sectionPoseSyncOk = null
-- Diese Fälle sind N/A und werden nicht mehr als fehlgeschlagener Section-Sync interpretiert.
+Nicht geändert:
+- Boot/Runtime-Start
+- PROT-v2 Messdefinitionen
+- Section-v2.1 Geometrie
+- Atlas-v2.9 Rendering/PROT-Zoom
+- Solver24
 
-3. PROT-Caveats für Deep explizit markiert
-- unresolved / pending PROT-Bedingungen => protocolEvidenceClass = provisional
-- protocolSolverWeightHint = reduced
-- Standardpfade => protocolEvidenceClass = standard / normal
-- Nur Atlas-/Manifest-Metadaten. Solver24 wird NICHT verändert.
-- Im PROT-Streifen erscheint bei provisional: "PROT PROVISORISCH · DEEP ↓".
-
-4. Atlas-Metadaten erweitert
-- protocolZoomMode
-- protocolCropRect
-- protocolEvidenceClass
-- protocolSolverWeightHint
-- protocolPendingConditions
-- sectionPoseSyncApplicable
-
-Kompatibilität
-- Abgeschlossene MORF-Läufe aus 0.8.24.13–0.8.24.16 werden weiter geladen.
-- Für den visuellen v2.9-Test ist kein neuer Quick nötig.
-- Nach visueller Abnahme ist ein letzter neuer Quick als Deep-Gate vorgesehen.
+Deep-Ziel:
+Ein einziger vollständiger Deep-Lauf mit 5 Levels, vollständigen Composition-Kontexten, 54 Paarhypothesen je Mann/Frau-Track und Interaktionstests in allen vier Kontexten pro Geschlecht. Danach FULL JSON + kompletter Atlas v2.9 als Basis für Solver V2.
