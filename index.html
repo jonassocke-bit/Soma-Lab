@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.24.19</title>
+<title>Sammy v0.8.24.20</title>
 <link rel="stylesheet" href="style.css?v=0.8.24.13">
 <script type="importmap">
 {"imports":{
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.24.19</div>
+  <div class="sammySplashVersion">v0.8.24.20</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.24.19</div>
+<div id="sammyVersion">Sammy · v0.8.24.20</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -214,7 +214,7 @@
    <div class="sammyCalibrationModes sammyMorphObsModes" role="group" aria-label="Observatory Tiefe"><button type="button" data-mobs-mode="quick" class="active">Quick</button><button type="button" data-mobs-mode="standard">Standard</button><button type="button" data-mobs-mode="deep">Groß / Deep</button></div>
    <div class="sammyCalibrationActions"><button id="sammyMorphObsStart" type="button">Neues Observatory</button><button id="sammyMorphObsPause" type="button" disabled>Pause</button></div>
    <div class="sammyCalibrationActions"><button id="sammyMorphObsReset" type="button">Lauf löschen</button><button id="sammyMorphObsSummary" type="button">Summary JSON</button><button id="sammyMorphObsFull" type="button">FULL JSON</button></div>
-   <div class="sammyCalibrationActions"><button id="sammyMorphObsMeasureGate" type="button">MEAS Gate</button><button id="sammyMorphObsMeasureGateExport" type="button" disabled>Gate JSON</button></div><div id="sammyMorphObsMeasureGateStatus" class="sammyCalibrationCurrent">Deep-Follow-up: gezielter Stabilitätstest für Neck / Neck Base / Thigh / Tibiale / Shoulder. Kein neuer Observatory-Lauf.</div>
+   <div class="sammyCalibrationActions"><button id="sammyMorphObsMeasureGate" type="button">MEAS Gate</button><button id="sammyMorphObsMeasureGateExport" type="button" disabled>Gate JSON</button></div><div id="sammyMorphObsMeasureGateStatus" class="sammyCalibrationCurrent">Deep-Follow-up v1.1: gezielter Stabilitätstest + Cross-Target-Guards für Neck / Neck Base / Thigh / Tibiale / Shoulder. Kein neuer Observatory-Lauf.</div>
    <div class="sammyCalibrationActions"><button id="sammyMorphObsDeepMeasurePatch" type="button">Deep MEAS Patch</button><button id="sammyMorphObsDeepMeasurePatchExport" type="button" disabled>Patch JSON</button></div><div id="sammyMorphObsDeepMeasurePatchStatus" class="sammyCalibrationCurrent">Nach bestandenem MEAS Gate: nur die 5 korrigierten Messoperatoren über Referenzen + Singles des gespeicherten Deep-Laufs neu messen. Rig/Mesh/Sections/Atlas werden nicht wiederholt.</div>
    <div id="sammyMorphObsStatus" class="sammyCalibrationStatus">Bereit · SOLV wird nicht verändert.</div>
    <div class="sammyCalibrationProgress"><i id="sammyMorphObsProgress"></i></div>
@@ -497,7 +497,7 @@
 </div>
 
 <header id="legacyHeader">
- <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.24.19</small><b>SOMA Rig · Anny Identity · Pose</b></div>
+ <div><small>SOMA BROWSER PROOF OF CONCEPT · v0.8.24.20</small><b>SOMA Rig · Anny Identity · Pose</b></div>
  <span id="fps">– fps</span>
 </header>
 <main id="legacyUi">
@@ -763,6 +763,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.24.19"></script>
+<script type="module" src="app.js?v=0.8.24.20"></script>
 </body>
 </html>
