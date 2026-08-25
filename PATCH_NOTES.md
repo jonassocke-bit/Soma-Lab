@@ -1,14 +1,10 @@
-SAMMY v0.8.24.20 PATCH
+SAMMY v0.8.24.21 PATCH
+Base: v0.8.24.20
 
-Geändert:
+Changed files:
 - app.js
 - index.html
+- RELEASE_NOTES_V0.8.24.21.md
+- PATCH_NOTES.md
 
-Nicht geändert:
-- Boot/Bootstrap
-- Atlas v2.9
-- morph-sections-v2.1.js
-- PROT-v2 Definitionen/Posen
-- Solver24
-
-Ziel: v0.8.24.19 Gate-Fails + im Gate-JSON sichtbare, aber nicht deklarierte Off-Target-Sprünge abfangen.
+Scope: Shoulder-Length stability only + Gate v1.2 diagnostics. No boot/atlas/section/PROT-definition/Solver24 changes.
