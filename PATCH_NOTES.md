@@ -1,50 +1,45 @@
-SAMMY v0.8.24.16 · Atlas v2.8 · PROT-State Debug + Leg Section Pose Sync
+SAMMY v0.8.24.17 PATCH
+Atlas v2.9 · PROT anatomical zoom + Deep metadata cleanup
 
 Basis
-- v0.8.24.15
-- Bootstrap / PROT / Solver24 / Morph-Observatory analysis logic are not restructured.
-- Existing v0.8.24.13/14/15 completed Observatory runs remain load-compatible for Atlas testing.
+- v0.8.24.16
+- Boot-/MORF-Startpfad unverändert.
+- Profile Section v2.1 und Atlas-Bein-Pose-Sync aus v0.8.24.16 bleiben unverändert.
+- Solver24 / PROT-v2 Definitionen / ANSUR-Messoperatoren werden nicht verändert.
 
-Changed files
+Geänderte Dateien
 - app.js
 - index.html
 
-1) Leg section pose-sync fix
-- v2.7's section guard compared section/triangle intersection points to the nearest LOW-LOD VERTEX.
-- On coarse leg triangles a perfectly valid intersection can lie ~35–50 mm from the nearest vertex, creating false SECTION CHECK FAILs.
-- v2.8 removes that invalid nearest-vertex criterion.
-- The posed LOW mesh is now taken directly from the ACTUAL displayed geometry:
-  - LOW display: direct geometry copy.
-  - MID display: exact lod_mid_to_low mapping from displayed MID vertices back to LOW vertices.
-  - old secondary skinning code remains fallback only.
-- Section pose-sync is therefore validated against the same geometry that is actually on screen.
+Änderungen
+1. PROT-Streifen als anatomischer Zoom
+- Der PROT-Snapshot wird weiterhin im echten ANSUR24-PROT-v2 MeasurementState erzeugt.
+- Statt des kleinen Ganzkörpers wird automatisch um die tatsächlich gemessene Linie / den Messring gecroppt.
+- Limb-Maße bekommen ausreichend Segmentkontext; Chest-Maße einen breiteren Thorax-Kontext.
+- Messlinie wird nach dem Crop neu in den Zoom transformiert und stärker gezeichnet.
 
-2) PROT is now the measurement reference in the Atlas
-- Sections remain a Morph-Observatory diagnostic in fixed T-pose.
-- The ANSUR measurement is no longer misleadingly projected onto the T-pose as though it used that pose.
-- For relevant male/female atlases, a separate PROT strip is added per MIN/REF/MAX state.
-- The strip applies the actual ANSUR24-PROT-v2 MeasurementState and renders the canonical measure there.
-- Limb mapping:
-  upperarm -> upperarm_circumference -> arm_flexed_forward
-  lowerarm -> forearm_circumference -> arm_flexed_forward
-  upperleg -> thigh_circumference -> thigh_special
-  lowerleg -> calf_circumference -> lowerleg_10cm
-- Breast morphs prioritize chest_breadth -> chest_breadth_measure.
-- Torso morphs use their leading chest-related PROT measure when present.
-- Neutral remains geometric only and gets no PROT strip.
+2. Section-N/A statt False-Fail
+- Für Morphs ohne semantisch erwartete Extremitäten-Section gilt jetzt:
+  sectionPoseSyncApplicable = false
+  sectionPoseSyncOk = null
+- Diese Fälle sind N/A und werden nicht mehr als fehlgeschlagener Section-Sync interpretiert.
 
-3) Manifest diagnostics
-- Stores section pose source, PROT measure id/value/state/view/surface rule/unresolved caveats.
-- Bulk export schema/version updated to sammy-morph-atlas-v2.8.
+3. PROT-Caveats für Deep explizit markiert
+- unresolved / pending PROT-Bedingungen => protocolEvidenceClass = provisional
+- protocolSolverWeightHint = reduced
+- Standardpfade => protocolEvidenceClass = standard / normal
+- Nur Atlas-/Manifest-Metadaten. Solver24 wird NICHT verändert.
+- Im PROT-Streifen erscheint bei provisional: "PROT PROVISORISCH · DEEP ↓".
 
-No new Quick is required for this Atlas-only validation patch.
-Recommended checks using the existing completed run:
-- male Lowerleg Scale Depth
-- male Upperleg Scale Depth
-- male Lowerarm Muscle
-- male Upperarm Muscle / Scale Vert
-- female Breast Dist
+4. Atlas-Metadaten erweitert
+- protocolZoomMode
+- protocolCropRect
+- protocolEvidenceClass
+- protocolSolverWeightHint
+- protocolPendingConditions
+- sectionPoseSyncApplicable
 
-Expected result
-- 25/50/75 leg sections render instead of false ~35–50 mm SECTION CHECK FAILs.
-- PROT strip visibly uses the protocol pose rather than the T-pose.
+Kompatibilität
+- Abgeschlossene MORF-Läufe aus 0.8.24.13–0.8.24.16 werden weiter geladen.
+- Für den visuellen v2.9-Test ist kein neuer Quick nötig.
+- Nach visueller Abnahme ist ein letzter neuer Quick als Deep-Gate vorgesehen.
