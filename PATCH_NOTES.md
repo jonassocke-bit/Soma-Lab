@@ -1,47 +1,38 @@
-SAMMY v0.8.24.14 PATCH
-MORPH OBSERVATORY v1.3 · ATLAS v2.6 SECTION DEBUG
+SAMMY v0.8.24.15 PATCH
 
 Basis
-- v0.8.24.13 (working boot baseline)
+- v0.8.24.14
+- normaler Bootstrap / App-Start nicht verändert
+- Profile Section v2.1 Analyse nicht verändert
+- Solver24 / PROT / ANSUR-Messoperatoren nicht verändert
 
 Geänderte Dateien
 - app.js
 - index.html
-- morph-sections-v2.1.js
 
-Wichtig: Der normale App-Bootstrap wurde NICHT umgebaut.
-Außer Versionsnummer/Cache-Key liegen die funktionalen Änderungen ausschließlich im MORF/Atlas-Pfad bzw. im weiterhin lazy geladenen Section-Modul.
+Atlas v2.7
+1. Pose-synchrone Sections
+- 25/50/75%-Sections werden für die Anzeige nicht mehr aus dem unposierten LOW-Rest-Mesh projiziert.
+- Nach der festen Measurement-T-Pose wird zusätzlich eine LOW-LOD-Posekopie aus currentPoseWorld + exakten Anny-Rest-Inversen + denselben LOW-Skinweights berechnet.
+- Die sichtbaren Section-Ringe werden auf dieser LOW-Posekopie geschnitten.
+- Die numerischen A/B/Umfang-Werte im Text bleiben aus dem Rest-Mesh, damit Analysewert und Darstellung sauber getrennt bleiben.
 
-Atlas v2.6
-- erzwingt für jede MIN/REFERENZ/MAX-Aufnahme die feste Measurement-T-Pose
-- behält Rest-Mesh Rot/Blau aus Atlas v2.5
-- behält SOMA-Skelett-Inset rechts unten
-- zeichnet die echten Profile-Sections des v2.1-Geometrie-Engines direkt ins Atlasbild:
-  - 25 % = Cyan
-  - 50 % = Gelb
-  - 75 % = Violett
-  - taxonomy topSection = dickere Linie
-- zeigt bei genau einem erwarteten Limb-Segment zusätzlich den aktuellen kanonischen ANSUR-Umfang als weiße gestrichelte Linie:
-  - upperarm -> upperarm_circumference
-  - lowerarm -> forearm_circumference
-  - upperleg -> thigh_circumference
-  - lowerleg -> calf_circumference
-- pro Kachel werden topSection A/B/Umfang sowie der ANSUR-Umfang als Zahlen ausgegeben
-- Bulk Atlas ZIP wurde auf Schema/Filename v2.6 angehoben und enthält Section-/ANSUR-Debugdaten im manifest.json
+2. Export-Guard
+- Jede sichtbare Section wird gegen Vertices desselben anatomischen Segments geprüft.
+- Liegt eine Section >35 mm vom erwarteten Segment entfernt, wird sie nicht gezeichnet und als SECTION CHECK FAIL im Atlas/Manifest markiert.
+- Damit sollen schwebende Arm-/Bein-Sections nicht mehr unbemerkt exportiert werden.
 
-Profile Section API
-- gleiche v2.1-Messlogik wie im erfolgreichen v0.8.24.13 Quick
-- zusätzlich computeSectionGeometry() für den Atlas
-- die Section-Geometrie wird NICHT in FULL-JSON aufgebläht; sie wird nur beim Atlasexport on demand berechnet
+3. Thorax/Brust Debug
+Bei Brust-/Torso-Morphs bzw. chest-relevanten Top-Maßen werden zusätzlich die aktuellen kanonischen Messgeometrien eingeblendet:
+- weiß gestrichelt: chest_circumference
+- grün: chest_breadth
+- orange: chest_depth
+- Werte stehen kompakt unten in der Kachel.
+Neutral bleibt ohne ANSUR-Overlay.
 
-Kompatibilität
-- abgeschlossene MORF-Runs aus v0.8.24.13 werden in v0.8.24.14 weiter geladen
-- deshalb ist KEIN neuer Quick-Lauf nötig, um Atlas v2.6 zu prüfen
-- das Section-Modul bleibt lazy: es wird erst bei MORF/Atlas benötigt und kann den normalen Sammy-Start nicht blockieren
-
-Prüfungen vor Verpackung
-- node --check app.js: OK
-- node --check morph-sections-v2.1.js: OK
-- TypeScript ES2020 Parser: 0 Syntaxfehler in beiden JS-Dateien
-- HTML IDs: 450, keine Duplikate
-- Section-Geometry API mit synthetischem Mesh getestet: 25/50/75%-Kurven werden erzeugt
+4. Bestehendes bleibt
+- Rot = Rest-Mesh nach außen, Blau = nach innen
+- Skelett separat rechts unten
+- feste T-Pose
+- Bulk-Atlas-ZIP
+- vorhandene v0.8.24.13/14 Observatory-Runs werden weiter geladen; kein neuer Quick nur für den Atlas nötig.
