@@ -1,21 +1,47 @@
-SAMMY v0.8.24.13 — BOOT ROLLBACK + PROFILE SECTION v2.1 + ATLAS v2.5
+SAMMY v0.8.24.14 PATCH
+MORPH OBSERVATORY v1.3 · ATLAS v2.6 SECTION DEBUG
 
-Basis:
-- app.js wurde bewusst auf den pre-Section-Stand v0.8.24.9 zurückgesetzt (v0.8.24.8 war auf iPhone/Safari nachweislich startfähig).
-- Atlas v2.5 Display-Rest-Delta bleibt enthalten.
+Basis
+- v0.8.24.13 (working boot baseline)
 
-Boot-Sicherheit:
-- Kein dynamic import und kein neuer Section-Code wird beim App-Start geparst/ausgeführt.
-- Profile Section v2.1 ist eine separate klassische JS-Datei und wird erst beim Klick auf MORF Start nachgeladen.
-- index.html zeigt bei einem echten Startfehler zusätzlich Dateiname + Zeile + Spalte.
+Geänderte Dateien
+- app.js
+- index.html
+- morph-sections-v2.1.js
 
-Profile Section v2.1:
-- 25/50/75% aus realer Low-LOD Meshregion-Ausdehnung.
-- Arme entlang T-Pose-X, Beine entlang Y.
-- Nur region-eigene Triangles/Vertices dürfen in den Schnitt eingehen.
-- topSection wird auf das semantisch passende Segment beschränkt.
-- profileCoverage enthält expected/complete + bySegment.
-- Pair sectionInteraction wird auf die zu den beiden Morphs passenden Segmente beschränkt.
+Wichtig: Der normale App-Bootstrap wurde NICHT umgebaut.
+Außer Versionsnummer/Cache-Key liegen die funktionalen Änderungen ausschließlich im MORF/Atlas-Pfad bzw. im weiterhin lazy geladenen Section-Modul.
 
-Unverändert:
-- Solver24 / PROT-v2 / ANSUR-Messoperatoren.
+Atlas v2.6
+- erzwingt für jede MIN/REFERENZ/MAX-Aufnahme die feste Measurement-T-Pose
+- behält Rest-Mesh Rot/Blau aus Atlas v2.5
+- behält SOMA-Skelett-Inset rechts unten
+- zeichnet die echten Profile-Sections des v2.1-Geometrie-Engines direkt ins Atlasbild:
+  - 25 % = Cyan
+  - 50 % = Gelb
+  - 75 % = Violett
+  - taxonomy topSection = dickere Linie
+- zeigt bei genau einem erwarteten Limb-Segment zusätzlich den aktuellen kanonischen ANSUR-Umfang als weiße gestrichelte Linie:
+  - upperarm -> upperarm_circumference
+  - lowerarm -> forearm_circumference
+  - upperleg -> thigh_circumference
+  - lowerleg -> calf_circumference
+- pro Kachel werden topSection A/B/Umfang sowie der ANSUR-Umfang als Zahlen ausgegeben
+- Bulk Atlas ZIP wurde auf Schema/Filename v2.6 angehoben und enthält Section-/ANSUR-Debugdaten im manifest.json
+
+Profile Section API
+- gleiche v2.1-Messlogik wie im erfolgreichen v0.8.24.13 Quick
+- zusätzlich computeSectionGeometry() für den Atlas
+- die Section-Geometrie wird NICHT in FULL-JSON aufgebläht; sie wird nur beim Atlasexport on demand berechnet
+
+Kompatibilität
+- abgeschlossene MORF-Runs aus v0.8.24.13 werden in v0.8.24.14 weiter geladen
+- deshalb ist KEIN neuer Quick-Lauf nötig, um Atlas v2.6 zu prüfen
+- das Section-Modul bleibt lazy: es wird erst bei MORF/Atlas benötigt und kann den normalen Sammy-Start nicht blockieren
+
+Prüfungen vor Verpackung
+- node --check app.js: OK
+- node --check morph-sections-v2.1.js: OK
+- TypeScript ES2020 Parser: 0 Syntaxfehler in beiden JS-Dateien
+- HTML IDs: 450, keine Duplikate
+- Section-Geometry API mit synthetischem Mesh getestet: 25/50/75%-Kurven werden erzeugt

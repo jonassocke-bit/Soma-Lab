@@ -1,4 +1,4 @@
-// Sammy v0.8.24.13 · Profile Section v2.1 classic lazy engine.
+// Sammy v0.8.24.14 · Profile Section v2.1 geometry engine + Atlas Section Overlay API.
 // Pure geometry: no DOM/THREE/solver side effects until MORF explicitly loads this file.
 (function(global){
 "use strict";
@@ -72,7 +72,7 @@ function sectionSide({rest,triangles,regionMap,segment,side,q,centerX}){
  let minA=Infinity,maxA=-Infinity,minB=Infinity,maxB=-Infinity,per=0;
  for(const z of hull){minA=Math.min(minA,z[0]);maxA=Math.max(maxA,z[0]);minB=Math.min(minB,z[1]);maxB=Math.max(maxB,z[1])}
  for(let i=0;i<hull.length;i++){const b=hull[(i+1)%hull.length];per+=Math.hypot(b[0]-hull[i][0],b[1]-hull[i][1])}
- return {valid:true,method,segment,side,q,count:pts.length,hullPoints:hull.length,regionVertices:allowed.length,triangleHits,candidateTriangles,axisSpanCm:Number((axisSpan*100).toFixed(3)),planeCoord:Number(planeCoord.toFixed(6)),slabCm,aCm:Number(((maxA-minA)*100).toFixed(3)),bCm:Number(((maxB-minB)*100).toFixed(3)),perimeterCm:Number((per*100).toFixed(3))}
+ return {valid:true,method,segment,side,q,count:pts.length,hullPoints:hull.length,regionVertices:allowed.length,triangleHits,candidateTriangles,axisSpanCm:Number((axisSpan*100).toFixed(3)),planeCoord:Number(planeCoord.toFixed(6)),slabCm,aCm:Number(((maxA-minA)*100).toFixed(3)),bCm:Number(((maxB-minB)*100).toFixed(3)),perimeterCm:Number((per*100).toFixed(3)),worldHull:hull.map(z=>isArm?[planeCoord,z[0],z[1]]:[z[0],planeCoord,z[1]])}
 }
 
 function computeLimbProfiles(input){
@@ -91,5 +91,20 @@ function computeLimbProfiles(input){
  return out
 }
 
-global.SammyMorphSectionsV21={computeLimbProfiles:computeLimbProfiles,version:"2.1"};
+function computeSectionGeometry(input){
+ const rest=input.rest,triangles=input.triangles,regionMap=input.regionMap,segments=Array.isArray(input.segments)&&input.segments.length?input.segments:["upperarm","lowerarm","upperleg","lowerleg"];
+ const b=bbox(rest),out=[];if(!b||!triangles?.length||!regionMap?.length)return out;
+ const centerX=(b.min[0]+b.max[0])*.5;
+ for(const segment of segments){
+  if(!["upperarm","lowerarm","upperleg","lowerleg"].includes(segment))continue;
+  for(const q of [.25,.5,.75])for(const side of ["left","right"]){
+   const g=sectionSide({rest,triangles,regionMap,segment,side,q,centerX});
+   if(!g.valid||!Array.isArray(g.worldHull)||g.worldHull.length<3)continue;
+   out.push({segment,side,q,method:g.method,aCm:g.aCm,bCm:g.bCm,perimeterCm:g.perimeterCm,points:g.worldHull});
+  }
+ }
+ return out
+}
+
+global.SammyMorphSectionsV21={computeLimbProfiles:computeLimbProfiles,computeSectionGeometry:computeSectionGeometry,version:"2.2-atlas"};
 })(window);
