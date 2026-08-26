@@ -1,15 +1,16 @@
-# PATCH NOTES · v0.8.25.0
+# PATCH NOTES · v0.8.25.1
 
-**SOLVER V2 PROOF 1.0** ist jetzt der primäre SOLV-Pfad.
+**SOLVER V2 PROOF 1.1** repariert den ungültigen Quick-Testaufbau von v0.8.25.0.
 
-- Blind Round-trip mit Typical-/Edge-Körpern und mehreren Seeds.
-- 24 ANSUR24-PROT-v2-Ziele werden über frische reale Mesh-Jacobians in 10 MeasurementStates optimiert.
-- Morph Observatory Deep liefert Hierarchie/Semantik; alte numerische Deep-Interaction-Residuals der sieben Repair-v1.6-Maße bleiben ausgeschlossen.
-- Reliability statt neuer Messoperator-Patches für nicht vollständig simulierbare PROT-Bedingungen.
-- Direction B: semantischer Fresh-Jacobian-Fallback nach klar scheiternden Seeds, im selben Build.
-- Conflict Controls, zusätzliche Maß-/Rig-Holdouts, Plausibilitätsguard und Seed-Streuung im Proof-Gate.
-- IndexedDB-Resume nach jedem vollständigen Seed.
-- AUDT unterstützt Solver-V2-Proof-Bestlösungen.
-- Legacy Solver24 V2.1 bleibt eingeklappt als Baseline erhalten.
+- neutraler Target-Fallback entfernt;
+- reliability-aware ANSUR-Delta-Prior statt absolutem Baseline-Deadlock;
+- harte Target-/Seed-Testvalidität vor dem Solver;
+- Duplicate- und Source-Distance-Gates;
+- keine nahezu perfekten Startseeds;
+- `PROOF INVALID` als eigener Status;
+- Direction B: `attempted / improved / finalFitAccepted`;
+- AUDT: Best-Fit + Far-Seed-Rekonstruktion blind.
 
-Siehe `RELEASE_NOTES_V0.8.25.0.md` und `SOLVER_V2_PROOF_1.0_V0.8.25.0.md`.
+Messdefinitionen, v0.8.24.26-Messgeometrie, Deep-Taxonomie und Solver-V2-Optimierer bleiben ansonsten unverändert.
+
+Siehe `RELEASE_NOTES_V0.8.25.1.md` und `SOLVER_V2_PROOF_1.1_V0.8.25.1.md`.

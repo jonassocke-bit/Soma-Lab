@@ -1,0 +1,410 @@
+{
+  "schema": "sammy-build-manifest-v1",
+  "app": "Sammy",
+  "version": "0.8.25.1",
+  "release": "SOLVER V2 PROOF 1.1",
+  "baseArtifact": "SAMMY_V0.8.25.0_SOLVER-V2-PROOF-1.0.zip",
+  "baseArtifactSha256": "dac6b01f56aa3f3185e69991f839c2721ce1f06e115a922860a13ee12c076490",
+  "generatedAt": "2026-08-26T19:31:46.110572+00:00",
+  "proofSchema": "sammy-solver-v2-proof-v1.1",
+  "summarySchema": "sammy-solver-v2-proof-summary-v1.1",
+  "testValiditySchema": "sammy-solver-v2-proof-test-validity-v1.1",
+  "scope": "Incremental proof-test harness repair: hard test validity, nontrivial/diverse targets, seed preflight, reliability-aware ANSUR delta prior, explicit Direction-B outcome fields, far-seed blind audit. Measurement geometry and Solver V2 numerical architecture otherwise unchanged.",
+  "files": [
+    {
+      "name": "anny-pack-setup.html",
+      "bytes": 4936,
+      "sha256": "ac752b534ceb3a762cda748e61bad0412b7e7cc0b680532278d6a50d6be4460c"
+    },
+    {
+      "name": "ANNY_PACK_WORKFLOW.yml",
+      "bytes": 2508,
+      "sha256": "80935f8942060eba02c1ff76b3a45967c19e6c8af9b29949526e68ef252ff4ae"
+    },
+    {
+      "name": "ansur-crops-atlas.jpg",
+      "bytes": 1439077,
+      "sha256": "00841e3b4d84633f89fb9fa942693de81d67c3b2a79cc495e273f0c3e258d10f"
+    },
+    {
+      "name": "ansur-crops-atlas.json",
+      "bytes": 4817,
+      "sha256": "a5e0c526916f76fc3f89353c118d9ba2b444caedc47f0cd3093dc0ef0f071d0e"
+    },
+    {
+      "name": "ansur-dimensions-bridge-v1.json",
+      "bytes": 13687,
+      "sha256": "33c3497e1f2003f3aed24b2a5c37b4e123d8e3d78faecd4a09f4d413494a85e8"
+    },
+    {
+      "name": "ansur-lab-worker.js",
+      "bytes": 27052,
+      "sha256": "706ea842c3bc3368cafc83916fbc9b012cd7eadcd43bf50123f89f8904e3bf95"
+    },
+    {
+      "name": "ansur-prediction-test-v1.json",
+      "bytes": 142634,
+      "sha256": "733359b48d5e317a6aa6e13bead18114e9d40ee37db8bae6276abd57ad2ca9d2"
+    },
+    {
+      "name": "ansur-prediction-trainval-v1.json",
+      "bytes": 772827,
+      "sha256": "88cc5e04b7808c1b8626790adffcc325050a37699b92b6717aedd35fecc6de14"
+    },
+    {
+      "name": "ansur-protocol-v1.json",
+      "bytes": 86057,
+      "sha256": "19604d8495887ab768ee4e3f9aeb0fa7c9b4665b5b3861d7e3d72737543542a1"
+    },
+    {
+      "name": "ANSUR24_PROT_V2_V0.8.22.0.md",
+      "bytes": 2048,
+      "sha256": "70da692a2dadfcc5ea387eaa28190d3cc34ecc5a3abd7f091c4374fe3340e2cc"
+    },
+    {
+      "name": "ANSUR24_PROTOCOL_V2.json",
+      "bytes": 15384,
+      "sha256": "50dc60ad63246599f07f3c38fca869a3ceca8f1c68f3c6e9acfd7ef981507bb6"
+    },
+    {
+      "name": "ANSUR_II_94_MEASURE_MAPPING_V0.8.19.9.md",
+      "bytes": 4700,
+      "sha256": "2d4352f19388f8d77d7d88dc25513e5a663d24d254c5ed9124b61bc066d46538"
+    },
+    {
+      "name": "ANSUR_II_94_MEASURE_MAPPING_V0.8.20.1.json",
+      "bytes": 18695,
+      "sha256": "d108cb372d9d0eef5b8fc6b84ca1fc86d264f368e4045dc9f3c825a225ef18f4"
+    },
+    {
+      "name": "ANSUR_II_94_MEASURE_MAPPING_V0.8.20.1.md",
+      "bytes": 5623,
+      "sha256": "01b58446e53312e566c8334adf9c35790264daa3d01e60fba7e32314fce61517"
+    },
+    {
+      "name": "ANSUR_PROTOCOL_AUDIT_V0.8.19.9.md",
+      "bytes": 2526,
+      "sha256": "01ab97b9d5ea2833b162dc2b118f0740e578bca3cd96bf1c611e24a7f519ca2b"
+    },
+    {
+      "name": "ANSUR_PROTOCOL_AUDIT_V0.8.20.1.md",
+      "bytes": 1930,
+      "sha256": "86176a1125a248c654e8f3c232f340ee2be4d63c7db3f75027f5926677bdaa0d"
+    },
+    {
+      "name": "ANSUR_SOURCE_PAGES.zip",
+      "bytes": 2978509,
+      "sha256": "052a788f7e8f4cec0703879730393d847119ff9c469e6e2ffe8a8fa2a69067e5"
+    },
+    {
+      "name": "ANSUR_SOURCE_PAGES_MANIFEST.json",
+      "bytes": 1406,
+      "sha256": "0cde38f131c922473b49f25ef76c2c306e2777cdf37062da2683971231e24ad0"
+    },
+    {
+      "name": "anthro24-conditional-prior-v1.json",
+      "bytes": 51095,
+      "sha256": "3a9597d06eed7eb160648ec6bd5a015ee42ad848ad42cf36ea8e4e4f99f68265"
+    },
+    {
+      "name": "app.js",
+      "bytes": 1194443,
+      "sha256": "4e4a65ba4170da2180b3a6347edd4f8bc68b9477040b92db3d50fc8f02a48409"
+    },
+    {
+      "name": "BOOT_HOTFIX_V0.8.20.2.md",
+      "bytes": 634,
+      "sha256": "d1f75dee6fe002c86aef0767fc19b51094e9effc94c9e2d1bda066d49e6f08b8"
+    },
+    {
+      "name": "BOOT_HOTFIX_V0.8.24.2.md",
+      "bytes": 1064,
+      "sha256": "a649c4aa29c09e808ee7cedd888463a07d16330ff94db639979f86cc3c451b22"
+    },
+    {
+      "name": "BUILD_MANIFEST_V0.8.23.0.json",
+      "bytes": 1720,
+      "sha256": "58020349bfbeefbaef1676f86ddb3da9833ea399cb195dafa7e85c3ff67dde69"
+    },
+    {
+      "name": "BUILD_MANIFEST_V0.8.24.0.json",
+      "bytes": 955,
+      "sha256": "d301b400a3710a5f47b453a09dc1b6174f71687e95fd816f43ef58c0275f5f4f"
+    },
+    {
+      "name": "BUILD_MANIFEST_V0.8.24.1.json",
+      "bytes": 1435,
+      "sha256": "d6134b285e453e586aa469e1890e9b45caac62bdd6f8f2ad6e9599aaf7df7afd"
+    },
+    {
+      "name": "BUILD_MANIFEST_V0.8.24.17.json",
+      "bytes": 10137,
+      "sha256": "69df752d47ee6ad79d33d3e483ab09f5b9ee04c8054d2a98c7951191b25d8b00"
+    },
+    {
+      "name": "BUILD_MANIFEST_V0.8.24.2.json",
+      "bytes": 1555,
+      "sha256": "6266e5a45f4d6fa63cf2d0055e46fcf5d184e7212ebccf4c3da70850c663479e"
+    },
+    {
+      "name": "BUILD_MANIFEST_V0.8.25.0.json",
+      "bytes": 13241,
+      "sha256": "2309a8fea040afaff4f9e67654fba64b1bf3d6315c9f737a147385c768620180"
+    },
+    {
+      "name": "BUILD_TEST_V0.8.25.0.txt",
+      "bytes": 1279,
+      "sha256": "8a7a416ddcddab92b5c486117c6c77c3362c507a7c8a976ba249a105f5479f8c"
+    },
+    {
+      "name": "BUILD_TEST_V0.8.25.1.txt",
+      "bytes": 3476,
+      "sha256": "05e50b56f7fd147515746bd79064ca98aaa736c18904bf71c6bcf8598a091910"
+    },
+    {
+      "name": "EXACT_ANNY_SOMA_RIG.md",
+      "bytes": 1827,
+      "sha256": "8f6793715f05643c2d55d637eb3f9ac0d448fec829db2f7cdc38ad8ac656178e"
+    },
+    {
+      "name": "extract_anny_soma_pack.py",
+      "bytes": 13227,
+      "sha256": "dae529ab4163715eaa6234e053c99d86a8af1cfbdc54399a8d3254d4c1cc1a5a"
+    },
+    {
+      "name": "extract_current_rig_pack.py",
+      "bytes": 12996,
+      "sha256": "1d8e5f2cf01f2677f19bc25348330adfc802829f367e08524a19659571b2fda2"
+    },
+    {
+      "name": "index.html",
+      "bytes": 76859,
+      "sha256": "6fe581527265741a5c7581dc598be07fc522abc01404f84c12a2ea64a2159427"
+    },
+    {
+      "name": "INFLUENCE_ADDENDUM_V0.8.20.4.md",
+      "bytes": 2530,
+      "sha256": "cf34eb2009e00621e821834f7e418adda9f9edad0693040e0eb373a53325357d"
+    },
+    {
+      "name": "INFLUENCE_LAB_V0.8.20.3.md",
+      "bytes": 1884,
+      "sha256": "512198cfed0bcd9601cd6c87ad662eac45939b148205e1f118efbff59682a959"
+    },
+    {
+      "name": "LAB_HUB_AUDIT_V0.8.20.0.md",
+      "bytes": 1426,
+      "sha256": "edca9ec84cc8be7d15ad2a5e0808afe02f8b9b0054d11efc1f68397ccda17e54"
+    },
+    {
+      "name": "mass-composition-v1.json",
+      "bytes": 12185,
+      "sha256": "2e7928fe1e29debcf581cdf454fdd95c108ff5c3d1ba4315565cbecba4334194"
+    },
+    {
+      "name": "MASS_COMPOSITION_V0.8.23.0.md",
+      "bytes": 3927,
+      "sha256": "28244ac614be384a898cd93f3768a41b57d08099298384a23d7aa0824fe1a9cf"
+    },
+    {
+      "name": "MEASUREMENT_SCHEMA_LOCK_V0.8.20.3.md",
+      "bytes": 621,
+      "sha256": "f42120a7cf20650085e510fc2c362c593bd169b258c2049927d136bcc524e56d"
+    },
+    {
+      "name": "MIXAMO_RIG_AUDIT_V0514.json",
+      "bytes": 14633,
+      "sha256": "9e89fd7265283b4092b15c0a0c012b77834efb0b01485d9a1ac6a3779d7f821f"
+    },
+    {
+      "name": "MIXAMO_XBOT_ANALYSIS.json",
+      "bytes": 9066,
+      "sha256": "befe919b4f90478cdd2f0bd8fcf2f3a4fc5a35bbbba376d3d98980ec053119ff"
+    },
+    {
+      "name": "morph-sections-v2.1.js",
+      "bytes": 7915,
+      "sha256": "fba3d7cff3fe27fbcdbcb109d57b0d8a537c9a3572b8c95cfe01b1d20f56d423"
+    },
+    {
+      "name": "MORPH_OBSERVATORY_V0.8.24.0.md",
+      "bytes": 5509,
+      "sha256": "052036e20173ee198bea3c4d605aea94503900edabc01f9637c19c45162a2cdc"
+    },
+    {
+      "name": "MORPH_OBSERVATORY_V0.8.24.1.md",
+      "bytes": 4424,
+      "sha256": "5806cb066d9acb18b49ffd1e84466a82b148a30c5c37db4092a799b3fae55519"
+    },
+    {
+      "name": "MOTION_IMPORT.md",
+      "bytes": 968,
+      "sha256": "65c1c206d8eb7fd08b621576dae6b24d25c0b61553182c379c9cba77509803df"
+    },
+    {
+      "name": "NEXT_PHASE_MEASURE_SLIDER_INFLUENCE.md",
+      "bytes": 1082,
+      "sha256": "bba6d2ac216fff44a381e8626db95852efe801d177ee3b36fe652eb2a6b4e7de"
+    },
+    {
+      "name": "PATCH_NOTES.md",
+      "bytes": 690,
+      "sha256": "0ff13c10a760e8000a04681ad0a050c8b71c072f0ddf0467877e815bc753e343"
+    },
+    {
+      "name": "pose-oracle-setup.html",
+      "bytes": 2054,
+      "sha256": "55ae9d2410362d786b5c5ec3eaf6d36958944e9b5e12f55fbaba165d2f5558c3"
+    },
+    {
+      "name": "pose_oracle.py",
+      "bytes": 3098,
+      "sha256": "81e12b765d1a6dc8101c0b0da1c55eb96a50b7a21d163e2a48774a52a7f39e18"
+    },
+    {
+      "name": "POSE_ORACLE_WORKFLOW.yml",
+      "bytes": 1294,
+      "sha256": "e4c9a184f438a1d9b59c009a9500f08b45b9503243b31a9800176a53cac6f1cc"
+    },
+    {
+      "name": "README.md",
+      "bytes": 1320,
+      "sha256": "7420f05b8a69cb61ee9674c8ab08dcd3a08e1fb5323f80ac5459f3e37887a8dc"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.24.17.md",
+      "bytes": 596,
+      "sha256": "1e11c96ca4a937b5bc0d8695cfa00c53761f73b838eecf971a139cbb0a7e9ccf"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.24.18.md",
+      "bytes": 631,
+      "sha256": "bbcb237af62bf27f10d423d8665d767d0673f31ab725048a6fba8c5f5535fb7f"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.24.19.md",
+      "bytes": 384,
+      "sha256": "256c666b661dd80b8c88cdb015f5a5ef98d45da2193308150a990dce4bcac26f"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.24.20.md",
+      "bytes": 1114,
+      "sha256": "ab323ec166b5a56176cfe31aaee533a55ae5d52288130580b78e9f578bc04855"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.24.21.md",
+      "bytes": 1342,
+      "sha256": "3ae2b0ec395ec22ec14a250e8be8b59e2ce30b2afb29bde3b477eaa578bc915e"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.24.22.md",
+      "bytes": 2033,
+      "sha256": "35a6e5a88c9879f2913278f02aac006e0e1f10f89f69cfb3c6c4e2726ea50c14"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.24.23.md",
+      "bytes": 2504,
+      "sha256": "9c19421445924a310113ec54cc45897436c8bf0dd8418862f9236c1a15185233"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.24.24.md",
+      "bytes": 2256,
+      "sha256": "d1e4b8bd779fa469725b30c9f7f037c1617cf02214cfd09d1e9ec4ae5c8291a5"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.24.25.md",
+      "bytes": 2155,
+      "sha256": "1a7adcd7059f930a464c0eefd231f86642dc12dadf20e69510467665a91a4b80"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.24.26.md",
+      "bytes": 2524,
+      "sha256": "d16382578cfe14dfe91b2abc1658e78f647b5b217af022932e4f5c70f082fe95"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.24.5.md",
+      "bytes": 400,
+      "sha256": "21d11ce64ab66b9c88c4dcbf3e13aad118a6472a020eda0f92b46d2b9f0b5098"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.25.0.md",
+      "bytes": 6455,
+      "sha256": "e308ccdcac4f040beafc700d95aa3e702f5901f1255c3648c778d494912b6f94"
+    },
+    {
+      "name": "RELEASE_NOTES_V0.8.25.1.md",
+      "bytes": 5163,
+      "sha256": "597d239d21dd948743e1054e1708fa94048709df7b438e194927f931fb800825"
+    },
+    {
+      "name": "rigpack-setup.html",
+      "bytes": 4362,
+      "sha256": "8036656ac9ec013869c77e04d5811fb70dc32512e169c822bdfc6b6033be2e6a"
+    },
+    {
+      "name": "RIGPACK_WORKFLOW.yml",
+      "bytes": 1532,
+      "sha256": "6e07cfec6671b430add1be4f8a65e5c143a6a67fdbb7bf5701cee236e24c5906"
+    },
+    {
+      "name": "sammy-ansur-sitting-source.fbx",
+      "bytes": 1030928,
+      "sha256": "90bf0eea2b0a1a2f028d6c9bb7c316c96ef6b0db9d78e712ec79c805c146bbe4"
+    },
+    {
+      "name": "sammy-ansur-standing-source.fbx",
+      "bytes": 833776,
+      "sha256": "5d26b2716f77e10d974c3de97bab6c82f8d24b2c878da67a19ee96aa156893a4"
+    },
+    {
+      "name": "solver24-prior-v1.json",
+      "bytes": 56011,
+      "sha256": "727dc02bf066d16f07f39a292083fad4c62f56a6cb9a4e8b5db3a9a81fe3566f"
+    },
+    {
+      "name": "SOLVER24_V1.1_V0.8.21.1.md",
+      "bytes": 2393,
+      "sha256": "355048c3dd38e719a632743438c44d84255526d69e55cbc031468f801291950e"
+    },
+    {
+      "name": "SOLVER24_V1.2_V0.8.21.2.md",
+      "bytes": 2327,
+      "sha256": "9152f42c129403adcfbb50f73c6471cd11079bda9e958ec9bf9a141e05ac51b7"
+    },
+    {
+      "name": "SOLVER24_V1.3_V0.8.21.3.md",
+      "bytes": 3622,
+      "sha256": "86c7f83a9e2f2c0dbc8a27ecd600bc59cb466da5405be83e3967f5f9260e6283"
+    },
+    {
+      "name": "SOLVER24_V1_V0.8.21.0.md",
+      "bytes": 5145,
+      "sha256": "7ef69c26d443edd54065db17465302fbfa7f297f599b9b6f38ba66cd9a0769c1"
+    },
+    {
+      "name": "SOLVER_V2_PROOF_1.0_V0.8.25.0.md",
+      "bytes": 3461,
+      "sha256": "f535dcdbecd2f8c318e85ec74e2b25b4ce4de494d082f03c92e542f49cd48b84"
+    },
+    {
+      "name": "SOLVER_V2_PROOF_1.1_V0.8.25.1.md",
+      "bytes": 4100,
+      "sha256": "285ba42720a8d826e70597568fa571b3d3d1af491dc61bcba88a293b50d65429"
+    },
+    {
+      "name": "standing-greeting.fbx",
+      "bytes": 1209120,
+      "sha256": "9df375e95fb052dc31c5bbf0914b4c530fec7d88ed555af0b93326972ae9c985"
+    },
+    {
+      "name": "style.css",
+      "bytes": 92653,
+      "sha256": "109c8b58af1a8d0c02308546b1669346c2f4368c99838aa56f5a176bec305ef8"
+    },
+    {
+      "name": "THIRD_PARTY.md",
+      "bytes": 2757,
+      "sha256": "4bd49607f07e1291b37440b5499d986f8b4fbb00daa54d0078cf58df6ec5d917"
+    }
+  ]
+}

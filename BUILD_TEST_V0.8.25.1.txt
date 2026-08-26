@@ -1,0 +1,74 @@
+SAMMY v0.8.25.1 · SOLVER V2 PROOF 1.1 · BUILD TEST
+====================================================
+
+Base
+----
+Source: SAMMY_V0.8.25.0_SOLVER-V2-PROOF-1.0.zip
+Scope: Proof-test harness repair only. ANSUR24-PROT-v2 definitions, v0.8.24.26 measurement geometry and the Solver-V2 numerical architecture are otherwise unchanged.
+
+Static / structural checks
+--------------------------
+PASS  SAMMY_APP_VERSION = 0.8.25.1
+PASS  Proof schema v1.1
+PASS  Summary schema v1.1
+PASS  Test-validity schema v1.1
+PASS  No old fallbackAcceptedSeeds naming
+PASS  Direction B outcome split
+PASS  Hard TARGET_GENERATION_INVALID path
+PASS  Old neutral accepted fallback absent
+PASS  Seed preflight exists
+PASS  Target diversity metrics exist
+PASS  Seed-source distance metrics exist
+PASS  Dedicated PROOF INVALID gate
+PASS  Far-seed AUDT record exists
+PASS  Visible Proof 1.1 label
+PASS  0.8.25.1 cache bust
+PASS  INVALID gate CSS
+PASS  Function unique: sammySolverV2ProofHiddenTargets
+PASS  Function unique: sammySolverV2ProofPreflightSeeds
+PASS  Function unique: sammySolverV2ProofValidateTest
+PASS  Function unique: sammySolverV2ProofSolveSeed
+PASS  Function unique: sammySolverV2ProofSummary
+PASS  Function unique: sammySolverV2ProofBuildRun
+PASS  Function unique: sammySolverV2ProofRun
+PASS  Function unique: sammySolverV2ProofRecordAuditCases
+PASS  HTML IDs unique (474)
+PASS  DOM id once: sammySolverV2ProofLab
+PASS  DOM id once: sammySolverV2ProofSource
+PASS  DOM id once: sammySolverV2ProofDeepFile
+PASS  DOM id once: sammySolverV2ProofRescan
+PASS  DOM id once: sammySolverV2ProofStart
+PASS  DOM id once: sammySolverV2ProofPause
+PASS  DOM id once: sammySolverV2ProofReset
+PASS  DOM id once: sammySolverV2ProofSummary
+PASS  DOM id once: sammySolverV2ProofFull
+PASS  DOM id once: sammySolverV2ProofStatus
+PASS  DOM id once: sammySolverV2ProofProgress
+PASS  DOM id once: sammySolverV2ProofCurrent
+PASS  DOM id once: sammySolverV2ProofLive
+PASS  DOM id once: sammySolverV2ProofResults
+PASS  DOM id once: sammySolverV2ProofShowBest
+PASS  DOM id once: sammySolverV2ProofAudit
+PASS  DOM id once: sammySolverV2ProofCriteriaBody
+PASS  Document exists: RELEASE_NOTES_V0.8.25.1.md
+PASS  Document exists: SOLVER_V2_PROOF_1.1_V0.8.25.1.md
+PASS  Document exists: README.md
+PASS  Document exists: PATCH_NOTES.md
+PASS  Regression fixture has 4 round-trip targets
+PASS  Regression target 1 == 3
+PASS  Regression target 2 == 4
+PASS  Regression sourceActiveVariableIds all empty
+PASS  Regression Seed 1 starts at exact 0 fit
+PASS  node --check app.js
+
+Regression interpretation
+-------------------------
+The supplied v0.8.25.0 Quick FULL fixture reproduces the exact failure mode that triggered Proof 1.1: two same-sex duplicate target pairs, zero active source variables and a 0.000 cm / 0.000 u initial Seed 1 for every round-trip. The v1.1 source contains hard pre-solver guards for all of these conditions and uses a new proof schema so the old run cannot be resumed as a v1.1 proof.
+
+Runtime limitation
+------------------
+A complete Sammy mesh/pose/10-MeasurementState solve cannot be executed in this build container because normal Sammy boot depends on external Three.js / SOMA-X / Hugging Face resources. The first authoritative runtime check remains LAB -> SOLV -> Quick. Proof 1.1 is designed to stop as PROOF INVALID before solver scoring if target/seed validity is still defective.
+
+Packaging
+---------
+PASS  final ZIP integrity verified with unzip -t (added after packaging verification)
