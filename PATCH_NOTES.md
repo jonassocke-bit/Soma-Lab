@@ -1,10 +1,10 @@
-SAMMY v0.8.24.24 PATCH
-Base: v0.8.24.23
+SAMMY v0.8.24.25 PATCH
+Base: v0.8.24.24
 
 Changed files:
 - app.js
 - index.html
-- RELEASE_NOTES_V0.8.24.24.md
+- RELEASE_NOTES_V0.8.24.25.md
 - PATCH_NOTES.md
 
-Scope: MEAS Gate v1.5. Fixes Neck Circumference tape-level drift by anchoring Infrathyroid directly to the canonical PROT Neck1→Neck2 level t=0.42, while preserving the sampled surface proxy only as audit metadata. Adds a fixed-Infrathyroid geometry guard to Gate and the 2,888-row Deep MEAS Repair sweep. No boot/atlas/section/PROT-definition/Solver24 changes.
+Scope: MEAS Gate v1.6. No measurement operator is changed. The last v1.5 failure (`Measure Neck Height Incr` -> Neck Circumference on female neutral) is reclassified from an invalid off-target invariance assumption to an expected structural cross-measure coupling audit, while all geometry guards remain mandatory. Deep MEAS Repair schema/status advances to v1.6. Boot/atlas/section/PROT-definition/Solver24 logic is unchanged.
