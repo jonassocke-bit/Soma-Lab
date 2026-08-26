@@ -1,21 +1,29 @@
-# Sammy v0.8.24.2 — MORPH OBSERVATORY v1.1
+# Sammy v0.8.25.0 — SOLVER V2 PROOF 1.0
 
-Inkrementelles Observatory-Update auf Basis von v0.8.24.0. **Solver24 und ANSUR24-PROT-v2 bleiben unverändert.**
+Dieser Build setzt direkt auf **v0.8.24.26 / Measurement Freeze Gate v1.7** auf und fügt den ersten entscheidenden Blind-Inverse-Nachweis für Solver V2 hinzu.
 
-Neu in MORF:
+## Einstieg
 
-- **Sex Split zuerst:** Mann und Frau werden vollständig getrennt klassifiziert; erst danach folgt ein Cross-Sex-Vergleich.
-- **Neutral / Mid-Shape:** `gender=0.5` als rein geometrischer Diagnose-Track; keine Mittelung in Mann/Frau. Female Breast/Cupsize/Firmness bleiben female-only.
-- **Quick ist Default:** zuerst 3-Level-Smoke-Test; danach bei erfolgreicher Prüfung **Groß / Deep** mit 5 Levels und mehr Weight/Muscle-Kontextkörpern.
-- **Pair-Kandidaten je Track:** Coupled-axis/Redundant/Alternatives werden nicht mehr aus einem gepoolten Mann/Frau-Effekt abgeleitet.
-- **Atlas v2:** 3×3 Min/Referenz/Max × Front/Side/Back bleibt erhalten, jetzt mit 20-Graustufen-Mannequin, roter geometrischer Surface-Delta-Kontur und kompaktem SOMA-Skelett daneben. Bewegte Joints/Bones werden rot markiert.
-- **Kompakter Export:** Atlas bleibt ein einzelnes JPEG on demand; keine Bilder oder Rohvertex-Deltas im JSON.
+1. App normal starten.
+2. `LAB → SOLV` öffnen.
+3. Prüfen, dass oben **Deep bereit** erscheint. Falls der Browser-IndexedDB-Lauf fehlt, das bereits exportierte `Sammy_MORPH_OBS_FULL_deep_*.json` auswählen.
+4. Zuerst **Quick** als technischen Smoke-/Resume-Test ausführen.
+5. Danach **Standard** als eigentlichen Entscheidungslauf ausführen und `Summary JSON` + `FULL JSON` exportieren.
+6. Optional `Blind Audit öffnen` und die Bestlösungen rein visuell auf klare anatomische Fehler prüfen.
 
-Details und Quick-Abnahmeliste: `MORPH_OBSERVATORY_V0.8.24.2.md`.
+## Architekturgrenze
 
+- Messdefinitionen / Mesh-Messoperatoren: unverändert `ANSUR24-PROT-v2` aus v0.8.24.26.
+- ANSUR↔Sammy: unverändert.
+- Solver V2: neue isolierte Proof-Schicht mit Deep-Hierarchie, frischen realen Mesh-Jacobians, Trust Region, Line Search, Reliability, Multi-Seed und Holdouts.
+- Die sieben Repair-v1.6-Maße verwenden keine alten Deep-Interaction-Residuals.
+- Der alte Solver24 V2.1 bleibt als eingeklappte Baseline verfügbar.
 
-## v0.8.24.2 boot-order hotfix
-- Fixes the splash hang at **„Körpermodell wird vorbereitet …“**.
-- Restores the v0.8.20.2 boot invariant: `sammyInitUi()`, Morph Observatory UI binding and `autoStartRuntime()` execute only at the absolute end of `app.js`, after every LAB `const`/`let` declaration.
-- MORPH OBSERVATORY v1.1 behavior (sex split, neutral diagnostic, Atlas v2) is unchanged.
-- Solver24 / ANSUR24-PROT-v2 / measurement geometry are unchanged.
+## Dokumentation
+
+- `RELEASE_NOTES_V0.8.25.0.md` — Testdesign, Gate und Bedienung.
+- `SOLVER_V2_PROOF_1.0_V0.8.25.0.md` — technische Solver-Architektur und Direction-B-Fallback.
+- `BUILD_TEST_V0.8.25.0.txt` — statische Build-Prüfungen.
+- `BUILD_MANIFEST_V0.8.25.0.json` — Dateien / SHA-256 / Build-Metadaten.
+
+Ältere Release-/Lab-Dokumente bleiben im Paket als Versionshistorie erhalten.

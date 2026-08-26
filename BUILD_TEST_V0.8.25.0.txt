@@ -1,0 +1,27 @@
+SAMMY v0.8.25.0 · SOLVER V2 PROOF 1.0 · BUILD TEST
+Generated: 2026-08-26T18:26:39+00:00
+
+[1] JavaScript syntax
+PASS · node --check app.js
+
+[2] HTML/CSS/static UI checks
+PASS · lxml HTML parse
+PASS · CSS parse · errors=0
+PASS · duplicate HTML IDs · []
+PASS · Solver V2 Proof DOM bindings · referenced=13 missing=[]
+PASS · Legacy Solver24 retained · missing=[]
+PASS · app version=0.8.25.0
+PASS · HTML shell version
+PASS · proof schema declaration count=1
+PASS · Direction B fallback present
+PASS · repair-v1.6 old interaction residual exclusion present
+
+[3] Change scope vs v0.8.24.26
+ /mnt/data/sammy_082426_original/app.js => app.js | 212 ++++++++++++++++++++++-
+ 1 file changed, 204 insertions(+), 8 deletions(-)
+ .../sammy_082426_original/index.html => index.html | 85 ++++++++++++++--------
+ 1 file changed, 56 insertions(+), 29 deletions(-)
+ /mnt/data/sammy_082426_original/style.css => style.css | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+NOTE · Full browser/model runtime cannot be executed in this offline build container because the unchanged app boot imports Three.js/fflate and model assets from external CDNs/Hugging Face. Static/module syntax and DOM/CSS integration are validated here; the intended first device test is SOLV → Quick.

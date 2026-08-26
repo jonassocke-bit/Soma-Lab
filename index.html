@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.24.26</title>
-<link rel="stylesheet" href="style.css?v=0.8.24.13">
+<title>Sammy v0.8.25.0</title>
+<link rel="stylesheet" href="style.css?v=0.8.25.0">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.24.26</div>
+  <div class="sammySplashVersion">v0.8.25.0</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.24.26</div>
+<div id="sammyVersion">Sammy · v0.8.25.0</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -215,8 +215,8 @@
    <div class="sammyCalibrationActions"><button id="sammyMorphObsStart" type="button">Neues Observatory</button><button id="sammyMorphObsPause" type="button" disabled>Pause</button></div>
    <div class="sammyCalibrationActions"><button id="sammyMorphObsReset" type="button">Lauf löschen</button><button id="sammyMorphObsSummary" type="button">Summary JSON</button><button id="sammyMorphObsFull" type="button">FULL JSON</button></div>
    <div class="sammyCalibrationActions"><button id="sammyMorphObsMeasureGate" type="button">MEAS Gate</button><button id="sammyMorphObsMeasureGateExport" type="button" disabled>Gate JSON</button></div><div id="sammyMorphObsMeasureGateStatus" class="sammyCalibrationCurrent">Finaler MEAS Freeze Gate v1.7: Acromion über stabilen Shoulder→Arm-Außenanker; Neck/Thigh exportieren PROT-Support-Signaturen. PASS friert die Messgeometrie ein und beendet die Repair-Schleife.</div>
-   <div class="sammyCalibrationActions"><button id="sammyMorphObsDeepMeasurePatch" type="button">Deep MEAS Patch</button><button id="sammyMorphObsDeepMeasurePatchExport" type="button" disabled>Patch JSON</button></div><div id="sammyMorphObsDeepMeasurePatchStatus" class="sammyCalibrationCurrent">Kein weiterer globaler 2.888er Repair vorgesehen. Nach Freeze-PASS geht es direkt zu Solver V2; Acromion-abhängige Maße werden nur für die tatsächlich gewählten Struktur-DOFs gezielt nachkalibriert.</div>
-   <div id="sammyMorphObsStatus" class="sammyCalibrationStatus">Bereit · SOLV wird nicht verändert.</div>
+   <div class="sammyCalibrationActions"><button id="sammyMorphObsDeepMeasurePatch" type="button">Deep MEAS Patch</button><button id="sammyMorphObsDeepMeasurePatchExport" type="button" disabled>Patch JSON</button></div><div id="sammyMorphObsDeepMeasurePatchStatus" class="sammyCalibrationCurrent">Kein weiterer globaler 2.888er Repair vorgesehen. Solver V2 Proof verwendet Deep + Repair-v1.6-Policy; v1.7-Support-/Acromion-Diagnostik wird als Reliability behandelt. Acromion-abhängige Ziele werden nur für tatsächlich gewählte Struktur-DOFs frisch nachgemessen.</div>
+   <div id="sammyMorphObsStatus" class="sammyCalibrationStatus">Bereit · MORF bleibt Mess-/Taxonomie-Lab; Solver V2 Proof nutzt den abgeschlossenen Deep-Lauf nur als Hierarchiequelle.</div>
    <div class="sammyCalibrationProgress"><i id="sammyMorphObsProgress"></i></div>
    <div id="sammyMorphObsCurrent" class="sammyCalibrationCurrent">Quick: 3 Levels · ♂ Mann / ♀ Frau getrennt · ◇ Mid-Shape nur Mesh/Rig/Atlas-Diagnostik. Pair-/Interaktionschecks nur für Mann/Frau. Kontextabhängigkeit wird im Quick ausdrücklich nicht bewertet. Wenn alles sauber ist, folgt Groß / Deep mit mehreren Kontextkörpern und 5 Levels.</div>
    <div id="sammyMorphObsLive" class="sammyCalibrationLiveMeasures"></div>
@@ -228,27 +228,54 @@
 
  <section id="sammySolver24Panel" class="sammyPanel sammySolver24Panel" data-panel-key="solver24">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
-  <div class="sammyPanelHead"><div><b>SOLVER 24 · V2.1</b><small>24 Zielmaße + Gewicht → ANSUR States · Mass + Composition</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelHead"><div><b>SOLVER V2 · PROOF 1.0</b><small>Blind inverse holdout · Deep taxonomy · fresh real-mesh Jacobian</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard"><b>Rekonstruktion auf dem echten Mesh</b><span>V2.0 misst die 24 Zielmaße nicht mehr in einem gemeinsamen Pose-Zustand, sondern gebündelt in 10 ANSUR-MeasurementStates. Der lokale Jacobian wird auf diesen Zuständen am echten Mesh neu vermessen; Residuen werden zusätzlich in ANSUR-Allowable-Observer-Error-Einheiten bewertet. Der bestehende Conditional Prior bleibt als diagnostischer Zielvektor-Check erhalten. MASS v1 ergänzt optionales bekanntes Gewicht bzw. eine ANSUR-Schätzung, Mesh-Volumen-Diagnostik und einen schwachen objektiven RFM/FFMI-Kompositions-Prior. Der rohe Anny-Muscle-Slider wird dabei ausdrücklich nicht als Muskelprozent interpretiert.</span></div>
-   <div class="sammySolver24Context">
-    <div class="sammySolver24Sex" role="group" aria-label="Geschlecht"><button type="button" data-s24-sex="0" class="active">♂ Mann</button><button type="button" data-s24-sex="1">♀ Frau</button></div>
-    <label><span>Alter</span><input id="sammySolver24Age" type="number" inputmode="numeric" min="19" max="70" step="1" value="35"><em>J.</em></label>
-    <label><span>Gewicht</span><input id="sammySolver24Weight" type="number" inputmode="decimal" min="30" max="300" step="0.1" placeholder="optional"><em>kg</em></label>
-   </div>
-   <div class="sammyCalibrationModes sammySolver24Modes" role="group" aria-label="Solver Tiefe"><button type="button" data-s24-mode="quick">Quick</button><button type="button" data-s24-mode="standard" class="active">Standard</button><button type="button" data-s24-mode="deep">Deep</button><button type="button" data-s24-mode="stress">Stress</button></div>
-   <div class="sammyCalibrationActions"><button id="sammySolver24Capture" type="button">Aktueller Körper → 24 Ziele</button><button id="sammySolver24Solve" type="button">Rekonstruieren</button></div>
-   <div class="sammyCalibrationActions"><button id="sammySolver24Blind" type="button">Blind-Test starten</button><button id="sammySolver24Pause" type="button" disabled>Pause</button></div>
-   <div id="sammySolver24Status" class="sammyCalibrationStatus">Prior wird geladen …</div>
-   <div class="sammyCalibrationProgress"><i id="sammySolver24Progress"></i></div>
-   <div id="sammySolver24Current" class="sammyCalibrationCurrent">Standard: 3 unterschiedliche Startkörper pro Ziel. „Stress“ nutzt 8 real beobachtete ANSUR-Maßkombinationen × 2 Seeds = 16 Auditkörper. V2.0 misst über 10 Protokollzustände und zeigt zusätzlich cm-Fehler sowie Protocol Units; direkte Zielwerte bleiben autoritativ.</div>
-   <div id="sammySolver24Live" class="sammyCalibrationLiveMeasures"></div>
-   <details class="sammySolver24Targets"><summary>24 Zielmaße in cm <span>editierbar</span></summary><div id="sammySolver24Inputs" class="sammySolver24Inputs"></div></details>
-   <details class="sammySolver24Anthro"><summary>Anthropometrischer Prior <span>ANSUR · diagnostisch</span></summary><div id="sammySolver24AnthroStatus" class="sammySolver24AnthroStatus">24 Zielwerte vervollständigen …</div><div id="sammySolver24AnthroRows" class="sammySolver24AnthroRows"></div></details>
-   <details class="sammySolver24Anthro" open><summary>Masse &amp; Komposition <span>kg · Volumen · objektiver Proxy</span></summary><div id="sammySolver24MassStatus" class="sammySolver24AnthroStatus">Mass/Composition Modell wird geladen …</div><div id="sammySolver24MassRows" class="sammySolver24AnthroRows"></div></details>
-   <div id="sammySolver24Results" class="sammySolver24Results"><div class="sammyInfluenceEmpty">Noch keine Rekonstruktion.</div></div>
-   <div class="sammyCalibrationActions"><button id="sammySolver24ShowBest" type="button" disabled>Beste Lösung zeigen</button><button id="sammySolver24Audit" type="button" disabled>Blind Audit öffnen</button></div>
-   <div class="sammyCalibrationActions"><button id="sammySolver24Summary" type="button">Summary JSON</button><button id="sammySolver24Full" type="button">FULL JSON</button></div>
+   <div class="sammyLabIntroCard sammySolverV2ProofIntro"><b>Entscheidungstest für die neue Solver-Richtung</b><span>Der Proof rekonstruiert versteckte, vom Modell selbst erzeugte Körper ausschließlich aus Geschlecht, Alter und den 24 ANSUR24-PROT-v2-Zielmaßen. Die Morph-Observatory-Deep-Taxonomie steuert nur Hierarchie und Kandidatenwahl; jede numerische Ableitung wird frisch am aktuellen echten Mesh über die 10 MeasurementStates gemessen. Die sieben reparierten Maße verwenden keine alten Deep-Interaction-Residuals. Unaufgelöste PROT-Bedingungen werden als Reliability-Metadaten gewichtet statt durch neue Messoperator-Patches kaschiert.</span></div>
+   <details class="sammyCalibrationLab sammySolverV2ProofLab" id="sammySolverV2ProofLab" open>
+    <summary><b>PROOF 1.0</b><span>Round-trip · Seed-Stabilität · Edge · Conflict control</span></summary>
+    <div class="sammyCalibrationBody">
+     <div id="sammySolverV2ProofSource" class="sammySolverV2ProofSource">Deep-Quelle wird gesucht …</div>
+     <div class="sammySolverV2ProofImportRow">
+      <label class="sammySolverV2ProofFile"><span>Deep FULL importieren</span><input id="sammySolverV2ProofDeepFile" type="file" accept="application/json,.json"></label>
+      <button id="sammySolverV2ProofRescan" type="button">Browser-Deep neu suchen</button>
+     </div>
+     <div class="sammyCalibrationModes sammySolverV2ProofModes" role="group" aria-label="Solver V2 Proof Tiefe"><button type="button" data-sv2-mode="quick">Quick</button><button type="button" data-sv2-mode="standard" class="active">Standard</button><button type="button" data-sv2-mode="deep">Deep</button></div>
+     <div class="sammyCalibrationActions"><button id="sammySolverV2ProofStart" type="button">Proof starten</button><button id="sammySolverV2ProofPause" type="button" disabled>Pause</button></div>
+     <div class="sammyCalibrationActions"><button id="sammySolverV2ProofReset" type="button">Proof-Lauf löschen</button><button id="sammySolverV2ProofSummary" type="button">Summary JSON</button><button id="sammySolverV2ProofFull" type="button">FULL JSON</button></div>
+     <div id="sammySolverV2ProofStatus" class="sammyCalibrationStatus">Proof wird initialisiert …</div>
+     <div class="sammyCalibrationProgress"><i id="sammySolverV2ProofProgress"></i></div>
+     <div id="sammySolverV2ProofCurrent" class="sammyCalibrationCurrent">Standard: 8 versteckte Round-trip-Körper (inkl. Edge-Fälle) × 3 weit getrennte Seeds plus 2 absichtlich widersprüchliche Conflict-Controls. Nach jedem vollständigen Seed wird in IndexedDB gesichert. Primärgate: ANSUR-Observer-Error-Units + cm-Fehler + Seed-Reproduzierbarkeit + Mesh-Plausibilität; Parameteridentität ist nur Sekundärdiagnostik.</div>
+     <div id="sammySolverV2ProofLive" class="sammyCalibrationLiveMeasures"></div>
+     <div id="sammySolverV2ProofResults" class="sammySolver24Results"><div class="sammyInfluenceEmpty">Noch kein Solver-V2-Proof.</div></div>
+     <div class="sammyCalibrationActions"><button id="sammySolverV2ProofShowBest" type="button" disabled>Beste Lösung zeigen</button><button id="sammySolverV2ProofAudit" type="button" disabled>Blind Audit öffnen</button></div>
+     <details class="sammySolverV2ProofCriteria"><summary><b>Proof-Gate &amp; Reliability</b><span>was als Erfolg zählt</span></summary><div id="sammySolverV2ProofCriteriaBody"></div></details>
+    </div>
+   </details>
+
+   <details class="sammyCalibrationLab sammySolverV2Legacy" id="sammySolverV2Legacy">
+    <summary><b>LEGACY SOLVER24 · V2.1</b><span>nur Vergleich / Baseline</span></summary>
+    <div class="sammyCalibrationBody">
+     <div class="sammyLabIntroCard"><b>Bestehender Solver24 bleibt unverändert verfügbar</b><span>Dieser Pfad ist nicht der neue Proof. Er bleibt als historische Baseline für direkte Rekonstruktion, ANSUR-Donor-Stress und Vergleichsexporte erhalten.</span></div>
+     <div class="sammySolver24Context">
+      <div class="sammySolver24Sex" role="group" aria-label="Geschlecht"><button type="button" data-s24-sex="0" class="active">♂ Mann</button><button type="button" data-s24-sex="1">♀ Frau</button></div>
+      <label><span>Alter</span><input id="sammySolver24Age" type="number" inputmode="numeric" min="19" max="70" step="1" value="35"><em>J.</em></label>
+      <label><span>Gewicht</span><input id="sammySolver24Weight" type="number" inputmode="decimal" min="30" max="300" step="0.1" placeholder="optional"><em>kg</em></label>
+     </div>
+     <div class="sammyCalibrationModes sammySolver24Modes" role="group" aria-label="Solver Tiefe"><button type="button" data-s24-mode="quick">Quick</button><button type="button" data-s24-mode="standard" class="active">Standard</button><button type="button" data-s24-mode="deep">Deep</button><button type="button" data-s24-mode="stress">Stress</button></div>
+     <div class="sammyCalibrationActions"><button id="sammySolver24Capture" type="button">Aktueller Körper → 24 Ziele</button><button id="sammySolver24Solve" type="button">Rekonstruieren</button></div>
+     <div class="sammyCalibrationActions"><button id="sammySolver24Blind" type="button">Blind-Test starten</button><button id="sammySolver24Pause" type="button" disabled>Pause</button></div>
+     <div id="sammySolver24Status" class="sammyCalibrationStatus">Prior wird geladen …</div>
+     <div class="sammyCalibrationProgress"><i id="sammySolver24Progress"></i></div>
+     <div id="sammySolver24Current" class="sammyCalibrationCurrent">Standard: 3 unterschiedliche Startkörper pro Ziel. „Stress“ nutzt 8 real beobachtete ANSUR-Maßkombinationen × 2 Seeds = 16 Auditkörper. V2.0 misst über 10 Protokollzustände und zeigt zusätzlich cm-Fehler sowie Protocol Units; direkte Zielwerte bleiben autoritativ.</div>
+     <div id="sammySolver24Live" class="sammyCalibrationLiveMeasures"></div>
+     <details class="sammySolver24Targets"><summary>24 Zielmaße in cm <span>editierbar</span></summary><div id="sammySolver24Inputs" class="sammySolver24Inputs"></div></details>
+     <details class="sammySolver24Anthro"><summary>Anthropometrischer Prior <span>ANSUR · diagnostisch</span></summary><div id="sammySolver24AnthroStatus" class="sammySolver24AnthroStatus">24 Zielwerte vervollständigen …</div><div id="sammySolver24AnthroRows" class="sammySolver24AnthroRows"></div></details>
+     <details class="sammySolver24Anthro" open><summary>Masse &amp; Komposition <span>kg · Volumen · objektiver Proxy</span></summary><div id="sammySolver24MassStatus" class="sammySolver24AnthroStatus">Mass/Composition Modell wird geladen …</div><div id="sammySolver24MassRows" class="sammySolver24AnthroRows"></div></details>
+     <div id="sammySolver24Results" class="sammySolver24Results"><div class="sammyInfluenceEmpty">Noch keine Rekonstruktion.</div></div>
+     <div class="sammyCalibrationActions"><button id="sammySolver24ShowBest" type="button" disabled>Beste Lösung zeigen</button><button id="sammySolver24Audit" type="button" disabled>Blind Audit öffnen</button></div>
+     <div class="sammyCalibrationActions"><button id="sammySolver24Summary" type="button">Summary JSON</button><button id="sammySolver24Full" type="button">FULL JSON</button></div>
+    </div>
+   </details>
   </div>
  </section>
 
@@ -265,9 +292,9 @@
   <div class="sammyBodyAuditMeta"><b id="sammyBodyAuditIndex">Blind Audit</b><span id="sammyBodyAuditProgress">Keine Testkörper vorhanden</span></div>
   <div id="sammyBodyAuditCommentWrap" class="sammyBodyAuditCommentWrap" hidden><textarea id="sammyBodyAuditComment" rows="3" placeholder="Optionaler Kommentar zum sichtbaren Körper …"></textarea></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard"><b>Blindes Plausibilitäts-Audit</b><span>Du siehst absichtlich weder Zielmaße noch Zielkörper oder Solverpfad. AUDT lädt ausschließlich den neuesten Solver24-Blindlauf – keine alten D2/D3-Fälle mehr. Bewerte nur offensichtliche anatomische Fehler. Wenn dir ein randnaher Körper zwar ungewöhnlich, aber nicht sicher unplausibel erscheint, lass ihn lieber unbewertet statt zu raten.</span></div>
+   <div class="sammyLabIntroCard"><b>Blindes Plausibilitäts-Audit</b><span>Du siehst absichtlich weder Zielmaße noch Zielkörper oder Solverpfad. AUDT lädt den vom Solver geöffneten aktuellen Blindlauf (Solver V2 Proof oder Legacy Solver24) – keine alten D2/D3-Fälle mehr. Bewerte nur offensichtliche anatomische Fehler. Wenn dir ein randnaher Körper zwar ungewöhnlich, aber nicht sicher unplausibel erscheint, lass ihn lieber unbewertet statt zu raten.</span></div>
    <div class="sammyBodyAuditLegend"><span>✓ plausibel</span><span>× unplausibel</span><span>◎ Fehlstelle</span><span>‹ / › Körper wechseln</span></div>
-   <div id="sammyBodyAuditStatus" class="sammyStatus"><span>Noch kein Solver24-Blindlauf geladen. Starte zuerst SOLV → Blind-Test.</span></div>
+   <div id="sammyBodyAuditStatus" class="sammyStatus"><span>Noch kein Solver-Blindlauf geladen. Starte zuerst SOLV → Proof oder Legacy-Blind-Test.</span></div>
    <div class="sammyCalibrationActions"><button id="sammyBodyAuditReload" type="button">Testkörper laden</button><button id="sammyBodyAuditExport" type="button">Audit JSON</button></div>
    <div class="sammyCalibrationActions"><button id="sammyBodyAuditClear" type="button">Bewertungen löschen</button></div>
   </div>
@@ -763,6 +790,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.24.26"></script>
+<script type="module" src="app.js?v=0.8.25.0"></script>
 </body>
 </html>
