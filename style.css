@@ -787,7 +787,7 @@ body.sammy-lab-hub-open #sammyLabBubble{box-shadow:0 0 0 2px rgba(255,255,255,.2
 @media(max-width:370px){.sammyMorphObsTrackModes{grid-template-columns:1fr 1fr}.sammyMorphObsAtlasTools{grid-template-columns:1fr}.sammyMorphObsAtlasTools #sammyMorphObsAtlasSlider,.sammyMorphObsAtlasTools #sammyMorphObsAtlasTrack{grid-column:1}}
 
 
-/* v0.8.25.1 · Solver V2 Proof 1.1 */
+/* v0.8.25.2 · Solver V2 Proof 1.2 */
 .sammySolverV2ProofIntro{border-color:rgba(110,196,255,.16);background:rgba(110,196,255,.035)}
 .sammySolverV2ProofLab>summary,.sammySolverV2Legacy>summary{min-height:43px}
 .sammySolverV2ProofSource{margin:0 0 8px;padding:9px 10px;border:1px solid rgba(255,255,255,.09);border-radius:11px;background:rgba(255,255,255,.025);font-size:9px;line-height:1.45;color:rgba(238,241,246,.76)}

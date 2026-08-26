@@ -1,0 +1,68 @@
+SAMMY v0.8.25.2 · SOLVER V2 PROOF 1.2 · BUILD TEST
+====================================================
+
+Base
+----
+Source: SAMMY_V0.8.25.1_SOLVER-V2-PROOF-1.1.zip
+Scope: Proof target/seed parameter-distance gate only. Measurement definitions, v0.8.24.26 geometry and Solver V2 numerical optimizer remain unchanged.
+
+Runtime diagnostic reproduced
+-----------------------------
+v0.8.25.1 iPhone/Safari stopped as designed with:
+TARGET_GENERATION_INVALID: Kein valider Typical-Zielkörper nach 40 Versuchen
+
+Static reconstruction of the v1.1 parameter gate using the persisted Deep solver map from the prior FULL Quick fixture:
+- male Typical: old global minParamRms >= 0.10 -> 0/40 candidates can pass before mesh evaluation
+- female Typical: old global minParamRms >= 0.10 -> 0/40 candidates can pass before mesh evaluation
+- male Edge: old global minParamRms >= 0.15 -> 0/40 candidates can pass before mesh evaluation
+- female Edge: old global minParamRms >= 0.15 -> 0/40 candidates can pass before mesh evaluation
+
+This proves the immediate invalid was dimension dilution in the test-harness parameter metric, not a mesh/measurement/Solver-V2 failure.
+
+Proof 1.2 parameter pre-gate on the same deterministic candidate sequences:
+- male Typical: 21/40 pass global>=0.045 + active>=0.12 + activeCount>=3
+- female Typical: 27/40 pass
+- male Edge: 17/40 pass global>=0.065 + active>=0.18 + activeCount>=3
+- female Edge: 17/40 pass
+
+These are only pre-mesh candidates. Real 24-measure distance, mesh plausibility, ANSUR delta prior and duplicate checks still decide final target acceptance.
+
+Static / structural checks
+--------------------------
+PASS  SAMMY_APP_VERSION = 0.8.25.2
+PASS  Proof schema v1.2
+PASS  Summary schema v1.2
+PASS  Test-validity schema v1.2
+PASS  Active-subspace parameter distance function unique
+PASS  globalRms retained as diagnostic/sanity guard
+PASS  activeRms + activeCount exported for targets
+PASS  activeRms exported for seed-source distance
+PASS  activeRms exported for seed-pair distance
+PASS  Typical active parameter gate present
+PASS  Edge active parameter gate present
+PASS  Seed-source active gate present
+PASS  Seed-pair active gate present
+PASS  Hard TARGET_GENERATION_INVALID path retained
+PASS  No neutral accepted-target assignment/fallback path
+PASS  Real measure-space target thresholds retained
+PASS  Mesh plausibility gate retained
+PASS  ANSUR reliability-aware delta prior retained
+PASS  Duplicate detection retained
+PASS  Seed real initial-fit thresholds retained
+PASS  Reject counters included in target invalid message
+PASS  Reject counters included in seed invalid message
+PASS  Direction B logic unchanged
+PASS  Far-seed AUDT path unchanged
+PASS  Visible Proof 1.2 label
+PASS  0.8.25.2 CSS/JS cache bust
+PASS  HTML IDs unique (474)
+PASS  node --check app.js
+PASS  release/proof/README/PATCH docs present
+
+Runtime limitation
+------------------
+The complete mesh/pose/10-MeasurementState solve cannot be executed in this container because normal Sammy boot depends on external Three.js / SOMA-X / Hugging Face resources. The authoritative runtime test remains LAB -> SOLV -> Quick on the deployed app.
+
+Diagnostic improvement
+----------------------
+If Proof 1.2 is still invalid, the visible error now carries the actual rejection distribution (for example tooCloseInMeasureSpace, meshPlausibility, anthroDeltaPrior, nearDuplicate). This makes the next invalid run directly actionable without weakening unrelated gates.
