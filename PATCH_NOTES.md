@@ -1,10 +1,11 @@
-SAMMY v0.8.24.25 PATCH
-Base: v0.8.24.24
+# PATCH NOTES · v0.8.24.26
 
-Changed files:
-- app.js
-- index.html
-- RELEASE_NOTES_V0.8.24.25.md
-- PATCH_NOTES.md
+Finaler Measurement-Freeze-Schritt vor Solver V2.
 
-Scope: MEAS Gate v1.6. No measurement operator is changed. The last v1.5 failure (`Measure Neck Height Incr` -> Neck Circumference on female neutral) is reclassified from an invalid off-target invariance assumption to an expected structural cross-measure coupling audit, while all geometry guards remain mandatory. Deep MEAS Repair schema/status advances to v1.6. Boot/atlas/section/PROT-definition/Solver24 logic is unchanged.
+- Acromion: stabiler Shoulder→Arm-Außenanker auf echter Schulteroberfläche.
+- Neck/Thigh: posed PROT Support Signature für Cross-Effect-Klassifikation.
+- MEAS Gate v1.7 = Freeze Gate; keine offene Repair-Schleife mehr.
+- Nach PASS kein weiterer 2.888er Deep-MEAS-Repair.
+- Boot, Atlas, Sections, PROT-v2 und Solver24 unverändert.
+
+Siehe `RELEASE_NOTES_V0.8.24.26.md`.
