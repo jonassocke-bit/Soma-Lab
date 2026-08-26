@@ -1,0 +1,67 @@
+SAMMY v0.8.25.3 · SOLVER V2 PROOF 1.3 · BUILD TEST
+====================================================
+
+Base
+----
+Source: SAMMY_V0.8.25.2_SOLVER-V2-PROOF-1.2.zip
+Scope: convergence-budget correction only. Measurement definitions, v0.8.24.26 geometry, Repair v1.6 policy, Deep taxonomy, target/seed validity, reliability weights and Trust-Region step mathematics remain unchanged.
+
+Proof 1.2 runtime evidence reproduced
+-------------------------------------
+Fixture: Sammy_SOLVER_V2_PROOF_FULL_quick_solver-v2-proof-2026-08-26T20-29-55-854Z-al9ca.json
+- Test validity: PASS
+- Round-trip targets: 4
+- Round-trip seeds: 8
+- Overall best-target weighted RMS: 1.2832 u_w
+- Overall best-target RMSE: 0.9261 cm
+- Seed accepted rate: 25 %
+- Mean derived seed spread: 4.0131 cm
+- Direction B improved seeds: 8/8
+- Seeds whose last available step still reduced weighted RMS: 8/8
+
+Trust-region travel diagnostic
+------------------------------
+Proof 1.2 Quick theoretical single-Core travel ceiling:
+4 × 0.085 + 1 × (0.085 × 0.88) = 0.4148
+
+Seed-source maximum normalized deltas from the validated preflight:
+- target 1 seed 1: 0.53673  > old budget
+- target 1 seed 2: 0.31904
+- target 2 seed 1: 0.53104  > old budget
+- target 2 seed 2: 0.43104  > old budget
+- target 3 seed 1: 0.39089
+- target 3 seed 2: 0.54208  > old budget
+- target 4 seed 1: 0.39793
+- target 4 seed 2: 0.64848  > old budget
+
+Seeds above the old theoretical Core travel ceiling: 5/8
+
+Proof 1.3 Quick theoretical Core travel ceiling if all rescue passes are needed:
+4 × 0.085 + 5 × (0.085 × 0.88) = 0.7140
+This fixed budget is larger than the largest validated seed-source max delta (0.64848) without using hidden source information during an individual solve. Rescue still stops early on accepted fit or genuine stall.
+
+Static / structural checks
+--------------------------
+PASS  SAMMY_APP_VERSION = 0.8.25.3
+PASS  Proof schema v1.3
+PASS  Summary schema v1.3
+PASS  Quick rescuePasses = 5
+PASS  Adaptive B loop present
+PASS  Conflict control remains one rescue pass
+PASS  Fresh Jacobian per B pass
+PASS  Rescue accepted/stalled/budget stop reasons
+PASS  Budget-limited diagnostic exported
+PASS  Pass-level alpha + relative improvement exported
+PASS  Target/seed validity schema retained
+PASS  Visible Proof 1.3 label
+PASS  0.8.25.3 CSS/JS cache bust
+PASS  HTML IDs unique (474)
+PASS  node --check app.js (run separately by build script)
+
+AUDT regression context
+-----------------------
+The Proof 1.2 blind audit contained 8 cases (best-fit + far-seed reconstructions). Seven were rated OK. One was flagged "Arme unproportional dünn"; record mapping identifies it as target 1 far-seed reconstruction, not an accepted/best solution. Proof 1.3 keeps the blind queue unchanged so this remains observable.
+
+Runtime limitation
+------------------
+The complete mesh/pose/10-MeasurementState solve cannot be executed in this container because normal Sammy boot depends on external browser assets. The authoritative runtime check remains LAB -> SOLV -> Quick on the deployed app.

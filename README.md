@@ -1,29 +1,23 @@
-# Sammy v0.8.25.2 — SOLVER V2 PROOF 1.2
+# Sammy v0.8.25.3 — SOLVER V2 PROOF 1.3
 
-Diese Version ist ein inkrementelles Test-Harness-Update von v0.8.25.1. Der iPhone/Safari-Quick-Lauf von Proof 1.1 stoppte korrekt mit `TARGET_GENERATION_INVALID`, weil der globale Parameter-RMS über die komplette Solver-Map reale Änderungen an nur wenigen aktiven DOFs zu stark verdünnte.
+Diese Version setzt direkt auf v0.8.25.2 auf.
 
-## Wichtig
+## Kernänderung
 
-- Messgeometrie bleibt auf v0.8.24.26 / Gate-v1.7-Stand.
-- Deep + Repair-v1.6 bleibt die Solver-V2-Datenbasis.
-- Der inverse Solver, Jacobian und Direction A/B werden in v0.8.25.2 **nicht** umgebaut.
-- Target-/Seed-Nichttrivialität wird jetzt mit `globalRms` **und** `activeRms` geprüft.
-- `activeRms` verwendet nur tatsächlich unterschiedliche DOFs (>= 3.5 % des jeweiligen Wertebereichs).
-- Reale Mindestdistanz der 24 ANSUR24-PROT-v2-Maße bleibt zwingend.
-- Kein neutraler Fallback, keine Duplikate, keine Source-äquivalenten oder fast perfekten Seeds.
-- Bei erneutem `PROOF INVALID` stehen die Reject-Zähler direkt in der Fehlermeldung.
+Proof 1.2 hat erstmals einen gültigen, nichttrivialen Blind-Round-trip geliefert. Die schlechte Seed-Stabilität war jedoch teilweise mit einem zu kurzen festen Trust-Region-Reisebudget vermischt. Proof 1.3 behält den Solver selbst und alle Testvaliditätsregeln bei, erlaubt nach den normalen Deep-gerankten Pässen aber mehrere adaptive semantische Fresh-Jacobian-Rescue-Pässe für weiterhin fehlschlagende Seeds.
 
-## Start
+## Testablauf
 
-`index.html` öffnen → `LAB → SOLV` → Deep-Quelle prüfen → **Quick**.
+1. App starten und `Sammy · v0.8.25.3` prüfen.
+2. `LAB → SOLV` öffnen; vorhandener Deep-Lauf kann weiterverwendet werden.
+3. **Quick** starten.
+4. Nach Abschluss FULL + Summary exportieren.
+5. AUDT vollständig blind bewerten; Best-Fit und Far-Seed-Rekonstruktionen bleiben gemischt.
+6. Noch keinen Standard-Lauf starten, bevor der Quick ausgewertet ist.
 
-Wenn `PROOF INVALID` erscheint, die Diagnose/Exports schicken und nicht Standard starten. Wenn `TEST VALID` erreicht und der Lauf fertig wird, Summary/FULL sowie den anschließenden Blind-AUDT exportieren.
+## Wichtige Dateien
 
-## Neue Dokumentation
-
-- `RELEASE_NOTES_V0.8.25.2.md`
-- `SOLVER_V2_PROOF_1.2_V0.8.25.2.md`
-- `BUILD_TEST_V0.8.25.2.txt`
-- `BUILD_MANIFEST_V0.8.25.2.json`
-
-Ältere Release-/Labor-Notizen bleiben als Projekt-Historie im Paket erhalten.
+- `RELEASE_NOTES_V0.8.25.3.md`
+- `SOLVER_V2_PROOF_1.3_V0.8.25.3.md`
+- `BUILD_TEST_V0.8.25.3.txt`
+- `BUILD_MANIFEST_V0.8.25.3.json`
