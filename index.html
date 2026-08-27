@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.25.9</title>
-<link rel="stylesheet" href="style.css?v=0.8.25.9">
+<title>Sammy v0.8.26.0</title>
+<link rel="stylesheet" href="style.css?v=0.8.26.0">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.25.9</div>
+  <div class="sammySplashVersion">v0.8.26.0</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.25.9</div>
+<div id="sammyVersion">Sammy · v0.8.26.0</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -228,7 +228,7 @@
 
  <section id="sammySolver24Panel" class="sammyPanel sammySolver24Panel" data-panel-key="solver24">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
-  <div class="sammyPanelHead"><div><b>SOLVER V2 · PROOF 1.6 + INSPECTOR 1.2</b><small>Blind inverse holdout · transparent replay · ANSUR residual overlay</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelHead"><div><b>SOLVER V2 · PROOF 1.6 + REAL ANSUR</b><small>validierte Baseline · held-out Stress Gate · Ergebnisprüfung</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
   <div class="sammyPanelScroll">
    <div class="sammyLabIntroCard sammySolverV2ProofIntro"><b>Hierarchischer Solver V2 · Canonical Multistart + statistischer Prefit</b><span>Proof 1.6 nutzt den bereits im Morph Observatory geplanten coarse-to-fine Aufbau um: Structural Rig → globale Masse → Schulter/Hüfte → regionale Composition → Segment/Landmark → lokale Maßkorrektur. Frühere Stufen werden nicht hart eingefroren, sondern als hochpriorisierte Constraints geschützt. Vor dem Solve bleibt TEST VALID unverändert zwingend. Danach werden Original-Seed, ein ANSUR-train/validation-basierter statistischer Canonical Body und ein Blend auf dem echten Mesh gescreent; ein zweites Basin wird nur bei weiterem FAIL gerechnet. Direkte 24 Zielmaße bleiben immer autoritativ. Die sieben reparierten Maße verwenden weiterhin keine alten Deep-Interaction-Residuals. Wenn der erste komplette Solve noch WARN oder FAIL ist, wird genau dessen fertiger Körper höchstens zweimal frisch und mit kleineren Schritten nachpoliert.</span></div>
    <details class="sammyCalibrationLab sammySolverV2ProofLab" id="sammySolverV2ProofLab" open>
@@ -302,6 +302,24 @@
     </div>
    </details>
 
+   <div class="sammyLabIntroCard sammySolverV2StressIntro"><b>Nächster Gate · echte ANSUR-Personen statt Sammy-Zielkörper</b><span>Dieser Test verändert den erfolgreichen Proof-1.6-Solver nicht. Zehn tatsächlich beobachtete Personen aus dem bisher unbenutzten ANSUR-II-Testsplit werden als 24-Maß-Ziele verwendet: vier typische Profile und sechs reale Randfälle. Jede Person läuft einmal; alle sechs Randfälle und jeder verdächtige typische Fall bekommen automatisch einen zweiten, weit entfernten Start. Nach jeder Person wird gespeichert. Erwartung auf dem aktuellen iPhone: ungefähr 1½–2 Stunden. Die zehn verwendeten Personen werden anschließend dauerhaft aus der späteren Few-Measure-Endvalidierung ausgeschlossen; 902 Testpersonen bleiben unangetastet.</span></div>
+   <details class="sammyCalibrationLab sammySolverV2StressLab" id="sammySolverV2StressLab" open>
+    <summary><b>REAL ANSUR STRESS · GATE 1.0</b><span>10 held-out Personen · 24 echte Maße · adaptive Re-Tests · Checkpoints</span></summary>
+    <div class="sammyCalibrationBody">
+     <div id="sammySolverV2StressSuite" class="sammySolverV2StressSuite">Stress-Suite wird geprüft …</div>
+     <div class="sammySolverV2StressPlan"><div><b>10</b><span>echte ANSUR-Personen</span></div><div><b>4 + 6</b><span>typisch + Randfall</span></div><div><b>1 → 2</b><span>adaptiver Seed-Re-Test</span></div><div><b>902</b><span>für Prediction reserviert</span></div></div>
+     <div class="sammyCalibrationActions"><button id="sammySolverV2StressStart" type="button">Stresstest starten</button><button id="sammySolverV2StressPause" type="button" disabled>Pause</button></div>
+     <div class="sammyCalibrationActions"><button id="sammySolverV2StressReset" type="button">Stress-Lauf löschen</button><button id="sammySolverV2StressSummary" type="button">Summary JSON</button><button id="sammySolverV2StressFull" type="button">FULL JSON</button></div>
+     <div id="sammySolverV2StressStatus" class="sammyCalibrationStatus">Stress-Gate wird initialisiert …</div>
+     <div class="sammyCalibrationProgress"><i id="sammySolverV2StressProgress"></i></div>
+     <div class="sammyCalibrationCurrent">Was wird geprüft? <b>Repräsentierbarkeit:</b> Kann der eingefrorene Solver einen real beobachteten ANSUR-Messvektor gleichzeitig treffen? <b>Generalisierung:</b> funktionieren typische und reale Randfälle? <b>Blind-Holdout:</b> Schulter→Schritt und Oberschenkelhöhe werden nicht optimiert und erst danach verglichen. <b>Seed-Robustheit:</b> Randfälle werden automatisch nochmals weit entfernt gestartet.</div>
+     <div id="sammySolverV2StressLive" class="sammyCalibrationLiveMeasures"></div>
+     <div id="sammySolverV2StressResults" class="sammySolverV2StressResults"><div class="sammyInfluenceEmpty">Noch kein Real-ANSUR-Stresstest.</div></div>
+     <div class="sammyCalibrationActions"><button id="sammySolverV2StressAudit" type="button" disabled>Blind Audit der 10 Körper</button></div>
+     <details class="sammySolverV2StressCriteria"><summary><b>Was bedeutet PASS?</b><span>einfache Stress-Gate-Kriterien</span></summary><div><p><b>24-Maß-Repräsentierbarkeit:</b> mindestens 80 % non-fail, mindestens 60 % PASS, alle vier typischen Profile non-fail, mindestens vier der sechs Randfälle non-fail, ≤ 0,90 cm Gesamt-RMSE, ≤ 1,35 gewichtete Observer-Units, kein Plausibility-Hard-Fail.</p><p><b>Blind-Holdout:</b> Median aus Schulter→Schritt + Oberschenkelhöhe ≤ 1,5 cm = gut; ≤ 2,5 cm = beobachten.</p><p><b>Re-Test:</b> mittlere abgeleitete Seed-Streuung ≤ 1,2 cm = gut; ≤ 2,0 cm = beobachten. Die experimentelle Torso-Surface-Kennzahl bleibt weiterhin nur Diagnose und beeinflusst das Gate nicht.</p></div></details>
+    </div>
+   </details>
+
    <details class="sammyCalibrationLab sammySolverV2Legacy" id="sammySolverV2Legacy">
     <summary><b>LEGACY SOLVER24 · V2.1</b><span>nur Vergleich / Baseline</span></summary>
     <div class="sammyCalibrationBody">
@@ -342,7 +360,7 @@
   <div class="sammyBodyAuditMeta"><b id="sammyBodyAuditIndex">Blind Audit</b><span id="sammyBodyAuditProgress">Keine Testkörper vorhanden</span></div>
   <div id="sammyBodyAuditCommentWrap" class="sammyBodyAuditCommentWrap" hidden><textarea id="sammyBodyAuditComment" rows="3" placeholder="Optionaler Kommentar zum sichtbaren Körper …"></textarea><div class="sammyBodyAuditQualityTags"><button id="sammyBodyAuditTorsoTag" type="button">Torso-Übergang kantig</button><span>Qualitätsmerkmal unabhängig von ✓ / ×</span></div></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard"><b>Blindes Plausibilitäts-Audit</b><span>Du siehst absichtlich weder Zielmaße noch Zielkörper oder Solverpfad. AUDT lädt den vom Solver geöffneten aktuellen Blindlauf (Solver V2 Proof oder Legacy Solver24). Beim Solver V2 Proof 1.6 enthält die Queue neben dem Best-Fit ausdrücklich auch die Rekonstruktion des am weitesten entfernten Seeds, sofern sie verschieden ist – weiterhin vollständig blind. Bewerte nur offensichtliche anatomische Fehler. Wenn dir ein randnaher Körper zwar ungewöhnlich, aber nicht sicher unplausibel erscheint, lass ihn lieber unbewertet statt zu raten.</span></div>
+   <div class="sammyLabIntroCard"><b>Blindes Plausibilitäts-Audit</b><span>Du siehst absichtlich weder Zielmaße noch Zielkörper oder Solverpfad. AUDT lädt den vom Solver geöffneten aktuellen Blindlauf (Solver V2 Proof, Real ANSUR Stress oder Legacy Solver24). Beim Solver V2 Proof 1.6 enthält die Queue neben dem Best-Fit ausdrücklich auch die Rekonstruktion des am weitesten entfernten Seeds, sofern sie verschieden ist. Beim Real-ANSUR-Stress siehst du genau einen anonymisierten Best-Fit pro beobachteter Person – weiterhin vollständig blind. Bewerte nur offensichtliche anatomische Fehler. Wenn dir ein randnaher Körper zwar ungewöhnlich, aber nicht sicher unplausibel erscheint, lass ihn lieber unbewertet statt zu raten.</span></div>
    <div class="sammyBodyAuditLegend"><span>✓ plausibel</span><span>× unplausibel</span><span>◎ Fehlstelle</span><span>‹ / › Körper wechseln</span></div>
    <div id="sammyBodyAuditStatus" class="sammyStatus"><span>Noch kein Solver-Blindlauf geladen. Starte zuerst SOLV → Proof oder Legacy-Blind-Test.</span></div>
    <div class="sammyCalibrationActions"><button id="sammyBodyAuditReload" type="button">Testkörper laden</button><button id="sammyBodyAuditExport" type="button">Audit JSON</button></div>
@@ -840,6 +858,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.25.9"></script>
+<script type="module" src="app.js?v=0.8.26.0"></script>
 </body>
 </html>

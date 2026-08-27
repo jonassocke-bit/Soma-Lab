@@ -1,0 +1,43 @@
+SAMMY v0.8.26.0 BUILD TEST
+Baseline: v0.8.25.9 Proof 1.6 validated PASS
+
+PASS node --check app.js
+PASS HTML parse; IDs = 509, unique = 509, duplicates = 0
+PASS index version/cache busters = 0.8.26.0
+PASS CSS parse; errors = 0; rules/tokens = 1012
+PASS Real-ANSUR Stress UI IDs present = 12
+PASS Stress JS DOM refs resolve = 9
+PASS stress schemas, adaptive retest, checkpoint, holdout and performance tokens present
+PASS suite = 10 observed held-out rows; 4 typical / 6 edge; 5 male / 5 female
+PASS future Few-Measure final reserve = 902 untouched test rows; exact 10 stress rows excluded
+PASS all 24 targets + 2 blind holdouts + weight context exactly match original held-out ANSUR rows
+PASS no consumed stress row remains in 902-row final reserve
+PASS Statistical Body Bank remains train+validation only (5156); heldOutTestUsed=false
+PASS sammySolverV2ProofFitMetrics sha[:12] e907dc6334d3 identical to v0.8.25.9
+PASS sammySolverV2ProofObjective sha[:12] b7005768b037 identical to v0.8.25.9
+PASS sammySolverV2ProofApplyShape sha[:12] 89661634b3de identical to v0.8.25.9
+PASS sammySolverV2ProofJacobian sha[:12] a641b2b62904 identical to v0.8.25.9
+PASS sammySolverV2HierSemanticScore sha[:12] c9776de0854a identical to v0.8.25.9
+PASS sammySolverV2HierCandidates sha[:12] 028f6da5485e identical to v0.8.25.9
+PASS sammySolverV2HierSolveStep sha[:12] 7120f8e8a103 identical to v0.8.25.9
+PASS sammySolverV2HierTryStep sha[:12] 9b1d596ef07e identical to v0.8.25.9
+PASS sammySolverV2RunHierarchy sha[:12] 77fa08e3979f identical to v0.8.25.9
+PASS sammySolverV2StatCanonicalShape sha[:12] 8994240d42cb identical to v0.8.25.9
+PASS sammySolverV2RunPolishRounds sha[:12] b3545d96e30a identical to v0.8.25.9
+PASS sammySolverV2ProofSolveSeed sha[:12] ec368b074049 identical to v0.8.25.9
+PASS sammySolverV2ProofSummary sha[:12] 864833f6575e identical to v0.8.25.9
+PASS sammyComputeANSUR24V2 sha[:12] 888bf129c9d3 identical to v0.8.25.9
+PASS sammyAns24V2MeasureOne sha[:12] 293001867915 identical to v0.8.25.9
+PASS ansur-protocol-v1.json sha[:16] 19604d8495887ab7 identical
+PASS ansur-prediction-trainval-v1.json sha[:16] 88cc5e04b7808c1b identical
+PASS ansur-prediction-test-v1.json sha[:16] 733359b48d5e317a identical
+PASS solver-v2-statistical-body-bank-v1.json sha[:16] 3be21f93291ef8ed identical
+PASS mass-composition-v1.json sha[:16] 2e7928fe1e29debc identical
+PASS ANSUR24_PROTOCOL_V2.json sha[:16] 50dc60ad63246599 identical
+PASS stress suite + 902-row reserve reproduce byte-identically from bundled generator
+PASS Stress Gate v1 hard criteria present in runtime code
+PASS Surface continuity remains diagnostic/non-gating
+PASS release/stress/next-phase/changelog docs present
+
+Runtime limitation:
+Full WebGL/Anny/MeasurementState stress runtime cannot be executed in this offline container. First iPhone/Safari Real-ANSUR Stress run is the scientific runtime validation.

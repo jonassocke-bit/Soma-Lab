@@ -1,3 +1,16 @@
+# Sammy v0.8.26.0 — Real ANSUR Stress Gate 1.0
+
+Der validierte Proof-1.6-Solver bleibt eingefroren. v0.8.26.0 testet ihn erstmals gegen 10 tatsächlich beobachtete held-out ANSUR-II-Messprofile (4 typisch, 6 Randfälle), mit adaptivem Far-Seed-Re-Test, Checkpoint/Resume und zwei Blind-Holdout-Maßen. Die 10 verwendeten Personen werden aus der späteren Few-Measure-Endvalidierung entfernt; 902 Testpersonen bleiben unangetastet.
+
+Siehe:
+- `RELEASE_NOTES_V0.8.26.0.md`
+- `REAL_ANSUR_STRESS_GATE_1.0_V0.8.26.0.md`
+- `NEXT_PHASE_AFTER_REAL_ANSUR_STRESS_V0.8.26.0.md`
+- `CHANGESET_V0.8.26.0.md`
+- `BUILD_REAL_ANSUR_STRESS_ASSETS_V0.8.26.0.py`
+
+---
+
 # Sammy v0.8.25.9 — Proof 1.6 Performance + Surface Quality + Result Review 1.3
 
 Der validierte Proof-1.6-Solver aus v0.8.25.8 bleibt wissenschaftlich unverändert. v0.8.25.9 reduziert Render-/UI-Last während langer Solverläufe, ergänzt einen exakten laufbezogenen ANSUR24-Messcache und exportiert echte Laufzeit-/Jacobian-Diagnostik.

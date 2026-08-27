@@ -1,3 +1,16 @@
+# v0.8.26.0
+
+- Adds Real ANSUR Stress Gate 1.0 on 10 observed held-out ANSUR II test rows.
+- 4 typical + 6 observed edge profiles, balanced 5 male / 5 female.
+- One mandatory solve per person; all edge cases and suspicious typical cases receive one deterministic far-seed retest.
+- Checkpoint/resume after every seed/person.
+- Blind holdout: `torso_height` + `upperleg_height`.
+- Stress Summary/FULL JSON and blind AUDT support.
+- Creates a 902-row untouched final reserve for later 24-vs-7-vs-5 few-measure prediction validation.
+- Proof 1.6 solver science remains frozen.
+
+---
+
 # v0.8.25.9
 
 - Proof 1.6 solver science/gates unchanged.
