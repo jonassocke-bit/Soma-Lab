@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.25.4</title>
-<link rel="stylesheet" href="style.css?v=0.8.25.4">
+<title>Sammy v0.8.25.6</title>
+<link rel="stylesheet" href="style.css?v=0.8.25.6">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.25.4</div>
+  <div class="sammySplashVersion">v0.8.25.6</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.25.4</div>
+<div id="sammyVersion">Sammy · v0.8.25.6</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -228,11 +228,11 @@
 
  <section id="sammySolver24Panel" class="sammyPanel sammySolver24Panel" data-panel-key="solver24">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
-  <div class="sammyPanelHead"><div><b>SOLVER V2 · PROOF 1.4</b><small>Blind inverse holdout · Deep taxonomy · fresh real-mesh Jacobian</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelHead"><div><b>SOLVER V2 · PROOF 1.5 + INSPECTOR 1.1</b><small>Blind inverse holdout · transparent replay · ANSUR residual overlay</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard sammySolverV2ProofIntro"><b>Entscheidungstest für die neue Solver-Richtung</b><span>Der Proof rekonstruiert versteckte, vom Modell selbst erzeugte Körper ausschließlich aus Geschlecht, Alter und den 24 ANSUR24-PROT-v2-Zielmaßen. Proof 1.4 behält Target-/Seed-Erzeugung, Messgeometrie und die erfolgreichen Direction-B-Regeln aus 1.3 unverändert. Neu ist nur eine diagnostische Direction C für weiterhin fehlschlagende normale Seeds: Ein breiterer DOF-Pool wird am aktuellen realen Mesh frisch nachgemessen und erst danach über den tatsächlich gemessenen lokalen Jacobian gerankt. So lässt sich „Candidate-Ranking zu eng“ von einem echten Basin-/Identifizierbarkeitsproblem unterscheiden. Kein neutraler Fallback, keine Duplikate und kein Source-äquivalenter oder nahezu perfekter Startseed bleiben harte Voraussetzungen. Die sieben reparierten Maße verwenden keine alten Deep-Interaction-Residuals.</span></div>
+   <div class="sammyLabIntroCard sammySolverV2ProofIntro"><b>Hierarchischer Solver V2 · Canonical Multistart + statistischer Prefit</b><span>Proof 1.5 setzt den bereits im Morph Observatory geplanten coarse-to-fine Aufbau um: Structural Rig → globale Masse → Schulter/Hüfte → regionale Composition → Segment/Landmark → lokale Maßkorrektur. Frühere Stufen werden nicht hart eingefroren, sondern als hochpriorisierte Constraints geschützt. Vor dem Solve bleibt TEST VALID unverändert zwingend. Danach werden Original-Seed, ein ANSUR-train/validation-basierter statistischer Canonical Body und ein Blend auf dem echten Mesh gescreent; ein zweites Basin wird nur bei weiterem FAIL gerechnet. Direkte 24 Zielmaße bleiben immer autoritativ. Die sieben reparierten Maße verwenden weiterhin keine alten Deep-Interaction-Residuals.</span></div>
    <details class="sammyCalibrationLab sammySolverV2ProofLab" id="sammySolverV2ProofLab" open>
-    <summary><b>PROOF 1.4</b><span>Testvalidität · Round-trip · Seed-Stabilität · Edge · Conflict control</span></summary>
+    <summary><b>PROOF 1.5</b><span>TEST VALID · STAT Multistart · Hierarchie · Seed-Stabilität · Edge · Conflict control</span></summary>
     <div class="sammyCalibrationBody">
      <div id="sammySolverV2ProofSource" class="sammySolverV2ProofSource">Deep-Quelle wird gesucht …</div>
      <div class="sammySolverV2ProofImportRow">
@@ -244,10 +244,55 @@
      <div class="sammyCalibrationActions"><button id="sammySolverV2ProofReset" type="button">Proof-Lauf löschen</button><button id="sammySolverV2ProofSummary" type="button">Summary JSON</button><button id="sammySolverV2ProofFull" type="button">FULL JSON</button></div>
      <div id="sammySolverV2ProofStatus" class="sammyCalibrationStatus">Proof wird initialisiert …</div>
      <div class="sammyCalibrationProgress"><i id="sammySolverV2ProofProgress"></i></div>
-     <div id="sammySolverV2ProofCurrent" class="sammyCalibrationCurrent">Standard: 8 versteckte Round-trip-Körper (inkl. Edge-Fälle) × 3 vorvalidierte, weit getrennte Seeds plus 2 absichtlich widersprüchliche Conflict-Controls. Vor dem Solve muss TEST VALID bestehen: nontriviale Zielkörper, keine Duplikate, ausreichende Seed↔Source-Distanz und kein nahezu perfekter Initialfit. Danach: ANSUR-Observer-Error-Units + cm-Fehler + Seed-Reproduzierbarkeit + Mesh-Plausibilität.</div>
+     <div id="sammySolverV2ProofCurrent" class="sammyCalibrationCurrent">Standard: 8 versteckte Round-trip-Körper × 3 vorvalidierte Proof-Seeds plus 2 Conflict-Controls. TEST VALID bleibt unverändert. Danach: STAT Canonical Multistart → RIG → MASS → FRAME → COMP → SEG → LOCAL → optional FINAL-Wide; Observer-Error-Units, cm-Fehler, Seed-Reproduzierbarkeit, Holdout/Rig und Mesh-Plausibilität bleiben die Gates.</div>
      <div id="sammySolverV2ProofLive" class="sammyCalibrationLiveMeasures"></div>
      <div id="sammySolverV2ProofResults" class="sammySolver24Results"><div class="sammyInfluenceEmpty">Noch kein Solver-V2-Proof.</div></div>
      <div class="sammyCalibrationActions"><button id="sammySolverV2ProofShowBest" type="button" disabled>Beste Lösung zeigen</button><button id="sammySolverV2ProofAudit" type="button" disabled>Blind Audit öffnen</button></div>
+
+     <details class="sammySolverV2Inspector" id="sammySolverV2Inspector" open>
+      <summary><b>PROOF INSPECTOR 1.1</b><span>STAT/Restart · Stufen-Replay · fertige Körper · ANSUR-Fehler direkt am Körper</span></summary>
+      <div class="sammySolverV2InspectorBody">
+       <div class="sammySolverV2InspectorImport">
+        <label class="sammySolverV2ProofFile"><span>Proof FULL importieren</span><input id="sammySolverV2InspectorFile" type="file" accept="application/json,.json"></label>
+        <button id="sammySolverV2InspectorUseBrowser" type="button">Browser-Lauf</button>
+        <button id="sammySolverV2InspectorRefresh" type="button">Aktualisieren</button>
+       </div>
+       <div id="sammySolverV2InspectorSource" class="sammySolverV2InspectorSource">Noch kein Proof für den Inspector geladen.</div>
+       <div id="sammySolverV2InspectorStat" class="sammySolverV2InspectorStat"><div class="sammyInfluenceEmpty">Statistischer Prefit erscheint nach Auswahl einer Rekonstruktion.</div></div>
+       <div id="sammySolverV2InspectorLive" class="sammySolverV2InspectorLive"><b>LIVE</b><span>Wartet auf Solver …</span></div>
+       <div id="sammySolverV2InspectorPhaseStrip" class="sammySolverV2InspectorPhaseStrip"><span data-sv2-phase="test">TEST</span><span data-sv2-phase="stat">STAT</span><span data-sv2-phase="rig">RIG</span><span data-sv2-phase="mass">MASS</span><span data-sv2-phase="frame">FRAME</span><span data-sv2-phase="comp">COMP</span><span data-sv2-phase="seg">SEG</span><span data-sv2-phase="local">LOCAL</span><span data-sv2-phase="final">FINAL</span><span data-sv2-phase="done">DONE</span></div>
+       <div class="sammySolverV2InspectorToolbar">
+        <select id="sammySolverV2InspectorTarget" aria-label="Proof Zielkörper"><option value="">Ziel wählen …</option></select>
+        <select id="sammySolverV2InspectorCase" aria-label="Proof Rekonstruktion"><option value="">Seed / Rekonstruktion …</option></select>
+        <button id="sammySolverV2InspectorShowStart" type="button" disabled>Solver-Start</button>
+        <button id="sammySolverV2InspectorShowResult" type="button" disabled>Rekonstruktion</button>
+        <button id="sammySolverV2InspectorShowTarget" type="button" disabled>Zielkörper</button>
+       </div>
+       <div class="sammySolverV2InspectorToolbar compact">
+        <button id="sammySolverV2InspectorOverlay" type="button" class="active" disabled>ANSUR-Farben AN</button>
+        <button id="sammySolverV2InspectorStanding" type="button" disabled>Übersichtspose</button>
+        <button id="sammySolverV2InspectorWorst" type="button" disabled>Schlimmstes Maß</button>
+        <label class="sammySolverV2InspectorFilter"><span>Zeigen</span><select id="sammySolverV2InspectorFilter"><option value="all">alle Seeds</option><option value="audit">Best + Far</option><option value="nonfail">nur PASS/WARN</option><option value="fail">nur FAIL</option></select></label>
+       </div>
+       <div class="sammySolverV2InspectorLegend" aria-label="ANSUR Residualfarben"><span class="ok">≤ 1 Observer-Unit</span><span class="warn">1–2 Units</span><span class="fail">&gt; 2 Units</span><span class="reduced">gestrichelt = reduzierte Reliability</span></div>
+       <div class="sammySolverV2InspectorGrid">
+        <div>
+         <div class="sammySolverV2InspectorSectionHead"><b>Fertige Körper</b><span>Tippen = im Viewport anzeigen</span></div>
+         <div id="sammySolverV2InspectorGallery" class="sammySolverV2InspectorGallery"><div class="sammyInfluenceEmpty">Noch keine Rekonstruktionen vorhanden.</div></div>
+        </div>
+        <div>
+         <div class="sammySolverV2InspectorSectionHead"><b>Solver-Prozess</b><span>Stufe antippen = Körperzustand im Viewport replayen</span></div>
+         <div id="sammySolverV2InspectorTimeline" class="sammySolverV2InspectorTimeline"><div class="sammyInfluenceEmpty">Seed auswählen.</div></div>
+        </div>
+       </div>
+       <div class="sammySolverV2InspectorSectionHead"><b>Maßfamilien</b><span>wo der Restfehler sitzt</span></div>
+       <div id="sammySolverV2InspectorFamilies" class="sammySolverV2InspectorFamilies"><div class="sammyInfluenceEmpty">Rekonstruktion auswählen.</div></div>
+       <div class="sammySolverV2InspectorSectionHead"><b>24 ANSUR24-PROT-v2 Residuen</b><span>Zeile antippen = echtes MeasurementState dieses Maßes</span></div>
+       <div id="sammySolverV2InspectorMeasures" class="sammySolverV2InspectorMeasures"><div class="sammyInfluenceEmpty">Rekonstruktion auswählen.</div></div>
+       <div class="sammySolverV2InspectorNote">Die Farbe bewertet den absoluten Fehler in ANSUR-Allowable-Observer-Error-Units. Timeline-Stufen mit gespeichertem Shape können direkt im Viewport replayt werden. Die Mehrfach-Overlay-Ansicht dient der räumlichen Orientierung auf einer gemeinsamen Übersichtspose; per Maßzeile wird der tatsächliche ANSUR24-PROT-v2 MeasurementState + Operator angewendet. Statistische Archetypen sind nur Initialisierungskontext; Solverwerte stammen weiterhin aus den 10 autoritativen MeasurementStates.</div>
+      </div>
+     </details>
+
      <details class="sammySolverV2ProofCriteria"><summary><b>Proof-Gate &amp; Reliability</b><span>was als Erfolg zählt</span></summary><div id="sammySolverV2ProofCriteriaBody"></div></details>
     </div>
    </details>
@@ -292,7 +337,7 @@
   <div class="sammyBodyAuditMeta"><b id="sammyBodyAuditIndex">Blind Audit</b><span id="sammyBodyAuditProgress">Keine Testkörper vorhanden</span></div>
   <div id="sammyBodyAuditCommentWrap" class="sammyBodyAuditCommentWrap" hidden><textarea id="sammyBodyAuditComment" rows="3" placeholder="Optionaler Kommentar zum sichtbaren Körper …"></textarea></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard"><b>Blindes Plausibilitäts-Audit</b><span>Du siehst absichtlich weder Zielmaße noch Zielkörper oder Solverpfad. AUDT lädt den vom Solver geöffneten aktuellen Blindlauf (Solver V2 Proof oder Legacy Solver24). Beim Solver V2 Proof 1.4 enthält die Queue neben dem Best-Fit ausdrücklich auch die Rekonstruktion des am weitesten entfernten Seeds, sofern sie verschieden ist – weiterhin vollständig blind. Bewerte nur offensichtliche anatomische Fehler. Wenn dir ein randnaher Körper zwar ungewöhnlich, aber nicht sicher unplausibel erscheint, lass ihn lieber unbewertet statt zu raten.</span></div>
+   <div class="sammyLabIntroCard"><b>Blindes Plausibilitäts-Audit</b><span>Du siehst absichtlich weder Zielmaße noch Zielkörper oder Solverpfad. AUDT lädt den vom Solver geöffneten aktuellen Blindlauf (Solver V2 Proof oder Legacy Solver24). Beim Solver V2 Proof 1.5 enthält die Queue neben dem Best-Fit ausdrücklich auch die Rekonstruktion des am weitesten entfernten Seeds, sofern sie verschieden ist – weiterhin vollständig blind. Bewerte nur offensichtliche anatomische Fehler. Wenn dir ein randnaher Körper zwar ungewöhnlich, aber nicht sicher unplausibel erscheint, lass ihn lieber unbewertet statt zu raten.</span></div>
    <div class="sammyBodyAuditLegend"><span>✓ plausibel</span><span>× unplausibel</span><span>◎ Fehlstelle</span><span>‹ / › Körper wechseln</span></div>
    <div id="sammyBodyAuditStatus" class="sammyStatus"><span>Noch kein Solver-Blindlauf geladen. Starte zuerst SOLV → Proof oder Legacy-Blind-Test.</span></div>
    <div class="sammyCalibrationActions"><button id="sammyBodyAuditReload" type="button">Testkörper laden</button><button id="sammyBodyAuditExport" type="button">Audit JSON</button></div>
@@ -790,6 +835,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.25.4"></script>
+<script type="module" src="app.js?v=0.8.25.6"></script>
 </body>
 </html>

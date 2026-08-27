@@ -1,24 +1,26 @@
-# Sammy v0.8.25.4 — SOLVER V2 PROOF 1.4
+# Sammy v0.8.25.6 — Solver V2 Proof 1.5 + Inspector 1.1
 
-Diese Version setzt den validierten Solver-V2-Proof inkrementell fort. Messdefinitionen, Messgeometrie, Target-/Seed-Generator, Reliability und die bisherigen A/B-Solverpfade bleiben unverändert.
+Aktiver Testpfad in `LAB → SOLV`:
 
-Neu ist **Direction C · Fresh-Wide Jacobian Rescue**: Nur ein normaler Seed, der nach Direction B weiterhin FAIL ist, erhält einen breiteren frisch am aktuellen Mesh gemessenen Kandidatenpool. Die finale DOF-Auswahl erfolgt aus diesem frischen lokalen Jacobian, nicht aus alten Deep-Zahlenvektoren.
+`TEST VALID → STAT Canonical Multistart → RIG → MASS → FRAME → COMP → SEG → LOCAL → optional FINAL`.
 
-## Testablauf
+Die Hierarchie entspricht der bereits im Morph Observatory dokumentierten Zielarchitektur. Frühere Stufen werden als priorisierte Constraints geschützt statt hart eingefroren.
 
-1. App starten und `Sammy · v0.8.25.4` prüfen.
-2. `LAB → SOLV` öffnen.
-3. Deep-Quelle muss `bereit` sein; falls nötig den bestehenden Deep-FULL-Export importieren.
-4. **Quick** starten.
-5. Bei Abschluss FULL JSON exportieren.
-6. Blind AUDT durchführen und ebenfalls exportieren.
-7. Vor Standard zuerst Quick auswerten: insbesondere `directionC`, `fresh-wide-rescue`, Seed-Akzeptanz und `derivedSeedSpreadCm`.
+## Statistik
 
-## Wichtige Dateien
+`solver-v2-statistical-body-bank-v1.json` enthält 8 beobachtete ANSUR-II-Train+Validation-Medoids pro Geschlecht. Der held-out Testsplit wird nicht genutzt. Weight-Ridge und RFM/FFMI-Proxy dienen nur der Initialisierung/Regularisierung; die 24 direkten Zielmaße bleiben maßgeblich.
 
-- `RELEASE_NOTES_V0.8.25.4.md`
-- `SOLVER_V2_PROOF_1.4_V0.8.25.4.md`
-- `BUILD_TEST_V0.8.25.4.txt`
-- `BUILD_MANIFEST_V0.8.25.4.json`
+## Inspector
 
-Ältere Release-/Proof-Dokumente bleiben als Historie im Paket.
+Inspector 1.1 zeigt Restart-Auswahl, statistische Zentren, Stage-Timeline und antippbare 3D-Replays samt ANSUR Residualfarben. Einzelne Maßzeilen wechseln weiterhin in den autoritativen ANSUR24-PROT-v2 MeasurementState.
+
+## Empfohlener nächster Lauf
+
+Zuerst **Quick**. Nach Abschluss FULL JSON und Blind AUDT exportieren. Standard erst, wenn Quick die Hierarchie/Multistart-Frage belastbar beantwortet.
+
+Details:
+- `RELEASE_NOTES_V0.8.25.6.md`
+- `SOLVER_V2_PROOF_1.5_V0.8.25.6.md`
+- `SOLVER_V2_STATISTICAL_PREFIT_1.0_V0.8.25.6.md`
+- `SOLVER_V2_INSPECTOR_1.1_V0.8.25.6.md`
+- `CHANGESET_V0.8.25.6.md`

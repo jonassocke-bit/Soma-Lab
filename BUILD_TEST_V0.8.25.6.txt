@@ -1,0 +1,48 @@
+Sammy v0.8.25.6 · BUILD TEST
+================================
+
+Purpose
+- Solver V2 Proof 1.5: hierarchical canonical multistart + statistical prefit.
+- Inspector 1.1: statistical restart card + stage-body replay.
+
+Static/runtime-independent checks
+- node --check app.js: PASS
+- HTML parser: 495 IDs, no duplicates: PASS
+- New Inspector DOM IDs present: PASS
+- CSS brace balance: PASS
+- Visible version and cache-bust = 0.8.25.6: PASS
+- Proof schema = sammy-solver-v2-proof-v1.5: PASS
+- Summary schema = sammy-solver-v2-proof-summary-v1.5: PASS
+- Statistical bank schema = sammy-solver-v2-statistical-body-bank-v1: PASS
+- Statistical bank source rows = 5,156 train+validation rows: PASS
+- Statistical bank held-out test used = false: PASS
+- 8 male + 8 female observed-row medoid archetypes: PASS
+- New hierarchical helper/function declarations unique: PASS
+- Latest Proof 1.4 FULL regression fixture parses as valid legacy Inspector source: PASS
+
+Scientific invariants vs v0.8.25.5
+- sammyComputeANSUR24V2: byte-identical function body
+- sammyAns24V2ApplyState: byte-identical function body
+- sammyAns24V2Spec: byte-identical function body
+- sammySolverV2ProofHiddenTargets: byte-identical function body
+- sammySolverV2ProofPreflightSeeds: byte-identical function body
+- sammySolverV2ProofValidateTest: byte-identical function body
+- sammySolverV2ProofTargetPriorGate: byte-identical function body
+- sammySolverV2ProofReliability: byte-identical function body
+- Repair-ID set: unchanged
+- Acromion-ID set: unchanged
+- Reliability table: unchanged
+- Proof target/seed validity rules: unchanged
+
+Architecture checks
+- Stage order present: structural-rig → global-mass → shoulder-hip-frame → regional-composition → segment-landmark → local-measure
+- Earlier-stage residual groups are protected, not hard frozen
+- Original / stat-canonical / blend restart screening present
+- Alternative second basin only for non-conflict FAILs
+- Conflict controls bypass statistical rescue
+- Final fresh-wide path is residual finisher only
+- Stage shape snapshots + fit snapshots persisted for Inspector replay
+- Legacy Proof v1.4 Inspector import remains accepted via v1.* schema family
+
+Runtime boundary
+A complete real-mesh Proof 1.5 cannot be executed in this container because normal Sammy boot requires browser/WebGL/Three.js/SOMA-X runtime assets. The first authoritative numerical run is Quick on the user's Safari/device. TEST VALID remains the prerequisite before interpreting solver performance.
