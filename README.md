@@ -1,3 +1,15 @@
+# Sammy v0.8.26.3 — Pragmatic Repair 1.1 · Residual Convergence
+
+v0.8.26.3 behebt den v0.8.26.2-Record/Checkpoint-Fehler und lässt den produktorientierten Repair nach den groben Blöcken nicht mehr mit freien Reglern und großen Restfehlern einfach aufhören. Bis zu sechs frische Residual-Re-Linearisationen verfolgen noch falsche kritische Maße; adaptive ±115/130-%-Bounds werden nur bei echtem Grenzanschlag genutzt. Proof 1.6, ANSUR24 und die 902er Prediction-Reserve bleiben unverändert.
+
+Siehe:
+- `RELEASE_NOTES_V0.8.26.3.md`
+- `REAL_ANSUR_RESIDUAL_CONVERGENCE_1.0_V0.8.26.3.md`
+- `NEXT_PHASE_AFTER_RESIDUAL_CONVERGENCE_V0.8.26.3.md`
+- `CHANGESET_V0.8.26.3.md`
+
+---
+
 # Sammy v0.8.26.2 — Real ANSUR Pragmatic Repair 1.0
 
 Nach dem Representability Lab wird nicht weiter auf 24/24 Laborperfektion optimiert. v0.8.26.2 testet einen einzigen begrenzten produktorientierten Nachlauf an fünf bereits verbrauchten Real-ANSUR-Körpern: kombinierte Thorax-DOFs, selektive lokale Extrapolation ±115/130 %, regionale Masse/Composition und eine Harness-/Design-relevante Bewertungsmetrik. Flexed Forearm bleibt Diagnose. Proof 1.6, ANSUR24 und die 902er Prediction-Reserve bleiben unverändert.
@@ -55,5 +67,5 @@ See:
 ### v0.8.25.8 hotfix
 Use v0.8.25.8 instead of v0.8.25.7 for Solver V2 Proof 1.6. It restores four missing Proof UI/runtime helpers that prevented the Proof UI from initializing/starting on Safari. Solver science is unchanged.
 
-## Aktueller Forschungsstand · v0.8.26.2
-Proof 1.6 bleibt die eingefrorene inverse Baseline; Real-ANSUR hat die Grenzen des aktuellen Morphraums sichtbar gemacht. v0.8.26.2 ist bewusst der **letzte kurze produktorientierte Repair-Versuch vor Few-Measure Prediction**: vorhandene Thorax-DOFs werden kombiniert, selektive lokale Morphs dürfen kontrolliert bis ±115/130 % extrapolieren und die Bewertung priorisiert Harness-/Design-relevante Torso-/Schultermaße statt 24/24 Laborperfektion. Die 902er Prediction-Reserve bleibt unangetastet.
+## Aktueller Forschungsstand · v0.8.26.3
+Proof 1.6 bleibt die eingefrorene inverse Baseline. v0.8.26.3 prüft jetzt gezielt, ob die großen Real-ANSUR-Restfehler tatsächlich Morphraumgrenzen sind oder nur daraus entstanden, dass der produktorientierte Nachlauf nach einem einzigen Block zu früh stoppte. Bis zu sechs frische Residual-Runden nutzen vorhandene Regler weiter; ±115/130 % wird nur bei echtem Bound-Block aktiviert. Die 902er Prediction-Reserve bleibt unangetastet.

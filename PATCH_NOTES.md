@@ -1,3 +1,16 @@
+# v0.8.26.3 · Pragmatic Repair 1.1 / Residual Convergence
+
+- Fixes missing PRA `ordinal` initialization that could overwrite Case records in IndexedDB.
+- Summary requires 5 unique case IDs before issuing a useful/partial/no-benefit decision.
+- Adds up to 6 fresh residual relinearizations per body.
+- Prioritizes the strongest still-wrong product measure and uses up to 3 locally relevant DOFs.
+- Falls back to single-DOF trials when the combined residual step is not safe.
+- Adaptive ±1.15 / ±1.30 only when a local linear morph is demonstrably bound-blocked in the needed direction.
+- Core axes are not extrapolated; Flexed Forearm remains diagnostic.
+- Previous v0.8.26.2 Pragmatic-Repair JSON can be imported as a source for the corrected rerun.
+
+---
+
 # v0.8.26.2 · Pragmatic Repair 1.0
 
 - One bounded product-oriented repair loop on the 5 already-consumed Real-ANSUR focus bodies.

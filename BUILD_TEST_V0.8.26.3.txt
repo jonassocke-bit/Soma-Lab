@@ -1,0 +1,46 @@
+Sammy v0.8.26.3 BUILD TEST
+Base: v0.8.26.2
+
+STATIC
+- HTML IDs: 531 total / 531 unique: PASS
+- App version: 0.8.26.3: PASS
+- Index/cache version: 0.8.26.3 only: PASS
+- PRA ordinal initialized: ordinal:0: PASS
+- Residual max 6: PASS: PASS
+- Adaptive bounds: ±1.15 / ±1.30 only after blocked detection: PASS
+- PRA prior JSON import: PASS: PASS
+- Summary storage integrity: PASS: PASS
+- Forearm product multiplier: 0.05: PASS
+- CSS braces: 1165 / 1165: PASS
+
+FROZEN v0.8.26.2 FUNCTIONS
+- sammyComputeANSUR24V2: EXACT
+- sammyAns24V2ApplyState: EXACT
+- sammyAns24V2Spec: EXACT
+- sammySolverV2ProofReliability: EXACT
+- sammySolverV2ProofFitMetrics: EXACT
+- sammySolverV2ProofObjective: EXACT
+- sammySolverV2CanonicalRestarts: EXACT
+- sammySolverV2RunHierarchy: EXACT
+- sammySolverV2RunPolishRounds: EXACT
+- sammySolverV2ProofSolveSeed: EXACT
+- sammyRarDiagnoseCase: EXACT
+- sammyRarSummary: EXACT
+
+FROZEN DATA ASSETS
+- ANSUR24_PROTOCOL_V2.json: EXACT
+- ansur-protocol-v1.json: EXACT
+- solver-v2-statistical-body-bank-v1.json: EXACT
+- ansur-prediction-trainval-v1.json: EXACT
+- ansur-prediction-test-v1.json: EXACT
+- ansur-prediction-final-reserve-v1.json: EXACT
+- mass-composition-v1.json: EXACT
+- solver-v2-real-ansur-stress-suite-v1.json: EXACT
+
+SOURCE COMPATIBILITY
+- Uploaded v0.8.26.2 PRA JSON: run.cases=5, summary.caseCount=2: PASS
+- Previous PRA run has solver map: PASS
+
+RUNTIME BOUNDARY
+- No WebGL/Safari runtime is available in the offline build container. iPhone Safari remains authoritative for fresh-mesh convergence, morphology and timing.
+- node --check app.js: PASS
