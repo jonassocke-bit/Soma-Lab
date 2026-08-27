@@ -11,3 +11,6 @@ See:
 - `SOLVER_V2_PROOF_1.6_V0.8.25.7.md`
 - `SOLVER_V2_INSPECTOR_1.2_V0.8.25.7.md`
 - `CHANGESET_V0.8.25.7.md`
+
+### v0.8.25.8 hotfix
+Use v0.8.25.8 instead of v0.8.25.7 for Solver V2 Proof 1.6. It restores four missing Proof UI/runtime helpers that prevented the Proof UI from initializing/starting on Safari. Solver science is unchanged.

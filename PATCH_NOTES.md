@@ -9,3 +9,8 @@
 - Simple decision summary first.
 - Technical details collapsed by default.
 - POLISH stage replay and diagnostics.
+
+## v0.8.25.8 — Solver V2 Proof 1.6 Boot Hotfix
+- Restores four Solver V2 Proof UI/runtime helpers accidentally omitted in v0.8.25.7.
+- Fixes iPhone/Safari `sammySolverV2ProofSetMode` ReferenceError and `sammySolverV2ProofStatus is not a function` TypeError.
+- No Solver V2 scientific behavior changed; Proof remains v1.6 / bounded Polish 1.0.

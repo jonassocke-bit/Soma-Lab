@@ -1,0 +1,22 @@
+SAMMY v0.8.25.8 BUILD TEST
+===========================
+
+Scope: runtime hotfix only; Solver V2 Proof 1.6 / Polish 1.0 science unchanged.
+
+PASS node --check app.js
+PASS app version = 0.8.25.8
+PASS proof schema still sammy-solver-v2-proof-v1.6
+PASS post-solve polish schema/function present
+PASS sammySolverV2ProofProgress declared exactly once
+PASS sammySolverV2ProofStatus declared exactly once
+PASS sammySolverV2ProofLive declared exactly once
+PASS sammySolverV2ProofSetMode declared exactly once
+PASS required Proof DOM ids present
+PASS 496 HTML ids / 0 duplicates
+PASS app.js cache buster = 0.8.25.8
+PASS v0.8.25.7 app.js cache reference absent
+
+Regression represented by user diagnostics:
+1. UI init could not find sammySolverV2ProofSetMode.
+2. Missing sammySolverV2ProofStatus then resolved on Safari as named DOM element and was called as a function.
+Both missing declarations are restored before Proof UI initialization.
