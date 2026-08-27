@@ -1,3 +1,16 @@
+# v0.8.25.9
+
+- Proof 1.6 solver science/gates unchanged.
+- Solver WebGL heartbeat instead of continuous 60-fps render during compute.
+- Exact repeated-shape ANSUR24 measurement cache + performance timings.
+- Heavy Result Review refresh deferred until proof completion instead of rebuilding after every seed.
+- Experimental non-gating torso surface-continuity diagnostic.
+- Blind Audit quality tag: `torso-transition-angular`.
+- Proof Inspector reorganized as simple-first `ERGEBNIS PRÜFEN`; technical details collapsed.
+- Added next-phase roadmap for extreme/plausible stress, held-out real ANSUR validation and few-measure prediction mask.
+
+---
+
 # PATCH NOTES · v0.8.25.7
 
 ## SOLVER V2 PROOF 1.6

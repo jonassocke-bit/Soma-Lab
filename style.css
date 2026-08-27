@@ -841,3 +841,11 @@ body.sammy-lab-hub-open #sammyLabBubble{box-shadow:0 0 0 2px rgba(255,255,255,.2
  .sammySolverV2SimpleProblems>b{font-size:10px}
  .sammySolverV2InspectorSimple>small{font-size:9px;line-height:1.45}
 }
+
+/* v0.8.25.9 · Result Review 1.3 + audit surface quality */
+.sammySolverV2FriendlySection{margin:8px 0;padding:9px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.018)}
+.sammySolverV2FriendlyHead{display:flex;flex-direction:column;gap:2px;margin-bottom:7px}.sammySolverV2FriendlyHead b{font-size:10px}.sammySolverV2FriendlyHead span{font-size:8px;line-height:1.35;opacity:.58}
+.sammySolverV2FriendlyToolbar button,.sammySolverV2FriendlyToolbar select{font-size:9px;min-height:34px}.sammySolverV2Inspector>summary{font-size:10px;padding:9px 2px}.sammySolverV2Inspector>summary span{font-size:8px;opacity:.55}
+.sammySolverV2SurfaceBadge{display:grid;grid-template-columns:auto 1fr;gap:3px 8px;align-items:center;margin:7px 0;padding:7px 8px;border-radius:9px;border:1px solid rgba(255,255,255,.08);font-size:7.5px}.sammySolverV2SurfaceBadge b{font-size:8px}.sammySolverV2SurfaceBadge span{opacity:.72}.sammySolverV2SurfaceBadge small{grid-column:1/-1;opacity:.45}.sammySolverV2SurfaceBadge.ok{border-color:rgba(104,220,160,.25)}.sammySolverV2SurfaceBadge.attention{border-color:rgba(255,205,94,.28)}.sammySolverV2SurfaceBadge.high{border-color:rgba(255,115,110,.32)}
+.sammyBodyAuditQualityTags{display:flex;align-items:center;gap:7px;margin-top:7px}.sammyBodyAuditQualityTags button{appearance:none;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.045);color:#fff;border-radius:999px;padding:7px 10px;font:700 9px/1 system-ui,-apple-system,sans-serif}.sammyBodyAuditQualityTags button.active{border-color:rgba(255,205,94,.65);background:rgba(255,205,94,.14);color:#ffe3a0}.sammyBodyAuditQualityTags span{font-size:8px;opacity:.46}
+@media(max-width:430px){.sammySolverV2FriendlyToolbar{grid-template-columns:1fr 1fr}.sammySolverV2FriendlyToolbar select{grid-column:span 2}.sammySolverV2InspectorStep{grid-template-columns:58px minmax(0,1fr) auto;font-size:9px;padding:8px}.sammySolverV2InspectorStep .phase{font-size:8px}.sammySolverV2InspectorStep small{font-size:8px}.sammyBodyAuditQualityTags{align-items:flex-start;flex-direction:column}}

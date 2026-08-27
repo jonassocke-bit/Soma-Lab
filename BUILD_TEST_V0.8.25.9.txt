@@ -1,0 +1,44 @@
+SAMMY v0.8.25.9 BUILD TEST
+Base: v0.8.25.8 Proof 1.6 Polish hotfix
+
+PASS node --check app.js
+PASS HTML parse; IDs = 497, unique = 497, duplicates = 0
+PASS CSS parse; errors = 0
+PASS required Result Review/AUDT IDs present
+PASS app version = 0.8.25.9
+PASS Proof schema = sammy-solver-v2-proof-v1.6
+PASS surface diagnostic = sammy-surface-continuity-v1; gate:false
+PASS Audit quality tag = torso-transition-angular
+PASS solver compute render throttle/performance tokens present
+PASS Result Review technical section collapsed by default
+
+Scientific-core function comparison to v0.8.25.8:
+PASS sammySolverV2ProofFitMetrics sha[:12] e907dc6334d3 identical
+PASS sammySolverV2ProofObjective sha[:12] b7005768b037 identical
+PASS sammySolverV2HierSemanticScore sha[:12] c9776de0854a identical
+PASS sammySolverV2HierCandidates sha[:12] 028f6da5485e identical
+PASS sammySolverV2HierSolveStep sha[:12] 7120f8e8a103 identical
+PASS sammySolverV2HierTryStep sha[:12] 9b1d596ef07e identical
+PASS sammySolverV2RunHierarchy sha[:12] 77fa08e3979f identical
+PASS sammySolverV2StatCanonicalShape sha[:12] 8994240d42cb identical
+PASS sammySolverV2RunPolishRounds sha[:12] b3545d96e30a identical
+PASS sammySolverV2ProofSummary sha[:12] 864833f6575e identical
+PASS sammySolverV2ProofBuildRun sha[:12] f9bd73673a2f identical
+PASS sammyComputeANSUR24V2 sha[:12] 888bf129c9d3 identical
+
+Frozen/statistical data assets:
+PASS ansur-protocol-v1.json sha[:16] 19604d8495887ab7 identical
+PASS ansur-prediction-trainval-v1.json sha[:16] 88cc5e04b7808c1b identical
+PASS ansur-prediction-test-v1.json sha[:16] 733359b48d5e317a identical
+PASS solver-v2-statistical-body-bank-v1.json sha[:16] 3be21f93291ef8ed identical
+PASS mass-composition-v1.json sha[:16] 2e7928fe1e29debc identical
+PASS ANSUR24_PROTOCOL_V2.json sha[:16] 50dc60ad63246599 identical
+
+Intentional code changes:
+- sammySolverV2ProofApplyShape: exact repeated-shape measurement cache + timing; applyAnnyParams still executes.
+- sammySolverV2ProofSolveSeed: attaches non-gating surfaceContinuity after final fit.
+- sammySolverV2ProofRun: compute mode, perf reset/snapshot, one Result Review refresh after completion.
+- render loop/live text: UI/GPU throttling only.
+
+Runtime limitation:
+Full WebGL/Anny/MeasurementState runtime cannot be executed in this offline container. First iPhone/Safari Quick is the required scientific regression/performance test.

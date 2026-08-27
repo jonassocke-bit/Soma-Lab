@@ -1,3 +1,18 @@
+# Sammy v0.8.25.9 — Proof 1.6 Performance + Surface Quality + Result Review 1.3
+
+Der validierte Proof-1.6-Solver aus v0.8.25.8 bleibt wissenschaftlich unverändert. v0.8.25.9 reduziert Render-/UI-Last während langer Solverläufe, ergänzt einen exakten laufbezogenen ANSUR24-Messcache und exportiert echte Laufzeit-/Jacobian-Diagnostik.
+
+Zusätzlich gibt es eine **nicht-gatende experimentelle Torso Surface-Continuity-Diagnose** und im Blind Audit den Qualitäts-Tag „Torso-Übergang kantig“. Der bisherige Proof Inspector heißt in der normalen Ansicht **ERGEBNIS PRÜFEN** und zeigt zuerst nur Übersicht, Ziel↔Ergebnis und die verständlich benannte Entstehung des Körpers. Technische Forschungsdetails bleiben eingeklappt verfügbar.
+
+Siehe:
+- `RELEASE_NOTES_V0.8.25.9.md`
+- `SOLVER_V2_PERFORMANCE_SURFACE_V0.8.25.9.md`
+- `SOLVER_V2_RESULT_REVIEW_1.3_V0.8.25.9.md`
+- `NEXT_PHASE_ANSUR_STRESS_AND_PREDICTION_V0.8.25.9.md`
+- `CHANGESET_V0.8.25.9.md`
+
+---
+
 # Sammy v0.8.25.7 — Solver V2 Proof 1.6 + Inspector 1.2
 
 Proof 1.6 keeps the v0.8.25.6 hierarchical canonical-multistart architecture and adds one bounded convergence experiment: when a normal seed is still WARN/FAIL, its actual final body is freshly remeasured and may run through at most two tighter post-solve POLISH rounds. Statistical initialization and multistart are not repeated. Conflict controls never receive polish.
