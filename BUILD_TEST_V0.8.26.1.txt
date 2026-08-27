@@ -1,0 +1,34 @@
+Sammy v0.8.26.1 · BUILD TEST
+
+Scope: Real-ANSUR Representability Lab 1.0; diagnostic only.
+Base: v0.8.26.0 full build.
+
+STATIC VALIDATION
+- node --check app.js: PASS (executed separately during packaging)
+- HTML IDs: 520 total / 520 unique: PASS
+- Representability DOM references: 10 / missing 0: PASS
+- CSS brace balance: 1165 / 1165: PASS
+- App/version markers 0.8.26.1: PASS
+- Representability schema/UI/export/import/checkpoint symbols present: PASS
+
+SCIENTIFIC INVARIANTS VS v0.8.26.0
+- sammyComputeANSUR24V2: IDENTICAL
+- sammyAns24V2ApplyState: IDENTICAL
+- sammyAns24V2Spec: IDENTICAL
+- sammySolverV2ProofFitMetrics: IDENTICAL
+- sammySolverV2ProofObjective: IDENTICAL
+- sammySolverV2CanonicalRestarts: IDENTICAL
+- sammySolverV2RunHierarchy: IDENTICAL
+- sammySolverV2RunPolishRounds: IDENTICAL
+- sammySolverV2ProofReliability: IDENTICAL
+- sammySolverV2ProofJacobian: IDENTICAL
+- ANSUR24_PROTOCOL_V2.json: BYTE-IDENTICAL
+- ansur-prediction-trainval-v1.json: BYTE-IDENTICAL
+- ansur-prediction-test-v1.json: BYTE-IDENTICAL
+- ansur-prediction-final-reserve-v1.json: BYTE-IDENTICAL
+- solver-v2-real-ansur-stress-suite-v1.json: BYTE-IDENTICAL
+- solver-v2-statistical-body-bank-v1.json: BYTE-IDENTICAL
+- mass-composition-v1.json: BYTE-IDENTICAL
+
+RUNTIME LIMIT
+- Full WebGL/Anny mesh runtime is not available in the offline packaging container; Safari/device run remains authoritative for fresh-mesh probe behavior and timings.

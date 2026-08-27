@@ -42,3 +42,6 @@ See:
 
 ### v0.8.25.8 hotfix
 Use v0.8.25.8 instead of v0.8.25.7 for Solver V2 Proof 1.6. It restores four missing Proof UI/runtime helpers that prevented the Proof UI from initializing/starting on Safari. Solver science is unchanged.
+
+## Aktueller Forschungsstand · v0.8.26.1
+Der model-generated Proof 1.6 bleibt die eingefrorene inverse Solver-Baseline. Real-ANSUR Stress Gate 1.0 hat jedoch gezeigt, dass reale held-out Messvektoren noch systematische Repräsentations-/Mappingprobleme offenlegen. Das neue **REAL ANSUR REPAIR · REPRESENTABILITY LAB 1.0** diagnostiziert diese Fehler auf fünf bereits verbrauchten Fällen, ohne neue ANSUR-Testpersonen oder die 902er Few-Measure-Reserve zu konsumieren. Few-Measure Prediction folgt erst nach dem daraus abgeleiteten gezielten Repair und einem erneuten Real-ANSUR-Gate.

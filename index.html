@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.26.0</title>
-<link rel="stylesheet" href="style.css?v=0.8.26.0">
+<title>Sammy v0.8.26.1</title>
+<link rel="stylesheet" href="style.css?v=0.8.26.1">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.26.0</div>
+  <div class="sammySplashVersion">v0.8.26.1</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.26.0</div>
+<div id="sammyVersion">Sammy · v0.8.26.1</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -302,8 +302,25 @@
     </div>
    </details>
 
+   <div class="sammyLabIntroCard sammyRarIntro"><b>Jetzt Diagnose statt neuer Solver</b><span>Stress Gate 1.0 hat gezeigt, dass reale ANSUR-Profile systematisch an Brustbreite, Schulterbreite, Flexed-Forearm und teils an der Körperzusammensetzung scheitern. Dieses Lab verwendet fünf der bereits verbrauchten Stress-Personen erneut und prüft nur lokal am fertigen Körper: Ist das Ziel mit vorhandenen Freiheitsgraden erreichbar? Ist die ANSUR↔Mesh-Messbrücke selbst unvollständig? Muss Sammy große Umfänge durch zu viel Muskel kompensieren? Neue ANSUR-Testpersonen werden dafür nicht verwendet.</span></div>
+   <details class="sammyCalibrationLab sammyRarLab" id="sammyRarLab" open>
+    <summary><b>REAL ANSUR REPAIR · REPRESENTABILITY LAB 1.0</b><span>5 Fokus-Körper · Messbrücke vs. Morphraum vs. Solver · Composition · Torso-Normalen</span></summary>
+    <div class="sammyCalibrationBody">
+     <div id="sammyRarSource" class="sammyRarSource">Stress-Quelle wird gesucht …</div>
+     <div class="sammyRarPlan"><div><b>5</b><span>bereits verbrauchte Fälle</span></div><div><b>3 ♂</b><span>2 typisch + schwer</span></div><div><b>2 ♀</b><span>Kontrollkörper</span></div><div><b>0</b><span>neue ANSUR-Zeilen</span></div></div>
+     <div class="sammyRarQuestion"><b>Was beantwortet der Lauf?</b><span><strong>Brustbreite:</strong> Messbrücke / Morphraum / Solver? · <strong>Schulter:</strong> fehlt echte Breitenfreiheit? · <strong>Unterarm:</strong> Max-Flex-Protokoll statt Ruhemesh erzwingen? · <strong>Composition:</strong> ist extreme Muskeldefinition wirklich nötig? · <strong>Torso:</strong> Vergleich lokaler Seitenflächen-Normalen zwischen beanstandeten Männern und weiblichen Kontrollen.</span></div>
+     <div class="sammyCalibrationActions"><button id="sammyRarStart" type="button">Diagnose starten</button><button id="sammyRarPause" type="button" disabled>Pause</button></div>
+     <div class="sammyCalibrationActions"><button id="sammyRarReset" type="button">Diagnose löschen</button><button id="sammyRarExport" type="button" disabled>Diagnose JSON</button><label class="sammyRarFile"><span>Stress FULL importieren</span><input id="sammyRarFile" type="file" accept="application/json,.json"></label></div>
+     <div id="sammyRarStatus" class="sammyCalibrationStatus">Representability Lab wird initialisiert …</div>
+     <div class="sammyCalibrationProgress"><i id="sammyRarProgress"></i></div>
+     <div id="sammyRarLive" class="sammyCalibrationLiveMeasures"></div>
+     <div id="sammyRarResults" class="sammyRarResults"><div class="sammyInfluenceEmpty">Noch keine Representability-Diagnose.</div></div>
+     <details class="sammyRarCriteria"><summary><b>Wie werden die Ursachen getrennt?</b><span>keine neuen Gate-Grenzen</span></summary><div><p><b>Solver/Convergence:</b> Ein vorhandener relevanter DOF kann das Ziel in einem kontrollierten lokalen Probe-Bereich erreichen, während geschützte Nachbarmaße nahe am fertigen Körper bleiben.</p><p><b>Morphraum:</b> Ein hochverlässliches Maß bleibt außerhalb dieses kontrollierten lokalen Bereichs. Das ist ein Hinweis auf fehlende oder zu stark gekoppelte Freiheitsgrade, kein Beweis für globale Unmöglichkeit.</p><p><b>Messbrücke + Morphraum:</b> Besonders Chest Breadth bleibt bewusst getrennt, weil Full Inspiration, Rib-Cage-Kompression und Brustgewebe-Ausschluss aus der Außenhaut nicht vollständig reproduziert werden.</p><p><b>Messzustand:</b> Forearm Circumference, Flexed bleibt reduziert, weil Maximalanspannung/Faustdeformation nicht simuliert werden. Die Diagnose soll Sammy dafür nicht künstlich aufblasen.</p><p><b>Composition:</b> Bei stark erhöhter Muskeldefinition wird zusätzlich derselbe fertige Körper mit dem statistischen Muskelzentrum nachgemessen. Kostet das kaum Fit, ist es eher Regularisierung; kostet es viel Fit, fehlt wahrscheinlich eine alternative Soft-Tissue-/Formbasis.</p><p><b>Torso-Normalen:</b> neue lokale Seitenflächen-Normalen sind nur eine Vergleichsdiagnose. Es gibt noch keine validierte Grad-Schwelle und keinen Solver-Gate-Effekt.</p></div></details>
+    </div>
+   </details>
+
    <div class="sammyLabIntroCard sammySolverV2StressIntro"><b>Nächster Gate · echte ANSUR-Personen statt Sammy-Zielkörper</b><span>Dieser Test verändert den erfolgreichen Proof-1.6-Solver nicht. Zehn tatsächlich beobachtete Personen aus dem bisher unbenutzten ANSUR-II-Testsplit werden als 24-Maß-Ziele verwendet: vier typische Profile und sechs reale Randfälle. Jede Person läuft einmal; alle sechs Randfälle und jeder verdächtige typische Fall bekommen automatisch einen zweiten, weit entfernten Start. Nach jeder Person wird gespeichert. Erwartung auf dem aktuellen iPhone: ungefähr 1½–2 Stunden. Die zehn verwendeten Personen werden anschließend dauerhaft aus der späteren Few-Measure-Endvalidierung ausgeschlossen; 902 Testpersonen bleiben unangetastet.</span></div>
-   <details class="sammyCalibrationLab sammySolverV2StressLab" id="sammySolverV2StressLab" open>
+   <details class="sammyCalibrationLab sammySolverV2StressLab" id="sammySolverV2StressLab">
     <summary><b>REAL ANSUR STRESS · GATE 1.0</b><span>10 held-out Personen · 24 echte Maße · adaptive Re-Tests · Checkpoints</span></summary>
     <div class="sammyCalibrationBody">
      <div id="sammySolverV2StressSuite" class="sammySolverV2StressSuite">Stress-Suite wird geprüft …</div>
@@ -858,6 +875,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.26.0"></script>
+<script type="module" src="app.js?v=0.8.26.1"></script>
 </body>
 </html>

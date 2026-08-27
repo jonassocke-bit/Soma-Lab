@@ -864,3 +864,23 @@ body.sammy-lab-hub-open #sammyLabBubble{box-shadow:0 0 0 2px rgba(255,255,255,.2
 .sammySolverV2StressTechnical{margin-top:10px}.sammySolverV2StressTechnical>div{padding:8px 2px}.sammySolverV2StressTechnical p{font-size:10px;line-height:1.4;margin:5px 0;opacity:.76}
 .sammySolverV2StressCriteria{margin-top:10px}.sammySolverV2StressCriteria>div{padding:8px 2px;font-size:11px;line-height:1.45}.sammySolverV2StressCriteria p{margin:7px 0}
 @media(max-width:430px){.sammySolverV2StressPlan,.sammySolverV2StressMetrics{grid-template-columns:repeat(2,minmax(0,1fr))}.sammySolverV2StressHeadline{align-items:flex-start}.sammySolverV2StressCase{padding:10px}}
+
+/* v0.8.26.1 · Real ANSUR Representability Lab 1.0 */
+.sammyRarIntro{border-left:3px solid rgba(90,200,250,.82)}
+.sammyRarLab>summary span{opacity:.76}
+.sammyRarSource{display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.045);font-size:12px;line-height:1.35}
+.sammyRarSource.ok{border:1px solid rgba(48,209,88,.34)}.sammyRarSource.warn{border:1px solid rgba(255,159,10,.34)}.sammyRarSource.fail{border:1px solid rgba(255,69,58,.42)}
+.sammyRarSource span{opacity:.78}
+.sammyRarPlan{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:10px 0}
+.sammyRarPlan>div{display:flex;flex-direction:column;gap:2px;min-width:0;padding:9px;border-radius:11px;background:rgba(255,255,255,.045);text-align:center}
+.sammyRarPlan b{font-size:16px}.sammyRarPlan span{font-size:10px;opacity:.72;line-height:1.2}
+.sammyRarQuestion{display:flex;flex-direction:column;gap:5px;padding:10px 12px;border-radius:12px;background:rgba(90,200,250,.07);font-size:11px;line-height:1.45}.sammyRarQuestion span{opacity:.84}
+.sammyRarFile{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 11px;border:1px solid rgba(255,255,255,.13);border-radius:9px;background:rgba(255,255,255,.045);font-size:11px;font-weight:700;cursor:pointer}.sammyRarFile input{display:none}
+.sammyRarResults{margin-top:10px}.sammyRarRunning,.sammyRarDecision{display:flex;flex-direction:column;gap:4px;padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.05);font-size:12px}.sammyRarDecision{border:1px solid rgba(90,200,250,.28)}.sammyRarDecision span{font-weight:650}.sammyRarDecision small,.sammyRarRunning span{opacity:.7}
+.sammyRarCards{display:grid;grid-template-columns:1fr;gap:9px;margin-top:9px}.sammyRarCard{padding:10px;border:1px solid rgba(255,255,255,.10);border-radius:13px;background:rgba(255,255,255,.035)}.sammyRarCard.male{border-left:3px solid rgba(90,200,250,.72)}.sammyRarCard.female{border-left:3px solid rgba(255,105,180,.60)}
+.sammyRarCard header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px}.sammyRarCard header b{font-size:12px}.sammyRarCard header span{font-size:10px;opacity:.7;text-align:right}
+.sammyRarGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.sammyRarFinding{display:flex;flex-direction:column;gap:2px;min-width:0;padding:8px;border-radius:10px;background:rgba(255,255,255,.045)}.sammyRarFinding span{font-size:9px;text-transform:uppercase;letter-spacing:.04em;opacity:.62}.sammyRarFinding b{font-size:13px}.sammyRarFinding em{font-size:10px;font-style:normal;font-weight:700}.sammyRarFinding small{font-size:9px;opacity:.65;line-height:1.25}
+.sammyRarFinding.solver-capacity em{color:#30d158}.sammyRarFinding.basis-pressure em{color:#ff9f0a}.sammyRarFinding.bridge-basis em,.sammyRarFinding.protocol-limited em{color:#ffd60a}.sammyRarFinding.not-blocking em{color:#64d2ff}.sammyRarFinding.composition em{color:#bf5af2}.sammyRarFinding.surface em{color:#64d2ff}
+.sammyRarActions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.sammyRarActions button{font-size:10px;padding:7px 9px}.sammyRarCard details{margin-top:7px}.sammyRarCard details summary{font-size:10px}.sammyRarExplain{padding:6px 2px 1px;font-size:10px;line-height:1.4;opacity:.78}.sammyRarExplain p{margin:5px 0}
+.sammyRarTechnical{margin-top:9px}.sammyRarTechnical>div{padding:6px 2px;font-size:10px;opacity:.72}.sammyRarTechnical p{margin:4px 0}.sammyRarCriteria{margin-top:9px}.sammyRarCriteria>div{padding:6px 2px;font-size:10px;line-height:1.45;opacity:.78}.sammyRarCriteria p{margin:7px 0}
+@media (max-width:600px){.sammyRarPlan{grid-template-columns:repeat(2,minmax(0,1fr))}.sammyRarGrid{grid-template-columns:1fr}.sammyRarCard header{flex-direction:column}.sammyRarCard header span{text-align:left}}

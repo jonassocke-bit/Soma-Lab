@@ -1,0 +1,66 @@
+{
+  "schema": "sammy-build-manifest-v1",
+  "app": "Sammy",
+  "version": "0.8.26.1",
+  "baseVersion": "0.8.26.0",
+  "build": "Real-ANSUR Representability Lab 1.0",
+  "generatedUtc": "2026-08-27T20:35:02.800006+00:00",
+  "changedFiles": [
+    "BUILD_MANIFEST_V0.8.26.1.json",
+    "BUILD_TEST_V0.8.26.1.txt",
+    "CHANGESET_V0.8.26.1.md",
+    "FILES_CHANGED_V0.8.26.1.txt",
+    "NEXT_PHASE_AFTER_REPRESENTABILITY_V0.8.26.1.md",
+    "PATCH_NOTES.md",
+    "README.md",
+    "REAL_ANSUR_REPRESENTABILITY_LAB_1.0_V0.8.26.1.md",
+    "RELEASE_NOTES_V0.8.26.1.md",
+    "app.js",
+    "index.html",
+    "style.css"
+  ],
+  "changedFileCount": 12,
+  "validation": {
+    "nodeCheck": "PASS",
+    "htmlIdCount": 520,
+    "htmlIdsUnique": true,
+    "rarDomRefs": 10,
+    "rarDomMissing": [],
+    "cssBraceBalanced": true,
+    "scientificFunctionsIdentical": {
+      "sammyComputeANSUR24V2": true,
+      "sammyAns24V2ApplyState": true,
+      "sammyAns24V2Spec": true,
+      "sammySolverV2ProofFitMetrics": true,
+      "sammySolverV2ProofObjective": true,
+      "sammySolverV2CanonicalRestarts": true,
+      "sammySolverV2RunHierarchy": true,
+      "sammySolverV2RunPolishRounds": true,
+      "sammySolverV2ProofReliability": true,
+      "sammySolverV2ProofJacobian": true
+    },
+    "frozenDataByteIdentical": {
+      "ANSUR24_PROTOCOL_V2.json": true,
+      "ansur-prediction-trainval-v1.json": true,
+      "ansur-prediction-test-v1.json": true,
+      "ansur-prediction-final-reserve-v1.json": true,
+      "solver-v2-real-ansur-stress-suite-v1.json": true,
+      "solver-v2-statistical-body-bank-v1.json": true,
+      "mass-composition-v1.json": true
+    },
+    "runtimeWebGL": "not available in offline packaging container"
+  },
+  "sha256": {
+    "BUILD_TEST_V0.8.26.1.txt": "1be4a8df0b40264c477c1e3411a77e4731c38f8c15c796f2b18f3fb4120626fa",
+    "CHANGESET_V0.8.26.1.md": "c683ab0af947c6363e7a62f355655af52c922970c7b9e014e90fd5be23a37384",
+    "FILES_CHANGED_V0.8.26.1.txt": "cdda44c3010d0cee70648b4e17a3f7cb950fc861af329053253e5c4a325fe3d9",
+    "NEXT_PHASE_AFTER_REPRESENTABILITY_V0.8.26.1.md": "8be5f425151c1f4fe1f07eace47fd640ed9f5e82e4218f033bc7f2362524d528",
+    "PATCH_NOTES.md": "0c4da906ac393e47f74bb03f0defcb17c5bd1e3b89bc2b28add7517df80800c7",
+    "README.md": "50a5ce23401d35b6965134e2aa86173a95ea6fa1329a6b527cb4931bf728cfed",
+    "REAL_ANSUR_REPRESENTABILITY_LAB_1.0_V0.8.26.1.md": "bd95089998db0827a65f88066cf38b43720420f7126cee2de80d3ef88eabd2d1",
+    "RELEASE_NOTES_V0.8.26.1.md": "d5f46c72c862327ed7d0bd4f22a97f469012002f616d7d5f8ecaaba5e313277e",
+    "app.js": "81ac8bc8cca5f0e7985202208f08a51025af31059f84db9f79b5286f373f6cf7",
+    "index.html": "9a92b24343e187507debf83fb955692953eaf1ada744e8d707f21f9a3b88a073",
+    "style.css": "bcac686466d7e9b6f161aff4a22e1df19c2044af4969421d1c4f15841b0baa0d"
+  }
+}

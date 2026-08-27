@@ -40,3 +40,10 @@
 - Restores four Solver V2 Proof UI/runtime helpers accidentally omitted in v0.8.25.7.
 - Fixes iPhone/Safari `sammySolverV2ProofSetMode` ReferenceError and `sammySolverV2ProofStatus is not a function` TypeError.
 - No Solver V2 scientific behavior changed; Proof remains v1.6 / bounded Polish 1.0.
+
+## v0.8.26.1 · Real ANSUR Representability Lab 1.0
+- 5 bereits verbrauchte Stress-Körper statt neuer held-out Personen.
+- trennt Chest/Shoulder/Forearm-Probleme in Solver-Kapazität, Morphraum und Messzustand/-brücke.
+- Composition-Prior-Probe gegen unnötig hohe Muskeldefinition.
+- experimentelle seitliche Torso-Normalen-Kontinuität.
+- Proof 1.6 / ANSUR24 / 902er Prediction-Reserve unverändert.
