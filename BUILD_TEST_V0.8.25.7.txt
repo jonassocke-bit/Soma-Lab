@@ -1,0 +1,72 @@
+Sammy v0.8.25.7 · BUILD TEST
+================================
+
+Purpose
+- Solver V2 Proof 1.6: bounded post-solve POLISH on the actually selected finished body.
+- Inspector 1.2: simple-first decision summary; technical details collapsed by default.
+
+Static/runtime-independent checks
+- node --check app.js: PASS
+- HTML parser: 496 IDs, no duplicates: PASS
+- Inspector simple-summary DOM ID unique: PASS
+- POLISH phase strip present: PASS
+- Quick is the default new-run mode: PASS
+- CSS brace balance: PASS
+- Mobile simple-summary typography override present: PASS
+- Visible version/cache-bust = 0.8.25.7: PASS
+- Proof schema = sammy-solver-v2-proof-v1.6: PASS
+- Summary schema = sammy-solver-v2-proof-summary-v1.6: PASS
+- Test-validity schema remains sammy-solver-v2-proof-test-validity-v1.2: PASS
+- Architecture schema = solver-v2-hierarchical-canonical-polish-v1: PASS
+
+Scientific invariants vs v0.8.25.6
+- sammyComputeANSUR24V2: byte-identical function body
+- sammyAns24V2ApplyState: byte-identical function body
+- sammyAns24V2Spec: byte-identical function body
+- sammyAns24V2MeasureOne: byte-identical function body
+- sammySolverV2ProofHiddenTargets: byte-identical function body
+- sammySolverV2ProofPreflightSeeds: byte-identical function body
+- sammySolverV2ProofValidateTest: byte-identical function body
+- sammySolverV2ProofTargetPriorGate: byte-identical function body
+- sammySolverV2ProofReliability: byte-identical function body
+- sammySolverV2ProofFitMetrics: byte-identical function body
+- sammySolverV2ProofSeedCandidateShapes: byte-identical function body
+- sammySolverV2ProofApplyTargetLocals: byte-identical function body
+- sammySolverV2ProofSeedShapes: byte-identical function body
+- Repair-ID set: unchanged
+- Acromion-ID set: unchanged
+- Reliability table: unchanged
+- Proof target/seed validity rules: unchanged
+- ANSUR24_PROTOCOL_V2.json: byte-identical
+- ansur-protocol-v1.json: byte-identical
+- solver-v2-statistical-body-bank-v1.json: byte-identical
+- ansur-prediction-trainval-v1.json: byte-identical
+- ansur-prediction-test-v1.json: byte-identical
+- mass-composition-v1.json: byte-identical
+
+Statistical-prefit invariants
+- Statistical Body Bank rows = 5,156 train+validation: PASS
+- heldOutTestUsed = false: PASS
+- 8 male + 8 female observed-row archetypes retained: PASS
+
+POLISH policy checks
+- Quick / Standard / Deep all have a hard maximum of 2 polish rounds: PASS
+- Step scales are tighter than the main solver: .58 / .55 / .52: PASS
+- POLISH starts only after the selected hierarchy/multistart result is finished: PASS
+- WARN and FAIL normal seeds are eligible; PASS seeds are skipped: PASS
+- Conflict-controls are explicitly excluded: PASS
+- No STAT/canonical restart call inside the polish helper: PASS
+- No sourceShape/sourceAllMeasures access inside the polish helper: PASS
+- Every accepted POLISH stage step must strictly reduce global real-mesh objective: PASS
+- Whole polish round is retained only when global objective improves and weighted fit improves, or when a lower-objective PASS is reached: PASS
+- Stop reasons: pass / polish-stalled / polish-budget: PASS
+- Fresh real-mesh Jacobian is rebuilt by the hierarchy on every polish round: PASS
+
+Regression fixture
+- Authoritative v0.8.25.6 Quick FULL fixture parses: PASS
+- 8 normal round-trip seeds found: PASS
+- Under Proof 1.6 eligibility, 5/8 of those old normal seeds (WARN or FAIL) would enter POLISH: PASS
+- 2 conflict-control seeds found and remain excluded from POLISH: PASS
+
+Runtime boundary
+A complete real-mesh Proof 1.6 cannot be executed in this container because normal Sammy boot requires browser/WebGL/Three.js/SOMA-X runtime assets. The first authoritative numerical result is therefore the user's Quick run on Safari/device. TEST VALID remains the prerequisite before interpreting solver performance.

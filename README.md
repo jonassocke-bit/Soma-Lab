@@ -1,26 +1,13 @@
-# Sammy v0.8.25.6 — Solver V2 Proof 1.5 + Inspector 1.1
+# Sammy v0.8.25.7 — Solver V2 Proof 1.6 + Inspector 1.2
 
-Aktiver Testpfad in `LAB → SOLV`:
+Proof 1.6 keeps the v0.8.25.6 hierarchical canonical-multistart architecture and adds one bounded convergence experiment: when a normal seed is still WARN/FAIL, its actual final body is freshly remeasured and may run through at most two tighter post-solve POLISH rounds. Statistical initialization and multistart are not repeated. Conflict controls never receive polish.
 
-`TEST VALID → STAT Canonical Multistart → RIG → MASS → FRAME → COMP → SEG → LOCAL → optional FINAL`.
+Inspector 1.2 is simple-first: the top view shows only the decision-relevant metrics and worst remaining measure. Full restart/stage/ANSUR debug data stays available under a collapsed technical section.
 
-Die Hierarchie entspricht der bereits im Morph Observatory dokumentierten Zielarchitektur. Frühere Stufen werden als priorisierte Constraints geschützt statt hart eingefroren.
+Scientific boundary remains frozen: ANSUR24-PROT-v2 operators/MeasurementStates, Proof target and seed validity, Deep repair-v1.6 policy, reliability weights, gate thresholds and the Statistical Body Bank are unchanged.
 
-## Statistik
-
-`solver-v2-statistical-body-bank-v1.json` enthält 8 beobachtete ANSUR-II-Train+Validation-Medoids pro Geschlecht. Der held-out Testsplit wird nicht genutzt. Weight-Ridge und RFM/FFMI-Proxy dienen nur der Initialisierung/Regularisierung; die 24 direkten Zielmaße bleiben maßgeblich.
-
-## Inspector
-
-Inspector 1.1 zeigt Restart-Auswahl, statistische Zentren, Stage-Timeline und antippbare 3D-Replays samt ANSUR Residualfarben. Einzelne Maßzeilen wechseln weiterhin in den autoritativen ANSUR24-PROT-v2 MeasurementState.
-
-## Empfohlener nächster Lauf
-
-Zuerst **Quick**. Nach Abschluss FULL JSON und Blind AUDT exportieren. Standard erst, wenn Quick die Hierarchie/Multistart-Frage belastbar beantwortet.
-
-Details:
-- `RELEASE_NOTES_V0.8.25.6.md`
-- `SOLVER_V2_PROOF_1.5_V0.8.25.6.md`
-- `SOLVER_V2_STATISTICAL_PREFIT_1.0_V0.8.25.6.md`
-- `SOLVER_V2_INSPECTOR_1.1_V0.8.25.6.md`
-- `CHANGESET_V0.8.25.6.md`
+See:
+- `RELEASE_NOTES_V0.8.25.7.md`
+- `SOLVER_V2_PROOF_1.6_V0.8.25.7.md`
+- `SOLVER_V2_INSPECTOR_1.2_V0.8.25.7.md`
+- `CHANGESET_V0.8.25.7.md`
