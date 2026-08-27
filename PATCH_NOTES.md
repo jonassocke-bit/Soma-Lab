@@ -1,11 +1,11 @@
-# PATCH NOTES · v0.8.25.3
+# PATCH NOTES · v0.8.25.4
 
-## SOLVER V2 PROOF 1.3
+## SOLVER V2 PROOF 1.4
 
-Der gültige Proof-1.2-Quick-Lauf zeigte eine klare Konvergenzbudget-Konfundierung: alle acht Round-trip-Seeds verbesserten sich bis zum letzten verfügbaren Schritt, während mehrere absichtlich entfernte Seeds in einzelnen Core-Dimensionen weiter von der Source entfernt waren als das gesamte Quick-Trust-Region-Budget überhaupt reisen konnte.
+Der validierte v1.3-Quick verbesserte sich auf 1.1295 gewichtete Protocol Units / 0.8029 cm RMSE, 100 % non-fail Targets und 62.5 % akzeptierte Seeds. Zwei Far-Seeds stallten jedoch real, ein weiterer blieb nach weiterem Fortschritt über der FAIL-Grenze; die derived Seed-Streuung lag noch bei 3.0709 cm.
 
-v0.8.25.3 ändert deshalb ausschließlich die Proof-Konvergenzsteuerung nach den festen Phase-A-Pässen. Direction B darf für weiterhin fehlschlagende Seeds adaptiv mehrere Fresh-Jacobian-Rescue-Pässe durchführen und meldet explizit ACCEPTED / STALLED / BUDGET. Conflict-Controls bleiben auf einen Rescue-Pass begrenzt.
+v0.8.25.4 fügt deshalb **nur nach weiterhin fehlschlagender Direction B** eine Direction-C-Eskalation hinzu: breiter DOF-Pool → frischer Real-Mesh-Jacobian → numerische lokale Spaltenauswahl → enger Trust-Step. Conflict-Controls erhalten C nicht.
 
-Messdefinitionen, v0.8.24.26-Geometrie, Repair-v1.6-Policy, Deep-Taxonomie, Reliability, Target-/Seed-Validierung und AUDT bleiben unverändert.
+Damit wird im nächsten Quick entschieden, ob der Restfehler primär aus zu engem Candidate-Ranking oder aus echter Basin-/Identifizierbarkeitsinstabilität stammt. Messung, Target-Erzeugung und Gate-Schwellen bleiben unverändert.
 
-Siehe `RELEASE_NOTES_V0.8.25.3.md` und `SOLVER_V2_PROOF_1.3_V0.8.25.3.md`.
+Siehe `RELEASE_NOTES_V0.8.25.4.md` und `SOLVER_V2_PROOF_1.4_V0.8.25.4.md`.

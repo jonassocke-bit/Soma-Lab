@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.25.3</title>
-<link rel="stylesheet" href="style.css?v=0.8.25.3">
+<title>Sammy v0.8.25.4</title>
+<link rel="stylesheet" href="style.css?v=0.8.25.4">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.25.3</div>
+  <div class="sammySplashVersion">v0.8.25.4</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.25.3</div>
+<div id="sammyVersion">Sammy · v0.8.25.4</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -228,11 +228,11 @@
 
  <section id="sammySolver24Panel" class="sammyPanel sammySolver24Panel" data-panel-key="solver24">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
-  <div class="sammyPanelHead"><div><b>SOLVER V2 · PROOF 1.3</b><small>Blind inverse holdout · Deep taxonomy · fresh real-mesh Jacobian</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelHead"><div><b>SOLVER V2 · PROOF 1.4</b><small>Blind inverse holdout · Deep taxonomy · fresh real-mesh Jacobian</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard sammySolverV2ProofIntro"><b>Entscheidungstest für die neue Solver-Richtung</b><span>Der Proof rekonstruiert versteckte, vom Modell selbst erzeugte Körper ausschließlich aus Geschlecht, Alter und den 24 ANSUR24-PROT-v2-Zielmaßen. Proof 1.3 behält die validierte Target-/Seed-Erzeugung aus 1.2 unverändert, beseitigt aber den im echten Quick-Lauf sichtbaren festen Konvergenzbudget-Effekt: Nach den Deep-gerankten Pässen erhalten nur weiterhin fehlschlagende Seeds mehrere frisch gemessene semantische Direction-B-Rescue-Pässe, bis sie akzeptiert sind, wirklich stagnieren oder das explizite Rescue-Budget erreichen. Kein neutraler Fallback, keine Duplikate und kein Source-äquivalenter oder nahezu perfekter Startseed bleiben harte Voraussetzungen. Die sieben reparierten Maße verwenden keine alten Deep-Interaction-Residuals.</span></div>
+   <div class="sammyLabIntroCard sammySolverV2ProofIntro"><b>Entscheidungstest für die neue Solver-Richtung</b><span>Der Proof rekonstruiert versteckte, vom Modell selbst erzeugte Körper ausschließlich aus Geschlecht, Alter und den 24 ANSUR24-PROT-v2-Zielmaßen. Proof 1.4 behält Target-/Seed-Erzeugung, Messgeometrie und die erfolgreichen Direction-B-Regeln aus 1.3 unverändert. Neu ist nur eine diagnostische Direction C für weiterhin fehlschlagende normale Seeds: Ein breiterer DOF-Pool wird am aktuellen realen Mesh frisch nachgemessen und erst danach über den tatsächlich gemessenen lokalen Jacobian gerankt. So lässt sich „Candidate-Ranking zu eng“ von einem echten Basin-/Identifizierbarkeitsproblem unterscheiden. Kein neutraler Fallback, keine Duplikate und kein Source-äquivalenter oder nahezu perfekter Startseed bleiben harte Voraussetzungen. Die sieben reparierten Maße verwenden keine alten Deep-Interaction-Residuals.</span></div>
    <details class="sammyCalibrationLab sammySolverV2ProofLab" id="sammySolverV2ProofLab" open>
-    <summary><b>PROOF 1.3</b><span>Testvalidität · Round-trip · Seed-Stabilität · Edge · Conflict control</span></summary>
+    <summary><b>PROOF 1.4</b><span>Testvalidität · Round-trip · Seed-Stabilität · Edge · Conflict control</span></summary>
     <div class="sammyCalibrationBody">
      <div id="sammySolverV2ProofSource" class="sammySolverV2ProofSource">Deep-Quelle wird gesucht …</div>
      <div class="sammySolverV2ProofImportRow">
@@ -292,7 +292,7 @@
   <div class="sammyBodyAuditMeta"><b id="sammyBodyAuditIndex">Blind Audit</b><span id="sammyBodyAuditProgress">Keine Testkörper vorhanden</span></div>
   <div id="sammyBodyAuditCommentWrap" class="sammyBodyAuditCommentWrap" hidden><textarea id="sammyBodyAuditComment" rows="3" placeholder="Optionaler Kommentar zum sichtbaren Körper …"></textarea></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard"><b>Blindes Plausibilitäts-Audit</b><span>Du siehst absichtlich weder Zielmaße noch Zielkörper oder Solverpfad. AUDT lädt den vom Solver geöffneten aktuellen Blindlauf (Solver V2 Proof oder Legacy Solver24). Beim Solver V2 Proof 1.3 enthält die Queue neben dem Best-Fit ausdrücklich auch die Rekonstruktion des am weitesten entfernten Seeds, sofern sie verschieden ist – weiterhin vollständig blind. Bewerte nur offensichtliche anatomische Fehler. Wenn dir ein randnaher Körper zwar ungewöhnlich, aber nicht sicher unplausibel erscheint, lass ihn lieber unbewertet statt zu raten.</span></div>
+   <div class="sammyLabIntroCard"><b>Blindes Plausibilitäts-Audit</b><span>Du siehst absichtlich weder Zielmaße noch Zielkörper oder Solverpfad. AUDT lädt den vom Solver geöffneten aktuellen Blindlauf (Solver V2 Proof oder Legacy Solver24). Beim Solver V2 Proof 1.4 enthält die Queue neben dem Best-Fit ausdrücklich auch die Rekonstruktion des am weitesten entfernten Seeds, sofern sie verschieden ist – weiterhin vollständig blind. Bewerte nur offensichtliche anatomische Fehler. Wenn dir ein randnaher Körper zwar ungewöhnlich, aber nicht sicher unplausibel erscheint, lass ihn lieber unbewertet statt zu raten.</span></div>
    <div class="sammyBodyAuditLegend"><span>✓ plausibel</span><span>× unplausibel</span><span>◎ Fehlstelle</span><span>‹ / › Körper wechseln</span></div>
    <div id="sammyBodyAuditStatus" class="sammyStatus"><span>Noch kein Solver-Blindlauf geladen. Starte zuerst SOLV → Proof oder Legacy-Blind-Test.</span></div>
    <div class="sammyCalibrationActions"><button id="sammyBodyAuditReload" type="button">Testkörper laden</button><button id="sammyBodyAuditExport" type="button">Audit JSON</button></div>
@@ -790,6 +790,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.25.3"></script>
+<script type="module" src="app.js?v=0.8.25.4"></script>
 </body>
 </html>

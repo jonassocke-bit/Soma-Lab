@@ -1,23 +1,24 @@
-# Sammy v0.8.25.3 — SOLVER V2 PROOF 1.3
+# Sammy v0.8.25.4 — SOLVER V2 PROOF 1.4
 
-Diese Version setzt direkt auf v0.8.25.2 auf.
+Diese Version setzt den validierten Solver-V2-Proof inkrementell fort. Messdefinitionen, Messgeometrie, Target-/Seed-Generator, Reliability und die bisherigen A/B-Solverpfade bleiben unverändert.
 
-## Kernänderung
-
-Proof 1.2 hat erstmals einen gültigen, nichttrivialen Blind-Round-trip geliefert. Die schlechte Seed-Stabilität war jedoch teilweise mit einem zu kurzen festen Trust-Region-Reisebudget vermischt. Proof 1.3 behält den Solver selbst und alle Testvaliditätsregeln bei, erlaubt nach den normalen Deep-gerankten Pässen aber mehrere adaptive semantische Fresh-Jacobian-Rescue-Pässe für weiterhin fehlschlagende Seeds.
+Neu ist **Direction C · Fresh-Wide Jacobian Rescue**: Nur ein normaler Seed, der nach Direction B weiterhin FAIL ist, erhält einen breiteren frisch am aktuellen Mesh gemessenen Kandidatenpool. Die finale DOF-Auswahl erfolgt aus diesem frischen lokalen Jacobian, nicht aus alten Deep-Zahlenvektoren.
 
 ## Testablauf
 
-1. App starten und `Sammy · v0.8.25.3` prüfen.
-2. `LAB → SOLV` öffnen; vorhandener Deep-Lauf kann weiterverwendet werden.
-3. **Quick** starten.
-4. Nach Abschluss FULL + Summary exportieren.
-5. AUDT vollständig blind bewerten; Best-Fit und Far-Seed-Rekonstruktionen bleiben gemischt.
-6. Noch keinen Standard-Lauf starten, bevor der Quick ausgewertet ist.
+1. App starten und `Sammy · v0.8.25.4` prüfen.
+2. `LAB → SOLV` öffnen.
+3. Deep-Quelle muss `bereit` sein; falls nötig den bestehenden Deep-FULL-Export importieren.
+4. **Quick** starten.
+5. Bei Abschluss FULL JSON exportieren.
+6. Blind AUDT durchführen und ebenfalls exportieren.
+7. Vor Standard zuerst Quick auswerten: insbesondere `directionC`, `fresh-wide-rescue`, Seed-Akzeptanz und `derivedSeedSpreadCm`.
 
 ## Wichtige Dateien
 
-- `RELEASE_NOTES_V0.8.25.3.md`
-- `SOLVER_V2_PROOF_1.3_V0.8.25.3.md`
-- `BUILD_TEST_V0.8.25.3.txt`
-- `BUILD_MANIFEST_V0.8.25.3.json`
+- `RELEASE_NOTES_V0.8.25.4.md`
+- `SOLVER_V2_PROOF_1.4_V0.8.25.4.md`
+- `BUILD_TEST_V0.8.25.4.txt`
+- `BUILD_MANIFEST_V0.8.25.4.json`
+
+Ältere Release-/Proof-Dokumente bleiben als Historie im Paket.
