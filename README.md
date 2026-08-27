@@ -1,3 +1,15 @@
+# Sammy v0.8.26.2 — Real ANSUR Pragmatic Repair 1.0
+
+Nach dem Representability Lab wird nicht weiter auf 24/24 Laborperfektion optimiert. v0.8.26.2 testet einen einzigen begrenzten produktorientierten Nachlauf an fünf bereits verbrauchten Real-ANSUR-Körpern: kombinierte Thorax-DOFs, selektive lokale Extrapolation ±115/130 %, regionale Masse/Composition und eine Harness-/Design-relevante Bewertungsmetrik. Flexed Forearm bleibt Diagnose. Proof 1.6, ANSUR24 und die 902er Prediction-Reserve bleiben unverändert.
+
+Siehe:
+- `RELEASE_NOTES_V0.8.26.2.md`
+- `REAL_ANSUR_PRAGMATIC_REPAIR_1.0_V0.8.26.2.md`
+- `NEXT_PHASE_AFTER_PRAGMATIC_REPAIR_V0.8.26.2.md`
+- `CHANGESET_V0.8.26.2.md`
+
+---
+
 # Sammy v0.8.26.0 — Real ANSUR Stress Gate 1.0
 
 Der validierte Proof-1.6-Solver bleibt eingefroren. v0.8.26.0 testet ihn erstmals gegen 10 tatsächlich beobachtete held-out ANSUR-II-Messprofile (4 typisch, 6 Randfälle), mit adaptivem Far-Seed-Re-Test, Checkpoint/Resume und zwei Blind-Holdout-Maßen. Die 10 verwendeten Personen werden aus der späteren Few-Measure-Endvalidierung entfernt; 902 Testpersonen bleiben unangetastet.
@@ -43,5 +55,5 @@ See:
 ### v0.8.25.8 hotfix
 Use v0.8.25.8 instead of v0.8.25.7 for Solver V2 Proof 1.6. It restores four missing Proof UI/runtime helpers that prevented the Proof UI from initializing/starting on Safari. Solver science is unchanged.
 
-## Aktueller Forschungsstand · v0.8.26.1
-Der model-generated Proof 1.6 bleibt die eingefrorene inverse Solver-Baseline. Real-ANSUR Stress Gate 1.0 hat jedoch gezeigt, dass reale held-out Messvektoren noch systematische Repräsentations-/Mappingprobleme offenlegen. Das neue **REAL ANSUR REPAIR · REPRESENTABILITY LAB 1.0** diagnostiziert diese Fehler auf fünf bereits verbrauchten Fällen, ohne neue ANSUR-Testpersonen oder die 902er Few-Measure-Reserve zu konsumieren. Few-Measure Prediction folgt erst nach dem daraus abgeleiteten gezielten Repair und einem erneuten Real-ANSUR-Gate.
+## Aktueller Forschungsstand · v0.8.26.2
+Proof 1.6 bleibt die eingefrorene inverse Baseline; Real-ANSUR hat die Grenzen des aktuellen Morphraums sichtbar gemacht. v0.8.26.2 ist bewusst der **letzte kurze produktorientierte Repair-Versuch vor Few-Measure Prediction**: vorhandene Thorax-DOFs werden kombiniert, selektive lokale Morphs dürfen kontrolliert bis ±115/130 % extrapolieren und die Bewertung priorisiert Harness-/Design-relevante Torso-/Schultermaße statt 24/24 Laborperfektion. Die 902er Prediction-Reserve bleibt unangetastet.

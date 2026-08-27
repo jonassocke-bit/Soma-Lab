@@ -1,3 +1,16 @@
+# v0.8.26.2 · Pragmatic Repair 1.0
+
+- One bounded product-oriented repair loop on the 5 already-consumed Real-ANSUR focus bodies.
+- Fresh combined Thorax solve using existing Dorsi/Pectoral/V-Shape/Bust/Underbust/Shoulder-Distance controls.
+- Selected linear local morphs may reach ±1.15; final Escape stage may reach ±1.30. Core axes are never extrapolated.
+- Product metrics prioritize stature, shoulder frame, torso circumferences and torso/shoulder lengths.
+- Chest Breadth remains supporting because its ANSUR↔surface bridge is unresolved.
+- Flexed Forearm is nearly diagnostic-only and cannot force a permanently enlarged rest forearm.
+- Conservative muscle-prior settle only when product fit stays essentially unchanged.
+- No new ANSUR rows, no new morph assets, no Proof-1.6 or ANSUR24 changes.
+
+---
+
 # v0.8.26.0
 
 - Adds Real ANSUR Stress Gate 1.0 on 10 observed held-out ANSUR II test rows.

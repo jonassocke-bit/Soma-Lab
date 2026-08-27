@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.26.1</title>
-<link rel="stylesheet" href="style.css?v=0.8.26.1">
+<title>Sammy v0.8.26.2</title>
+<link rel="stylesheet" href="style.css?v=0.8.26.2">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.26.1</div>
+  <div class="sammySplashVersion">v0.8.26.2</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.26.1</div>
+<div id="sammyVersion">Sammy · v0.8.26.2</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -302,8 +302,25 @@
     </div>
    </details>
 
-   <div class="sammyLabIntroCard sammyRarIntro"><b>Jetzt Diagnose statt neuer Solver</b><span>Stress Gate 1.0 hat gezeigt, dass reale ANSUR-Profile systematisch an Brustbreite, Schulterbreite, Flexed-Forearm und teils an der Körperzusammensetzung scheitern. Dieses Lab verwendet fünf der bereits verbrauchten Stress-Personen erneut und prüft nur lokal am fertigen Körper: Ist das Ziel mit vorhandenen Freiheitsgraden erreichbar? Ist die ANSUR↔Mesh-Messbrücke selbst unvollständig? Muss Sammy große Umfänge durch zu viel Muskel kompensieren? Neue ANSUR-Testpersonen werden dafür nicht verwendet.</span></div>
-   <details class="sammyCalibrationLab sammyRarLab" id="sammyRarLab" open>
+   <div class="sammyLabIntroCard sammyPraIntro"><b>Jetzt pragmatisch reparieren – nicht weiter perfektionieren</b><span>Representability Lab 1.0 hat die Hauptgrenzen eingegrenzt. Dieser kurze 5-Körper-Lauf startet direkt an den bereits fertigen Real-ANSUR-Lösungen und testet drei Reparaturen: eine kombinierte Thorax-Richtung aus vorhandenen Dorsi/Pectoral/V-Shape-Reglern, selektives Escape-Polish mit lokalen Morphs bis zunächst ±115 % und nur bei weiterem Nutzen bis ±130 %, sowie eine produktbezogene Bewertung für einen plausiblen Harness-/Design-Avatar. Flexed Forearm bleibt Diagnose statt Ruhemesh-Zwang. Es werden keine neuen ANSUR-Personen verbraucht und keine neuen Morph-Assets erfunden.</span></div>
+   <details class="sammyCalibrationLab sammyPraLab" id="sammyPraLab" open>
+    <summary><b>REAL ANSUR REPAIR · PRAGMATIC REPAIR 1.0</b><span>5 bekannte Fälle · Thorax-Kombi · Escape ±115/130 % · Produktmaße</span></summary>
+    <div class="sammyCalibrationBody">
+     <div id="sammyPraSource" class="sammyRarSource">Representability-/Stress-Quelle wird gesucht …</div>
+     <div class="sammyRarPlan"><div><b>5</b><span>bekannte Fokus-Körper</span></div><div><b>115→130 %</b><span>nur selektive lokale Morphs</span></div><div><b>0</b><span>neue Morph-Assets</span></div><div><b>0</b><span>neue ANSUR-Zeilen</span></div></div>
+     <div class="sammyRarQuestion"><b>Was soll dieser Lauf entscheiden?</b><span><strong>Thorax:</strong> reichen Dorsi + Pectoral + V-Shape als kombinierte schmal↔tief-Achse? · <strong>Bounds:</strong> bringt kontrollierte Extrapolation über ±100 % noch echten Nutzen? · <strong>Composition:</strong> kann Masse regionaler verteilt werden, ohne Muskel unnötig hochzuziehen? · <strong>Produktziel:</strong> Schulter/Torso/Umfänge zählen stärker; Flexed-Forearm darf den Avatar nicht aufblasen.</span></div>
+     <div class="sammyCalibrationActions"><button id="sammyPraStart" type="button">Repair-Test starten</button><button id="sammyPraPause" type="button" disabled>Pause</button></div>
+     <div class="sammyCalibrationActions"><button id="sammyPraReset" type="button">Repair-Test löschen</button><button id="sammyPraExport" type="button" disabled>Repair JSON</button><label class="sammyRarFile"><span>Representability / Stress JSON</span><input id="sammyPraFile" type="file" accept="application/json,.json"></label></div>
+     <div id="sammyPraStatus" class="sammyCalibrationStatus">Pragmatic Repair wird initialisiert …</div>
+     <div class="sammyCalibrationProgress"><i id="sammyPraProgress"></i></div>
+     <div id="sammyPraLive" class="sammyCalibrationLiveMeasures"></div>
+     <div id="sammyPraResults" class="sammyRarResults"><div class="sammyInfluenceEmpty">Noch kein Pragmatic-Repair-Test.</div></div>
+     <details class="sammyRarCriteria"><summary><b>Was ist hier absichtlich anders als im Forschungs-Proof?</b><span>Produkt- statt Laborziel</span></summary><div><p><b>Keine neue Solverarchitektur:</b> Start ist immer die bereits fertige Real-ANSUR-Lösung. Getestet wird nur ein begrenzter Nachlauf.</p><p><b>Escape Bounds:</b> Core-Regler bleiben 0…1. Nur ausgewählte lineare lokale Morphs dürfen zunächst bis ±1,15 und nur in einer letzten Escape-Stufe bis ±1,30 extrapolieren. Eine Lösung außerhalb ±1 wird zusätzlich bestraft und nur behalten, wenn produktrelevante Maße wirklich besser werden.</p><p><b>Virtuelle Thorax-Achse:</b> Dorsi, Pectoral, V-Shape, Bust/Underbust und Shoulder-Distance werden gemeinsam über einen frischen lokalen Jacobian kombiniert. Ziel ist nicht „mehr Brust“, sondern Breite/Tiefe/Umfang sinnvoll gegeneinander zu verschieben.</p><p><b>Produktmetriken:</b> Körperhöhe, Schulterrahmen, Brust-/Taillen-/Gesäßumfang und Torso-/Schulterlängen haben Vorrang. Chest Breadth bleibt formunterstützend, weil die ANSUR↔Oberflächen-Brücke unvollständig ist. Flexed Forearm wird fast nur diagnostisch gewichtet.</p><p><b>Stop-Regel:</b> Wenn der kurze Nachlauf normale Körper deutlich plausibler und produktrelevante Maße besser macht, reicht das für den nächsten Schritt. Kein Zwang auf 24/24 Observer-Error-PASS.</p></div></details>
+    </div>
+   </details>
+
+   <div class="sammyLabIntroCard sammyRarIntro"><b>Diagnose 1.0 · technische Grundlage</b><span>Stress Gate 1.0 hat gezeigt, dass reale ANSUR-Profile systematisch an Brustbreite, Schulterbreite, Flexed-Forearm und teils an der Körperzusammensetzung scheitern. Dieses Lab verwendet fünf der bereits verbrauchten Stress-Personen erneut und prüft nur lokal am fertigen Körper: Ist das Ziel mit vorhandenen Freiheitsgraden erreichbar? Ist die ANSUR↔Mesh-Messbrücke selbst unvollständig? Muss Sammy große Umfänge durch zu viel Muskel kompensieren? Neue ANSUR-Testpersonen werden dafür nicht verwendet.</span></div>
+   <details class="sammyCalibrationLab sammyRarLab" id="sammyRarLab">
     <summary><b>REAL ANSUR REPAIR · REPRESENTABILITY LAB 1.0</b><span>5 Fokus-Körper · Messbrücke vs. Morphraum vs. Solver · Composition · Torso-Normalen</span></summary>
     <div class="sammyCalibrationBody">
      <div id="sammyRarSource" class="sammyRarSource">Stress-Quelle wird gesucht …</div>
@@ -875,6 +892,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.26.1"></script>
+<script type="module" src="app.js?v=0.8.26.2"></script>
 </body>
 </html>

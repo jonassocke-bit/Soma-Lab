@@ -1,0 +1,43 @@
+Sammy v0.8.26.2 BUILD TEST
+Base: v0.8.26.1
+
+STATIC
+- node --check app.js: PASS (executed separately during build)
+- HTML IDs: 531 total / 531 unique: PASS
+- Pragmatic Repair UI IDs present: PASS
+- CSS braces: 1165 / 1165: PASS
+- App/index/cache version 0.8.26.2: PASS
+- PRA schema / ±1.15 / ±1.30 / core-no-extrapolation notes present: PASS
+- Flexed forearm product multiplier = 0.05: PASS
+- Thorax candidate set contains Dorsi/Pectoral/V-Shape/Bust/Underbust/Shoulder: PASS
+
+FROZEN v0.8.26.1 FUNCTIONS
+- sammyComputeANSUR24V2: EXACT
+- sammyAns24V2ApplyState: EXACT
+- sammyAns24V2Spec: EXACT
+- sammySolverV2ProofReliability: EXACT
+- sammySolverV2ProofFitMetrics: EXACT
+- sammySolverV2ProofObjective: EXACT
+- sammySolverV2CanonicalRestarts: EXACT
+- sammySolverV2RunHierarchy: EXACT
+- sammySolverV2RunPolishRounds: EXACT
+- sammySolverV2ProofSolveSeed: EXACT
+- sammyRarDiagnoseCase: EXACT
+- sammyRarSummary: EXACT
+
+FROZEN DATA ASSETS
+- ANSUR24_PROTOCOL_V2.json: EXACT
+- ansur-protocol-v1.json: EXACT
+- solver-v2-statistical-body-bank-v1.json: EXACT
+- ansur-prediction-trainval-v1.json: EXACT
+- ansur-prediction-test-v1.json: EXACT
+- ansur-prediction-final-reserve-v1.json: EXACT
+- mass-composition-v1.json: EXACT
+- solver-v2-real-ansur-stress-suite-v1.json: EXACT
+
+SOURCE COMPATIBILITY
+- Uploaded Representability FULL parses as direct PRA source: PASS
+- Source solver map: male 47 / female 52
+
+RUNTIME BOUNDARY
+- No WebGL/Safari runtime is available in the offline build container. iPhone Safari is authoritative for fresh-mesh behavior and timing.
