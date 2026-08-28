@@ -946,3 +946,20 @@ body.sammy-lab-hub-open #sammyLabBubble{box-shadow:0 0 0 2px rgba(255,255,255,.2
 @media(max-width:370px){.sammyLabSubBubble{width:66px;height:66px;margin:-33px}.sammyLabSubBubble.lab-prot{transform:translate(0,-126px)}.sammyLabSubBubble.lab-meas{transform:translate(89px,-89px)}.sammyLabSubBubble.lab-infl{transform:translate(126px,0)}.sammyLabSubBubble.lab-solv{transform:translate(89px,89px)}.sammyLabSubBubble.lab-morf{transform:translate(0,126px)}.sammyLabSubBubble.lab-bank{transform:translate(-89px,89px)}.sammyLabSubBubble.lab-audt{transform:translate(-126px,0)}.sammyLabSubBubble.lab-ansr{transform:translate(-89px,-89px)}.sammyLabSubBubble.lab-prot:active{transform:translate(0,-126px) scale(.95)}.sammyLabSubBubble.lab-meas:active{transform:translate(89px,-89px) scale(.95)}.sammyLabSubBubble.lab-infl:active{transform:translate(126px,0) scale(.95)}.sammyLabSubBubble.lab-solv:active{transform:translate(89px,89px) scale(.95)}.sammyLabSubBubble.lab-morf:active{transform:translate(0,126px) scale(.95)}.sammyLabSubBubble.lab-bank:active{transform:translate(-89px,89px) scale(.95)}.sammyLabSubBubble.lab-audt:active{transform:translate(-126px,0) scale(.95)}.sammyLabSubBubble.lab-ansr:active{transform:translate(-89px,-89px) scale(.95)}.sammyBodyBankVoteGrid button{height:68px}.sammyBodyBankVoteGrid button span{font-size:9px}}
 
 @media(max-width:370px){.sammyBodyBankReason{grid-template-columns:minmax(0,1fr) 118px}.sammyBodyBankReason>span{font-size:7.5px}}
+
+
+/* v0.8.28.4 · BANK-only dual viewport. Transparent hit surfaces own OrbitControls;
+   the renderer itself stays one WebGL canvas and uses scissor rendering. */
+.sammyBodyBankDualViewport{position:fixed;inset:0;z-index:8;display:none;pointer-events:none}
+body.sammy-body-bank-dual .sammyBodyBankDualViewport{display:grid;grid-template-columns:1fr 1fr;pointer-events:auto}
+.sammyBodyBankViewportHit{position:relative;min-width:0;min-height:0;touch-action:none;border:1px solid transparent;cursor:grab}
+.sammyBodyBankViewportHit:active{cursor:grabbing}
+.sammyBodyBankViewportHit:first-child{border-right-color:rgba(255,255,255,.18)}
+.sammyBodyBankViewportHit span{position:absolute;top:max(12px,calc(env(safe-area-inset-top) + 8px));left:12px;display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:rgba(12,13,16,.68);border:1px solid rgba(255,255,255,.20);color:#b9bbc2;font-size:9px;font-weight:850;pointer-events:none;backdrop-filter:blur(10px)}
+.sammyBodyBankViewportHit.active{box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)}
+.sammyBodyBankViewportHit.active span{background:rgba(238,239,242,.92);color:#111318;border-color:#fff}
+.sammyBodyBankViewportState{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:7px 0 5px;padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}
+.sammyBodyBankViewportState b{font-size:9px}.sammyBodyBankViewportState small{font-size:7.5px;color:#8e9199;text-align:right}
+.sammyBodyBankViewRow{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+#sammyUi #sammyBodyBankAutoFit.active{background:#eceef2!important;color:#15161a!important}
+@media(max-aspect-ratio:4/5){body.sammy-body-bank-dual .sammyBodyBankDualViewport{grid-template-columns:1fr;grid-template-rows:1fr 1fr}.sammyBodyBankViewportHit:first-child{border-right-color:transparent;border-bottom-color:rgba(255,255,255,.18)}}

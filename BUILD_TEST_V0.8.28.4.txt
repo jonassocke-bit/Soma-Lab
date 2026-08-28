@@ -1,0 +1,42 @@
+SAMMY v0.8.28.4 static + BODY BANK blind/dual-view gate
+Status: PASS
+
+Plan SHA-256: c80fd033bbcfeb81b8f8cd4c40aa6e97900e9254b5d5e1c9d0d7c392a3169825
+
+PASS checks:
+- PASS: JavaScript syntax
+- PASS: SAMMY_APP_VERSION 0.8.28.4
+- PASS: HTML version <title>Sammy v0.8.28.4</title>
+- PASS: HTML version style.css?v=0.8.28.4
+- PASS: HTML version app.js?v=0.8.28.4
+- PASS: HTML version Sammy · v0.8.28.4
+- PASS: no duplicate HTML IDs · []
+- PASS: BANK UI sammyBodyBankDualViewport
+- PASS: BANK UI sammyBodyBankActiveViewport
+- PASS: BANK UI sammyBodyBankAutoFit
+- PASS: BANK UI sammyBodyBankMotion
+- PASS: BANK UI sammyBodyBankReason
+- PASS: two BANK viewport hit surfaces
+- PASS: BANK dual render hook
+- PASS: last interaction active routing
+- PASS: per-viewport AutoFit
+- PASS: reason defaults blank
+- PASS: test kind hidden in UI
+- PASS: plan schema v2
+- PASS: 400 queue
+- PASS: 380 unique + 20 repeats
+- PASS: 380 unique body IDs
+- PASS: zero duplicate unique recipes
+- PASS: no direct same family
+- PASS: no direct same parent
+- PASS: hidden repeats far apart · min=91
+- PASS: plan pre-cap <=201 predicted
+- PASS: runtime exact <=205 gate
+- PASS: export schema v3
+- PASS: BANK-only body class
+- PASS: head audit deferred
+- PASS: .nojekyll present
+- PASS: Master MD v0.6 / App .28.4
+
+Environment note:
+A full headless Chromium WebGL smoke run is not used as a release gate in this container because GPU/ANGLE support is not reliable. The static/data/deployment gates above are the release checks; the BANK dual view is implemented on the existing single WebGL canvas via scissor rendering.

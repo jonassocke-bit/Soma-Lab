@@ -1,5 +1,5 @@
-0.8.28.3
-SAMMY_V0.8.28.3_BODY-BANK-PHASE2-BOUNDARY-EXTREMES.zip
-Current canonical source: v0.8.28.3 Body Bank Phase 2 Boundary/Extreme Audit
+0.8.28.4
+SAMMY_V0.8.28.4_BODY-BANK-BLIND-DUAL-VIEWPORT.zip
+Current canonical source: v0.8.28.4 Body Bank Blind Mix + Dual Viewport
 GitHub current: SAMMY_GITHUB_CURRENT.zip
 GitHub compact direct files: 55

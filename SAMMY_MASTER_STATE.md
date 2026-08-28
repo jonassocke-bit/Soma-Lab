@@ -1,12 +1,12 @@
 # SAMMY / BODY LAB / SOMA-LAB · MASTER STATE
 
-**Kanonischer Projektstand · Version 0.5 · 28.08.2026 · App v0.8.28.3**
+**Kanonischer Projektstand · Version 0.6 · 28.08.2026 · App v0.8.28.4**
 
 ## 1. Verbindliche Projektpflege
 
 - Dieser Master State ist die kanonische Zusammenfassung des aktuellen Projektstands.
 - **Jeder neue SAMMY-Export aktualisiert im selben Arbeitsschritt den Master State.** Ein Release ohne synchronen Master State gilt nicht als vollständiger Projektstand.
-- Zusätzlich wird bei jedem Export `SAMMY_CURRENT.zip` auf die neue vollständige Version gesetzt, `SAMMY_CURRENT_VERSION.txt` aktualisiert und `SAMMY_GITHUB_CURRENT.zip` als direkt uploadbare Compact-Fassung erzeugt. Die GitHub-Fassung muss unter 100 direkt sichtbaren Dateien bleiben; ältere Projektstände werden dafür in genau einem internen History-Archiv gebündelt, nicht verworfen.
+- Zusätzlich wird bei jedem Export `SAMMY_CURRENT.zip` auf die neue vollständige Version gesetzt, `SAMMY_GITHUB_CURRENT.zip` auf die kompakte GitHub-Fassung gesetzt und `SAMMY_CURRENT_VERSION.txt` aktualisiert. Die GitHub-Fassung bleibt unter 100 direkt sichtbaren Dateien; ältere Release-Historie darf dafür als internes History-Archiv gebündelt werden.
 - Neue Arbeit startet ausschließlich von `SAMMY_CURRENT` bzw. der dort genannten Version.
 - Ersetzte Ansätze bleiben nur als Forschungsarchiv erhalten und dürfen nicht ungeprüft wieder als Hauptpfad vorgeschlagen werden.
 
@@ -56,7 +56,7 @@ Statusmodell:
 
 Zwei akzeptierte Endpunkte garantieren nicht automatisch, dass jede Interpolation dazwischen gültig ist. Zwischenstufen müssen separat technisch geprüft und bei Bedarf human auditiert werden.
 
-## 5. Aktueller Build v0.8.28.3 · BODY BANK PHASE 2 · GRENZ- UND EXTREMRAUM
+## 5. Aktueller Build v0.8.28.4 · BODY BANK PHASE 2 · BLIND MIX + DUAL VIEWPORT
 
 ### Ergebnis Phase 1 (v0.8.28.2)
 
@@ -92,37 +92,62 @@ Phase 2 speichert deshalb keine dieser einfachen Umfangssnapshots mehr. Stattdes
 
 Grundlage ist das **shape-abhängige exakte Anny/SOMA-Rest-Rig**, nicht die sichtbare Auditpose oder Animation. Diese Kennzahlen dienen zunächst nur zur Diagnose der langen-Beine-Grenze; daraus wird noch kein anthropometrischer Auto-Gate abgeleitet.
 
-### Phase-2-Queue
+### Phase-2-Queue · blind gemischt
 
-Der neue Audit umfasst 400 Bewertungen:
+Der wissenschaftliche Inhalt des 400er Audits bleibt erhalten: Proportionsfamilien, absichtliche Extremkombinationen, breite Randstichproben und 20 verdeckte Wiederholungen. **Für die menschliche Bewertung wird die Queue jedoch vollständig blind durchmischt.**
 
-- 160 **Proportionsfamilien-Fälle**: 40 unterschiedliche, in Phase 1 akzeptierte Körper dienen als lokale Anker; pro Anker werden vier nahe Varianten der `proportions`-Achse getestet.
-- 160 **Extremraum-Fälle**: 20 unterschiedliche akzeptierte Anker werden mit acht absichtlichen Core-Randkombinationen geprüft, darunter sehr groß/klein, leicht/schwer, lang-/kurzproportioniert sowie Muskel-/Masse-Gegenpole.
-- 60 **breite Randstichproben**: deterministische Halton-Abdeckung nahe der Core-Grenzen.
-- 20 **verdeckte Wiederholungen** zur Konsistenzkontrolle.
+Die neue Planfassung `body-bank-phase2-plan-v2.json`:
 
-Die 380 eindeutigen Rezepte sind vorab geprüft, reproduzierbar und enthalten keine exakten Duplikate.
+- mischt alle 400 Fälle deterministisch mit gespeichertem Shuffle-Seed,
+- verhindert direkte Nachbarschaft derselben `familyId` bzw. desselben Elternankers,
+- hält verdeckte Wiederholungen mit großem Abstand zum Original,
+- zeigt dem Reviewer weder Testtyp noch Familie, Variantenrichtung, Ausgangsanker oder Wiederholungsstatus,
+- enthält weiterhin 380 eindeutige Zielkörper + 20 verdeckte Wiederholungen.
 
-### Audit-UI
+Damit soll verhindert werden, dass der Reviewer eine sichtbare Änderungsserie erkennt und relativ zum unmittelbar vorherigen Körper urteilt.
 
-Die bewährte schnelle Bedienung bleibt erhalten:
+### Erwachsenengröße
 
-- `Plausibel`, `Unsicher`, `Unplausibel`,
-- Vorne / 3/4 / Seite / Hinten,
-- statische Posen, Gang-/Stress-Loops und importierte Animationen,
-- manueller Zoom und Orbit bleiben beim Personenwechsel unverändert,
-- nur ein expliziter Viewport-Klick darf neu einrahmen.
+Für diesen Audit werden **keine Erwachsenen über 205 cm angezeigt**. Der Plan wird zunächst konservativ anhand der aus Phase 1 beobachteten Beziehung zwischen Anny-`height` und Rest-Mesh-Körperhöhe vorgekappt. Vor jeder Anzeige folgt zusätzlich ein harter, pose-unabhängiger Check der tatsächlichen Rest-Mesh-Statur. Falls ein Kandidat noch über 205 cm liegt, wird ausschließlich seine `height`-Komponente so weit reduziert, bis der exakte Rest-Mesh-Wert innerhalb der Grenze liegt. Die angepasste Rezeptur wird für verdeckte Wiederholungen identisch weiterverwendet.
 
-Neu ist ein **optionaler persistenter Schnellgrund** für `?` / `×`. Er startet in Phase 2 auf `Beine zu lang`, weil dies die bekannte Ursache aller Phase-1-Unsicherheiten war. Weitere Werte sind `Beine zu kurz`, `Torso / Proportion`, `Masse / Breite`, `Sonstiges` oder kein Grund. Der Audit blockiert niemals auf eine Begründung.
+Die 205-cm-Regel ist eine **Audit-Sampling-Grenze**, keine anthropometrische Aussage, dass größere Menschen unmöglich sind. Sie vermeidet nur extrem seltene Größen, die für die aktuelle Kartierung wenig Informationsgewinn liefern.
+
+### BANK-only Dual Viewport
+
+Nur im `LAB -> BANK`-Modus stehen zwei Viewports A/B zur Verfügung. Beide zeigen dieselbe Person und denselben Bewegungsframe, besitzen aber **unabhängige Kameras**:
+
+- eigener Zoom, Orbit, Pan und Blickwinkel,
+- letzter Klick / Touch / Orbit / Zoom wählt automatisch den aktiven Viewport,
+- `Vorne`, `3/4`, `Seite`, `Hinten` und `AutoFit` wirken nur auf den aktiven Viewport,
+- die aktive Ansicht wird dezent markiert,
+- Pose/Animation bleibt absichtlich synchron, damit derselbe Bewegungsframe gleichzeitig aus zwei Richtungen beurteilt werden kann.
+
+### Optionales AutoFit
+
+`AutoFit` ist **pro Viewport separat ein-/ausschaltbar**.
+
+- `AutoFit AN`: Beim Wechsel zur nächsten Person wird die Kamera so angepasst, dass der neue Körper ungefähr gleich groß im jeweiligen Viewport erscheint. Die aktuelle Blickrichtung bleibt erhalten.
+- `AutoFit AUS`: Kamera, Zoom und Zielpunkt bleiben beim Personenwechsel exakt stehen.
+- Ein expliziter View-Button (`Vorne`, `3/4`, `Seite`, `Hinten`) darf unabhängig davon neu einrahmen.
+
+Damit ragt ein großer Körper nach einem kleinen nicht versehentlich aus dem Bild, ohne den bereits gewünschten manuellen Kamera-Lock abzuschaffen.
+
+### Objektivitätsregel Schnellgrund
+
+Der optionale Schnellgrund für `?` / `x` bleibt verfügbar, wird aber in v0.8.28.4 **nicht mehr mit `Beine zu lang` vorausgewählt**. Standard ist `kein Grund`, damit die bekannte Phase-1-Beobachtung den neuen Blind-Audit nicht vorprägt.
+
+### Kopfmodell · bewusst vertagt
+
+Eine Quellcodeprüfung von Anny zeigt: `height`, `weight`, `age` usw. sind separate Phenotypachsen; zusätzlich existieren lokale Kopf-Morphs wie `head-fat` und Kopf-Skalierungsachsen. Das beobachtete Verhalten, dass Kopfgröße bzw. Kopffett nicht automatisch anthropometrisch mit Körpergröße/Gewicht gekoppelt werden, ist daher überwiegend eine Eigenschaft des zugrunde liegenden Anny/MakeHuman-Modells und **kein aktueller BANK-Browserfehler**.
+
+Diese Korrektur wird **nicht in den aktuellen Blind-Audit aufgenommen**, weil dort kein absoluter Größenmaßstab sichtbar ist und Kopfgröße derzeit keine kritische Zielgröße ist. Sie bleibt als spätere Aufgabe festgehalten: separate Prüfung mit bekannter Körpergröße und anthropometrischem Kopf-Körper-Verhältnis; erst danach ggf. semantische Kopplung von Head-Size/Head-Fat.
 
 ### Datenbasis Phase 2
 
-Der Build enthält zwei reproduzierbare Dateien:
+Der Build enthält:
 
 - `body-bank-phase1-audit-seed-v1.json`: konsolidiert die 95 eindeutigen Phase-1-Körper, Originalurteile und die nachträgliche `legs-too-long`-Annotation.
-- `body-bank-phase2-plan-v1.json`: enthält den vollständigen 380+20-Plan und die verwendeten Phase-1-Anker.
-
-Dadurch ist nachvollziehbar, aus welchem Human-Audit jeder Phase-2-Kandidat abgeleitet wurde.
+- `body-bank-phase2-plan-v2.json`: blind durchmischter 380+20-Plan mit 205-cm-Samplingregel, gespeichertem Shuffle-Seed und unverändertem lokalen Familienkontext für die spätere Auswertung.
 
 ## 6. Rolle des bisherigen Wissens
 
@@ -153,7 +178,7 @@ Externe Populationsdaten können später genutzt werden, um aus wenigen Nutzerda
 ### Aktueller Produktions-/Produktpfad
 
 - Body Fit v1.2 aus v0.8.27.2 bleibt als bestehender Minimal-Prototyp verfügbar.
-- v0.8.28.3 setzt den Body-Bank-/Audit-Pfad mit dem ersten echten Folge-Gate fort: Phase-1-Human-Anker werden für lokale Proportionsgrenzen sowie bewusste Extrem- und Randraumfälle genutzt. Der Runtime-Lookup/Fitter bleibt weiterhin deaktiviert, bis dieser Raum ausreichend kartiert ist.
+- v0.8.28.4 setzt den Body-Bank-/Audit-Pfad als echten Blind-Audit fort: dieselben lokalen Proportions-/Extrem-/Randfälle werden objektiv durchmischt, mit BANK-only Dual-Viewport und optionalem AutoFit geprüft. Der Runtime-Lookup/Fitter bleibt weiterhin deaktiviert, bis dieser Raum ausreichend kartiert ist.
 
 ### Forschungsarchiv
 
@@ -178,7 +203,7 @@ Diese Pfade dürfen als Diagnose, Vergleich oder Datenquelle genutzt werden. Ein
 - Messfehler, Mesh-Limit, Lookup-Abdeckung und Fitterfehler müssen separat diagnostizierbar bleiben.
 - iPhone/Safari-Tauglichkeit und Resume/Persistenz sind Pflicht.
 
-## 10. Nächster Gate nach v0.8.28.3
+## 10. Nächster Gate nach v0.8.28.4
 
 Der Nutzer auditiert die 400 Phase-2-Fälle und exportiert `Sammy_BODY_BANK_PHASE2_AUDIT_*.json`.
 
@@ -198,7 +223,7 @@ Erst wenn diese Auswertung brauchbar ist, folgt der nächste technische Proof:
 - anschließend sehr kleiner anatomisch gerouteter lokaler Fitter,
 - kein freier From-Scratch-Solver.
 
-Wenn die langen-Beine-Unsicherheit durch einen klaren, aber familienabhängigen Skelettbereich erklärt werden kann, wird daraus **keine globale Proportions-Grenze**, sondern ein lokaler Audit-/Korridorhinweis für die jeweilige Körperfamilie.
+Wenn die langen-Beine-Unsicherheit durch einen klaren, aber familienabhängigen Skelettbereich erklärt werden kann, wird daraus **keine globale `proportions`-Grenze**, sondern ein lokaler Audit-/Korridorhinweis für die jeweilige Körperfamilie.
 
 ## 11. Abbruch-/Entscheidungsregel
 
@@ -213,3 +238,4 @@ Wenn bereits der konservative Anny-Core-Raum überwiegend unplausibel ist oder s
 | 0.3 | 28.08.2026 | GitHub Pages Hotfix v0.8.28.1: Cache-Busting-/Versionsdrift aus v0.8.28.0 korrigiert; synchroner HTML/JS/CSS-Deployment-Gate und `.nojekyll` als Exportregel ergänzt. |
 | 0.4 | 28.08.2026 | BODY BANK v0.8.28.2: manueller Zoom/Orbit bleibt über Personenwechsel erhalten; nur expliziter Viewport-Wechsel reframed. Statische Posen, Gang-/Stress-Loops und importierte Animationen direkt im Audit. Review-Kontext wird gespeichert; numerische Audit-Snapshots sind pose-unabhängig. |
 | 0.5 | 28.08.2026 | BODY BANK v0.8.28.3: Phase-1-Audit konsolidiert; alle Unsicherheiten als nutzerbestätigtes `legs-too-long`-Signal dokumentiert. Neuer 400er Grenz-/Extremraum (160 Proportionsfamilien, 160 Extremfälle, 60 breite Randfälle, 20 verdeckte Wiederholungen). Fehleranfällige Phase-1-Umfangssnapshots aus dem Bank-Pfad entfernt; stattdessen exakte Anny-Rest-Rig-Bein/Torso-Verhältnisse. Optionaler persistenter Schnellgrund ohne Kommentarzwang. |
+| 0.6 | 28.08.2026 | BODY BANK v0.8.28.4: 400er Queue vollständig reviewer-blind durchmischt und aktuelle Testkategorie verborgen; direkte Familien-/Elternnachbarschaft vermieden und Wiederholungen weit getrennt. BANK-only Dual-Viewport mit Last-Interaction-Auswahl und unabhängigem Kamera-/AutoFit-Zustand. Erwachsenenanzeige hart auf <=205 cm Rest-Mesh-Statur begrenzt. Schnellgrund standardmäßig leer. Kopfgröße/Head-Fat nach Anny-Quellcodeprüfung als spätere separate Modellkorrektur dokumentiert und bewusst aus dem Audit herausgehalten. |

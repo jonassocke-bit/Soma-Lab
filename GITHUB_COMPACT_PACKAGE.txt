@@ -1,11 +1,11 @@
-SAMMY GitHub Compact Package · v0.8.28.3
+SAMMY GitHub Compact Package · v0.8.28.4
 
 Purpose: unpack this ZIP and upload the contained files directly to the repository root.
 The package keeps current runtime/source/current-release files visible and consolidates prior project history into one internal archive.
 Direct file count: 55 (intentionally below GitHub Web Upload's 100-file limit).
-Current history archive: SAMMY_HISTORY_THROUGH_V0.8.28.2.zip
-The history archive is a full v0.8.28.2 project snapshot (except older nested SAMMY_HISTORY archives), so prior runtime files are not silently discarded.
+Current history archive: SAMMY_HISTORY_THROUGH_V0.8.28.3.zip
+The history archive is the full v0.8.28.3 project snapshot, so prior runtime/research files are not silently discarded.
 
-Canonical current files include the synchronized SAMMY_MASTER_STATE.md/.docx, Phase-1 audit seed, Phase-2 400-case plan, current release/build notes and runtime assets.
+Canonical current files include the synchronized SAMMY_MASTER_STATE.md/.docx, Phase-1 audit seed, blind Phase-2 plan v2, current release/build notes and runtime assets.
 
 Upload rule: extract this compact ZIP first, then upload the 55 extracted root files to GitHub. Do not upload the outer ZIP as the website payload.

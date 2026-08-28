@@ -1,3 +1,7 @@
+# v0.8.28.4
+
+BODY BANK: vollständig blind gemischte 400er Queue, aktuelle Testkategorie verborgen, zwei unabhängige BANK-only Viewports mit Last-Interaction-Auswahl und optionalem per-Viewport AutoFit. Adult-Sampling zeigt keine Rest-Mesh-Statur >205 cm. Schnellgrund startet leer; Kopfgröße/Head-Fat bleibt bewusst vertagt.
+
 # v0.8.28.3 · BODY BANK Phase 2
 
 - Phase-1-Human-Audit als reproduzierbarer Seed eingebaut.
