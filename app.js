@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {unzipSync,zipSync,strToU8} from "https://esm.sh/fflate@0.8.2";
 
-const SAMMY_APP_VERSION="0.8.27.2";
+const SAMMY_APP_VERSION="0.8.28.0";
 
 const HF="https://huggingface.co/nvidia/SOMA-X/resolve/main/";
 const SHAPE=HF+"SOMA_neutral.npz?download=true";
@@ -6231,6 +6231,7 @@ function sammyOpenPanel(id){
  if(beforeMeasureLike&&!nextMeasureLike)sammyExitMeasureMode(true);
  if(before==="sammyProtocolPanel"&&id!=="sammyProtocolPanel")sammyProtocolExit(true);
  if(before==="sammyBodyAuditPanel"&&id!=="sammyBodyAuditPanel")sammyBodyAuditExit();
+ if(before==="sammyBodyBankPanel"&&id!=="sammyBodyBankPanel")sammyBodyBankExit();
  if(id==="sammyAnimPanel"&&before!=="sammyAnimPanel"&&!sammyIntroActive)sammyPreAnimationCamera=sammyCaptureCameraState();
  document.querySelectorAll(".sammyPanel").forEach(p=>p.classList.toggle("open",p.id===id));
  document.querySelectorAll(".sammyBubble").forEach(b=>b.classList.toggle("active",b.dataset.panel===id));
@@ -6247,6 +6248,7 @@ function sammyOpenPanel(id){
  if(id==="sammyMeasurePanel"&&before==="sammyInfluencePanel"&&!sammyIntroActive)requestAnimationFrame(()=>sammyMeasureRefresh(false))
  if(id==="sammyProtocolPanel"&&!sammyIntroActive)sammyProtocolEnter().catch(e=>sammyReportError(e,{source:"ANSUR Protocol Lab"}))
  if(id==="sammyBodyAuditPanel"&&!sammyIntroActive)sammyBodyAuditEnter().catch(e=>sammyReportError(e,{source:"Body Audit"}))
+ if(id==="sammyBodyBankPanel"&&!sammyIntroActive)sammyBodyBankEnter().catch(e=>sammyReportError(e,{source:"Body Bank Audit"}))
  sammyLabSyncActive(id)
 }
 function sammyClosePanels(){
@@ -6259,6 +6261,7 @@ function sammyClosePanels(){
  if((before==="sammyMeasurePanel"||before==="sammyInfluencePanel"||before==="sammySolver24Panel"||before==="sammyMorphObsPanel")&&!sammyIntroActive)sammyExitMeasureMode()
  if(before==="sammyProtocolPanel"&&!sammyIntroActive)sammyProtocolExit()
  if(before==="sammyBodyAuditPanel")sammyBodyAuditExit()
+ if(before==="sammyBodyBankPanel")sammyBodyBankExit()
  sammyLabSyncActive(null)
 }
 function sammyInstallBubbleDrag(el,defaultX,defaultY){
@@ -7514,7 +7517,7 @@ function sammyProtocolMigrateV8201(){
 // Keeps the compact top-level UI (ANIM / FORM / LAB). LAB opens a centered
 // radial launcher for PROT, MEAS, ANSR, INFL and blind BODY AUDIT.
 // -----------------------------------------------------------------------------
-const SAMMY_LAB_PANEL_IDS=new Set(["sammyProtocolPanel","sammyMeasurePanel","sammyAnsPanel","sammyInfluencePanel","sammySolver24Panel","sammyBodyAuditPanel","sammyMorphObsPanel"]);
+const SAMMY_LAB_PANEL_IDS=new Set(["sammyProtocolPanel","sammyMeasurePanel","sammyAnsPanel","sammyInfluencePanel","sammySolver24Panel","sammyBodyAuditPanel","sammyBodyBankPanel","sammyMorphObsPanel"]);
 function sammyLabSyncActive(panelId=null){const b=$("#sammyLabBubble");if(b)b.classList.toggle("active",!!panelId&&SAMMY_LAB_PANEL_IDS.has(panelId))}
 function sammyLabCloseHub(){const h=$("#sammyLabHub");if(h){h.classList.remove("open");h.setAttribute("aria-hidden","true")}document.body.classList.remove("sammy-lab-hub-open")}
 function sammyLabToggleHub(force=null){
@@ -7530,6 +7533,7 @@ function sammyLabInitUI(){
  const hub=$("#sammyLabHub");if(hub){hub.addEventListener("pointerup",e=>{if(e.target===hub)sammyLabToggleHub(false)});hub.querySelectorAll("[data-lab-panel]").forEach(b=>b.addEventListener("pointerup",e=>{e.stopPropagation();const id=b.dataset.labPanel;sammyLabCloseHub();sammyOpenPanel(id)}))}
  sammyLabMountInfluence();
  sammyBodyAuditInitUI();
+ sammyBodyBankInitUI();
 }
 
 // -----------------------------------------------------------------------------
@@ -7740,6 +7744,53 @@ function sammyBodyAuditInitUI(){
  const ct=$("#sammyBodyAuditCommentToggle"),wrap=$("#sammyBodyAuditCommentWrap"),ta=$("#sammyBodyAuditComment");if(ct&&wrap)ct.onclick=()=>{wrap.hidden=!wrap.hidden;ct.classList.toggle("active",!wrap.hidden);if(!wrap.hidden)setTimeout(()=>ta?.focus(),40)};if(ta)ta.oninput=e=>{const c=sammyBodyAuditCase();if(!c)return;sammyBodyAuditRating(c.id).comment=e.target.value;sammyBodyAuditSave()};
  renderer?.domElement?.addEventListener("pointerup",e=>{if(sammyBodyAuditPickFlaw(e.clientX,e.clientY)){e.preventDefault();e.stopPropagation()}},true);sammyBodyAuditRender()
 }
+
+
+// -----------------------------------------------------------------------------
+// Sammy v0.8.28.0 · AUDITED BODY BANK POC
+// Phase 1 deliberately audits only Anny core/base bodies. It does NOT infer a
+// global slider bound from a rejection. Every verdict stays attached to the
+// exact body recipe + coarse local family context. Five hidden repeats estimate
+// reviewer consistency without asking for written explanations.
+// -----------------------------------------------------------------------------
+const SAMMY_BODY_BANK_KEY="sammy-audited-body-bank-session-v1";
+const SAMMY_BODY_BANK_SCHEMA="sammy-audited-body-bank-audit-v1";
+const SAMMY_BODY_BANK_UNIQUE=95;
+const SAMMY_BODY_BANK_REPEATS=5;
+const SAMMY_BODY_BANK_TOTAL=SAMMY_BODY_BANK_UNIQUE+SAMMY_BODY_BANK_REPEATS;
+let sammyBodyBank={session:null,index:0,restoreShape:null,restoreCamera:null,restorePose:null,view:"front",busy:false};
+function sammyBodyBankClamp(v,a,b){return Math.max(a,Math.min(b,Number(v)))}
+function sammyBodyBankRound(v,n=4){const p=10**n;return Math.round(Number(v)*p)/p}
+function sammyBodyBankClone(x){return JSON.parse(JSON.stringify(x))}
+function sammyBodyBankLoad(){try{const x=JSON.parse(localStorage.getItem(SAMMY_BODY_BANK_KEY)||"null");return x?.schema===SAMMY_BODY_BANK_SCHEMA?x:null}catch{return null}}
+function sammyBodyBankSave(){try{if(sammyBodyBank.session)localStorage.setItem(SAMMY_BODY_BANK_KEY,JSON.stringify(sammyBodyBank.session))}catch(e){console.warn("Body Bank local save",e)}}
+function sammyBodyBankCoreDefaults(sex){return {gender:sex?1:0,age:.79,muscle:.5,weight:.5,height:.5,proportions:.5,cupsize:sex?.58:.5,firmness:sex?.56:.5,african:.5,asian:.5,caucasian:.5}}
+function sammyBodyBankFamilyId(core){const bin=(v,n=3)=>Math.max(0,Math.min(n-1,Math.floor(sammyBodyBankClamp(v,0,.999999)*n)));return `${Number(core.gender)>=.5?"F":"M"}-H${bin(core.height)}-W${bin(core.weight)}-M${bin(core.muscle)}-P${bin(core.proportions)}${Number(core.gender)>=.5?`-C${bin(core.cupsize)}`:""}`}
+function sammyBodyBankArchetypeRefs(prior,sex){const ids=sex?["female_avg","female_curvy","female_tall"]:["male_avg","male_lean","male_muscular"];return ids.map(id=>({id,core:prior?.references?.[id]?.core||sammyBodyBankCoreDefaults(sex)}))}
+function sammyBodyBankJitterCore(base,index,sex){const h=d=>sammyCalHalton(index+1703,d),sym=(d,a)=>(h(d)*2-1)*a,core={...sammyBodyBankCoreDefaults(sex),...base};core.gender=sex;core.age=sammyBodyBankClamp(Number(core.age||.79)+sym(2,.085),SAMMY_ADULT_SHAPE_AGE_MIN+.015,.965);core.height=sammyBodyBankClamp(Number(core.height||.5)+sym(3,.27),.10,.90);core.weight=sammyBodyBankClamp(Number(core.weight||.5)+sym(5,.29),.10,.90);core.muscle=sammyBodyBankClamp(Number(core.muscle||.5)+sym(7,.27),.10,.90);core.proportions=sammyBodyBankClamp(Number(core.proportions||.5)+sym(11,.22),.16,.84);if(sex){core.cupsize=sammyBodyBankClamp(Number(core.cupsize||.58)+sym(13,.23),.14,.90);core.firmness=sammyBodyBankClamp(Number(core.firmness||.56)+sym(17,.16),.22,.82)}else{core.cupsize=.5;core.firmness=.5}core.african=.5;core.asian=.5;core.caucasian=.5;for(const k of Object.keys(core))core[k]=sammyBodyBankRound(core[k],5);return core}
+function sammyBodyBankBuildSession(prior){
+ const bodies=[];for(let i=0;i<SAMMY_BODY_BANK_UNIQUE;i++){const sex=i%2,refs=sammyBodyBankArchetypeRefs(prior,sex),ref=refs[Math.floor(sammyCalHalton(i+211,19)*refs.length)%refs.length],core=sammyBodyBankJitterCore(ref.core,i,sex),bodyId=`BB-${String(i+1).padStart(3,"0")}`;bodies.push({bodyId,familyId:sammyBodyBankFamilyId(core),sourceArchetype:ref.id,shape:{core,local:{}},generation:{kind:"anny-core-base",localMorphCount:0,sampling:"archetype-centered deterministic Halton",samplingIndex:i}})}
+ const repeatSources=[4,22,41,63,82].map(i=>bodies[i]);const repeatSlots=[17,39,61,80,96];const queue=bodies.map((b,i)=>({caseId:`C-${String(i+1).padStart(3,"0")}`,bodyId:b.bodyId,repeatOf:null,...sammyBodyBankClone(b)}));
+ for(let r=0;r<repeatSources.length;r++){const b=repeatSources[r],slot=Math.min(repeatSlots[r],queue.length),q={caseId:`R-${r+1}-${b.bodyId}`,bodyId:b.bodyId,repeatOf:b.bodyId,...sammyBodyBankClone(b)};queue.splice(slot,0,q)}
+ queue.forEach((q,i)=>q.auditIndex=i+1);
+ return {schema:SAMMY_BODY_BANK_SCHEMA,appVersion:SAMMY_APP_VERSION,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),phase:"base-body-audit",policy:{humanVisibleInputs:"body only; recipe and measures hidden",uniqueBodies:SAMMY_BODY_BANK_UNIQUE,hiddenRepeats:SAMMY_BODY_BANK_REPEATS,totalReviews:SAMMY_BODY_BANK_TOTAL,rejectionScope:"local body/family only; never a global slider prohibition",localMorphs:"disabled in phase 1",nextPhase:"accepted anchors -> small context-dependent family edges"},queue,ratings:{},index:0}
+}
+function sammyBodyBankCase(){return sammyBodyBank.session?.queue?.[sammyBodyBank.index]||null}
+function sammyBodyBankRating(caseId){const r=sammyBodyBank.session.ratings||(sammyBodyBank.session.ratings={});if(!r[caseId])r[caseId]={status:"unchecked",reviewedAt:null,measurementSnapshot:null,autoCheck:null};return r[caseId]}
+function sammyBodyBankDoneCount(){return Object.values(sammyBodyBank.session?.ratings||{}).filter(r=>["accepted","uncertain","rejected"].includes(r?.status)).length}
+function sammyBodyBankConsistency(){const s=sammyBodyBank.session;if(!s)return {pairs:0,matched:0};let pairs=0,matched=0;for(const q of s.queue.filter(x=>x.repeatOf)){const original=s.queue.find(x=>x.bodyId===q.repeatOf&&!x.repeatOf),a=s.ratings?.[q.caseId]?.status,b=original?s.ratings?.[original.caseId]?.status:null;if([a,b].every(x=>["accepted","uncertain","rejected"].includes(x))){pairs++;if(a===b)matched++}}return {pairs,matched}}
+function sammyBodyBankMeasureSnapshot(){try{const m=sammyBfSelectedMeasures();return {stature:sammyBodyBankRound(m.stature,2),crotch_height:sammyBodyBankRound(m.crotch_height,2),biacromial_breadth:sammyBodyBankRound(m.biacromial_breadth,2),chest_circumference:sammyBodyBankRound(m.chest_circumference,2),waist_circumference:sammyBodyBankRound(m.waist_circumference,2),buttock_circumference:sammyBodyBankRound(m.buttock_circumference,2),hip_breadth:sammyBodyBankRound(m.hip_breadth,2)} }catch(e){return {error:String(e?.message||e)}}}
+function sammyBodyBankAutoCheck(snapshot){const finite=Object.entries(snapshot||{}).filter(([k])=>k!=="error").every(([,v])=>Number.isFinite(Number(v)));const h=Number(snapshot?.stature);const broadStature=Number.isFinite(h)&&h>=125&&h<=220;return {status:finite&&broadStature?"pass":"warn",finiteMeasures:finite,broadStature,phase1CoreOnly:true}}
+async function sammyBodyBankApplyCurrent(){const c=sammyBodyBankCase();if(!c)return sammyBodyBankRender();sammyBodyBank.busy=true;try{await sammyBfWaitReady();stopPoseAnimation(false);if(poseReady&&typeof sammyMeasurementIdentityPose==="function"&&typeof sammyApplyMeasurementRelative==="function"){sammyApplyMeasurementRelative(sammyMeasurementIdentityPose(),"BODY BANK AUDIT · neutral T-pose");await new Promise(r=>requestAnimationFrame(r))}annyParams={...annyParams,...c.shape.core};for(const k of Object.keys(annyLocalValues||{}))annyLocalValues[k]=0;applyAnnyParams();await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));sammyClearMeasureOverlay?.();sammyBodyBankCamera(sammyBodyBank.view,260);sammyBodyBankRender()}finally{sammyBodyBank.busy=false}}
+function sammyBodyBankCamera(view="front",duration=260){sammyBodyBank.view=view;document.querySelectorAll("[data-bank-view]").forEach(b=>b.classList.toggle("active",b.dataset.bankView===view));const b=sammyMeasureBBox();if(!b)return;const vfov=THREE.MathUtils.degToRad(32),dist=Math.max(b.height/(2*Math.tan(vfov/2))*1.18,b.width*2.3),target=new THREE.Vector3(b.cx,b.minY+b.height*.47,b.cz),dirs={front:new THREE.Vector3(0,0,1),threequarter:new THREE.Vector3(.72,0,.72).normalize(),side:new THREE.Vector3(1,0,0),back:new THREE.Vector3(0,0,-1)},dir=dirs[view]||dirs.front,pos=target.clone().add(dir.multiplyScalar(dist));pos.y+=b.height*.025;sammyCameraTweenToState({position:pos,target,zoom:1,fov:32},duration,duration===0)}
+function sammyBodyBankRender(){const s=sammyBodyBank.session,c=sammyBodyBankCase(),idx=$("#sammyBodyBankIndex"),done=$("#sammyBodyBankDone"),st=$("#sammyBodyBankStatus"),buttons=[["#sammyBodyBankOk","accepted"],["#sammyBodyBankUnsure","uncertain"],["#sammyBodyBankBad","rejected"]];if(!s||!c){if(idx)idx.textContent="100er Audit";if(done)done.textContent="noch nicht gestartet";return}sammyBodyBank.index=Math.max(0,Math.min(sammyBodyBank.index,s.queue.length-1));s.index=sammyBodyBank.index;const r=sammyBodyBankRating(c.caseId),n=s.queue.length,d=sammyBodyBankDoneCount();if(idx)idx.textContent=`Person ${String(sammyBodyBank.index+1).padStart(2,"0")} / ${n}`;if(done)done.textContent=`${d} bewertet`;for(const [sel,status] of buttons)$(sel)?.classList.toggle("active",r.status===status);const complete=d>=n,cc=sammyBodyBankConsistency();if(st){const span=st.querySelector("span")||st;span.textContent=complete?`Audit vollständig · ${d}/${n}. Verdeckter Wiederholungs-Check: ${cc.pairs?`${cc.matched}/${cc.pairs} identisch bewertet`:"noch offen"}. Bitte Audit JSON exportieren.`:`Bewerte nur den sichtbaren Körper. Keine Begründung nötig. „Unsicher“ ist ausdrücklich erlaubt.`}document.querySelectorAll("[data-bank-view]").forEach(b=>b.classList.toggle("active",b.dataset.bankView===sammyBodyBank.view))}
+async function sammyBodyBankMove(delta){if(sammyBodyBank.busy||!sammyBodyBank.session)return;const n=sammyBodyBank.session.queue.length;sammyBodyBank.index=Math.max(0,Math.min(n-1,sammyBodyBank.index+delta));sammyBodyBank.session.index=sammyBodyBank.index;sammyBodyBankSave();await sammyBodyBankApplyCurrent()}
+async function sammyBodyBankVote(status){if(sammyBodyBank.busy)return;const c=sammyBodyBankCase();if(!c)return;const r=sammyBodyBankRating(c.caseId),snap=sammyBodyBankMeasureSnapshot();r.status=status;r.reviewedAt=new Date().toISOString();r.measurementSnapshot=snap;r.autoCheck=sammyBodyBankAutoCheck(snap);sammyBodyBank.session.updatedAt=new Date().toISOString();sammyBodyBankSave();sammyBodyBankRender();if(sammyBodyBank.index<sammyBodyBank.session.queue.length-1){await new Promise(r=>setTimeout(r,90));await sammyBodyBankMove(1)}}
+async function sammyBodyBankNew(force=false){if(sammyBodyBank.session&&!force)return;if(force&&sammyBodyBank.session&&!confirm("Neues 100er Audit starten? Die aktuelle lokale Audit-Sitzung wird ersetzt. Vorher bei Bedarf Audit JSON exportieren."))return;const st=$("#sammyBodyBankStatus");if(st)(st.querySelector("span")||st).textContent="100 Basiskörper werden vorbereitet …";let prior=null;try{prior=await sammySolver24LoadPrior()}catch(e){console.warn("Body Bank prior fallback",e)}sammyBodyBank.session=sammyBodyBankBuildSession(prior);sammyBodyBank.index=0;sammyBodyBankSave();await sammyBodyBankApplyCurrent()}
+function sammyBodyBankExport(){const s=sammyBodyBank.session;if(!s)return;const consistency=sammyBodyBankConsistency(),ratings=s.queue.map(q=>({caseId:q.caseId,bodyId:q.bodyId,familyId:q.familyId,repeatOf:q.repeatOf||null,status:s.ratings?.[q.caseId]?.status||"unchecked",reviewedAt:s.ratings?.[q.caseId]?.reviewedAt||null,measurementSnapshot:s.ratings?.[q.caseId]?.measurementSnapshot||null,autoCheck:s.ratings?.[q.caseId]?.autoCheck||null,shape:q.shape,generation:q.generation,sourceArchetype:q.sourceArchetype})),summary={total:s.queue.length,uniqueBodies:SAMMY_BODY_BANK_UNIQUE,hiddenRepeats:SAMMY_BODY_BANK_REPEATS,accepted:ratings.filter(r=>r.status==="accepted").length,uncertain:ratings.filter(r=>r.status==="uncertain").length,rejected:ratings.filter(r=>r.status==="rejected").length,unchecked:ratings.filter(r=>r.status==="unchecked").length,repeatPairsRated:consistency.pairs,repeatExactMatches:consistency.matched,repeatExactMatchRate:consistency.pairs?sammyBodyBankRound(consistency.matched/consistency.pairs,3):null};const payload={schema:"sammy-audited-body-bank-export-v1",app:"Sammy",appVersion:SAMMY_APP_VERSION,generated:new Date().toISOString(),session:{schema:s.schema,createdAt:s.createdAt,updatedAt:s.updatedAt,phase:s.phase,policy:s.policy},summary,ratings,interpretation:{accepted:"human-accepted anchor for this exact body and local family context",uncertain:"not certified; no positive or negative rule inferred",rejected:"local negative example only; never a global morph/slider bound",hiddenRepeats:"used only to estimate reviewer consistency"}};const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Sammy_BODY_BANK_AUDIT_${new Date().toISOString().replace(/[:.]/g,"-")}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1400)}
+async function sammyBodyBankEnter(){if(!sammyBodyBank.restoreShape)sammyBodyBank.restoreShape={core:{...annyParams},local:{...(annyLocalValues||{})}};if(!sammyBodyBank.restoreCamera)sammyBodyBank.restoreCamera=sammyCaptureCameraState();if(!sammyBodyBank.restorePose)sammyBodyBank.restorePose={euler:poseEulerDeg?Float32Array.from(poseEulerDeg):null,relative:lastAppliedRelative3?Float32Array.from(lastAppliedRelative3):null};if(!sammyBodyBank.session)sammyBodyBank.session=sammyBodyBankLoad();if(sammyBodyBank.session){sammyBodyBank.index=Math.max(0,Math.min(Number(sammyBodyBank.session.index)||0,sammyBodyBank.session.queue.length-1));await sammyBodyBankApplyCurrent()}else await sammyBodyBankNew(false)}
+function sammyBodyBankExit(){const shape=sammyBodyBank.restoreShape,camState=sammyBodyBank.restoreCamera,poseState=sammyBodyBank.restorePose;sammyBodyBank.restoreShape=null;sammyBodyBank.restoreCamera=null;sammyBodyBank.restorePose=null;if(shape){annyParams={...annyParams,...shape.core};for(const k of Object.keys(annyLocalValues||{}))annyLocalValues[k]=Number(shape.local?.[k]||0);applyAnnyParams();sammyMeasureSyncLocalUiV3?.()}if(poseState?.relative&&typeof sammyApplyMeasurementRelative==="function")sammyApplyMeasurementRelative(poseState.relative,"BODY BANK AUDIT → vorherige Pose");else if(poseState?.euler&&poseEulerDeg){poseEulerDeg.set(poseState.euler);applyPoseToRest(currentDisplayRest(),true)}if(camState)sammyCameraTweenToState(camState,420,false)}
+function sammyBodyBankInitUI(){sammyBodyBank.session=sammyBodyBankLoad();if(sammyBodyBank.session)sammyBodyBank.index=Math.max(0,Math.min(Number(sammyBodyBank.session.index)||0,sammyBodyBank.session.queue.length-1));const bind=(id,fn)=>{const e=$(id);if(e)e.onclick=fn};bind("#sammyBodyBankOk",()=>sammyBodyBankVote("accepted"));bind("#sammyBodyBankUnsure",()=>sammyBodyBankVote("uncertain"));bind("#sammyBodyBankBad",()=>sammyBodyBankVote("rejected"));bind("#sammyBodyBankPrev",()=>sammyBodyBankMove(-1));bind("#sammyBodyBankNext",()=>sammyBodyBankMove(1));bind("#sammyBodyBankExport",sammyBodyBankExport);bind("#sammyBodyBankRestart",()=>sammyBodyBankNew(true).catch(e=>sammyReportError(e,{source:"Body Bank restart"})));document.querySelectorAll("[data-bank-view]").forEach(b=>b.onclick=()=>sammyBodyBankCamera(b.dataset.bankView,240));sammyBodyBankRender()}
 
 
 // v0.8.24.13: keep the proven v0.8.24.0 bootstrap position.

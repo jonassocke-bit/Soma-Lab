@@ -1,0 +1,18 @@
+SAMMY v0.8.28.0 static build test
+Status: PASS
+
+{
+  "app_version": "0.8.28.0",
+  "index_version_present": true,
+  "duplicate_html_ids": [],
+  "missing_body_bank_ids": [],
+  "bank_panel_registered": true,
+  "body_bank_unique_constant": 95,
+  "body_bank_repeat_constant": 5,
+  "body_bank_total_constant": true,
+  "master_state_docx_exists": true,
+  "legacy_audit_preserved": true
+}
+
+Additional gate: node --check app.js = PASS (run during build).
+DOCX render QA: PASS, 5 pages visually inspected.

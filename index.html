@@ -27,7 +27,7 @@
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.27.2</div>
+<div id="sammyVersion">Sammy · v0.8.28.0</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -51,7 +51,8 @@
   <button type="button" class="sammyLabSubBubble lab-infl" data-lab-panel="sammyInfluencePanel" aria-label="Influence Lab"><b>INFL</b><small>5-Level</small></button>
   <button type="button" class="sammyLabSubBubble lab-solv" data-lab-panel="sammySolver24Panel" aria-label="24 Maß Solver"><b>SOLV</b><small>24 → Body</small></button>
   <button type="button" class="sammyLabSubBubble lab-morf" data-lab-panel="sammyMorphObsPanel" aria-label="Morph Observatory"><b>MORF</b><small>Observatory</small></button>
-  <button type="button" class="sammyLabSubBubble lab-audt" data-lab-panel="sammyBodyAuditPanel" aria-label="Blind Body Audit"><b>AUDT</b><small>Blind</small></button>
+  <button type="button" class="sammyLabSubBubble lab-bank" data-lab-panel="sammyBodyBankPanel" aria-label="Audited Body Bank"><b>BANK</b><small>100er Audit</small></button>
+  <button type="button" class="sammyLabSubBubble lab-audt" data-lab-panel="sammyBodyAuditPanel" aria-label="Legacy Blind Body Audit"><b>AUDT</b><small>Solver blind</small></button>
   <button type="button" class="sammyLabSubBubble lab-ansr" data-lab-panel="sammyAnsPanel" aria-label="ANSUR Lab"><b>ANSR</b><small>Prediction</small></button>
  </div>
 
@@ -230,7 +231,7 @@
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
   <div class="sammyPanelHead"><div><b>BODY FIT + RESEARCH SOLVER</b><small>Produktions-Prototyp oben · bisherige ANSUR-Forschung bleibt darunter erhalten</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard sammyBfIntro"><b>BODY FIT v1.2 · MASSE → HÜFTE · Build 0.8.27.2</b><span>Produktions-Prototyp mit korrigierter Priorität: Nach der Körperhöhe wird zuerst die Masse über frisch gemessene Weight- und Muscle-Wirkung an das Meshvolumen gekoppelt. Danach werden Hüfte/Taille lokal wiederhergestellt. ANSUR II bleibt ausschließlich statistischer Prior; keine 24-Maß-Optimierung, kein Cross-Region-Polish.</span></div>
+   <div class="sammyLabIntroCard sammyBfIntro"><b>BODY FIT v1.2 · unverändert seit 0.8.27.2 · App 0.8.28.0</b><span>Produktions-Prototyp mit korrigierter Priorität: Nach der Körperhöhe wird zuerst die Masse über frisch gemessene Weight- und Muscle-Wirkung an das Meshvolumen gekoppelt. Danach werden Hüfte/Taille lokal wiederhergestellt. ANSUR II bleibt ausschließlich statistischer Prior; keine 24-Maß-Optimierung, kein Cross-Region-Polish.</span></div>
    <details class="sammyCalibrationLab sammyBfLab" id="sammyBfLab" open>
     <summary><b>BODY FIT MINIMAL · PROTOTYPE 1.1</b><span>5 Maße · Masse zuerst · Weight+Muscle ↔ Volumen · Hüfte recovery · ♀ Cup A–H</span></summary>
     <div class="sammyCalibrationBody">
@@ -475,6 +476,20 @@
    <div id="sammyBodyAuditStatus" class="sammyStatus"><span>Noch kein Solver-Blindlauf geladen. Starte zuerst SOLV → Proof oder Legacy-Blind-Test.</span></div>
    <div class="sammyCalibrationActions"><button id="sammyBodyAuditReload" type="button">Testkörper laden</button><button id="sammyBodyAuditExport" type="button">Audit JSON</button></div>
    <div class="sammyCalibrationActions"><button id="sammyBodyAuditClear" type="button">Bewertungen löschen</button></div>
+  </div>
+ </section>
+
+ <section id="sammyBodyBankPanel" class="sammyPanel sammyBodyBankPanel" data-panel-key="body-bank">
+  <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
+  <div class="sammyPanelHead"><div><b>BODY BANK · AUDIT</b><small>95 Basiskörper + 5 verdeckte Wiederholungen</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelScroll">
+   <div class="sammyBodyBankProgress"><b id="sammyBodyBankIndex">Person 01 / 100</b><span id="sammyBodyBankDone">0 bewertet</span></div>
+   <div class="sammyBodyBankViewRow" role="toolbar" aria-label="Ansicht"><button type="button" data-bank-view="front" class="active">Vorne</button><button type="button" data-bank-view="threequarter">¾</button><button type="button" data-bank-view="side">Seite</button><button type="button" data-bank-view="back">Hinten</button></div>
+   <div class="sammyBodyBankVoteGrid" role="group" aria-label="Körper bewerten"><button id="sammyBodyBankOk" class="ok" type="button"><b>✓</b><span>Plausibel</span></button><button id="sammyBodyBankUnsure" class="unsure" type="button"><b>?</b><span>Unsicher</span></button><button id="sammyBodyBankBad" class="bad" type="button"><b>×</b><span>Unplausibel</span></button></div>
+   <div class="sammyBodyBankNav"><button id="sammyBodyBankPrev" type="button">‹ zurück</button><button id="sammyBodyBankNext" type="button">weiter ›</button></div>
+   <div id="sammyBodyBankStatus" class="sammyStatus"><span>Basiskörper werden lokal aus Annys Core-Parametern aufgebaut. Keine lokalen Spezialmorphs und keine Solver-Rekonstruktionen.</span></div>
+   <details class="sammyBodyBankInfo"><summary>Was wird gespeichert?</summary><div>Deine Bewertung gilt nur für diesen Körper und seine lokale Körperfamilie. Ein × erzeugt ausdrücklich kein globales Slider-Verbot. Intern bleiben vollständiges Anny-Rezept, Familien-ID, automatische Basischecks und die verdeckten Wiederholungs-Paare erhalten. Während des Audits werden keine Morphwerte oder Messwerte eingeblendet.</div></details>
+   <div class="sammyCalibrationActions"><button id="sammyBodyBankExport" type="button">Audit JSON</button><button id="sammyBodyBankRestart" type="button">Neues 100er Audit</button></div>
   </div>
  </section>
 

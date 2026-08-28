@@ -1,3 +1,17 @@
+# Sammy v0.8.28.0 — Audited Body Bank PoC
+
+v0.8.28.0 führt den neuen **BANK**-Pfad ein, ohne die bisherigen Solver-/Mess-/Morph-Labs zu löschen. Der erste Body-Bank-Test erzeugt deterministisch 95 unterschiedliche Anny-Core-Basiskörper plus 5 verdeckte Wiederholungen. Das menschliche Audit ist absichtlich minimal: **Plausibel / Unsicher / Unplausibel**, vier Kameraansichten, Zurück/Weiter, keine Kommentar- oder Fehlerbeschreibungspflicht.
+
+Wichtig: Eine Ablehnung gilt nur für den exakten Körper und seinen lokalen Familienkontext. Sie wird **niemals** als globales Slider-Verbot interpretiert. Lokale Spezialmorphs sind in Phase 1 deaktiviert; Ziel ist zuerst zu prüfen, ob Annys Core-Formraum als Ausgangsbank brauchbar ist. Der bestehende Blind-Solver-Audit bleibt separat unter `AUDT` erhalten.
+
+Siehe:
+- `BODY_BANK_AUDIT_POC_V0.8.28.0.md`
+- `RELEASE_NOTES_V0.8.28.0.md`
+- `CHANGESET_V0.8.28.0.md`
+- `SAMMY_MASTER_STATE.docx`
+
+---
+
 # Sammy v0.8.26.6 — Solver Shape Layer 1.0
 
 v0.8.26.6 trennt erstmals kanonische ANSUR-Referenzmessungen von zusätzlichen morph-aligned Solver-Shape-Features. Chest Breadth/Depth, Abdomen, Upper Thigh und Upperarm erhalten gelockte Regionalbänder; `stomach-pregnant-incr` wird konditional und neutral als **Abdominal Projection** getestet. Vollständige ANSUR24-Neumessungen und Checkpoint-Rollbacks verhindern stille Regressionen. Die 902er Prediction-Reserve bleibt unverändert.
