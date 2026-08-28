@@ -89,3 +89,13 @@
 - Composition-Prior-Probe gegen unnötig hohe Muskeldefinition.
 - experimentelle seitliche Torso-Normalen-Kontinuität.
 - Proof 1.6 / ANSUR24 / 902er Prediction-Reserve unverändert.
+
+## v0.8.26.4.1
+Boot/UI-Hotfix: ungültigen `rc`-Verweis aus der alten Representability-Renderansicht entfernt. Keine Solver-/Messänderung.
+
+## v0.8.26.5 — Morph ↔ Messebene Alignment Lab 1.0
+- Kanonische ANSUR24-PROT-v2-Ebenen bleiben unverändert.
+- Neues diagnostisches Shape-Band für Chest, Abdomen, Thigh und Upperarm.
+- Basisebene wird gelockt; Morph-Wirkmaximum und beste Zielnähe werden unabhängig gemessen.
+- `stomach-pregnant-incr` wird testweise nur als `Abdominal Projection` ausgewertet.
+- Keine neuen ANSUR-Fälle; Prediction-Reserve bleibt 902.

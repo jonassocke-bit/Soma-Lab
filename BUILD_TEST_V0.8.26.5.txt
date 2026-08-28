@@ -1,0 +1,37 @@
+SAMMY v0.8.26.5 BUILD TEST
+===========================
+
+1) JavaScript syntax: PASS (node --check executed after packaging)
+2) HTML IDs: 542 total / 542 unique -> PASS
+3) Required Alignment UI IDs: PASS
+4) Required Alignment functions: PASS
+5) App/index version 0.8.26.5: PASS
+6) Canonical ANSUR boundary: PASS
+7) Locked baseline plane path: PASS
+8) Four requested regions: PASS
+9) Abdominal Projection candidate: PASS
+10) Uploaded v0.8.26.4 PRA source compatibility: PASS (schema=sammy-real-ansur-pragmatic-repair-v1; cases=5)
+11) v0.8.26.4.1 RAR boot hotfix preserved: PASS
+
+Frozen scientific functions vs exact v0.8.26.4.1 base:
+- sammyComputeANSUR24V2: EXACT
+- sammyAns24V2ApplyState: EXACT
+- sammySolverV2ProofReliability: EXACT
+- sammySolverV2ProofFitMetrics: EXACT
+- sammySolverV2ProofObjective: EXACT
+- sammySolverV2ProofSolveStep: EXACT
+- sammySolverV2ProofTryStep: EXACT
+- sammySolverV2ProofSolveSeed: EXACT
+- sammySolverV2RunPolishRounds: EXACT
+
+Frozen research/data files vs exact v0.8.26.4.1 base:
+- ANSUR24_PROTOCOL_V2.json: EXACT
+- ANSUR_II_94_MEASURE_MAPPING_V0.8.20.1.json: EXACT
+- MASS_COMPOSITION_V0.8.23.0.md: EXACT
+- solver-v2-real-ansur-stress-suite-v1.json: EXACT
+- ansur-prediction-final-reserve-v1.json: EXACT
+- ansur-prediction-trainval-v1.json: EXACT
+- ansur-prediction-test-v1.json: EXACT
+
+Runtime limitation:
+- Full Three.js/WebGL/Anny real-mesh execution is not available in the offline build container. The first iPhone/Safari run remains authoritative for runtime behavior.

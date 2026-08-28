@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.26.4</title>
-<link rel="stylesheet" href="style.css?v=0.8.26.4">
+<title>Sammy v0.8.26.5</title>
+<link rel="stylesheet" href="style.css?v=0.8.26.5">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.26.4</div>
+  <div class="sammySplashVersion">v0.8.26.5</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.26.4</div>
+<div id="sammyVersion">Sammy · v0.8.26.5</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -302,8 +302,25 @@
     </div>
    </details>
 
-   <div class="sammyLabIntroCard sammyPraIntro"><b>Solver Architecture Audit · anatomisch routen statt Slider raten</b><span>v0.8.26.4 korrigiert die Solver-Architektur an der Ursache: Depth/Horizontal bleiben getrennte Raw-DOFs, die sieben reparierten Maße dürfen keine alten Top-Measure-Hinweise mehr verwenden, fehlende direkte Wrist/Ankle-Zielmorphs werden fresh-only ergänzt und Residuals bekommen eine harte anatomische Route. Der Nachlauf misst bis zu fünf fachlich passende DOFs frisch, wählt danach maximal drei über ihre echte lokale Ableitung und landet prädiktiv in Richtung Ziel. Kritische Maße werden dauerhaft geschützt; höchstens zwei Aktionen hintereinander dürfen dasselbe Maß monopolieren. ±115/130 % bleibt ausschließlich ein echter Bound-Escape.</span></div>
-   <details class="sammyCalibrationLab sammyPraLab" id="sammyPraLab" open>
+   <div class="sammyLabIntroCard sammyPraIntro"><b>Morph ↔ Messebene · Wirkzentrum statt Protokollhöhe erzwingen</b><span>v0.8.26.5 lässt die kanonischen ANSUR24-PROT-v2-Messungen vollständig unangetastet und prüft separat, wo Annys vorhandene Morphs tatsächlich wirken. Auf den fünf bereits fertigen Repair-Körpern wird die ANSUR-Ebene einmal gelockt und ein kleines Nachbarband für Brust, Bauch/Taille, Oberschenkel und Oberarm gescannt. Danach werden die relevanten lokalen Morphs einzeln auf demselben gelockten Band probiert. `stomach-pregnant-incr` wird ausschließlich diagnostisch unter dem neutralen Namen <b>Abdominal Projection</b> getestet.</span></div>
+   <details class="sammyCalibrationLab sammyMmaLab" id="sammyMmaLab" open>
+    <summary><b>MORPH ↔ MESSEBENE · ALIGNMENT LAB 1.0</b><span>5 Repair-Körper · Chest / Abdomen / Thigh / Upperarm · Abdominal Projection · 0 neue ANSUR-Zeilen</span></summary>
+    <div class="sammyCalibrationBody">
+     <div id="sammyMmaSource" class="sammyRarSource">Pragmatic-Repair-Quelle wird gesucht …</div>
+     <div class="sammyRarPlan"><div><b>5</b><span>fertige Repair-Körper</span></div><div><b>4</b><span>Shape-Regionen</span></div><div><b>~23</b><span>lokale Morph-Kandidaten</span></div><div><b>0</b><span>neue ANSUR-Zeilen</span></div></div>
+     <div class="sammyRarQuestion"><b>Was wird hier wirklich getestet?</b><span><strong>Plane lock:</strong> Die kanonische ANSUR-Ebene wird vor jeder Probe am Ausgangskörper fixiert, damit der Morph seine eigene Referenz nicht verschieben kann. · <strong>Target band:</strong> Im Nachbarband wird gesucht, ob derselbe ANSUR-Zahlenwert wenige Zentimeter daneben viel besser zur sichtbaren Form passt. · <strong>Morph response:</strong> Dorsi/Pectoral/V-Shape/Torso Width/Depth, Waist/Stomach, Thigh/Upperleg und Upperarm-Morphs werden auf exakt denselben Ebenen gemessen. · <strong>Bauch:</strong> Abdominal Projection wird auf Tiefen- statt Breitenzuwachs geprüft.</span></div>
+     <div class="sammyCalibrationActions"><button id="sammyMmaStart" type="button">Alignment-Test starten</button><button id="sammyMmaPause" type="button" disabled>Pause</button></div>
+     <div class="sammyCalibrationActions"><button id="sammyMmaReset" type="button">Alignment-Test löschen</button><button id="sammyMmaExport" type="button" disabled>Alignment JSON</button><label class="sammyRarFile"><span>Pragmatic Repair JSON</span><input id="sammyMmaFile" type="file" accept="application/json,.json"></label></div>
+     <div id="sammyMmaStatus" class="sammyCalibrationStatus">Morph↔Messebene Alignment wird initialisiert …</div>
+     <div class="sammyCalibrationProgress"><i id="sammyMmaProgress"></i></div>
+     <div id="sammyMmaLive" class="sammyCalibrationLiveMeasures"></div>
+     <div id="sammyMmaResults" class="sammyRarResults"><div class="sammyInfluenceEmpty">Noch kein Morph↔Messebene-Test.</div></div>
+     <details class="sammyRarCriteria"><summary><b>Wissenschaftliche Grenze</b><span>ANSUR bleibt Referenz, Shape-Plane bleibt getrennt</span></summary><div><p><b>Kanonisches ANSUR:</b> Kein Operator und keine Protokollhöhe wird in diesem Patch verändert. Der Lauf erzeugt nur eine zweite diagnostische Shape-Schicht.</p><p><b>Gelockte Ebene:</b> Jede Basisebene bzw. Gliedmaßenebene wird vor dem Morph-Test fixiert. Dadurch messen wir echte Morphwirkung im Raum und nicht eine mitwandernde Landmarke.</p><p><b>Brust:</b> ±6 cm um die Chest-Point-Ebene; Umfang, Breite und Tiefe werden getrennt verfolgt.</p><p><b>Bauch/Taille:</b> ±8 cm um Omphalion; Circ/Width/Depth plus Abdominal-Projection Tiefe/Breite-Ratio.</p><p><b>Oberschenkel:</b> −4 bis +12 cm entlang der Hip→Knee-Achse ab Gluteal-Furrow-Ebene; entscheidend ist der Umfang.</p><p><b>Oberarm:</b> ±8 cm entlang der Oberarmachse ab Biceps-Point-Ebene. Das ANSUR-Flexed-Ziel bleibt protokollbedingt nur Referenz.</p><p><b>Nächste Entscheidung:</b> Nur wenn Zielnähe und Morph-Wirkmaximum konsistent im selben Nachbarbereich liegen, bekommt diese Region später eine separate Solver-Shape-Ebene oder ein kleines Envelope-Band.</p></div></details>
+    </div>
+   </details>
+
+   <div class="sammyLabIntroCard sammyPraIntro"><b>Solver Architecture Audit · anatomisch routen statt Slider raten</b><span>Routing-v2 aus v0.8.26.4 bleibt unverändert: Depth/Horizontal bleiben getrennte Raw-DOFs, die sieben reparierten Maße dürfen keine alten Top-Measure-Hinweise mehr verwenden, fehlende direkte Wrist/Ankle-Zielmorphs werden fresh-only ergänzt und Residuals bekommen eine harte anatomische Route. Der Nachlauf misst bis zu fünf fachlich passende DOFs frisch, wählt danach maximal drei über ihre echte lokale Ableitung und landet prädiktiv in Richtung Ziel. Kritische Maße werden dauerhaft geschützt; höchstens zwei Aktionen hintereinander dürfen dasselbe Maß monopolieren. ±115/130 % bleibt ausschließlich ein echter Bound-Escape.</span></div>
+   <details class="sammyCalibrationLab sammyPraLab" id="sammyPraLab">
     <summary><b>REAL ANSUR REPAIR · PRAGMATIC REPAIR 1.2</b><span>5 bekannte Fälle · Anatomical Routing · Predictive Residual · adaptive ±115/130 %</span></summary>
     <div class="sammyCalibrationBody">
      <div id="sammyPraSource" class="sammyRarSource">Representability-/Stress-Quelle wird gesucht …</div>
@@ -892,6 +909,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.26.4"></script>
+<script type="module" src="app.js?v=0.8.26.5"></script>
 </body>
 </html>

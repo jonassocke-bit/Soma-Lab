@@ -82,3 +82,9 @@ Use v0.8.25.8 instead of v0.8.25.7 for Solver V2 Proof 1.6. It restores four mis
 
 ## Aktueller Forschungsstand · v0.8.26.3
 Proof 1.6 bleibt die eingefrorene inverse Baseline. v0.8.26.3 prüft jetzt gezielt, ob die großen Real-ANSUR-Restfehler tatsächlich Morphraumgrenzen sind oder nur daraus entstanden, dass der produktorientierte Nachlauf nach einem einzigen Block zu früh stoppte. Bis zu sechs frische Residual-Runden nutzen vorhandene Regler weiter; ±115/130 % wird nur bei echtem Bound-Block aktiviert. Die 902er Prediction-Reserve bleibt unangetastet.
+
+### v0.8.26.4.1
+Boot/UI-Hotfix auf v0.8.26.4; wissenschaftlicher Solverstand unverändert.
+
+### v0.8.26.5 — Morph ↔ Messebene Alignment
+Unter SOLV steht ein fokussierter 5-Körper-Test zur Verfügung, der nicht die ANSUR-Protokollmessung verschiebt, sondern separat untersucht, ob Annys Morph-Wirkmaximum einige Zentimeter neben der kanonischen Ebene liegt. Chest, Abdomen, Thigh und Upperarm werden als kleine gelockte Profile gescannt; `stomach-pregnant-incr` erscheint ausschließlich diagnostisch als **Abdominal Projection**.
