@@ -1,3 +1,21 @@
+# Sammy v0.8.26.6 — Solver Shape Layer 1.0
+
+v0.8.26.6 trennt erstmals kanonische ANSUR-Referenzmessungen von zusätzlichen morph-aligned Solver-Shape-Features. Chest Breadth/Depth, Abdomen, Upper Thigh und Upperarm erhalten gelockte Regionalbänder; `stomach-pregnant-incr` wird konditional und neutral als **Abdominal Projection** getestet. Vollständige ANSUR24-Neumessungen und Checkpoint-Rollbacks verhindern stille Regressionen. Die 902er Prediction-Reserve bleibt unverändert.
+
+Siehe:
+- `RELEASE_NOTES_V0.8.26.6.md`
+- `SOLVER_SHAPE_LAYER_1.0_V0.8.26.6.md`
+- `NEXT_PHASE_AFTER_SHAPE_LAYER_V0.8.26.6.md`
+- `CHANGESET_V0.8.26.6.md`
+
+---
+
+# Sammy v0.8.26.5 — Morph ↔ Messebene Alignment Lab 1.0
+
+v0.8.26.5 quantifiziert separat, wo Annys lokale Morphs relativ zu den kanonischen ANSUR-Ebenen tatsächlich wirken. ANSUR24 selbst bleibt unverändert; fünf bekannte Repair-Körper werden in Chest/Abdomen/Thigh/Upperarm-Bändern gescannt.
+
+---
+
 # Sammy v0.8.26.4 — Solver Architecture Audit · Anatomical Routing + Predictive Polish
 
 v0.8.26.4 korrigiert die Solver-Nutzung vorhandener Freiheitsgrade: harte anatomische Routen, fresh-only Behandlung der sieben Repair-v1.6-Maße, getrennte Raw-DOFs statt vorzeitiger Depth/Horizontal-Fusion, predictive Residual-Landung, fairer Scheduler, persistente kritische Locks und echte adaptive ±115/130-%-Bounds nur bei nachgewiesenem Grenzanschlag. ANSUR24-Messung, Reliability, FitMetrics, Proof Objective, Statistikdaten und die 902er Prediction-Reserve bleiben unverändert.

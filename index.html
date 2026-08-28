@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.26.5</title>
-<link rel="stylesheet" href="style.css?v=0.8.26.5">
+<title>Sammy v0.8.26.6</title>
+<link rel="stylesheet" href="style.css?v=0.8.26.6">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.26.5</div>
+  <div class="sammySplashVersion">v0.8.26.6</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.26.5</div>
+<div id="sammyVersion">Sammy · v0.8.26.6</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -302,8 +302,25 @@
     </div>
    </details>
 
+   <div class="sammyLabIntroCard sammyPraIntro"><b>Solver Shape Layer · ANSUR-Referenz bleibt, sichtbare Form bekommt eigene Ziele</b><span>v0.8.26.6 setzt die bestätigten Alignment-Befunde erstmals als echten Nachlauf um. Die fünf fertigen Repair-Körper werden nicht neu erfunden: kanonisches ANSUR24 wird vor und nach dem Test vollständig neu gemessen und bleibt Regression-Guard. Zusätzlich optimiert Sammy gelockte Shape-Bänder für Brust, Bauch, Oberschenkel und Oberarm. Der frühere <code>stomach-pregnant-incr</code> darf ausschließlich als neutral benannte <b>Abdominal Projection</b> arbeiten – und nur wenn Umfang/Tiefe fehlen, während zusätzliche Breite gerade unerwünscht ist.</span></div>
+   <details class="sammyCalibrationLab sammySslLab" id="sammySslLab" open>
+    <summary><b>SOLVER SHAPE LAYER · REPAIR 1.0</b><span>5 Alignment-Körper · locked bands · Abdominal Projection · canonical ANSUR guard</span></summary>
+    <div class="sammyCalibrationBody">
+     <div id="sammySslSource" class="sammyRarSource">Morph↔Messebene-Quelle wird gesucht …</div>
+     <div class="sammyRarPlan"><div><b>5</b><span>fertige Repair-Körper</span></div><div><b>3</b><span>regionale Shape-Stufen</span></div><div><b>ANSUR</b><span>vorher + nachher frisch</span></div><div><b>0</b><span>neue ANSUR-Zeilen</span></div></div>
+     <div class="sammyRarQuestion"><b>Was wird diesmal optimiert?</b><span><strong>Thorax:</strong> Brustumfang wird auf der gelockten kanonischen Ausgangsebene verfolgt, Breite/Tiefe zusätzlich als festes +2/+4/+6-cm-Shape-Band; echtes ANSUR24 wird danach separat neu berechnet. · <strong>Bauch:</strong> gelockte ANSUR-Ausgangsebene für Umfang/Breite/Tiefe plus ein Upper-Abdomen-Width-Envelope gegen seitliche Wellen; die dynamische kanonische ANSUR-Messung bleibt der Regression-Guard. Abdominal Projection darf Tiefe/Umfang hinzufügen, ohne den Bauch weiter breit zu ziehen. · <strong>Oberschenkel:</strong> sichtbarer Band-Maximum-Umfang von −2…+12 cm statt nur der schwach reagierenden ANSUR-Furrow-Ebene. · <strong>Oberarm:</strong> Mid-Arm-Band-Maximum −2…+8 cm; weiterhin nur Soft-Ziel, da ANSUR flexed.</span></div>
+     <div class="sammyCalibrationActions"><button id="sammySslStart" type="button">Shape-Layer-Test starten</button><button id="sammySslPause" type="button" disabled>Pause</button></div>
+     <div class="sammyCalibrationActions"><button id="sammySslReset" type="button">Shape-Layer-Test löschen</button><button id="sammySslExport" type="button" disabled>Shape-Layer JSON</button><label class="sammyRarFile"><span>Alignment JSON</span><input id="sammySslFile" type="file" accept="application/json,.json"></label></div>
+     <div id="sammySslStatus" class="sammyCalibrationStatus">Solver Shape Layer 1.0 wird initialisiert …</div>
+     <div class="sammyCalibrationProgress"><i id="sammySslProgress"></i></div>
+     <div id="sammySslLive" class="sammyCalibrationLiveMeasures"></div>
+     <div id="sammySslResults" class="sammyRarResults"><div class="sammyInfluenceEmpty">Noch kein Shape-Layer-Test.</div></div>
+     <details class="sammyRarCriteria"><summary><b>Sicherheitsgrenzen</b><span>keine stille ANSUR-Umschreibung</span></summary><div><p><b>Kanonisch bleibt kanonisch:</b> ANSUR24-PROT-v2 wird weder verschoben noch umbenannt. Die Shape-Bänder sind zusätzliche Solver-Features.</p><p><b>Plane lock:</b> Alle vier Regionalframes werden einmal auf dem Repair-Ausgangskörper eingefroren. Ein Morph kann seine eigene Shape-Messstelle deshalb nicht mitverschieben.</p><p><b>Torso Guard:</b> Nach der Torso-Stufe wird ANSUR24 vollständig neu gemessen. Verschlechtert sich der produktkritische kanonische Fit relevant, rollt die komplette Torso-Shape-Stufe zurück.</p><p><b>Abdominal Projection:</b> positiver 0…1-DOF; wird nur in den Kandidatenpool aufgenommen, wenn Taille/Umfang zu klein ist und Tiefe fehlt oder Breite bereits zu groß ist.</p><p><b>Gliedmaßen:</b> Thigh/Upperarm verwenden feste Band-Maxima als sichtbare Formziele. Der finale kanonische Critical-Fit wird danach nochmals geprüft.</p></div></details>
+    </div>
+   </details>
+
    <div class="sammyLabIntroCard sammyPraIntro"><b>Morph ↔ Messebene · Wirkzentrum statt Protokollhöhe erzwingen</b><span>v0.8.26.5 lässt die kanonischen ANSUR24-PROT-v2-Messungen vollständig unangetastet und prüft separat, wo Annys vorhandene Morphs tatsächlich wirken. Auf den fünf bereits fertigen Repair-Körpern wird die ANSUR-Ebene einmal gelockt und ein kleines Nachbarband für Brust, Bauch/Taille, Oberschenkel und Oberarm gescannt. Danach werden die relevanten lokalen Morphs einzeln auf demselben gelockten Band probiert. `stomach-pregnant-incr` wird ausschließlich diagnostisch unter dem neutralen Namen <b>Abdominal Projection</b> getestet.</span></div>
-   <details class="sammyCalibrationLab sammyMmaLab" id="sammyMmaLab" open>
+   <details class="sammyCalibrationLab sammyMmaLab" id="sammyMmaLab">
     <summary><b>MORPH ↔ MESSEBENE · ALIGNMENT LAB 1.0</b><span>5 Repair-Körper · Chest / Abdomen / Thigh / Upperarm · Abdominal Projection · 0 neue ANSUR-Zeilen</span></summary>
     <div class="sammyCalibrationBody">
      <div id="sammyMmaSource" class="sammyRarSource">Pragmatic-Repair-Quelle wird gesucht …</div>
@@ -909,6 +926,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.26.5"></script>
+<script type="module" src="app.js?v=0.8.26.6"></script>
 </body>
 </html>

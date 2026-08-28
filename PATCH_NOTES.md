@@ -1,3 +1,16 @@
+# v0.8.26.6 · Solver Shape Layer 1.0
+
+- Keeps canonical ANSUR24-PROT-v2 operators untouched; adds separate locked Solver Shape features.
+- Chest circumference stays canonical; chest breadth/depth get a fixed +2/+4/+6 cm shape band.
+- Adds canonical waist width/depth + upper-abdomen width envelope against lateral waviness.
+- Re-enables `stomach-pregnant-incr` only under the neutral solver role **Abdominal Projection**, positive-only and conditionally when circumference+depth are missing and the waist is not too narrow.
+- Uses Upper-Thigh and Upperarm band maxima as visible-shape proxies; ANSUR values remain separately reported.
+- Fresh finite-difference Shape Jacobian and bounded line search on local morphs only.
+- Full canonical ANSUR remeasurement after torso and final stages with explicit checkpoint rollback.
+- Uses only the same five consumed cases; 902-row Prediction reserve remains untouched.
+
+---
+
 # v0.8.26.4 · Solver Architecture Audit / Anatomical Routing + Predictive Polish
 
 - Hard 24-measure anatomical routing prevents unrelated local morphs from entering a residual pool.

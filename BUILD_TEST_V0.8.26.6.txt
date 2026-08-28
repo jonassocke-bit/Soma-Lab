@@ -1,0 +1,18 @@
+node --check app.js: PASS
+HTML IDs: 553 total / 553 unique: PASS
+CSS braces: 1165/1165 balanced: PASS
+Version 0.8.26.6 in app/index: PASS
+SSL HTML IDs present: PASS
+SSL runtime functions present: PASS
+Abdominal Projection conditional gate present: PASS
+Explicit torso checkpoint rollback present: PASS
+Frozen/core function comparison vs v0.8.26.5: PASS (16/16 exact)
+Frozen research/data assets byte-identical vs v0.8.26.5: PASS (13/13)
+Authoritative Alignment fixture: 5 cases / required band samples finite: PASS
+Abdominal Projection pre-gate fixture: PASS · triggered=edge-male-heavy
+  typical-male-a: projection=no; waistNeed circ=-0.03 depth=-0.73 width=-1.54
+  typical-male-b: projection=no; waistNeed circ=-0.07 depth=-0.37 width=-2.71
+  edge-male-heavy: projection=YES; waistNeed circ=5.23 depth=1.28 width=-2.78
+  typical-female-a: projection=no; waistNeed circ=0.82 depth=-2.51 width=-0.99
+  edge-female-short: projection=no; waistNeed circ=-0.00 depth=0.72 width=-2.41
+Prediction reserve consumption: 0 new rows by Shape Layer design; source cases remain the same five consumed Repair/Alignment cases.
