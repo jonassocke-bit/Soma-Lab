@@ -1,0 +1,13 @@
+SAMMY v0.8.28.0 — GitHub Compact Package
+==========================================
+
+Complete v0.8.28.0 build repackaged to keep the number of files directly
+uploaded to GitHub below the browser upload limit.
+
+Runtime/source/current project files remain unpacked. Historical release notes,
+changesets, build reports and superseded design notes are preserved byte-for-byte
+inside SAMMY_HISTORY_THROUGH_V0.8.27.2.zip. Nothing from the original package was discarded.
+
+Original file count: 204
+Direct files in compact package: 52
+Historical files inside nested archive: 154
