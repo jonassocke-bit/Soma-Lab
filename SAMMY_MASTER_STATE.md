@@ -1,12 +1,12 @@
 # SAMMY / BODY LAB / SOMA-LAB · MASTER STATE
 
-**Kanonischer Projektstand · Version 0.4 · 28.08.2026 · App v0.8.28.2**
+**Kanonischer Projektstand · Version 0.5 · 28.08.2026 · App v0.8.28.3**
 
 ## 1. Verbindliche Projektpflege
 
 - Dieser Master State ist die kanonische Zusammenfassung des aktuellen Projektstands.
 - **Jeder neue SAMMY-Export aktualisiert im selben Arbeitsschritt den Master State.** Ein Release ohne synchronen Master State gilt nicht als vollständiger Projektstand.
-- Zusätzlich wird bei jedem Export `SAMMY_CURRENT.zip` auf die neue vollständige Version gesetzt und `SAMMY_CURRENT_VERSION.txt` aktualisiert.
+- Zusätzlich wird bei jedem Export `SAMMY_CURRENT.zip` auf die neue vollständige Version gesetzt, `SAMMY_CURRENT_VERSION.txt` aktualisiert und `SAMMY_GITHUB_CURRENT.zip` als direkt uploadbare Compact-Fassung erzeugt. Die GitHub-Fassung muss unter 100 direkt sichtbaren Dateien bleiben; ältere Projektstände werden dafür in genau einem internen History-Archiv gebündelt, nicht verworfen.
 - Neue Arbeit startet ausschließlich von `SAMMY_CURRENT` bzw. der dort genannten Version.
 - Ersetzte Ansätze bleiben nur als Forschungsarchiv erhalten und dürfen nicht ungeprüft wieder als Hauptpfad vorgeschlagen werden.
 
@@ -56,70 +56,73 @@ Statusmodell:
 
 Zwei akzeptierte Endpunkte garantieren nicht automatisch, dass jede Interpolation dazwischen gültig ist. Zwischenstufen müssen separat technisch geprüft und bei Bedarf human auditiert werden.
 
-## 5. Aktueller Build v0.8.28.2 · BODY BANK AUDIT VIEW/MOTION
+## 5. Aktueller Build v0.8.28.3 · BODY BANK PHASE 2 · GRENZ- UND EXTREMRAUM
 
-### Zweck
+### Ergebnis Phase 1 (v0.8.28.2)
 
-Der erste Test prüft nur, ob Annys **Core-Basiskörperraum** als Ausgangspunkt für eine Body Bank brauchbar ist. Noch kein Nearest-Neighbor-Runtime-Lookup und noch kein lokaler Family-Fitter.
+Der erste 100er-Audit wurde abgeschlossen und als `Sammy_BODY_BANK_AUDIT_2026-08-28T19-10-48-878Z.json` ausgewertet.
 
-### Audit-Queue
+Gesamtergebnis inklusive verdeckter Wiederholungen:
 
-- 95 eindeutige Basiskörper.
-- 5 verdeckte Wiederholungen.
-- 100 Bewertungen insgesamt.
-- Männer/Frauen werden gemischt erzeugt.
-- Erzeugung ist deterministisch und reproduzierbar.
-- Die sechs vorhandenen kanonischen Referenzkörper (`male_avg`, `male_lean`, `male_muscular`, `female_avg`, `female_curvy`, `female_tall`) dienen nur als Sampling-Zentren.
-- Variation erfolgt auf Anny-Core-Parametern innerhalb konservativer Bereiche.
-- Lokale Spezialmorphs sind in Phase 1 vollständig deaktiviert.
+- 70 `Plausibel`,
+- 26 `Unsicher`,
+- 2 `Unplausibel`,
+- 2 nicht bewertet,
+- 4 von 5 verdeckten Wiederholungen exakt gleich bewertet.
+
+Auf eindeutige Körper reduziert sind 66 akzeptierte Anker, 25 unsichere, 2 abgelehnte und 2 unbewertete Körper vorhanden.
+
+Wichtige Human-Audit-Erkenntnis: Der Nutzer erklärte nach dem Lauf, dass **alle unsicheren Bewertungen ausschließlich dadurch entstanden, dass die Beine extrem lang wirkten**. Diese Aussage wird als Phase-1-Annotation `legs-too-long` gespeichert; sie ist keine globale Regel.
+
+Die Phase-1-Auswertung zeigt zugleich einen Zusammenhang mit Annys Core-Achsen: Unsichere Körper lagen im Mittel deutlich höher bei `proportions` und `height` als akzeptierte Körper. Dies wird nur als Auswahlhinweis für Phase 2 genutzt, nicht als harte Grenze.
+
+### Mess-/Diagnosekorrektur
+
+Die visuellen Phase-1-Verdikte sind gültige Auditdaten. Die damals mitgespeicherten einfachen Umfangs-/Proxy-Snapshots sind jedoch **nicht für Body-Bank-Statistik freigegeben**: In einzelnen Fällen traten offensichtlich unbrauchbare Umfangs- und Schulterproxywerte auf.
+
+Phase 2 speichert deshalb keine dieser einfachen Umfangssnapshots mehr. Stattdessen werden nur pose-unabhängige, geometrisch robuste Diagnosekennzahlen verwendet:
+
+- Rest-Mesh-Körperhöhe,
+- Hüftgelenkhöhe relativ zur Körperhöhe,
+- Femur- + Tibia-Kettenlänge relativ zur Körperhöhe,
+- Femur/Tibia-Verhältnis,
+- Torso-Skelettkette relativ zur Körperhöhe,
+- vertikales Becken-zu-Hals-Verhältnis,
+- Schulter- und Hüftgelenkbreite relativ zur Körperhöhe.
+
+Grundlage ist das **shape-abhängige exakte Anny/SOMA-Rest-Rig**, nicht die sichtbare Auditpose oder Animation. Diese Kennzahlen dienen zunächst nur zur Diagnose der langen-Beine-Grenze; daraus wird noch kein anthropometrischer Auto-Gate abgeleitet.
+
+### Phase-2-Queue
+
+Der neue Audit umfasst 400 Bewertungen:
+
+- 160 **Proportionsfamilien-Fälle**: 40 unterschiedliche, in Phase 1 akzeptierte Körper dienen als lokale Anker; pro Anker werden vier nahe Varianten der `proportions`-Achse getestet.
+- 160 **Extremraum-Fälle**: 20 unterschiedliche akzeptierte Anker werden mit acht absichtlichen Core-Randkombinationen geprüft, darunter sehr groß/klein, leicht/schwer, lang-/kurzproportioniert sowie Muskel-/Masse-Gegenpole.
+- 60 **breite Randstichproben**: deterministische Halton-Abdeckung nahe der Core-Grenzen.
+- 20 **verdeckte Wiederholungen** zur Konsistenzkontrolle.
+
+Die 380 eindeutigen Rezepte sind vorab geprüft, reproduzierbar und enthalten keine exakten Duplikate.
 
 ### Audit-UI
 
-Der Nutzer sieht bewusst keine Morphwerte oder Messwerte. Sichtbar sind:
+Die bewährte schnelle Bedienung bleibt erhalten:
 
-- aktueller Fortschritt,
-- Vorne / 3/4 / Seite / Hinten,
-- kompakte Pose-/Bewegungsauswahl,
 - `Plausibel`, `Unsicher`, `Unplausibel`,
-- Zurück / Weiter.
+- Vorne / 3/4 / Seite / Hinten,
+- statische Posen, Gang-/Stress-Loops und importierte Animationen,
+- manueller Zoom und Orbit bleiben beim Personenwechsel unverändert,
+- nur ein expliziter Viewport-Klick darf neu einrahmen.
 
-Es gibt **keine Kommentar- oder Fehlerbeschreibungspflicht**. Nach einer Bewertung wird automatisch der nächste Körper geladen.
+Neu ist ein **optionaler persistenter Schnellgrund** für `?` / `×`. Er startet in Phase 2 auf `Beine zu lang`, weil dies die bekannte Ursache aller Phase-1-Unsicherheiten war. Weitere Werte sind `Beine zu kurz`, `Torso / Proportion`, `Masse / Breite`, `Sonstiges` oder kein Grund. Der Audit blockiert niemals auf eine Begründung.
 
-### Kamera-/Zoom-Regel
+### Datenbasis Phase 2
 
-- Beim Eintritt in BODY BANK wird der aktuelle Körper einmal initial eingerahmt.
-- Danach bleiben **manueller Zoom, Orbit-Ziel, Kameradistanz und Blickausschnitt beim Personenwechsel unverändert**.
-- Weder Bewertung, Zurück/Weiter, Posewechsel noch Animation dürfen die Kamera neu einrahmen.
-- **Nur ein aktiver Klick auf Vorne / 3/4 / Seite / Hinten** darf eine neue standardisierte Kameraeinstellung setzen.
+Der Build enthält zwei reproduzierbare Dateien:
 
-### Pose und Bewegung
+- `body-bank-phase1-audit-seed-v1.json`: konsolidiert die 95 eindeutigen Phase-1-Körper, Originalurteile und die nachträgliche `legs-too-long`-Annotation.
+- `body-bank-phase2-plan-v1.json`: enthält den vollständigen 380+20-Plan und die verwendeten Phase-1-Anker.
 
-Für die visuelle Plausibilitätsprüfung stehen statische Posen und Bewegungen zur Verfügung:
-
-- T-Pose,
-- anthropometrisches/ruhiges Stehen,
-- Kniebeuge, Lauf- und Action-Pose,
-- synthetischer Gang-Loop,
-- Rig-Stress-Loop,
-- optional importierte FBX/NPY/NPZ-Animationen aus dem bereits vorhandenen Sammy-Animationspfad.
-
-Animationen können pausiert und in der Geschwindigkeit verändert werden. Ein Personenwechsel behält die aktuell gewählte Pose bzw. den laufenden/pausierten Bewegungszustand bei. Die Körper-ID und das Anny-Rezept werden dadurch nicht verändert.
-
-### Audit-Export
-
-Der JSON-Export enthält intern:
-
-- Case-ID / Body-ID / Family-ID,
-- Repeat-Beziehung,
-- Bewertung und Zeitpunkt,
-- vollständiges Anny-Core-Rezept,
-- versteckte **pose-unabhängige Rest-Shape-Snapshots** grundlegender Maße,
-- Basis-Autocheck,
-- Erzeugungsmetadaten,
-- Review-Kontext pro Bewertung (Viewport, Pose/Animation, Play/Pause, Tempo, Kameradistanz),
-- Repeat-Konsistenz-Zusammenfassung.
-
-Die versteckten Mess-Snapshots werden absichtlich am Rest-Shape ermittelt. Dadurch kann eine während des visuellen Audits laufende Animation die numerische Basisprüfung nicht verfälschen.
+Dadurch ist nachvollziehbar, aus welchem Human-Audit jeder Phase-2-Kandidat abgeleitet wurde.
 
 ## 6. Rolle des bisherigen Wissens
 
@@ -150,7 +153,7 @@ Externe Populationsdaten können später genutzt werden, um aus wenigen Nutzerda
 ### Aktueller Produktions-/Produktpfad
 
 - Body Fit v1.2 aus v0.8.27.2 bleibt als bestehender Minimal-Prototyp verfügbar.
-- v0.8.28.2 prüft parallel den neuen Body-Bank-/Audit-Pfad als bevorzugte nächste Architektur. Gegenüber v0.8.28.1 bleibt die Queue unverändert; neu sind persistenter Audit-Zoom/Orbit sowie Pose-/Animationskontrolle innerhalb von BANK.
+- v0.8.28.3 setzt den Body-Bank-/Audit-Pfad mit dem ersten echten Folge-Gate fort: Phase-1-Human-Anker werden für lokale Proportionsgrenzen sowie bewusste Extrem- und Randraumfälle genutzt. Der Runtime-Lookup/Fitter bleibt weiterhin deaktiviert, bis dieser Raum ausreichend kartiert ist.
 
 ### Forschungsarchiv
 
@@ -175,24 +178,27 @@ Diese Pfade dürfen als Diagnose, Vergleich oder Datenquelle genutzt werden. Ein
 - Messfehler, Mesh-Limit, Lookup-Abdeckung und Fitterfehler müssen separat diagnostizierbar bleiben.
 - iPhone/Safari-Tauglichkeit und Resume/Persistenz sind Pflicht.
 
-## 10. Nächster Gate nach v0.8.28.2
+## 10. Nächster Gate nach v0.8.28.3
 
-Der Nutzer auditiert die 100 Fälle und exportiert `Sammy_BODY_BANK_AUDIT_*.json`.
+Der Nutzer auditiert die 400 Phase-2-Fälle und exportiert `Sammy_BODY_BANK_PHASE2_AUDIT_*.json`.
 
-Danach werden mindestens bewertet:
+Danach werden mindestens getrennt bewertet:
 
-1. Anteil `Plausibel` / `Unsicher` / `Unplausibel`.
-2. Konsistenz der fünf verdeckten Wiederholungen.
-3. Welche Körperfamilien viele lokale Ablehnungen enthalten.
-4. Ob ein ausreichend großer zusammenhängender Satz akzeptierter Basiskörper entsteht.
+1. **Lange-Beine-Grenze:** Zusammenhang zwischen `legs-too-long` und den neuen exakten Rest-Rig-Kennzahlen (`hipJointHeightRatio`, `legChainRatio`, `torsoChainRatio`) innerhalb einzelner Körperfamilien.
+2. **Kontextabhängigkeit:** ob ähnliche Skelettverhältnisse in verschiedenen Körperfamilien unterschiedlich bewertet werden und deshalb lokale statt globale Grenzen nötig bleiben.
+3. **Extremraum:** welche der absichtlich weit getriebenen Core-Kombinationen noch plausibel sind und wo echte lokale Ablehnungsregionen beginnen.
+4. **Breite Randabdeckung:** ob außerhalb des bisherigen komfortablen Innenraums weitere plausible Inseln existieren.
+5. **Reviewer-Konsistenz:** 20 verdeckte Wiederholungen, getrennt nach Proportions-, Extrem- und Randfällen.
+6. **Zusammenhängender akzeptierter Raum:** ob genug `HUMAN_ACCEPTED`-Anker und lokale Übergänge für einen ersten Lookup-Prototyp vorhanden sind.
 
-Nur wenn dieser Gate brauchbar ausfällt, folgt Phase 2:
+Erst wenn diese Auswertung brauchbar ist, folgt der nächste technische Proof:
 
-- akzeptierte Anker auswählen,
-- kleine lokale Variationen um einzelne Körperfamilien erzeugen,
-- kontextabhängige Grenzen testen,
-- sichere lokale Kanten aufbauen,
-- danach einen Body-Bank-Lookup + Minimal-Fitter testen.
+- Top-K-Lookup auf akzeptierten Anny-Rezepten,
+- zunächst nur mit wenigen stabilen Eingaben,
+- anschließend sehr kleiner anatomisch gerouteter lokaler Fitter,
+- kein freier From-Scratch-Solver.
+
+Wenn die langen-Beine-Unsicherheit durch einen klaren, aber familienabhängigen Skelettbereich erklärt werden kann, wird daraus **keine globale Proportions-Grenze**, sondern ein lokaler Audit-/Korridorhinweis für die jeweilige Körperfamilie.
 
 ## 11. Abbruch-/Entscheidungsregel
 
@@ -206,3 +212,4 @@ Wenn bereits der konservative Anny-Core-Raum überwiegend unplausibel ist oder s
 | 0.2 | 28.08.2026 | Auf aktuellen Projektstand konsolidiert. From-Scratch-Solver nicht mehr bevorzugter Produktpfad; Audited Body Bank / lokale Körperfamilien als neue Hauptarchitektur. BODY BANK AUDIT PoC v0.8.28.0 und verpflichtende synchronisierte Master-State-/SAMMY_CURRENT-Exports festgelegt. |
 | 0.3 | 28.08.2026 | GitHub Pages Hotfix v0.8.28.1: Cache-Busting-/Versionsdrift aus v0.8.28.0 korrigiert; synchroner HTML/JS/CSS-Deployment-Gate und `.nojekyll` als Exportregel ergänzt. |
 | 0.4 | 28.08.2026 | BODY BANK v0.8.28.2: manueller Zoom/Orbit bleibt über Personenwechsel erhalten; nur expliziter Viewport-Wechsel reframed. Statische Posen, Gang-/Stress-Loops und importierte Animationen direkt im Audit. Review-Kontext wird gespeichert; numerische Audit-Snapshots sind pose-unabhängig. |
+| 0.5 | 28.08.2026 | BODY BANK v0.8.28.3: Phase-1-Audit konsolidiert; alle Unsicherheiten als nutzerbestätigtes `legs-too-long`-Signal dokumentiert. Neuer 400er Grenz-/Extremraum (160 Proportionsfamilien, 160 Extremfälle, 60 breite Randfälle, 20 verdeckte Wiederholungen). Fehleranfällige Phase-1-Umfangssnapshots aus dem Bank-Pfad entfernt; stattdessen exakte Anny-Rest-Rig-Bein/Torso-Verhältnisse. Optionaler persistenter Schnellgrund ohne Kommentarzwang. |

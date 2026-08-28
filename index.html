@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.28.2</title>
-<link rel="stylesheet" href="style.css?v=0.8.28.2">
+<title>Sammy v0.8.28.3</title>
+<link rel="stylesheet" href="style.css?v=0.8.28.3">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.28.2</div>
+  <div class="sammySplashVersion">v0.8.28.3</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.28.2</div>
+<div id="sammyVersion">Sammy · v0.8.28.3</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -51,7 +51,7 @@
   <button type="button" class="sammyLabSubBubble lab-infl" data-lab-panel="sammyInfluencePanel" aria-label="Influence Lab"><b>INFL</b><small>5-Level</small></button>
   <button type="button" class="sammyLabSubBubble lab-solv" data-lab-panel="sammySolver24Panel" aria-label="24 Maß Solver"><b>SOLV</b><small>24 → Body</small></button>
   <button type="button" class="sammyLabSubBubble lab-morf" data-lab-panel="sammyMorphObsPanel" aria-label="Morph Observatory"><b>MORF</b><small>Observatory</small></button>
-  <button type="button" class="sammyLabSubBubble lab-bank" data-lab-panel="sammyBodyBankPanel" aria-label="Audited Body Bank"><b>BANK</b><small>100er Audit</small></button>
+  <button type="button" class="sammyLabSubBubble lab-bank" data-lab-panel="sammyBodyBankPanel" aria-label="Audited Body Bank"><b>BANK</b><small>400er Grenzraum</small></button>
   <button type="button" class="sammyLabSubBubble lab-audt" data-lab-panel="sammyBodyAuditPanel" aria-label="Legacy Blind Body Audit"><b>AUDT</b><small>Solver blind</small></button>
   <button type="button" class="sammyLabSubBubble lab-ansr" data-lab-panel="sammyAnsPanel" aria-label="ANSUR Lab"><b>ANSR</b><small>Prediction</small></button>
  </div>
@@ -481,19 +481,21 @@
 
  <section id="sammyBodyBankPanel" class="sammyPanel sammyBodyBankPanel" data-panel-key="body-bank">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
-  <div class="sammyPanelHead"><div><b>BODY BANK · AUDIT</b><small>95 Basiskörper + 5 verdeckte Wiederholungen</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelHead"><div><b>BODY BANK · PHASE 2</b><small>380 Zielkörper + 20 verdeckte Wiederholungen</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
   <div class="sammyPanelScroll">
-   <div class="sammyBodyBankProgress"><b id="sammyBodyBankIndex">Person 01 / 100</b><span id="sammyBodyBankDone">0 bewertet</span></div>
+   <div class="sammyBodyBankProgress"><b id="sammyBodyBankIndex">Person 001 / 400</b><span id="sammyBodyBankDone">0 bewertet</span></div>
+   <div id="sammyBodyBankKind" class="sammyBodyBankKind">Gezielte Grenz- und Extremraumprüfung</div>
    <div class="sammyBodyBankViewRow" role="toolbar" aria-label="Ansicht"><button type="button" data-bank-view="front" class="active">Vorne</button><button type="button" data-bank-view="threequarter">¾</button><button type="button" data-bank-view="side">Seite</button><button type="button" data-bank-view="back">Hinten</button></div>
    <div class="sammyBodyBankMotionBox">
     <div class="sammyBodyBankMotionMain"><label><span>Pose / Bewegung</span><select id="sammyBodyBankMotion" aria-label="Pose oder Animation"></select></label><button id="sammyBodyBankMotionPlay" type="button" aria-label="Animation abspielen">▶</button></div>
     <div class="sammyBodyBankMotionSub"><label><span>Tempo</span><select id="sammyBodyBankSpeed" aria-label="Animationstempo"><option value="0.5">0.50×</option><option value="0.75">0.75×</option><option value="1" selected>1.00×</option><option value="1.25">1.25×</option><option value="1.5">1.50×</option></select></label><label class="sammyBodyBankFile"><span>+ Animation</span><input id="sammyBodyBankAnimFile" type="file" accept=".fbx,.npy,.npz" multiple></label><small id="sammyBodyBankMotionState">T-Pose · statisch</small></div>
    </div>
+   <label class="sammyBodyBankReason"><span>Schnellgrund für ? / × · optional</span><select id="sammyBodyBankReason" aria-label="Optionaler Schnellgrund"><option value="">— kein Grund</option><option value="legs-too-long" selected>Beine zu lang</option><option value="legs-too-short">Beine zu kurz</option><option value="torso-proportion">Torso / Proportion</option><option value="mass-width">Masse / Breite</option><option value="other">Sonstiges</option></select></label>
    <div class="sammyBodyBankVoteGrid" role="group" aria-label="Körper bewerten"><button id="sammyBodyBankOk" class="ok" type="button"><b>✓</b><span>Plausibel</span></button><button id="sammyBodyBankUnsure" class="unsure" type="button"><b>?</b><span>Unsicher</span></button><button id="sammyBodyBankBad" class="bad" type="button"><b>×</b><span>Unplausibel</span></button></div>
    <div class="sammyBodyBankNav"><button id="sammyBodyBankPrev" type="button">‹ zurück</button><button id="sammyBodyBankNext" type="button">weiter ›</button></div>
-   <div id="sammyBodyBankStatus" class="sammyStatus"><span>Basiskörper werden lokal aus Annys Core-Parametern aufgebaut. Keine lokalen Spezialmorphs und keine Solver-Rekonstruktionen.</span></div>
-   <details class="sammyBodyBankInfo"><summary>Was wird gespeichert?</summary><div>Deine Bewertung gilt nur für diesen Körper und seine lokale Körperfamilie. Ein × erzeugt ausdrücklich kein globales Slider-Verbot. Intern bleiben vollständiges Anny-Rezept, Familien-ID, automatische Basischecks und die verdeckten Wiederholungs-Paare erhalten. Während des Audits werden keine Morphwerte oder Messwerte eingeblendet. Zoom und Orbit bleiben beim Wechsel der Person exakt erhalten; nur ein aktiver Wechsel zwischen Vorne / ¾ / Seite / Hinten darf die Kamera neu einrahmen. Pose oder Animation verändern nur die Darstellung, nicht die Körper-ID.</div></details>
-   <div class="sammyCalibrationActions"><button id="sammyBodyBankExport" type="button">Audit JSON</button><button id="sammyBodyBankRestart" type="button">Neues 100er Audit</button></div>
+   <div id="sammyBodyBankStatus" class="sammyStatus"><span>Phase 2 nutzt bestätigte Körper aus deinem ersten Audit als lokale Anker und ergänzt gezielte Proportions- sowie Extremfälle.</span></div>
+   <details class="sammyBodyBankInfo"><summary>Was ist diesmal anders?</summary><div>Die ersten 160 Zielkörper variieren Proportionen in kleinen Schritten um bestätigte Phase-1-Körperfamilien. Danach folgen 160 absichtliche Extremkombinationen und 60 breite Randstichproben. 20 Fälle werden verdeckt wiederholt. Der Schnellgrund ist optional und bleibt gesetzt, damit mehrere lange-Beine-Fälle ohne Zusatzklick bewertet werden können. Intern werden keine fehleranfälligen Phase-1-Umfangssnapshots mehr gespeichert, sondern pose-unabhängige Kennzahlen aus dem exakten Anny-Rest-Skelett: Hüfthöhe, Beinsegmentkette, Torso-Kette und deren Verhältnis zur Rest-Mesh-Körperhöhe. Ein ? oder × bleibt weiterhin ausschließlich lokal für diesen Körper bzw. diese Familie.</div></details>
+   <div class="sammyCalibrationActions"><button id="sammyBodyBankExport" type="button">Phase-2 Audit JSON</button><button id="sammyBodyBankRestart" type="button">Neues 400er Audit</button></div>
   </div>
  </section>
 
@@ -987,6 +989,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.28.2"></script>
+<script type="module" src="app.js?v=0.8.28.3"></script>
 </body>
 </html>

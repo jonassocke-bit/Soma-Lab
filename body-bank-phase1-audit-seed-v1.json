@@ -1,0 +1,3037 @@
+{
+  "schema": "sammy-body-bank-phase1-audit-seed-v1",
+  "source": {
+    "filename": "Sammy_BODY_BANK_AUDIT_2026-08-28T19-10-48-878Z.json",
+    "sha256": "71ac7b33e4fc21bb9a973354c136dea4e2adab9eb66ed9753e81edc7b127d693",
+    "appVersion": "0.8.28.2",
+    "generated": "2026-08-28T19:10:48.875Z"
+  },
+  "userFollowUp": {
+    "uncertainReason": "legs-too-long",
+    "note": "User stated that every phase-1 uncertain rating was caused by legs appearing extremely long."
+  },
+  "summary": {
+    "total": 100,
+    "uniqueBodies": 95,
+    "hiddenRepeats": 5,
+    "accepted": 70,
+    "uncertain": 26,
+    "rejected": 2,
+    "unchecked": 2,
+    "repeatPairsRated": 5,
+    "repeatExactMatches": 4,
+    "repeatExactMatchRate": 0.8
+  },
+  "uniqueSummary": {
+    "accepted": 66,
+    "unchecked": 2,
+    "uncertain": 25,
+    "rejected": 2
+  },
+  "derived": {
+    "coreProportionsByStatus": {
+      "accepted": {
+        "n": 66,
+        "mean": 0.47563,
+        "min": 0.27511,
+        "max": 0.74912
+      },
+      "uncertain": {
+        "n": 25,
+        "mean": 0.599164,
+        "min": 0.2989,
+        "max": 0.83133
+      },
+      "rejected": {
+        "n": 2,
+        "mean": 0.607765,
+        "min": 0.59587,
+        "max": 0.61966
+      },
+      "unchecked": {
+        "n": 2,
+        "mean": 0.336415,
+        "min": 0.33047,
+        "max": 0.34236
+      }
+    },
+    "coreHeightByStatus": {
+      "accepted": {
+        "n": 66,
+        "mean": 0.50609,
+        "min": 0.23112,
+        "max": 0.78413
+      },
+      "uncertain": {
+        "n": 25,
+        "mean": 0.726199,
+        "min": 0.23317,
+        "max": 0.9
+      },
+      "rejected": {
+        "n": 2,
+        "mean": 0.50745,
+        "min": 0.43031,
+        "max": 0.58459
+      },
+      "unchecked": {
+        "n": 2,
+        "mean": 0.71973,
+        "min": 0.68116,
+        "max": 0.7583
+      }
+    }
+  },
+  "bodies": [
+    {
+      "bodyId": "BB-001",
+      "familyId": "M-H2-W1-M2-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T18:46:00.091Z",
+      "sourceArchetype": "male_muscular",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.876,
+          "muscle": 0.9,
+          "weight": 0.36069,
+          "height": 0.68688,
+          "proportions": 0.36669,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 0
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-002",
+      "familyId": "F-H1-W0-M1-P0-C1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T18:46:06.129Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7168,
+          "muscle": 0.64766,
+          "weight": 0.3053,
+          "height": 0.60402,
+          "proportions": 0.31858,
+          "cupsize": 0.65924,
+          "firmness": 0.70658,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 1
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-003",
+      "familyId": "M-H2-W1-M2-P0",
+      "status": "unchecked",
+      "reviewedAt": null,
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7508,
+          "muscle": 0.67608,
+          "weight": 0.34992,
+          "height": 0.68116,
+          "proportions": 0.33047,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 2
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-004",
+      "familyId": "F-H2-W1-M2-P1-C2",
+      "status": "unchecked",
+      "reviewedAt": null,
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7848,
+          "muscle": 0.7045,
+          "weight": 0.39453,
+          "height": 0.7583,
+          "proportions": 0.34236,
+          "cupsize": 0.68063,
+          "firmness": 0.71708,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 3
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-005",
+      "familyId": "M-H0-W1-M2-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:17.887Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8188,
+          "muscle": 0.73292,
+          "weight": 0.43915,
+          "height": 0.30647,
+          "proportions": 0.35425,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 4
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-006",
+      "familyId": "F-H1-W1-M2-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:20.766Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8528,
+          "muscle": 0.76134,
+          "weight": 0.48376,
+          "height": 0.38361,
+          "proportions": 0.36614,
+          "cupsize": 0.70203,
+          "firmness": 0.40765,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 5
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-007",
+      "familyId": "M-H1-W1-M0-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:29.370Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7236,
+          "muscle": 0.25126,
+          "weight": 0.52838,
+          "height": 0.46075,
+          "proportions": 0.37804,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 6
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-008",
+      "familyId": "F-H1-W1-M0-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:31.716Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7576,
+          "muscle": 0.27968,
+          "weight": 0.57299,
+          "height": 0.5379,
+          "proportions": 0.38993,
+          "cupsize": 0.72342,
+          "firmness": 0.41815,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 7
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-009",
+      "familyId": "M-H1-W1-M0-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:34.164Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7916,
+          "muscle": 0.3081,
+          "weight": 0.61761,
+          "height": 0.61504,
+          "proportions": 0.40182,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 8
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-010",
+      "familyId": "F-H2-W1-M1-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:35.978Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8256,
+          "muscle": 0.33652,
+          "weight": 0.66223,
+          "height": 0.69218,
+          "proportions": 0.41371,
+          "cupsize": 0.74482,
+          "firmness": 0.42864,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 9
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-011",
+      "familyId": "M-H2-W2-M1-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:37.792Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8596,
+          "muscle": 0.36494,
+          "weight": 0.70684,
+          "height": 0.76933,
+          "proportions": 0.4256,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 10
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-012",
+      "familyId": "F-H0-W2-M1-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:44.166Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7304,
+          "muscle": 0.39336,
+          "weight": 0.75146,
+          "height": 0.23112,
+          "proportions": 0.4375,
+          "cupsize": 0.76621,
+          "firmness": 0.43913,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 11
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-013",
+      "familyId": "M-H0-W0-M1-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:46.912Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7644,
+          "muscle": 0.42178,
+          "weight": 0.2195,
+          "height": 0.30827,
+          "proportions": 0.44939,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 12
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-014",
+      "familyId": "F-H1-W0-M1-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:48.876Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7984,
+          "muscle": 0.4502,
+          "weight": 0.26412,
+          "height": 0.38541,
+          "proportions": 0.46128,
+          "cupsize": 0.78761,
+          "firmness": 0.44962,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 13
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-015",
+      "familyId": "M-H1-W0-M1-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:50.341Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8324,
+          "muscle": 0.47863,
+          "weight": 0.30873,
+          "height": 0.46255,
+          "proportions": 0.47317,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 14
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-016",
+      "familyId": "F-H1-W1-M1-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:51.406Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8664,
+          "muscle": 0.50705,
+          "weight": 0.35335,
+          "height": 0.5397,
+          "proportions": 0.48506,
+          "cupsize": 0.809,
+          "firmness": 0.46011,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 15
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-017",
+      "familyId": "M-H1-W1-M1-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:52.538Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7372,
+          "muscle": 0.53547,
+          "weight": 0.39797,
+          "height": 0.61684,
+          "proportions": 0.49696,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 16
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-018",
+      "familyId": "F-H2-W1-M1-P1-C1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:56.699Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7712,
+          "muscle": 0.56389,
+          "weight": 0.44258,
+          "height": 0.69398,
+          "proportions": 0.50885,
+          "cupsize": 0.37065,
+          "firmness": 0.4706,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 17
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-019",
+      "familyId": "M-H0-W1-M1-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:57.764Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8052,
+          "muscle": 0.59231,
+          "weight": 0.4872,
+          "height": 0.24214,
+          "proportions": 0.52074,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 18
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-020",
+      "familyId": "F-H0-W1-M1-P1-C1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:58.779Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8392,
+          "muscle": 0.62073,
+          "weight": 0.53181,
+          "height": 0.31929,
+          "proportions": 0.53263,
+          "cupsize": 0.39204,
+          "firmness": 0.4811,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 19
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-021",
+      "familyId": "M-H1-W1-M1-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:05:59.811Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8732,
+          "muscle": 0.64915,
+          "weight": 0.57643,
+          "height": 0.39643,
+          "proportions": 0.54452,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 20
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-022",
+      "familyId": "F-H1-W1-M2-P1-C1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:06:01.974Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.715,
+          "muscle": 0.67757,
+          "weight": 0.62104,
+          "height": 0.47357,
+          "proportions": 0.55641,
+          "cupsize": 0.41344,
+          "firmness": 0.49159,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 21
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-023",
+      "familyId": "M-H1-W1-M2-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:06:04.370Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.74536,
+          "muscle": 0.70599,
+          "weight": 0.66566,
+          "height": 0.55072,
+          "proportions": 0.56831,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 22
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-024",
+      "familyId": "F-H1-W2-M2-P1-C1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:06:13.841Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.77936,
+          "muscle": 0.73441,
+          "weight": 0.71027,
+          "height": 0.62786,
+          "proportions": 0.5802,
+          "cupsize": 0.43484,
+          "firmness": 0.50208,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 23
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-025",
+      "familyId": "M-H2-W2-M2-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:06:15.056Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.81336,
+          "muscle": 0.76284,
+          "weight": 0.75489,
+          "height": 0.705,
+          "proportions": 0.59209,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 24
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-026",
+      "familyId": "F-H0-W1-M0-P1-C1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:06:48.320Z",
+      "sourceArchetype": "female_curvy",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.82736,
+          "muscle": 0.10275,
+          "weight": 0.34294,
+          "height": 0.23317,
+          "proportions": 0.65398,
+          "cupsize": 0.63623,
+          "firmness": 0.53257,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 25
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-027",
+      "familyId": "M-H1-W0-M0-P1",
+      "status": "rejected",
+      "reviewedAt": "2026-08-28T19:06:51.644Z",
+      "sourceArchetype": "male_lean",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.715,
+          "muscle": 0.14117,
+          "weight": 0.1,
+          "height": 0.43031,
+          "proportions": 0.59587,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 26
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-028",
+      "familyId": "F-H1-W1-M0-P2-C1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:06:56.754Z",
+      "sourceArchetype": "female_curvy",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.73216,
+          "muscle": 0.15959,
+          "weight": 0.43217,
+          "height": 0.38745,
+          "proportions": 0.67777,
+          "cupsize": 0.65763,
+          "firmness": 0.54306,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 27
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-029",
+      "familyId": "M-H1-W0-M0-P1",
+      "status": "rejected",
+      "reviewedAt": "2026-08-28T19:07:01.346Z",
+      "sourceArchetype": "male_lean",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.76616,
+          "muscle": 0.19802,
+          "weight": 0.1,
+          "height": 0.58459,
+          "proportions": 0.61966,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 28
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-030",
+      "familyId": "F-H1-W1-M0-P2-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:03.725Z",
+      "sourceArchetype": "female_curvy",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.80016,
+          "muscle": 0.21644,
+          "weight": 0.5214,
+          "height": 0.54174,
+          "proportions": 0.70155,
+          "cupsize": 0.67902,
+          "firmness": 0.55356,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 29
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-031",
+      "familyId": "M-H2-W0-M0-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:10.100Z",
+      "sourceArchetype": "male_lean",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.83416,
+          "muscle": 0.25486,
+          "weight": 0.18601,
+          "height": 0.73888,
+          "proportions": 0.64344,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 30
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-032",
+      "familyId": "F-H2-W1-M0-P2-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:11.614Z",
+      "sourceArchetype": "female_curvy",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.715,
+          "muscle": 0.27328,
+          "weight": 0.61063,
+          "height": 0.69602,
+          "proportions": 0.72533,
+          "cupsize": 0.70042,
+          "firmness": 0.56405,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 31
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-033",
+      "familyId": "M-H1-W0-M0-P2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:16.774Z",
+      "sourceArchetype": "male_lean",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.73896,
+          "muscle": 0.3117,
+          "weight": 0.27524,
+          "height": 0.36419,
+          "proportions": 0.66723,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 32
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-034",
+      "familyId": "F-H0-W2-M0-P2-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:20.416Z",
+      "sourceArchetype": "female_curvy",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.77296,
+          "muscle": 0.33012,
+          "weight": 0.69986,
+          "height": 0.32133,
+          "proportions": 0.74912,
+          "cupsize": 0.72181,
+          "firmness": 0.57454,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 33
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-035",
+      "familyId": "M-H1-W1-M1-P2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:22.165Z",
+      "sourceArchetype": "male_lean",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.80696,
+          "muscle": 0.36854,
+          "weight": 0.36447,
+          "height": 0.51847,
+          "proportions": 0.69101,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 34
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-036",
+      "familyId": "F-H1-W2-M1-P0-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:27.826Z",
+      "sourceArchetype": "female_curvy",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.84096,
+          "muscle": 0.38696,
+          "weight": 0.78909,
+          "height": 0.47561,
+          "proportions": 0.33322,
+          "cupsize": 0.74321,
+          "firmness": 0.58503,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 35
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-037",
+      "familyId": "M-H2-W1-M1-P0",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:29.655Z",
+      "sourceArchetype": "male_lean",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.715,
+          "muscle": 0.42538,
+          "weight": 0.45371,
+          "height": 0.67276,
+          "proportions": 0.27511,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 36
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-038",
+      "familyId": "F-H1-W2-M1-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:30.935Z",
+      "sourceArchetype": "female_curvy",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.74576,
+          "muscle": 0.44381,
+          "weight": 0.87832,
+          "height": 0.6299,
+          "proportions": 0.35701,
+          "cupsize": 0.7646,
+          "firmness": 0.59552,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 37
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-039",
+      "familyId": "M-H2-W0-M1-P0",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:07:43.087Z",
+      "sourceArchetype": "male_lean",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.77976,
+          "muscle": 0.48223,
+          "weight": 0.1,
+          "height": 0.82704,
+          "proportions": 0.2989,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 38
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-040",
+      "familyId": "F-H0-W1-M1-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:49.676Z",
+      "sourceArchetype": "female_curvy",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.81376,
+          "muscle": 0.50065,
+          "weight": 0.39098,
+          "height": 0.25521,
+          "proportions": 0.38079,
+          "cupsize": 0.786,
+          "firmness": 0.60601,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 39
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-041",
+      "familyId": "M-H1-W0-M1-P0",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:55.967Z",
+      "sourceArchetype": "male_lean",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.84776,
+          "muscle": 0.53907,
+          "weight": 0.1,
+          "height": 0.45235,
+          "proportions": 0.32268,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 40
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-042",
+      "familyId": "F-H1-W1-M1-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:57.914Z",
+      "sourceArchetype": "female_curvy",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.71856,
+          "muscle": 0.55749,
+          "weight": 0.48021,
+          "height": 0.40949,
+          "proportions": 0.40457,
+          "cupsize": 0.80739,
+          "firmness": 0.61651,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 41
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-043",
+      "familyId": "M-H1-W0-M1-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:07:59.612Z",
+      "sourceArchetype": "male_lean",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.75256,
+          "muscle": 0.59591,
+          "weight": 0.14483,
+          "height": 0.60663,
+          "proportions": 0.34647,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 42
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-044",
+      "familyId": "F-H1-W1-M1-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:08:02.127Z",
+      "sourceArchetype": "female_curvy",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.78656,
+          "muscle": 0.61433,
+          "weight": 0.56944,
+          "height": 0.56378,
+          "proportions": 0.42836,
+          "cupsize": 0.82879,
+          "firmness": 0.627,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 43
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-045",
+      "familyId": "M-H2-W0-M0-P1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:08:12.360Z",
+      "sourceArchetype": "male_lean",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.82056,
+          "muscle": 0.11425,
+          "weight": 0.23406,
+          "height": 0.76092,
+          "proportions": 0.37025,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 44
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-046",
+      "familyId": "F-H2-W1-M0-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:08:15.190Z",
+      "sourceArchetype": "female_curvy",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.85456,
+          "muscle": 0.13267,
+          "weight": 0.65868,
+          "height": 0.71806,
+          "proportions": 0.45214,
+          "cupsize": 0.85018,
+          "firmness": 0.63749,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 45
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-047",
+      "familyId": "M-H1-W0-M0-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:08:18.551Z",
+      "sourceArchetype": "male_lean",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.715,
+          "muscle": 0.17109,
+          "weight": 0.32329,
+          "height": 0.38623,
+          "proportions": 0.39403,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 46
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-048",
+      "familyId": "F-H1-W2-M0-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:08:25.075Z",
+      "sourceArchetype": "female_curvy",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7202,
+          "muscle": 0.18951,
+          "weight": 0.74791,
+          "height": 0.34337,
+          "proportions": 0.47593,
+          "cupsize": 0.87158,
+          "firmness": 0.64798,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 47
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-049",
+      "familyId": "M-H1-W1-M0-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:08:26.789Z",
+      "sourceArchetype": "male_lean",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7542,
+          "muscle": 0.22793,
+          "weight": 0.41252,
+          "height": 0.54051,
+          "proportions": 0.41782,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 48
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-050",
+      "familyId": "F-H2-W2-M1-P1-C1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:08:34.732Z",
+      "sourceArchetype": "female_tall",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8382,
+          "muscle": 0.37635,
+          "weight": 0.66714,
+          "height": 0.83766,
+          "proportions": 0.56971,
+          "cupsize": 0.61297,
+          "firmness": 0.63847,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 49
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-051",
+      "familyId": "M-H2-W2-M2-P1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:08:36.642Z",
+      "sourceArchetype": "male_muscular",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8722,
+          "muscle": 0.76477,
+          "weight": 0.86175,
+          "height": 0.7548,
+          "proportions": 0.5216,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 50
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-052",
+      "familyId": "F-H2-W0-M1-P1-C1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:08:38.106Z",
+      "sourceArchetype": "female_tall",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.743,
+          "muscle": 0.4332,
+          "weight": 0.1798,
+          "height": 0.9,
+          "proportions": 0.59349,
+          "cupsize": 0.63437,
+          "firmness": 0.64897,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 51
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-053",
+      "familyId": "M-H2-W1-M2-P1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:08:39.154Z",
+      "sourceArchetype": "male_muscular",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.777,
+          "muscle": 0.82162,
+          "weight": 0.37442,
+          "height": 0.9,
+          "proportions": 0.54538,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 52
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-054",
+      "familyId": "F-H1-W0-M1-P1-C1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:08:42.532Z",
+      "sourceArchetype": "female_tall",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.811,
+          "muscle": 0.49004,
+          "weight": 0.26903,
+          "height": 0.61725,
+          "proportions": 0.61728,
+          "cupsize": 0.65577,
+          "firmness": 0.65946,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 53
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-055",
+      "familyId": "M-H1-W1-M2-P1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:08:43.515Z",
+      "sourceArchetype": "male_muscular",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.845,
+          "muscle": 0.87846,
+          "weight": 0.46365,
+          "height": 0.53439,
+          "proportions": 0.56917,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 54
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-056",
+      "familyId": "F-H2-W1-M1-P1-C2",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:08:44.380Z",
+      "sourceArchetype": "female_tall",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.879,
+          "muscle": 0.54688,
+          "weight": 0.35826,
+          "height": 0.77153,
+          "proportions": 0.64106,
+          "cupsize": 0.67716,
+          "firmness": 0.66995,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 55
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-057",
+      "familyId": "M-H2-W1-M2-P1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:08:45.212Z",
+      "sourceArchetype": "male_muscular",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7498,
+          "muscle": 0.9,
+          "weight": 0.55288,
+          "height": 0.68868,
+          "proportions": 0.59295,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 56
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-058",
+      "familyId": "F-H2-W1-M1-P1-C2",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:08:46.277Z",
+      "sourceArchetype": "female_tall",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7838,
+          "muscle": 0.60372,
+          "weight": 0.44749,
+          "height": 0.9,
+          "proportions": 0.66484,
+          "cupsize": 0.69856,
+          "firmness": 0.68044,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 57
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-059",
+      "familyId": "M-H2-W1-M2-P1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:08:47.313Z",
+      "sourceArchetype": "male_muscular",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8178,
+          "muscle": 0.9,
+          "weight": 0.64211,
+          "height": 0.84296,
+          "proportions": 0.61674,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 58
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-060",
+      "familyId": "F-H2-W1-M1-P2-C0",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:08:51.354Z",
+      "sourceArchetype": "female_tall",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8518,
+          "muscle": 0.66056,
+          "weight": 0.53672,
+          "height": 0.9,
+          "proportions": 0.68863,
+          "cupsize": 0.2602,
+          "firmness": 0.69093,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 59
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-061",
+      "familyId": "M-H1-W2-M2-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:08:57.062Z",
+      "sourceArchetype": "male_muscular",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8858,
+          "muscle": 0.9,
+          "weight": 0.73134,
+          "height": 0.3927,
+          "proportions": 0.64052,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 60
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-062",
+      "familyId": "F-H1-W1-M2-P2-C0",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:09:08.247Z",
+      "sourceArchetype": "female_tall",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7566,
+          "muscle": 0.71741,
+          "weight": 0.62595,
+          "height": 0.62984,
+          "proportions": 0.71241,
+          "cupsize": 0.2816,
+          "firmness": 0.70142,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 61
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-063",
+      "familyId": "M-H1-W2-M2-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:09:13.769Z",
+      "sourceArchetype": "male_muscular",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7906,
+          "muscle": 0.9,
+          "weight": 0.82057,
+          "height": 0.54698,
+          "proportions": 0.6643,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 62
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-064",
+      "familyId": "F-H2-W2-M0-P2-C0",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:09:22.726Z",
+      "sourceArchetype": "female_tall",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8246,
+          "muscle": 0.23574,
+          "weight": 0.71518,
+          "height": 0.78413,
+          "proportions": 0.7362,
+          "cupsize": 0.30299,
+          "firmness": 0.71192,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 63
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-065",
+      "familyId": "M-H2-W0-M1-P2",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:09:25.737Z",
+      "sourceArchetype": "male_muscular",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8586,
+          "muscle": 0.62417,
+          "weight": 0.33323,
+          "height": 0.70127,
+          "proportions": 0.68809,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 64
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-066",
+      "familyId": "F-H2-W0-M0-P2-C0",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:09:26.603Z",
+      "sourceArchetype": "female_tall",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8926,
+          "muscle": 0.29259,
+          "weight": 0.22785,
+          "height": 0.9,
+          "proportions": 0.75998,
+          "cupsize": 0.32439,
+          "firmness": 0.40249,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 65
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-067",
+      "familyId": "M-H2-W1-M2-P2",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:09:27.519Z",
+      "sourceArchetype": "male_muscular",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7634,
+          "muscle": 0.68101,
+          "weight": 0.42246,
+          "height": 0.85556,
+          "proportions": 0.71187,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 66
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-068",
+      "familyId": "F-H1-W0-M1-P2-C1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:09:29.400Z",
+      "sourceArchetype": "female_tall",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7974,
+          "muscle": 0.34943,
+          "weight": 0.31708,
+          "height": 0.56372,
+          "proportions": 0.78376,
+          "cupsize": 0.34578,
+          "firmness": 0.41299,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 67
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-069",
+      "familyId": "M-H1-W1-M2-P2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:09:31.381Z",
+      "sourceArchetype": "male_muscular",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8314,
+          "muscle": 0.73785,
+          "weight": 0.51169,
+          "height": 0.48086,
+          "proportions": 0.73566,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 68
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-070",
+      "familyId": "F-H2-W1-M1-P2-C1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:09:32.628Z",
+      "sourceArchetype": "female_tall",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8654,
+          "muscle": 0.40627,
+          "weight": 0.40631,
+          "height": 0.718,
+          "proportions": 0.80755,
+          "cupsize": 0.36718,
+          "firmness": 0.42348,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 69
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-071",
+      "familyId": "M-H1-W1-M2-P2",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:09:33.978Z",
+      "sourceArchetype": "male_muscular",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8994,
+          "muscle": 0.79469,
+          "weight": 0.60092,
+          "height": 0.63515,
+          "proportions": 0.75944,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 70
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-072",
+      "familyId": "F-H2-W1-M1-P2-C1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:09:34.843Z",
+      "sourceArchetype": "female_tall",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.73756,
+          "muscle": 0.46311,
+          "weight": 0.49554,
+          "height": 0.87229,
+          "proportions": 0.83133,
+          "cupsize": 0.38857,
+          "firmness": 0.43397,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 71
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-073",
+      "familyId": "M-H1-W1-M1-P0",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:09:38.038Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.74156,
+          "muscle": 0.51153,
+          "weight": 0.59015,
+          "height": 0.62943,
+          "proportions": 0.28354,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 72
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-074",
+      "familyId": "F-H2-W1-M1-P0-C1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:09:41.383Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.77556,
+          "muscle": 0.53995,
+          "weight": 0.63477,
+          "height": 0.70658,
+          "proportions": 0.29544,
+          "cupsize": 0.50997,
+          "firmness": 0.44446,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 73
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-075",
+      "familyId": "M-H0-W2-M1-P0",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:09:42.897Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.80956,
+          "muscle": 0.56838,
+          "weight": 0.67939,
+          "height": 0.25474,
+          "proportions": 0.30733,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 74
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-076",
+      "familyId": "F-H0-W2-M1-P0-C1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:09:44.661Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.84356,
+          "muscle": 0.5968,
+          "weight": 0.724,
+          "height": 0.33188,
+          "proportions": 0.31922,
+          "cupsize": 0.53136,
+          "firmness": 0.45495,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 75
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-077",
+      "familyId": "M-H1-W2-M1-P0",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:09:48.875Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.715,
+          "muscle": 0.62522,
+          "weight": 0.76862,
+          "height": 0.40903,
+          "proportions": 0.33111,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 76
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-078",
+      "familyId": "F-H1-W0-M1-P1-C1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:09:55.080Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.74836,
+          "muscle": 0.65364,
+          "weight": 0.23666,
+          "height": 0.48617,
+          "proportions": 0.343,
+          "cupsize": 0.55276,
+          "firmness": 0.46544,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 77
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-079",
+      "familyId": "M-H1-W0-M2-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:09:57.026Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.78236,
+          "muscle": 0.68206,
+          "weight": 0.28128,
+          "height": 0.56331,
+          "proportions": 0.3549,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 78
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-080",
+      "familyId": "F-H1-W0-M2-P1-C1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:09:59.473Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.81636,
+          "muscle": 0.71048,
+          "weight": 0.32589,
+          "height": 0.64045,
+          "proportions": 0.36679,
+          "cupsize": 0.57415,
+          "firmness": 0.47594,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 79
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-081",
+      "familyId": "M-H2-W1-M2-P1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:10:00.589Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.85036,
+          "muscle": 0.7389,
+          "weight": 0.37051,
+          "height": 0.7176,
+          "proportions": 0.37868,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 80
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-082",
+      "familyId": "F-H0-W1-M2-P1-C1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:10:02.885Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.72116,
+          "muscle": 0.76732,
+          "weight": 0.41513,
+          "height": 0.26576,
+          "proportions": 0.39057,
+          "cupsize": 0.59555,
+          "firmness": 0.48643,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 81
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-083",
+      "familyId": "M-H1-W1-M0-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:10:03.904Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.75516,
+          "muscle": 0.25724,
+          "weight": 0.45974,
+          "height": 0.3429,
+          "proportions": 0.40246,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 82
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-084",
+      "familyId": "F-H1-W1-M0-P1-C1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:10:06.081Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.78916,
+          "muscle": 0.28566,
+          "weight": 0.50436,
+          "height": 0.42005,
+          "proportions": 0.41435,
+          "cupsize": 0.61694,
+          "firmness": 0.49692,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 83
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-085",
+      "familyId": "M-H1-W1-M0-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:10:10.042Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.82316,
+          "muscle": 0.31408,
+          "weight": 0.54897,
+          "height": 0.49719,
+          "proportions": 0.42625,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 84
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-086",
+      "familyId": "F-H1-W1-M1-P1-C1",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:10:12.589Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.85716,
+          "muscle": 0.3425,
+          "weight": 0.59359,
+          "height": 0.57433,
+          "proportions": 0.43814,
+          "cupsize": 0.63834,
+          "firmness": 0.50741,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 85
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-087",
+      "familyId": "M-H1-W1-M1-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:10:16.550Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.72796,
+          "muscle": 0.37092,
+          "weight": 0.6382,
+          "height": 0.65147,
+          "proportions": 0.45003,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 86
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-088",
+      "familyId": "F-H2-W2-M1-P1-C1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:10:18.314Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.76196,
+          "muscle": 0.39935,
+          "weight": 0.68282,
+          "height": 0.72862,
+          "proportions": 0.46192,
+          "cupsize": 0.65973,
+          "firmness": 0.5179,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 87
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-089",
+      "familyId": "M-H0-W2-M1-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:10:19.597Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.79596,
+          "muscle": 0.42777,
+          "weight": 0.72743,
+          "height": 0.27678,
+          "proportions": 0.47381,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 88
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-090",
+      "familyId": "F-H1-W2-M1-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:10:22.025Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.82996,
+          "muscle": 0.45619,
+          "weight": 0.77205,
+          "height": 0.35392,
+          "proportions": 0.48571,
+          "cupsize": 0.68113,
+          "firmness": 0.5284,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 89
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-091",
+      "familyId": "M-H1-W0-M1-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:10:25.237Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.86396,
+          "muscle": 0.48461,
+          "weight": 0.2401,
+          "height": 0.43107,
+          "proportions": 0.4976,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 90
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-092",
+      "familyId": "F-H1-W0-M1-P1-C2",
+      "status": "uncertain",
+      "reviewedAt": "2026-08-28T19:10:27.218Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.73476,
+          "muscle": 0.51303,
+          "weight": 0.28471,
+          "height": 0.50821,
+          "proportions": 0.50949,
+          "cupsize": 0.70253,
+          "firmness": 0.53889,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 91
+      },
+      "humanAnnotation": {
+        "reason": "legs-too-long",
+        "source": "user-follow-up-after-phase1",
+        "scope": "this phase-1 rating only"
+      }
+    },
+    {
+      "bodyId": "BB-093",
+      "familyId": "M-H1-W0-M1-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:10:30.344Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.76876,
+          "muscle": 0.54145,
+          "weight": 0.32933,
+          "height": 0.58535,
+          "proportions": 0.52138,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 92
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-094",
+      "familyId": "F-H1-W1-M1-P1-C2",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:10:34.257Z",
+      "sourceArchetype": "female_avg",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.80276,
+          "muscle": 0.56987,
+          "weight": 0.37394,
+          "height": 0.66249,
+          "proportions": 0.53327,
+          "cupsize": 0.72392,
+          "firmness": 0.54938,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 93
+      },
+      "humanAnnotation": null
+    },
+    {
+      "bodyId": "BB-095",
+      "familyId": "M-H2-W1-M1-P1",
+      "status": "accepted",
+      "reviewedAt": "2026-08-28T19:10:40.517Z",
+      "sourceArchetype": "male_avg",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.83676,
+          "muscle": 0.59829,
+          "weight": 0.41856,
+          "height": 0.73964,
+          "proportions": 0.54517,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "anny-core-base",
+        "localMorphCount": 0,
+        "sampling": "archetype-centered deterministic Halton",
+        "samplingIndex": 94
+      },
+      "humanAnnotation": null
+    }
+  ]
+}

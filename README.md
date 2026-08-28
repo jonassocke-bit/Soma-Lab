@@ -1,3 +1,17 @@
+# Sammy v0.8.28.3 — BODY BANK Phase 2 · Boundary / Extreme Audit
+
+Der abgeschlossene 100er Human-Audit aus v0.8.28.2 ist jetzt reproduzierbar als Seed hinterlegt. Phase 2 zeigt 400 gezielt ausgewählte Fälle: lokale Proportionsvarianten um akzeptierte Körperfamilien, absichtliche Extremkombinationen, breite Randstichproben und verdeckte Wiederholungen.
+
+Die bekannte Unsicherheit `Beine zu lang` wird nicht als globale `proportions`-Grenze interpretiert. Stattdessen speichert Phase 2 erstmals robuste pose-unabhängige Bein-/Torso-Verhältnisse aus dem exakten Anny/SOMA-Rest-Rig. Ein optionaler Schnellgrund hält das Audit trotzdem bei einem Klick pro Person.
+
+Siehe:
+- `BODY_BANK_PHASE2_BOUNDARY_EXTREMES_V0.8.28.3.md`
+- `RELEASE_NOTES_V0.8.28.3.md`
+- `CHANGESET_V0.8.28.3.md`
+- `SAMMY_MASTER_STATE.docx`
+
+---
+
 # Sammy v0.8.28.2 — BODY BANK Audit View / Motion
 
 v0.8.28.2 macht den visuellen BODY-BANK-Audit bewegungsfähig, ohne die Körperidentität oder die 95+5-Bank zu verändern. **Manueller Zoom und Orbit bleiben jetzt beim Wechsel der Person exakt erhalten**; nur ein expliziter Viewport-Wechsel über Vorne / ¾ / Seite / Hinten rahmt die Kamera neu ein.

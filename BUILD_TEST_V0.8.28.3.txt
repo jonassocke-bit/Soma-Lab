@@ -1,0 +1,27 @@
+SAMMY v0.8.28.3 static + BODY BANK Phase-2 boundary/extreme gate
+Status: PASS
+
+PASS checks:
+- JavaScript syntax (`node --check`)
+- HTML title / visible version / splash / app.js cache tag / style.css cache tag all = 0.8.28.3
+- no duplicate HTML IDs
+- Phase-2 BANK UI IDs present
+- Phase-1 seed schema valid: 95 unique bodies = 66 accepted / 25 uncertain / 2 rejected / 2 unchecked
+- every Phase-1 uncertain body carries the user follow-up annotation `legs-too-long`
+- Phase-1 source SHA-256 matches the uploaded audit export
+- Phase-2 plan schema valid: 380 unique + 20 hidden repeats = 400 reviews
+- Phase-2 unique breakdown: 160 proportion-family / 160 extreme-space / 60 broad-edge
+- zero duplicate core recipes among 380 unique Phase-2 targets
+- exact Anny rest-rig metric path present, including ground-Y alignment
+- hidden metrics include hipJointHeightRatio / legChainRatio / torsoChainRatio and related segment ratios
+- legacy simple circumference/proxy snapshot is not used by the Phase-2 BODY BANK block
+- export schema = sammy-audited-body-bank-export-v2
+- optional persistent quick-reason options present
+- manual camera is not reset on person change; viewport buttons remain the explicit reframe path
+- Phase-2 plan fetch uses cache:no-store
+- `.nojekyll` present
+- Master State Markdown = 0.5 / App 0.8.28.3
+- Master State DOCX rendered and visually checked on all 5 pages
+
+Environment note:
+A full headless Chromium WebGL smoke run is not used as a release gate in this container because its GPU/ANGLE initialization fails before Sammy can boot. This is an environment limitation; the static/data/deployment gates above are PASS.

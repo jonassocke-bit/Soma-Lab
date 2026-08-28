@@ -1,3 +1,15 @@
+# v0.8.28.3 · BODY BANK Phase 2
+
+- Phase-1-Human-Audit als reproduzierbarer Seed eingebaut.
+- 400er Zielaudit: 160 lokale Proportionsfälle, 160 Extremfälle, 60 Randfälle, 20 verdeckte Wiederholungen.
+- Nutzerhinweis „alle Unsicheren = Beine zu lang“ als lokale Human-Annotation übernommen.
+- Alte fehleranfällige BANK-Umfangssnapshots nicht weiterverwendet.
+- Neue exakte Rest-Rig-Bein/Torso-Verhältnisse pro Vote.
+- Optionaler persistenter Schnellgrund ohne Kommentarzwang.
+- Zoom/Orbit, Pose-/Animationsaudit und lokale Verdict-Semantik unverändert.
+
+---
+
 # v0.8.28.2 · BODY BANK Audit View / Motion
 
 - Manual zoom/orbit persists exactly across body changes, voting and pose/motion changes.
