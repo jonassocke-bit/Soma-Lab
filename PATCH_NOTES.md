@@ -116,3 +116,11 @@ Boot/UI-Hotfix: ungültigen `rc`-Verweis aus der alten Representability-Renderan
 ### v0.8.27.0
 
 Produktionsrichtung auf Body Fit Minimal umgestellt: 5-Maße-Maske bleibt, ANSUR nur Statistikprior, kleiner regionaler Fit, permanente Volumen-/Gewichtsrückmeldung und Frauen-Cup A–H/Auto von Anfang an. Historische Solver-V2-Labs bleiben unverändert als Research-Pfad verfügbar.
+
+## v0.8.27.1
+Body Fit Priority Fix: Masse jetzt Weight+Muscle am realen Mesh, danach Hüfte/Taille Recovery; direkter Hüftmorph erhält deutlich mehr automatischen Arbeitsraum und einen eigenen manuellen Regler.
+
+## v0.8.27.2 · Deployment + Defaults Fix
+- Sichtbarer Build-Stempel 0.8.27.2; gemeldeter vorheriger Test lief noch mit v0.8.27.0.
+- Body-Fit Defaults: 174 / 88.5 / 103 / 86 / 113.
+- Priority-Fix v0.8.27.1 bleibt aktiv: Masse über Weight+Muscle vor regionaler Recovery.

@@ -110,3 +110,9 @@ Unter SOLV steht ein fokussierter 5-Körper-Test zur Verfügung, der nicht die A
 ## v0.8.27.0 — neuer Produktionspfad
 
 Im SOLV-Panel steht `BODY FIT MINIMAL · PROTOTYPE 1.0` jetzt vor dem historischen Solver-V2-Bereich. Die normale Avatar-Erzeugung soll künftig aus 5 Nutzereingaben, einem statistischen Prior, wenigen direkten Anny-Reglern, Meshvolumen↔Gewicht und einem getrennten Frauenbrust-/Cup-Block entstehen. Die ANSUR24-Solver bleiben als Forschungsarchiv erhalten.
+
+### v0.8.27.1 · Minimal Body Fit Priorität
+Produktionsreihenfolge: Größe → Masse (Weight+Muscle via Meshvolumen) → Frame → Taille/Hüfte → Masse-Check → lokale Recovery → Frauen-Cup. ANSUR bleibt Statistik, nicht geometrisches Zielsystem.
+
+### v0.8.27.2 Body Fit
+Der Produktionsprototyp startet standardmäßig mit 174 cm, 88.5 kg, Brust 103 cm, Taille 86 cm, Hüfte/Gesäß 113 cm. Vor Tests muss sowohl die globale Versionsanzeige als auch der Body-Fit-Buildstempel 0.8.27.2 zeigen.
