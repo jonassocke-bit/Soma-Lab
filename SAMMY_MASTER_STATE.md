@@ -1,6 +1,6 @@
 # SAMMY / BODY LAB / SOMA-LAB · MASTER STATE
 
-**Kanonischer Projektstand · Version 0.3 · 28.08.2026 · App v0.8.28.1**
+**Kanonischer Projektstand · Version 0.4 · 28.08.2026 · App v0.8.28.2**
 
 ## 1. Verbindliche Projektpflege
 
@@ -56,7 +56,7 @@ Statusmodell:
 
 Zwei akzeptierte Endpunkte garantieren nicht automatisch, dass jede Interpolation dazwischen gültig ist. Zwischenstufen müssen separat technisch geprüft und bei Bedarf human auditiert werden.
 
-## 5. Aktueller Build v0.8.28.1 · BODY BANK AUDIT POC + GITHUB PAGES HOTFIX
+## 5. Aktueller Build v0.8.28.2 · BODY BANK AUDIT VIEW/MOTION
 
 ### Zweck
 
@@ -75,14 +75,35 @@ Der erste Test prüft nur, ob Annys **Core-Basiskörperraum** als Ausgangspunkt 
 
 ### Audit-UI
 
-Der Nutzer sieht bewusst keine Morphwerte oder Messwerte. Sichtbar sind nur:
+Der Nutzer sieht bewusst keine Morphwerte oder Messwerte. Sichtbar sind:
 
 - aktueller Fortschritt,
 - Vorne / 3/4 / Seite / Hinten,
+- kompakte Pose-/Bewegungsauswahl,
 - `Plausibel`, `Unsicher`, `Unplausibel`,
 - Zurück / Weiter.
 
 Es gibt **keine Kommentar- oder Fehlerbeschreibungspflicht**. Nach einer Bewertung wird automatisch der nächste Körper geladen.
+
+### Kamera-/Zoom-Regel
+
+- Beim Eintritt in BODY BANK wird der aktuelle Körper einmal initial eingerahmt.
+- Danach bleiben **manueller Zoom, Orbit-Ziel, Kameradistanz und Blickausschnitt beim Personenwechsel unverändert**.
+- Weder Bewertung, Zurück/Weiter, Posewechsel noch Animation dürfen die Kamera neu einrahmen.
+- **Nur ein aktiver Klick auf Vorne / 3/4 / Seite / Hinten** darf eine neue standardisierte Kameraeinstellung setzen.
+
+### Pose und Bewegung
+
+Für die visuelle Plausibilitätsprüfung stehen statische Posen und Bewegungen zur Verfügung:
+
+- T-Pose,
+- anthropometrisches/ruhiges Stehen,
+- Kniebeuge, Lauf- und Action-Pose,
+- synthetischer Gang-Loop,
+- Rig-Stress-Loop,
+- optional importierte FBX/NPY/NPZ-Animationen aus dem bereits vorhandenen Sammy-Animationspfad.
+
+Animationen können pausiert und in der Geschwindigkeit verändert werden. Ein Personenwechsel behält die aktuell gewählte Pose bzw. den laufenden/pausierten Bewegungszustand bei. Die Körper-ID und das Anny-Rezept werden dadurch nicht verändert.
 
 ### Audit-Export
 
@@ -92,10 +113,13 @@ Der JSON-Export enthält intern:
 - Repeat-Beziehung,
 - Bewertung und Zeitpunkt,
 - vollständiges Anny-Core-Rezept,
-- versteckte Mess-Snapshots grundlegender stabiler Maße,
+- versteckte **pose-unabhängige Rest-Shape-Snapshots** grundlegender Maße,
 - Basis-Autocheck,
 - Erzeugungsmetadaten,
+- Review-Kontext pro Bewertung (Viewport, Pose/Animation, Play/Pause, Tempo, Kameradistanz),
 - Repeat-Konsistenz-Zusammenfassung.
+
+Die versteckten Mess-Snapshots werden absichtlich am Rest-Shape ermittelt. Dadurch kann eine während des visuellen Audits laufende Animation die numerische Basisprüfung nicht verfälschen.
 
 ## 6. Rolle des bisherigen Wissens
 
@@ -126,7 +150,7 @@ Externe Populationsdaten können später genutzt werden, um aus wenigen Nutzerda
 ### Aktueller Produktions-/Produktpfad
 
 - Body Fit v1.2 aus v0.8.27.2 bleibt als bestehender Minimal-Prototyp verfügbar.
-- v0.8.28.1 prüft parallel den neuen Body-Bank-/Audit-Pfad als bevorzugte nächste Architektur; gegenüber v0.8.28.0 ist nur die GitHub-Pages-/Cache-Auslieferung korrigiert.
+- v0.8.28.2 prüft parallel den neuen Body-Bank-/Audit-Pfad als bevorzugte nächste Architektur. Gegenüber v0.8.28.1 bleibt die Queue unverändert; neu sind persistenter Audit-Zoom/Orbit sowie Pose-/Animationskontrolle innerhalb von BANK.
 
 ### Forschungsarchiv
 
@@ -151,7 +175,7 @@ Diese Pfade dürfen als Diagnose, Vergleich oder Datenquelle genutzt werden. Ein
 - Messfehler, Mesh-Limit, Lookup-Abdeckung und Fitterfehler müssen separat diagnostizierbar bleiben.
 - iPhone/Safari-Tauglichkeit und Resume/Persistenz sind Pflicht.
 
-## 10. Nächster Gate nach v0.8.28.1
+## 10. Nächster Gate nach v0.8.28.2
 
 Der Nutzer auditiert die 100 Fälle und exportiert `Sammy_BODY_BANK_AUDIT_*.json`.
 
@@ -180,4 +204,5 @@ Wenn bereits der konservative Anny-Core-Raum überwiegend unplausibel ist oder s
 |---|---|---|
 | 0.1 | 22.08.2026 | Master State eingeführt; Landmark-/Messpipeline als damaliger Schwerpunkt dokumentiert. |
 | 0.2 | 28.08.2026 | Auf aktuellen Projektstand konsolidiert. From-Scratch-Solver nicht mehr bevorzugter Produktpfad; Audited Body Bank / lokale Körperfamilien als neue Hauptarchitektur. BODY BANK AUDIT PoC v0.8.28.0 und verpflichtende synchronisierte Master-State-/SAMMY_CURRENT-Exports festgelegt. |
-0.3 | 28.08.2026 | GitHub Pages Hotfix v0.8.28.1: Cache-Busting-/Versionsdrift aus v0.8.28.0 korrigiert; synchroner HTML/JS/CSS-Deployment-Gate und .nojekyll als Exportregel ergänzt.
+| 0.3 | 28.08.2026 | GitHub Pages Hotfix v0.8.28.1: Cache-Busting-/Versionsdrift aus v0.8.28.0 korrigiert; synchroner HTML/JS/CSS-Deployment-Gate und `.nojekyll` als Exportregel ergänzt. |
+| 0.4 | 28.08.2026 | BODY BANK v0.8.28.2: manueller Zoom/Orbit bleibt über Personenwechsel erhalten; nur expliziter Viewport-Wechsel reframed. Statische Posen, Gang-/Stress-Loops und importierte Animationen direkt im Audit. Review-Kontext wird gespeichert; numerische Audit-Snapshots sind pose-unabhängig. |

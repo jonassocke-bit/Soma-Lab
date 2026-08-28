@@ -1,0 +1,35 @@
+SAMMY v0.8.28.2 static + BODY BANK view/motion gate
+Status: PASS
+
+{
+  "status": "PASS",
+  "failed": [],
+  "app_version": "0.8.28.2",
+  "html_title": true,
+  "css_cache": true,
+  "js_cache": true,
+  "visible_version": true,
+  "splash_version": true,
+  "duplicate_html_ids": [],
+  "missing_body_bank_motion_ids": [],
+  "bank_panel_registered": true,
+  "body_bank_unique_95": true,
+  "body_bank_repeats_5": true,
+  "body_bank_total_formula": true,
+  "legacy_audit_preserved": true,
+  "camera_not_reset_on_apply": true,
+  "camera_not_reset_on_move": true,
+  "viewport_is_explicit_reframe": true,
+  "pose_options": true,
+  "loop_options": true,
+  "animation_import_extensions": true,
+  "animation_import_handler": true,
+  "speed_handler": true,
+  "review_context_saved": true,
+  "rest_shape_snapshot": true,
+  "nojekyll_exists": true,
+  "master_state_docx_exists": true,
+  "master_state_markdown_version": true,
+  "body_bank_motion_css": true,
+  "preview_removed": true
+}

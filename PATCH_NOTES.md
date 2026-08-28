@@ -1,3 +1,16 @@
+# v0.8.28.2 · BODY BANK Audit View / Motion
+
+- Manual zoom/orbit persists exactly across body changes, voting and pose/motion changes.
+- Only explicit Vorne / ¾ / Seite / Hinten selection reframes the camera.
+- Adds T-Pose, Standing, Squat, Run and Action static audit poses.
+- Adds Walk and Rig-Stress loops with play/pause and speed control.
+- Reuses the existing animation pipeline for direct `.fbx` / `.npy` / `.npz` import in BODY BANK.
+- Vote snapshots use pose-independent rest-shape measurements; motion cannot contaminate hidden numeric audit values.
+- Vote export records view, motion, running state, speed and camera review context.
+- 95+5 sampling and local body-family semantics unchanged.
+
+---
+
 # v0.8.26.6 · Solver Shape Layer 1.0
 
 - Keeps canonical ANSUR24-PROT-v2 operators untouched; adds separate locked Solver Shape features.

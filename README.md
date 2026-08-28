@@ -1,3 +1,17 @@
+# Sammy v0.8.28.2 — BODY BANK Audit View / Motion
+
+v0.8.28.2 macht den visuellen BODY-BANK-Audit bewegungsfähig, ohne die Körperidentität oder die 95+5-Bank zu verändern. **Manueller Zoom und Orbit bleiben jetzt beim Wechsel der Person exakt erhalten**; nur ein expliziter Viewport-Wechsel über Vorne / ¾ / Seite / Hinten rahmt die Kamera neu ein.
+
+Direkt im BANK-Panel stehen T-Pose, Stehen, Kniebeuge, Laufpose und Action-Pose sowie Gang-Loop und Rig-Stress bereit. Eigene `.fbx`/`.npy`/`.npz`-Animationen können über die bestehende Motion-Pipeline importiert werden. Play/Pause und Tempo sind im Audit verfügbar. Numerische Vote-Snapshots bleiben bewusst **pose-unabhängig** und werden aus der Rest-Shape erzeugt; Ansicht/Motion/Kamera werden getrennt als Review-Kontext exportiert.
+
+Siehe:
+- `BODY_BANK_AUDIT_VIEW_MOTION_V0.8.28.2.md`
+- `RELEASE_NOTES_V0.8.28.2.md`
+- `CHANGESET_V0.8.28.2.md`
+- `SAMMY_MASTER_STATE.docx`
+
+---
+
 # Sammy v0.8.28.1 — GitHub Pages Cache/Deploy Hotfix
 
 v0.8.28.1 ändert keine Body-Bank-Logik. Der Hotfix korrigiert die in v0.8.28.0 versehentlich stehen gebliebenen `0.8.27.2`-Versions-/Cache-URLs für `app.js` und `style.css`, synchronisiert Titel/Splash/App-Version und legt `.nojekyll` für eine unveränderte statische GitHub-Pages-Auslieferung bei. Dadurch lädt GitHub Pages nach einem Release garantiert die neue JS/CSS-Revision statt ggf. eine gecachte v0.8.27.2-Ressource mit dem v0.8.28.x-HTML zu mischen.
