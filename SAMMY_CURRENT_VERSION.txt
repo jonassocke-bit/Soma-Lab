@@ -1,3 +1,3 @@
-0.8.28.0
-SAMMY_V0.8.28.0_BODY-BANK-AUDIT-POC.zip
-Current canonical source: v0.8.28.0 Body Bank Audit PoC
+0.8.28.1
+SAMMY_V0.8.28.1_BODY-BANK-AUDIT-GITHUB-HOTFIX.zip
+Current canonical source: v0.8.28.1 Body Bank Audit GitHub Pages Hotfix

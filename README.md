@@ -1,3 +1,9 @@
+# Sammy v0.8.28.1 — GitHub Pages Cache/Deploy Hotfix
+
+v0.8.28.1 ändert keine Body-Bank-Logik. Der Hotfix korrigiert die in v0.8.28.0 versehentlich stehen gebliebenen `0.8.27.2`-Versions-/Cache-URLs für `app.js` und `style.css`, synchronisiert Titel/Splash/App-Version und legt `.nojekyll` für eine unveränderte statische GitHub-Pages-Auslieferung bei. Dadurch lädt GitHub Pages nach einem Release garantiert die neue JS/CSS-Revision statt ggf. eine gecachte v0.8.27.2-Ressource mit dem v0.8.28.x-HTML zu mischen.
+
+---
+
 # Sammy v0.8.28.0 — Audited Body Bank PoC
 
 v0.8.28.0 führt den neuen **BANK**-Pfad ein, ohne die bisherigen Solver-/Mess-/Morph-Labs zu löschen. Der erste Body-Bank-Test erzeugt deterministisch 95 unterschiedliche Anny-Core-Basiskörper plus 5 verdeckte Wiederholungen. Das menschliche Audit ist absichtlich minimal: **Plausibel / Unsicher / Unplausibel**, vier Kameraansichten, Zurück/Weiter, keine Kommentar- oder Fehlerbeschreibungspflicht.

@@ -1,6 +1,6 @@
 # SAMMY / BODY LAB / SOMA-LAB · MASTER STATE
 
-**Kanonischer Projektstand · Version 0.2 · 28.08.2026 · App v0.8.28.0**
+**Kanonischer Projektstand · Version 0.3 · 28.08.2026 · App v0.8.28.1**
 
 ## 1. Verbindliche Projektpflege
 
@@ -56,7 +56,7 @@ Statusmodell:
 
 Zwei akzeptierte Endpunkte garantieren nicht automatisch, dass jede Interpolation dazwischen gültig ist. Zwischenstufen müssen separat technisch geprüft und bei Bedarf human auditiert werden.
 
-## 5. Aktueller Build v0.8.28.0 · BODY BANK AUDIT POC
+## 5. Aktueller Build v0.8.28.1 · BODY BANK AUDIT POC + GITHUB PAGES HOTFIX
 
 ### Zweck
 
@@ -126,7 +126,7 @@ Externe Populationsdaten können später genutzt werden, um aus wenigen Nutzerda
 ### Aktueller Produktions-/Produktpfad
 
 - Body Fit v1.2 aus v0.8.27.2 bleibt als bestehender Minimal-Prototyp verfügbar.
-- v0.8.28.0 prüft parallel den neuen Body-Bank-/Audit-Pfad als bevorzugte nächste Architektur.
+- v0.8.28.1 prüft parallel den neuen Body-Bank-/Audit-Pfad als bevorzugte nächste Architektur; gegenüber v0.8.28.0 ist nur die GitHub-Pages-/Cache-Auslieferung korrigiert.
 
 ### Forschungsarchiv
 
@@ -151,7 +151,7 @@ Diese Pfade dürfen als Diagnose, Vergleich oder Datenquelle genutzt werden. Ein
 - Messfehler, Mesh-Limit, Lookup-Abdeckung und Fitterfehler müssen separat diagnostizierbar bleiben.
 - iPhone/Safari-Tauglichkeit und Resume/Persistenz sind Pflicht.
 
-## 10. Nächster Gate nach v0.8.28.0
+## 10. Nächster Gate nach v0.8.28.1
 
 Der Nutzer auditiert die 100 Fälle und exportiert `Sammy_BODY_BANK_AUDIT_*.json`.
 
@@ -180,3 +180,4 @@ Wenn bereits der konservative Anny-Core-Raum überwiegend unplausibel ist oder s
 |---|---|---|
 | 0.1 | 22.08.2026 | Master State eingeführt; Landmark-/Messpipeline als damaliger Schwerpunkt dokumentiert. |
 | 0.2 | 28.08.2026 | Auf aktuellen Projektstand konsolidiert. From-Scratch-Solver nicht mehr bevorzugter Produktpfad; Audited Body Bank / lokale Körperfamilien als neue Hauptarchitektur. BODY BANK AUDIT PoC v0.8.28.0 und verpflichtende synchronisierte Master-State-/SAMMY_CURRENT-Exports festgelegt. |
+0.3 | 28.08.2026 | GitHub Pages Hotfix v0.8.28.1: Cache-Busting-/Versionsdrift aus v0.8.28.0 korrigiert; synchroner HTML/JS/CSS-Deployment-Gate und .nojekyll als Exportregel ergänzt.

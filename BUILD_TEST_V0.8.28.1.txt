@@ -1,0 +1,20 @@
+SAMMY v0.8.28.1 static + GitHub Pages deployment gate
+Status: PASS
+
+{
+  "app_version": "0.8.28.1",
+  "html_title": "Sammy v0.8.28.1",
+  "css_cache": "style.css?v=0.8.28.1",
+  "js_cache": "app.js?v=0.8.28.1",
+  "visible_version": "Sammy · v0.8.28.1",
+  "splash_version": "v0.8.28.1",
+  "duplicate_html_ids": [],
+  "missing_body_bank_ids": [],
+  "bank_panel_registered": true,
+  "body_bank_unique_constant": true,
+  "body_bank_repeat_constant": true,
+  "body_bank_total_constant": true,
+  "nojekyll_exists": true,
+  "master_state_docx_exists": true,
+  "legacy_audit_preserved": true
+}

@@ -1,13 +1,7 @@
-SAMMY v0.8.28.0 — GitHub Compact Package
+SAMMY v0.8.28.1 — GitHub Compact Package
 ==========================================
 
-Complete v0.8.28.0 build repackaged to keep the number of files directly
-uploaded to GitHub below the browser upload limit.
-
-Runtime/source/current project files remain unpacked. Historical release notes,
-changesets, build reports and superseded design notes are preserved byte-for-byte
-inside SAMMY_HISTORY_THROUGH_V0.8.27.2.zip. Nothing from the original package was discarded.
-
-Original file count: 204
-Direct files in compact package: 52
-Historical files inside nested archive: 154
+GitHub-Pages hotfix of v0.8.28.0. Runtime/source/current project files remain directly visible.
+Historical release/build material is preserved byte-for-byte in SAMMY_HISTORY_THROUGH_V0.8.28.0.zip.
+Important deployment rule: upload/extract the direct files themselves to the repository root; do not upload only this outer ZIP as a single file.
+`index.html`, `app.js`, `style.css` cache tags and visible build version are synchronized to v0.8.28.1. `.nojekyll` is included.
