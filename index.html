@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.26.3</title>
-<link rel="stylesheet" href="style.css?v=0.8.26.3">
+<title>Sammy v0.8.26.4</title>
+<link rel="stylesheet" href="style.css?v=0.8.26.4">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.26.3</div>
+  <div class="sammySplashVersion">v0.8.26.4</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.26.3</div>
+<div id="sammyVersion">Sammy · v0.8.26.4</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -302,20 +302,20 @@
     </div>
    </details>
 
-   <div class="sammyLabIntroCard sammyPraIntro"><b>Pragmatisch konvergieren – vorhandene Regler wirklich ausnutzen</b><span>v0.8.26.3 behebt den Record/Checkpoint-Fehler des letzten Repair-Laufs und ergänzt einen Residual-Convergence-Polish. Nach Thorax/Frame/Soft wird jedes noch deutlich falsche produktrelevante Maß erneut auf dem aktuellen echten Mesh linearisiert. Bis zu sechs kleine Schritte dürfen vorhandene direkte Regler weiterdrehen, solange bereits passende kritische Maße geschützt bleiben. ±115/130 % wird erst freigegeben, wenn ein sinnvoller lokaler Morph tatsächlich an ±100 % in der benötigten Richtung blockiert. Flexed Forearm bleibt Diagnose; keine neuen ANSUR-Personen und keine neuen Morph-Assets.</span></div>
+   <div class="sammyLabIntroCard sammyPraIntro"><b>Solver Architecture Audit · anatomisch routen statt Slider raten</b><span>v0.8.26.4 korrigiert die Solver-Architektur an der Ursache: Depth/Horizontal bleiben getrennte Raw-DOFs, die sieben reparierten Maße dürfen keine alten Top-Measure-Hinweise mehr verwenden, fehlende direkte Wrist/Ankle-Zielmorphs werden fresh-only ergänzt und Residuals bekommen eine harte anatomische Route. Der Nachlauf misst bis zu fünf fachlich passende DOFs frisch, wählt danach maximal drei über ihre echte lokale Ableitung und landet prädiktiv in Richtung Ziel. Kritische Maße werden dauerhaft geschützt; höchstens zwei Aktionen hintereinander dürfen dasselbe Maß monopolieren. ±115/130 % bleibt ausschließlich ein echter Bound-Escape.</span></div>
    <details class="sammyCalibrationLab sammyPraLab" id="sammyPraLab" open>
-    <summary><b>REAL ANSUR REPAIR · PRAGMATIC REPAIR 1.1</b><span>5 bekannte Fälle · Residual Convergence · adaptive ±115/130 % · Produktmaße</span></summary>
+    <summary><b>REAL ANSUR REPAIR · PRAGMATIC REPAIR 1.2</b><span>5 bekannte Fälle · Anatomical Routing · Predictive Residual · adaptive ±115/130 %</span></summary>
     <div class="sammyCalibrationBody">
      <div id="sammyPraSource" class="sammyRarSource">Representability-/Stress-Quelle wird gesucht …</div>
-     <div class="sammyRarPlan"><div><b>5</b><span>bekannte Fokus-Körper</span></div><div><b>≤6</b><span>frische Residual-Runden je Körper</span></div><div><b>115→130 %</b><span>nur bei echtem Bound-Block</span></div><div><b>0</b><span>neue ANSUR-Zeilen</span></div></div>
+     <div class="sammyRarPlan"><div><b>5</b><span>bekannte Fokus-Körper</span></div><div><b>≤12</b><span>kritisch-first Residual-Aktionen</span></div><div><b>5→3</b><span>anatomischer Pool → fresh Auswahl</span></div><div><b>0</b><span>neue ANSUR-Zeilen</span></div></div>
      <div class="sammyRarQuestion"><b>Was soll dieser Lauf entscheiden?</b><span><strong>Konvergenz:</strong> verschwinden 3–5-cm-Restfehler, wenn Sammy dieselben Maße erneut frisch linearisiert statt nach einem Block aufzuhören? · <strong>Trade-off:</strong> wenn ein Restfehler bleibt, wird protokolliert, ob kein sicherer Schritt existiert. · <strong>Bounds:</strong> ±115/130 % nur bei nachgewiesenem Grenzanschlag. · <strong>Produktziel:</strong> Schulter/Torso/Umfänge zählen stärker; Flexed-Forearm darf den Avatar nicht aufblasen.</span></div>
      <div class="sammyCalibrationActions"><button id="sammyPraStart" type="button">Repair-Test starten</button><button id="sammyPraPause" type="button" disabled>Pause</button></div>
      <div class="sammyCalibrationActions"><button id="sammyPraReset" type="button">Repair-Test löschen</button><button id="sammyPraExport" type="button" disabled>Repair JSON</button><label class="sammyRarFile"><span>Representability / Stress / Repair JSON</span><input id="sammyPraFile" type="file" accept="application/json,.json"></label></div>
-     <div id="sammyPraStatus" class="sammyCalibrationStatus">Pragmatic Repair 1.1 wird initialisiert …</div>
+     <div id="sammyPraStatus" class="sammyCalibrationStatus">Pragmatic Repair 1.2 wird initialisiert …</div>
      <div class="sammyCalibrationProgress"><i id="sammyPraProgress"></i></div>
      <div id="sammyPraLive" class="sammyCalibrationLiveMeasures"></div>
      <div id="sammyPraResults" class="sammyRarResults"><div class="sammyInfluenceEmpty">Noch kein Pragmatic-Repair-Test.</div></div>
-     <details class="sammyRarCriteria"><summary><b>Was ist hier absichtlich anders als im Forschungs-Proof?</b><span>Produkt- statt Laborziel</span></summary><div><p><b>Keine neue Solverarchitektur:</b> Start ist immer die bereits fertige Real-ANSUR-Lösung. Getestet wird nur ein begrenzter Nachlauf.</p><p><b>Residual Convergence:</b> Nach dem groben Repair werden noch falsche Produktmaße einzeln priorisiert. Pro Runde werden nur bis zu drei passende Freiheitsgrade frisch am Mesh vermessen; maximal sechs Runden je Körper. Ein bereits gutes kritisches Maß wird dabei geschützt.</p><p><b>Adaptive Bounds:</b> Core-Regler bleiben 0…1. Lokale lineare Morphs dürfen erst dann bis ±1,15 und notfalls ±1,30 extrapolieren, wenn der aktuelle Residual-Schritt am normalen ±1-Limit in genau der benötigten Richtung blockiert. Kein pauschales 130-%-Freischalten.</p><p><b>Virtuelle Thorax-Achse:</b> Dorsi, Pectoral, V-Shape, Bust/Underbust und Shoulder-Distance werden gemeinsam über einen frischen lokalen Jacobian kombiniert. Ziel ist nicht „mehr Brust“, sondern Breite/Tiefe/Umfang sinnvoll gegeneinander zu verschieben.</p><p><b>Produktmetriken:</b> Körperhöhe, Schulterrahmen, Brust-/Taillen-/Gesäßumfang und Torso-/Schulterlängen haben Vorrang. Chest Breadth bleibt formunterstützend, weil die ANSUR↔Oberflächen-Brücke unvollständig ist. Flexed Forearm wird fast nur diagnostisch gewichtet.</p><p><b>Stop-Regel:</b> Wenn der kurze Nachlauf normale Körper deutlich plausibler und produktrelevante Maße besser macht, reicht das für den nächsten Schritt. Kein Zwang auf 24/24 Observer-Error-PASS.</p></div></details>
+     <details class="sammyRarCriteria"><summary><b>Was wurde am Solver selbst korrigiert?</b><span>Routing/DOFs statt neuer Solver V3</span></summary><div><p><b>Raw DOFs bleiben raw:</b> `coupled-axis candidate` bedeutet wieder nur Hypothese. Torso-, Neck- und Upperleg-Depth/Horizontal werden nicht mehr vorzeitig zu einer Variable fusioniert.</p><p><b>Fresh-only Repair:</b> Für Biacromial, Neck/Neck Base, Thigh, Tibiale, Shoulder Length und Upperarm Length sind alte Deep-Vektoren und alte Top-Measure-Hinweise als Kandidatenranking gesperrt. Anatomie wählt den Pool, das aktuelle Mesh liefert die Zahlen.</p><p><b>Harte anatomische Route:</b> Ein Thigh-Residual darf nur Thigh/Upperleg und geeignete globale Composition-Achsen sehen – niemals Cupsize/Breast/Neck. Entsprechend gelten eigene Routen für Schulter, Brust, Taille, Gesäß, Hals, Arme und Beine.</p><p><b>Predictive Residual:</b> Erst bis zu fünf passende DOFs frisch vermessen, dann maximal drei anhand echter Steigung, Reichweite und Kollateralschaden auswählen. Aus Restfehler/Steigung wird ein Zielschritt geschätzt; Line-Search und erneute Mesh-Messung bleiben Sicherheitsnetz.</p><p><b>Scheduler + Locks:</b> Produktkritische Residuen kommen vor Supportmaßen; höchstens zwei Aktionen hintereinander auf dasselbe Maß. Ein einmal gutes kritisches Maß bleibt persistent geschützt. Ein lokaler Stall darf nach einer echten Zustandsänderung erneut geprüft werden; am Ende kann auf den besten Zwischenstand zurückgerollt werden.</p><p><b>Adaptive Bounds:</b> Grobe Thorax/Frame/Soft-Stufen bleiben strikt im normalen Bereich. Nur ein konkret am ±1-Limit blockierter lokaler Morph darf im Residual auf ±1,15 und danach maximal ±1,30 geöffnet werden.</p><p><b>Produktmetriken:</b> Körperhöhe, Schulterrahmen, Brust-/Taillen-/Gesäßumfang und Torso-/Schulterlängen haben Vorrang. Chest Breadth bleibt formunterstützend; Flexed Forearm bleibt Diagnose.</p></div></details>
     </div>
    </details>
 
@@ -336,7 +336,7 @@
     </div>
    </details>
 
-   <div class="sammyLabIntroCard sammySolverV2StressIntro"><b>Nächster Gate · echte ANSUR-Personen statt Sammy-Zielkörper</b><span>Dieser Test verändert den erfolgreichen Proof-1.6-Solver nicht. Zehn tatsächlich beobachtete Personen aus dem bisher unbenutzten ANSUR-II-Testsplit werden als 24-Maß-Ziele verwendet: vier typische Profile und sechs reale Randfälle. Jede Person läuft einmal; alle sechs Randfälle und jeder verdächtige typische Fall bekommen automatisch einen zweiten, weit entfernten Start. Nach jeder Person wird gespeichert. Erwartung auf dem aktuellen iPhone: ungefähr 1½–2 Stunden. Die zehn verwendeten Personen werden anschließend dauerhaft aus der späteren Few-Measure-Endvalidierung ausgeschlossen; 902 Testpersonen bleiben unangetastet.</span></div>
+   <div class="sammyLabIntroCard sammySolverV2StressIntro"><b>Nächster Gate · echte ANSUR-Personen statt Sammy-Zielkörper</b><span>Die Proof-1.6-Zielfunktion und Gate-Formeln bleiben erhalten; neue Läufe verwenden jedoch die korrigierte Routing-v2-DOF-Architektur. Zehn tatsächlich beobachtete Personen aus dem bisher unbenutzten ANSUR-II-Testsplit werden als 24-Maß-Ziele verwendet: vier typische Profile und sechs reale Randfälle. Jede Person läuft einmal; alle sechs Randfälle und jeder verdächtige typische Fall bekommen automatisch einen zweiten, weit entfernten Start. Nach jeder Person wird gespeichert. Erwartung auf dem aktuellen iPhone: ungefähr 1½–2 Stunden. Die zehn verwendeten Personen werden anschließend dauerhaft aus der späteren Few-Measure-Endvalidierung ausgeschlossen; 902 Testpersonen bleiben unangetastet.</span></div>
    <details class="sammyCalibrationLab sammySolverV2StressLab" id="sammySolverV2StressLab">
     <summary><b>REAL ANSUR STRESS · GATE 1.0</b><span>10 held-out Personen · 24 echte Maße · adaptive Re-Tests · Checkpoints</span></summary>
     <div class="sammyCalibrationBody">
@@ -892,6 +892,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.26.3"></script>
+<script type="module" src="app.js?v=0.8.26.4"></script>
 </body>
 </html>

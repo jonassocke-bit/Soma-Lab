@@ -1,3 +1,19 @@
+# v0.8.26.4 · Solver Architecture Audit / Anatomical Routing + Predictive Polish
+
+- Hard 24-measure anatomical routing prevents unrelated local morphs from entering a residual pool.
+- Seven Repair-v1.6 rows are fresh-only: no stale Deep vector or stale `topMeasureIds` may rank candidates.
+- Removes premature solver fusion of Depth/Horizontal axes; legacy coupled maps split at runtime.
+- Restores required direct target morphs (including Wrist/Ankle) as fresh-only supplements when missing.
+- PRA 1.2 measures up to five anatomical DOFs freshly, then selects up to three by actual derivative/collateral/reach.
+- Predictive Newton/least-squares landing replaces the old fixed ±0.14 local / ±0.045 core residual clip.
+- Residual scheduler: max 12 actions, critical-first, max two same-focus actions in a row, state-local stalls and capacity-limited diagnosis.
+- Persistent locks protect critical measurements once they are inside product tolerance.
+- Best-checkpoint rollback prevents late accepted trades from leaving a worse final body.
+- ±1.15/±1.30 is now opened only for the exact locally bound-blocked DOF; coarse stages remain inside normal bounds and core axes never extrapolate.
+- Measurement operators, Reliability, FitMetrics, Proof Objective and frozen ANSUR/statistical data remain unchanged.
+
+---
+
 # v0.8.26.3 · Pragmatic Repair 1.1 / Residual Convergence
 
 - Fixes missing PRA `ordinal` initialization that could overwrite Case records in IndexedDB.

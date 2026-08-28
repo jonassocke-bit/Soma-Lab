@@ -1,3 +1,16 @@
+# Sammy v0.8.26.4 — Solver Architecture Audit · Anatomical Routing + Predictive Polish
+
+v0.8.26.4 korrigiert die Solver-Nutzung vorhandener Freiheitsgrade: harte anatomische Routen, fresh-only Behandlung der sieben Repair-v1.6-Maße, getrennte Raw-DOFs statt vorzeitiger Depth/Horizontal-Fusion, predictive Residual-Landung, fairer Scheduler, persistente kritische Locks und echte adaptive ±115/130-%-Bounds nur bei nachgewiesenem Grenzanschlag. ANSUR24-Messung, Reliability, FitMetrics, Proof Objective, Statistikdaten und die 902er Prediction-Reserve bleiben unverändert.
+
+Siehe:
+- `RELEASE_NOTES_V0.8.26.4.md`
+- `SOLVER_V2_ARCHITECTURE_AUDIT_1.0_V0.8.26.4.md`
+- `REAL_ANSUR_PRAGMATIC_REPAIR_1.2_V0.8.26.4.md`
+- `NEXT_PHASE_AFTER_SOLVER_AUDIT_V0.8.26.4.md`
+- `CHANGESET_V0.8.26.4.md`
+
+---
+
 # Sammy v0.8.26.3 — Pragmatic Repair 1.1 · Residual Convergence
 
 v0.8.26.3 behebt den v0.8.26.2-Record/Checkpoint-Fehler und lässt den produktorientierten Repair nach den groben Blöcken nicht mehr mit freien Reglern und großen Restfehlern einfach aufhören. Bis zu sechs frische Residual-Re-Linearisationen verfolgen noch falsche kritische Maße; adaptive ±115/130-%-Bounds werden nur bei echtem Grenzanschlag genutzt. Proof 1.6, ANSUR24 und die 902er Prediction-Reserve bleiben unverändert.

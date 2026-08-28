@@ -1,0 +1,61 @@
+Sammy v0.8.26.4 BUILD TEST
+Base: v0.8.26.3
+
+STATIC / BOOT
+- app.js syntax + version 0.8.26.4: PASS
+- index/cache version contains only 0.8.26.4: PASS · ['0.8.26.4']
+- HTML IDs unique: PASS · 531/531
+- CSS braces balanced: PASS
+
+ARCHITECTURE AUDIT FIXES
+- new SolverMap keeps raw DOFs; no pair-candidate fusion: PASS
+- legacy coupled solver maps split into fresh-only raw axes: PASS
+- repaired measure IDs removed from stale topMeasureIds: PASS
+- repaired rows cannot use stored static ranking hints: PASS
+- required wrist/ankle/calf/lowerleg target morphs bypass broad Morph Observatory category filter: PASS
+- old solver maps receive missing direct target controls as fresh-only supplements: PASS
+- architecture schema routing-v2: PASS
+
+ANATOMICAL ROUTING / RESIDUAL
+- actual routing helper self-test (thigh/shoulder/chest hard exclusions): PASS
+- critical-first residual scheduler: max 12 actions and max 2 consecutive same-focus actions: PASS
+- persistent critical-measure locks: PASS
+- best-checkpoint rollback: PASS
+- stalls are state-local and retry after body-state change: PASS
+- capacity-limited early stop classification: PASS
+- predictive trust-region landing replaces fixed ±0.14/±0.045 residual clip: PASS
+- real-mesh line search guards predictive landing: PASS
+- anatomical pool up to 5 then fresh numerical selection up to 3: PASS
+- coarse stages stay in normal bounds: PASS
+- ±115/130 only adaptive residual escape: PASS
+- legacy solver-map migration invariants: PASS
+
+FROZEN MEASUREMENT / STATISTICAL FUNCTIONS
+- sammyComputeANSUR24V2 exact vs v0.8.26.3: PASS
+- sammyAns24V2ApplyState exact vs v0.8.26.3: PASS
+- sammyAns24V2Spec exact vs v0.8.26.3: PASS
+- sammySolverV2ProofReliability exact vs v0.8.26.3: PASS
+- sammySolverV2ProofFitMetrics exact vs v0.8.26.3: PASS
+- sammySolverV2ProofObjective exact vs v0.8.26.3: PASS
+- sammySolverV2CanonicalRestarts exact vs v0.8.26.3: PASS
+- sammySolverV2StatCoreCenters exact vs v0.8.26.3: PASS
+- sammyRarDiagnoseCase exact vs v0.8.26.3: PASS
+- sammyRarSummary exact vs v0.8.26.3: PASS
+
+FROZEN DATA ASSETS
+- ANSUR24_PROTOCOL_V2.json exact: PASS
+- ansur-protocol-v1.json exact: PASS
+- solver-v2-statistical-body-bank-v1.json exact: PASS
+- ansur-prediction-trainval-v1.json exact: PASS
+- ansur-prediction-test-v1.json exact: PASS
+- ansur-prediction-final-reserve-v1.json exact: PASS
+- mass-composition-v1.json exact: PASS
+- solver-v2-real-ansur-stress-suite-v1.json exact: PASS
+
+LATEST SOURCE COMPATIBILITY
+- uploaded v0.8.26.3 PRA has 5 source cases: PASS · 5
+- uploaded PRA contains legacy solver map for runtime migration: PASS
+
+RUNTIME BOUNDARY
+- Offline container cannot execute Three.js/WebGL + Anny MeasurementStates end-to-end; iPhone/Safari remains authoritative for fresh-mesh morphology/timing.
+- Static syntax, actual routing helpers, legacy-map migration invariants, frozen functions/data and package integrity are tested before release.
