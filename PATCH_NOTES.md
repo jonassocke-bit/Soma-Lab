@@ -112,3 +112,7 @@ Boot/UI-Hotfix: ungültigen `rc`-Verweis aus der alten Representability-Renderan
 - Basisebene wird gelockt; Morph-Wirkmaximum und beste Zielnähe werden unabhängig gemessen.
 - `stomach-pregnant-incr` wird testweise nur als `Abdominal Projection` ausgewertet.
 - Keine neuen ANSUR-Fälle; Prediction-Reserve bleibt 902.
+
+### v0.8.27.0
+
+Produktionsrichtung auf Body Fit Minimal umgestellt: 5-Maße-Maske bleibt, ANSUR nur Statistikprior, kleiner regionaler Fit, permanente Volumen-/Gewichtsrückmeldung und Frauen-Cup A–H/Auto von Anfang an. Historische Solver-V2-Labs bleiben unverändert als Research-Pfad verfügbar.

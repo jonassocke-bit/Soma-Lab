@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.26.6</title>
-<link rel="stylesheet" href="style.css?v=0.8.26.6">
+<title>Sammy v0.8.27.0</title>
+<link rel="stylesheet" href="style.css?v=0.8.27.0">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -21,13 +21,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.26.6</div>
+  <div class="sammySplashVersion">v0.8.27.0</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.26.6</div>
+<div id="sammyVersion">Sammy · v0.8.27.0</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -228,10 +228,51 @@
 
  <section id="sammySolver24Panel" class="sammyPanel sammySolver24Panel" data-panel-key="solver24">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
-  <div class="sammyPanelHead"><div><b>SOLVER V2 · PROOF 1.6 + REAL ANSUR</b><small>validierte Baseline · held-out Stress Gate · Ergebnisprüfung</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelHead"><div><b>BODY FIT + RESEARCH SOLVER</b><small>Produktions-Prototyp oben · bisherige ANSUR-Forschung bleibt darunter erhalten</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard sammySolverV2ProofIntro"><b>Hierarchischer Solver V2 · Canonical Multistart + statistischer Prefit</b><span>Proof 1.6 nutzt den bereits im Morph Observatory geplanten coarse-to-fine Aufbau um: Structural Rig → globale Masse → Schulter/Hüfte → regionale Composition → Segment/Landmark → lokale Maßkorrektur. Frühere Stufen werden nicht hart eingefroren, sondern als hochpriorisierte Constraints geschützt. Vor dem Solve bleibt TEST VALID unverändert zwingend. Danach werden Original-Seed, ein ANSUR-train/validation-basierter statistischer Canonical Body und ein Blend auf dem echten Mesh gescreent; ein zweites Basin wird nur bei weiterem FAIL gerechnet. Direkte 24 Zielmaße bleiben immer autoritativ. Die sieben reparierten Maße verwenden weiterhin keine alten Deep-Interaction-Residuals. Wenn der erste komplette Solve noch WARN oder FAIL ist, wird genau dessen fertiger Körper höchstens zweimal frisch und mit kleineren Schritten nachpoliert.</span></div>
-   <details class="sammyCalibrationLab sammySolverV2ProofLab" id="sammySolverV2ProofLab" open>
+   <div class="sammyLabIntroCard sammyBfIntro"><b>BODY FIT v1 · weniger Zwang, mehr Anny</b><span>Neuer Produktions-Prototyp: 5 Eingaben bleiben erhalten. ANSUR II dient nur noch als statistischer Prior für wenige robuste Struktur-/Rahmenwerte; der Avatar selbst wird mit wenigen direkten Anny-Reglern, großzügigen Toleranzen und einer permanenten Volumen↔Gewicht-Rückmeldung aufgebaut. Keine 24-Maß-Optimierung, kein Cross-Region-Polish.</span></div>
+   <details class="sammyCalibrationLab sammyBfLab" id="sammyBfLab" open>
+    <summary><b>BODY FIT MINIMAL · PROTOTYPE 1.0</b><span>5 Maße · Statistik nur Prior · Volume↔Weight · ♀ Cup A–H · intuitive Form</span></summary>
+    <div class="sammyCalibrationBody">
+     <div class="sammyBfInputGrid">
+      <div class="sammyBfField sammyBfSex"><span>Gender</span><div class="sammyCalibrationModes" role="group" aria-label="Body Fit Gender"><button type="button" data-bf-sex="0" class="active">♂ Mann</button><button type="button" data-bf-sex="1">♀ Frau</button></div></div>
+      <label class="sammyBfField"><span>Alter</span><input id="sammyBfAge" type="number" inputmode="numeric" min="18" max="80" step="1" value="35"><small>Kontext, kein hartes Formmaß</small></label>
+      <label class="sammyBfField"><span>Körpergröße</span><div><input id="sammyBfHeight" type="number" inputmode="decimal" min="140" max="210" step="0.5" value="178"><em>cm</em></div><small>starker Strukturanker</small></label>
+      <label class="sammyBfField"><span>Gewicht</span><div><input id="sammyBfWeight" type="number" inputmode="decimal" min="40" max="180" step="0.5" value="82"><em>kg</em></div><small>über Meshvolumen rückgekoppelt</small></label>
+      <label class="sammyBfField"><span>Brustumfang</span><div><input id="sammyBfChest" type="number" inputmode="decimal" min="65" max="160" step="0.5" value="104"><em>cm</em></div><small>weiches Formsignal, kein ANSUR-Zwang</small></label>
+      <label class="sammyBfField"><span>Taillenumfang</span><div><input id="sammyBfWaist" type="number" inputmode="decimal" min="50" max="170" step="0.5" value="90"><em>cm</em></div><small>weiche lokale Korrektur</small></label>
+      <label class="sammyBfField"><span>Gesäß-/Hüftumfang</span><div><input id="sammyBfHip" type="number" inputmode="decimal" min="65" max="180" step="0.5" value="102"><em>cm</em></div><small>weiche lokale Korrektur</small></label>
+     </div>
+
+     <div id="sammyBfFemaleBlock" class="sammyBfFemaleBlock" hidden>
+      <div class="sammyBfFemaleHead"><b>♀ Brustblock</b><span>Rippenkorb und Brust bleiben getrennt. Cup ist eine verständliche EU/DE-Schätzung, kein BH-Fitting.</span></div>
+      <div class="sammyBfCupRow"><label><span>Körbchengröße</span><select id="sammyBfCup"><option value="auto">Auto · aus Körper ableiten</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option></select></label><div id="sammyBfCupLive" class="sammyBfCupLive">Noch nicht berechnet.</div></div>
+     </div>
+
+     <div class="sammyCalibrationActions"><button id="sammyBfStart" type="button">Body Fit anwenden</button><button id="sammyBfReset" type="button">Neutral zurücksetzen</button><button id="sammyBfExport" type="button" disabled>Body-Fit JSON</button></div>
+     <div id="sammyBfStatus" class="sammyCalibrationStatus">Bereit · 5 Maße eingeben und Body Fit starten.</div>
+     <div class="sammyCalibrationProgress"><i id="sammyBfProgress"></i></div>
+     <div id="sammyBfPrior" class="sammyBfPrior"><div class="sammyInfluenceEmpty">Statistischer Prior wird beim Start aus ANSUR train+validation berechnet; kein ANSUR-Maß wird als Produktionsziel erzwungen.</div></div>
+     <div id="sammyBfFeedback" class="sammyBfFeedback"><div class="sammyInfluenceEmpty">Nach dem Fit erscheinen Ziel↔Avatar, Volumen und Gewichtsschätzung.</div></div>
+
+     <details class="sammyBfManual" open><summary><b>Intuitive Form</b><span>bewusste Feinkorrektur nach dem Auto-Fit</span></summary>
+      <div class="sammyBfSliderGrid">
+       <label><span>Fülle</span><input id="sammyBfFullness" type="range" min="0" max="100" step="1" value="50"><output id="sammyBfFullnessOut">50</output></label>
+       <label><span>Muskulatur</span><input id="sammyBfMuscle" type="range" min="0" max="100" step="1" value="50"><output id="sammyBfMuscleOut">50</output></label>
+       <label><span>Bauchprojektion</span><input id="sammyBfBelly" type="range" min="0" max="100" step="1" value="0"><output id="sammyBfBellyOut">0</output></label>
+       <label><span>Gesäß</span><input id="sammyBfButt" type="range" min="-100" max="100" step="1" value="0"><output id="sammyBfButtOut">0</output></label>
+       <label><span>Oberschenkel</span><input id="sammyBfThigh" type="range" min="-100" max="100" step="1" value="0"><output id="sammyBfThighOut">0</output></label>
+       <label><span>Oberarme</span><input id="sammyBfArm" type="range" min="-100" max="100" step="1" value="0"><output id="sammyBfArmOut">0</output></label>
+      </div>
+      <div class="sammyBfManualNote">Diese Regler sind absichtlich intuitiv und konservativ. Das Gewichtsfeld wird danach nicht zwanghaft zurückoptimiert; die Avatar-Gewichtsschätzung folgt dem tatsächlichen Meshvolumen.</div>
+     </details>
+
+     <details class="sammyRarCriteria"><summary><b>Was dieser Prototyp ausdrücklich NICHT macht</b><span>Anti-Grotesk-Regel</span></summary><div><p><b>Keine 24 Zielmaße.</b> ANSUR II wird nur statistisch für plausible Start-/Rahmenwerte verwendet.</p><p><b>Keine Cross-Region-Rettung.</b> Schulter wird nicht über Hals/Brust repariert; Taille nicht über Cupsize; lokale Korrekturen bleiben in ihrer Region.</p><p><b>Große Deadbands.</b> Brust/Taille/Hüfte werden nur grob angenähert. Ein natürlicher Avatar darf einige Zentimeter vom Eingabewert abweichen.</p><p><b>Keine Auto-Extrapolation.</b> Der automatische Fit bleibt innerhalb normaler Anny-Grenzen und nutzt nur wenige Korrekturschritte.</p><p><b>Gewicht bleibt sichtbar rückgekoppelt.</b> Eingabegewicht und aus aktuellem Meshvolumen geschätztes Avatar-Gewicht werden getrennt angezeigt.</p></div></details>
+    </div>
+   </details>
+
+   <div class="sammyLabIntroCard sammySolverV2ProofIntro"><b>FORSCHUNGSARCHIV · Solver V2 / ANSUR</b><span>Die bisherigen Proof-, Stress-, Repair- und Alignment-Läufe bleiben für Vergleich und Forschung erhalten. Sie sind ab v0.8.27.0 nicht mehr der Produktionspfad für den Körperaufbau.</span></div>
+   <details class="sammyCalibrationLab sammySolverV2ProofLab" id="sammySolverV2ProofLab">
     <summary><b>PROOF 1.6</b><span>TEST VALID · STAT · Hierarchie · POLISH ×2 max · Seed-Stabilität · Conflict</span></summary>
     <div class="sammyCalibrationBody">
      <div id="sammySolverV2ProofSource" class="sammySolverV2ProofSource">Deep-Quelle wird gesucht …</div>
@@ -926,6 +967,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.26.6"></script>
+<script type="module" src="app.js?v=0.8.27.0"></script>
 </body>
 </html>

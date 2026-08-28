@@ -1,0 +1,15 @@
+SAMMY v0.8.27.0 · static build checks
+
+- app.js: node --check PASS
+- HTML IDs: unique PASS
+- CSS braces: balanced PASS
+- Body Fit UI IDs: present and referenced PASS
+- ANSUR train+validation default5 columns: stature / weightkg / chest_circumference / waist_circumference / buttock_circumference PASS
+- kNN prior smoke test: finite male/female shoulder, crotch, waist-breadth, hip-breadth predictions PASS
+- required direct morph IDs from recent completed shapes: shoulder / upperleg-height / bust / waist / hips / buttock / thigh / upperarm PASS
+- stomach-pregnant-incr: present in v0.8.26.6 runtime candidate definitions; manual Body-Fit control guards missing runtime key safely
+- old Solver V2 / Stress / Repair / Alignment code remains in build as research archive
+- no held-out/final-reserve row is consumed by Body Fit; only ansur-prediction-trainval-v1.json is fetched by new prior
+
+Runtime boundary:
+- Full Anny/WebGL mesh application, closed-mesh volume feedback, cup slice geometry and iPhone Safari interaction require the real browser runtime and cannot be executed in this container.

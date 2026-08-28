@@ -106,3 +106,7 @@ Boot/UI-Hotfix auf v0.8.26.4; wissenschaftlicher Solverstand unverändert.
 
 ### v0.8.26.5 — Morph ↔ Messebene Alignment
 Unter SOLV steht ein fokussierter 5-Körper-Test zur Verfügung, der nicht die ANSUR-Protokollmessung verschiebt, sondern separat untersucht, ob Annys Morph-Wirkmaximum einige Zentimeter neben der kanonischen Ebene liegt. Chest, Abdomen, Thigh und Upperarm werden als kleine gelockte Profile gescannt; `stomach-pregnant-incr` erscheint ausschließlich diagnostisch als **Abdominal Projection**.
+
+## v0.8.27.0 — neuer Produktionspfad
+
+Im SOLV-Panel steht `BODY FIT MINIMAL · PROTOTYPE 1.0` jetzt vor dem historischen Solver-V2-Bereich. Die normale Avatar-Erzeugung soll künftig aus 5 Nutzereingaben, einem statistischen Prior, wenigen direkten Anny-Reglern, Meshvolumen↔Gewicht und einem getrennten Frauenbrust-/Cup-Block entstehen. Die ANSUR24-Solver bleiben als Forschungsarchiv erhalten.
