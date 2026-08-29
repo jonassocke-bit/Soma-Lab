@@ -1,0 +1,55 @@
+SAMMY v0.8.29.4 · BUILD TEST
+Generated: 2026-08-29T17:10:05.813419+00:00
+Scope: static/source/data/package-preflight only; no Safari/WebGL runtime claim.
+
+PASS · app.js JavaScript syntax · node --check PASS
+PASS · SAMMY_APP_VERSION · 0.8.29.4
+PASS · HTML title version · 0.8.29.4
+PASS · Visible version marker · 0.8.29.4
+PASS · Splash version · 0.8.29.4
+PASS · app.js cache tag · 0.8.29.4
+PASS · style.css cache tag · 0.8.29.4
+PASS · No duplicate HTML ids · none
+PASS · Required handler sammyBbsSearchRun · present
+PASS · Required handler sammyBbsFitRun · present
+PASS · Required handler sammyBbsProofRun · present
+PASS · Required handler sammyBbsRestore · present
+PASS · Required handler sammyBbsExport · present
+PASS · Required handler sammyBbsProofExport · present
+PASS · Runtime handler self-gate · present
+PASS · Solver schema v1.1 · present
+PASS · Proof case count 24 · 24
+PASS · Proof schema v1.3 · present
+PASS · Family holdout exclusion · present
+PASS · Near-neighbor holdout exclusion · 0.16 core-distance
+PASS · Top-3 local-fit helper · present
+PASS · Manual Top-3 UI · present
+PASS · 24er Top-3 proof UI · present
+PASS · Bidirectional plus probe · present
+PASS · Bidirectional minus probe · present
+PASS · Probe mode exported · present
+PASS · Morph-name direction policy · present
+PASS · Single-vs-Top3 proof fields · present
+PASS · Solver eligibility separation · present
+PASS · Final measurement gate rollback · present
+PASS · Canonical rest-mesh stature · present
+PASS · Weight excluded from local gate · present
+PASS · Proof grid four desktop columns · present
+PASS · Body bank app target version · 0.8.29.4
+PASS · Body bank node count · 397
+PASS · Body bank trusted/frontier/negative/unchecked · {"frontier": 91, "negative": 37, "trusted": 269, "unchecked": 0}
+PASS · Active seed app target version · 0.8.29.4
+PASS · Active seed count · count=33
+PASS · Master State app version synchronized · 0.12 / 0.8.29.4
+PASS · Master State 16er GO evidence · documented
+PASS · Master State next gate synchronized · documented
+PASS · Current version marker synchronized · SAMMY_V0.8.29.4_BODY-BANK-SOLVER-TOP3-BIDIRECTIONAL.zip
+PASS · v0.8.29.3 proof evidence preserved · present
+PASS · v0.8.29.3 manual evidence preserved · present
+PASS · 24 proof targets statically available · selected=24 sex={0: 12, 1: 12}
+PASS · Family/near holdout eligible pool does not collapse · min same-sex eligible=115; max=146
+PASS · GitHub compact root manifest count · count=66
+PASS · GitHub compact current artifacts · present
+PASS · Source proof confirms v0.8.29.3 GO · {"decision": "GO", "localBetterCases": 16, "localImprovedCases": 11, "localMedian": 0.303705, "medianGainPct": 15.4, "neutralMedian": 0.5146850000000001, "reason": "Family-/Nahnachbar-bereinigtes Retrieval schl\u00e4gt den h\u00f6henangepassten Neutralstart im Median; der kleine Local Fit verschlechtert den Median nicht.", "retrievalBetterCases": 11, "retrievalMedian": 0.43554499999999996}
+
+RESULT: PASS · 49/49 checks passed.

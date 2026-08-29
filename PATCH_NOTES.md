@@ -1,3 +1,15 @@
+# v0.8.29.4 · Body Bank Solver 1.1 · Top-3 + Bidirectional Probing
+
+- 16er Family-Holdout v0.8.29.3 blieb GO: 0.515 neutral -> 0.436 retrieval -> 0.304 local.
+- Jeder Local Controller wird jetzt am konkreten Seed in +ε und -ε geprobt; Morphnamen legen keine Wirkrichtung fest.
+- Top-3 Retrieval-Seeds werden unabhängig lokal gefittet; bester sicherer Geometrie-Endscore gewinnt.
+- Human-Audit-Status und technische `solverEligible`-Messbarkeit getrennt.
+- Finaler Measurement-Sanity-Gate kann Local-Fit auf auditierten Seed zurückrollen.
+- Neuer 24er Proof v1.3 vergleicht Neutral -> Retrieval -> Single-Seed -> Top-3.
+- Keine neuen DOFs, keine größeren Bounds, kein Weight/Muscle-Rescue.
+
+---
+
 # v0.8.29.3 · Body Bank Solver Proof Hardening 1.1
 
 - kanonische Rest-Mesh-Statur für Body-Bank-Retrieval, Proof und Height-Fit.

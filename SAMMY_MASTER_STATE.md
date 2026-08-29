@@ -1,6 +1,6 @@
 # SAMMY / BODY LAB / SOMA-LAB · MASTER STATE
 
-**Kanonischer Projektstand · Version 0.11 · 29.08.2026 · App v0.8.29.3**
+**Kanonischer Projektstand · Version 0.12 · 29.08.2026 · App v0.8.29.4**
 
 ## 1. Verbindliche Projektpflege
 
@@ -56,11 +56,11 @@ Statusmodell:
 
 Zwei akzeptierte Endpunkte garantieren nicht automatisch, dass jede Interpolation dazwischen gültig ist. Zwischenstufen müssen separat technisch geprüft und bei Bedarf human auditiert werden.
 
-## 5. Aktueller Build v0.8.29.3 · BODY BANK SOLVER · PROOF HARDENING 1.1
+## 5. Aktueller Build v0.8.29.4 · BODY BANK SOLVER 1.1 · TOP-3 + BIDIRECTIONAL PROBING
 
 ### 5.1 Kanonische Body Bank
 
-Der kanonische `body-bank-index-v1.json` bleibt bei **397 eindeutigen Nodes** aus Phase 2 plus dem abgeschlossenen 32er ACTIVE-Audit:
+Der kanonische `body-bank-index-v1.json` bleibt inhaltlich bei **397 eindeutigen Nodes** aus Phase 2 plus abgeschlossenem 32er ACTIVE-Audit:
 
 - 269 `trusted`,
 - 91 `frontier`,
@@ -69,92 +69,104 @@ Der kanonische `body-bank-index-v1.json` bleibt bei **397 eindeutigen Nodes** au
 
 `negative` bleibt lokales Negativwissen. Kein Audit-Vote wird in eine globale Slidergrenze übersetzt. Der bekannte fehlerhafte `shoulderJointBreadth`-Proxy bleibt aus Retrieval und Auto-Gates ausgeschlossen.
 
-### 5.2 Bisherige Solver-Evidenz
+Die erfolgreichen v0.8.29.3 Proof-/Manuallauf-JSONs werden als Solver-Evidenz im vollständigen Projektstand mitgeführt. Neue, durch Proof oder manuellen Solver erzeugte und noch nicht bewertete Kandidaten bleiben auf demselben GitHub-Origin über den bestehenden Pending-/ACTIVE-LocalStorage erhalten und werden nicht stillschweigend als `trusted` übernommen.
 
-Der erste 8er Proof aus v0.8.29.0 unterstützte die Architekturhypothese bereits deutlich, war aber wegen eines offensichtlich falschen Brust-Snapshots noch nicht als sauberer Solverbeweis geeignet.
+### 5.2 Belastbare Solver-Evidenz aus v0.8.29.3
 
-Der reparierte Proof v1.1 unter v0.8.29.2 ergab:
+Der Family-/Near-Neighbor-Holdout v1.2 entfernte pro Ziel:
 
-- Neutral-Median: `0.45745`,
-- Body-Bank-Retrieval-Median: `0.115095`,
-- Local-Fit-Median: `0.115095`,
-- Retrieval besser als neutral: 6/8,
-- Local Fit nicht schlechter als Retrieval: 8/8,
-- Local Fit tatsächlich verbessert: 1/8,
-- ein technisch ungültiger Holdout (`chest = 42.96 cm`) wurde vom Measurement-Sanity-Gate korrekt übersprungen und ersetzt.
-
-Der manuelle Test `Mann · 35 · 178 cm · 80 kg · Brust 100 · Taille 85 · Hüfte 100` lief vollständig durch und reduzierte den damaligen kombinierten Score von `0.788` auf `0.518`. Er erzeugte den unauditierten ACTIVE-Kandidaten `AA-S-2f9708e4`.
-
-Diese Evidenz stützt weiterhin den neuen Hauptpfad, zeigt aber zwei methodische Schwächen des bisherigen Proofs: nahe Familiennachbarn konnten im Holdout verbleiben, und zwei unterschiedliche Körperhöhen-Definitionen wurden parallel verwendet.
-
-### 5.3 Eine kanonische Körperhöhe im Body-Bank-Solver
-
-Ab v0.8.29.3 verwendet der Body-Bank-Solver für Eingabe, Retrieval, Proof und `core:height`-Local-Fit **eine einzige Staturdefinition**:
-
-`exact Anny rest-mesh bounding-box height`.
-
-Die bisherige Measurement-Stack-Statur wird im Solver nur noch diagnostisch exportiert (`legacyMeasureStatureCm` und Differenz zur kanonischen Statur). Sie darf den Body-Bank-Score oder Height-Fit nicht mehr steuern. Damit wird die in v0.8.29.2 beobachtete systematische Differenz von ungefähr 2.4 cm nicht länger in zwei widersprüchlichen Solverpfaden verwendet.
-
-Die allgemeine Messpipeline außerhalb des Body-Bank-Solvers bleibt davon unberührt; Messdefinition und Solverdefinition bleiben getrennte Arbeitsstränge.
-
-### 5.4 Geometrischer Fit und Gewicht/Prior werden getrennt
-
-Gewicht wird weiterhin als Seed-/Ranking-Prior und als Diagnose genutzt. Es ist jedoch **kein lokal steuerbares Ziel** in Solver 1.0 und darf deshalb den Local-Fit-Gate nicht retten oder verwerfen.
-
-Ab v0.8.29.3 gilt:
-
-- `geometryScore`: nur Statur + Brust + Taille + Hüfte/Gesäß,
-- `weightPriorScore`: separater Diagnose-/Retrievalwert,
-- `retrievalScore`: Geometrie plus schwach gewichteter Weight-Prior für die Seed-Rangfolge,
-- `Local-Fit global gate`: ausschließlich `geometryScore`.
-
-Weight/Muscle werden weiterhin nicht frei nachoptimiert. Cross-Region-Rettung bleibt verboten.
-
-### 5.5 Family-Holdout-Proof v1.2
-
-Der alte Exact-Body-Holdout wird durch einen härteren **16er Family-Holdout** ersetzt. Für jeden versteckten Zielkörper werden vor Retrieval ausgeschlossen:
-
-1. der exakte Zielkörper,
+1. den exakten Zielkörper,
 2. die komplette `familyId`,
-3. zusätzlich sehr nahe Core-Rezeptnachbarn mit `coreDistance <= 0.16`.
+3. Core-Rezeptnachbarn mit Distanz `<= 0.16`.
 
-Der Proof ist auf den Produktbereich 140–205 cm begrenzt und weiterhin geschlechtsbalanciert. Er vergleicht:
+Trotz dieses deutlich härteren Gates blieb die Architektur auf GO:
 
-`neutraler Anny-Start -> family-bereinigtes Trusted Retrieval -> kleiner Local Fit`.
+- Neutral-Median: `0.514685`,
+- Retrieval-Median: `0.435545`,
+- Single-Seed Local-Fit-Median: `0.303705`,
+- Retrieval besser als neutral: `11/16`,
+- Local Fit verbessert Retrieval: `11/16`,
+- finaler Local Fit besser als neutral: `14/16`.
 
-GO bleibt bewusst ein einfaches Architektur-Gate:
+Damit gilt die Kernhypothese `auditiertes Retrieval -> kleiner lokaler Fit` als ausreichend gestützt, um den Solver gezielt weiterzuentwickeln. Dies ist weiterhin **kein Beweis realanthropometrischer Rekonstruktion**, weil Zielkörper und Zielmaße aus dem eigenen Anny-Raum stammen.
+
+### 5.3 Kritischer Fund: Morphname bestimmt keine Wirkrichtung
+
+Der vollständige v0.8.29.3-Trace zeigte, dass derselbe direkte Brust-Controller `measure-bust-circ-incr` abhängig vom konkreten Körperkontext gegensätzliche lokale Messableitungen besitzen kann. Im manuellen Kontrollkörper war die lokale Ableitung negativ; andere Proof-Körper zeigten positive oder erneut stark negative Ableitungen.
+
+Daraus folgt verbindlich:
+
+**Der Solver darf niemals aus `incr` / `decr` oder aus einem semantischen Morphnamen auf die aktuelle Messrichtung schließen.**
+
+Jeder zugelassene Controller muss am konkreten Seed und im aktuellen bereits veränderten Körperzustand lokal vermessen werden.
+
+### 5.4 Bidirektionales Controller-Probing
+
+Ab v0.8.29.4 werden die vier erlaubten Local-Fit-Controller am konkreten Seed bidirektional geprobt:
+
+- `core:height`,
+- `measure-bust-circ-incr`,
+- `measure-waist-circ-incr`,
+- `measure-hips-circ-incr`.
+
+Für jeden aktiven Controller werden, soweit die lokalen Bounds es erlauben, `+epsilon` und `-epsilon` getestet. Der Solver misst daraus die tatsächlichen lokalen Ableitungen und erzeugt mögliche Korrekturschritte aus der gemessenen Wirkung, nicht aus dem Morphnamen.
+
+Der Trace speichert Probe-Ausgaben, Ableitungen, gewählte Richtung/Quelle, mögliche lokale Vorzeichenwechsel sowie Rollback-Gründe. Die kleinen bisherigen Local-Bounds bleiben unverändert. Es werden **keine neuen DOFs** freigeschaltet.
+
+### 5.5 Top-3 Local Fit
+
+Der Runtime-Solver verwendet weiterhin Trusted Retrieval. Neu ist die lokale Seedstrategie:
+
+1. Retrieval erzeugt die Top-5-Vorschau.
+2. Die Retrieval-Ränge `#1`, `#2` und `#3` werden unabhängig voneinander lokal gefittet.
+3. Jeder Fit startet exakt vom jeweiligen auditierten Seed und bleibt in dessen lokalen Bounds.
+4. Der kleinste zulässige finale `geometryScore` gewinnt; bei Gleichstand wird der kleinere lokale Abstand bevorzugt.
+5. Nur der Gewinner wird dargestellt und - falls verändert - als `local-unaudited` an `BANK -> ACTIVE` übergeben.
+
+Damit kann ein Seed, der vor Local Fit knapp schlechter gerankt war, gewinnen, wenn seine lokale Geometrie besser kontrollierbar ist. Der Solver darf dafür weder Cross-Region-Morphs noch größere Bounds benutzen.
+
+### 5.6 Human-Audit-Status und Solver-Eignung sind getrennt
+
+Ein `HUMAN_ACCEPTED` / `trusted` Körper bleibt wertvolles visuelles Plausibilitätswissen. Eine technisch kaputte Brust-/Taillen-/Hüftmessung darf diesen Human-Vote nicht nachträglich löschen.
+
+Ab v0.8.29.4 wird deshalb explizit getrennt:
+
+- `trusted`: visuell akzeptierter Körper im auditierten Körperraum,
+- `solverEligible`: die für den aktuellen Solver benötigten technischen Messungen bestehen den breiten Measurement-Sanity-Gate.
+
+Ein `trusted`, aber aktuell solver-ineligible Körper wird aus der betreffenden Retrieval-Shortlist ausgeschlossen. Sein Auditstatus bleibt erhalten. Der gleiche Gate wird auch auf den finalen Local-Fit-Zustand angewandt; ein technischer Ausfall führt zum Rollback auf den auditierten Seed.
+
+### 5.7 Kanonische Statur und Scoretrennung bleiben verbindlich
+
+Der Body-Bank-Solver verwendet weiterhin ausschließlich die **exakte Anny-Rest-Mesh-Bounding-Box-Höhe** als kanonische Statur. Die ältere Measurement-Stack-Statur bleibt Diagnosewert.
+
+Scoretrennung:
+
+- `geometryScore`: Statur + Brust + Taille + Hüfte/Gesäß,
+- `weightPriorScore`: separater Retrieval-/Diagnosewert,
+- `Local-Fit global gate`: ausschließlich steuerbare Geometrie.
+
+Weight/Muscle werden weiterhin nicht frei nachoptimiert.
+
+### 5.8 Neuer Proof v1.3 · 24er Family-Holdout mit Single-vs-Top-3
+
+Der nächste Architekturtest umfasst **24 geschlechtsbalancierte Family-Holdouts** im Produktbereich 140–205 cm. Die bisherigen Ausschlüsse bleiben identisch: Zielkörper, komplette Familie und Core-Nachbarn `<= 0.16` werden verborgen.
+
+Für exakt dieselbe Retrieval-Shortlist werden vier Stufen verglichen:
+
+`Neutral -> Retrieval -> Single-Seed Local Fit (#1) -> Top-3 Local Fit (#1-#3)`.
+
+Damit wird der Zusatznutzen von Top-3 isoliert, ohne gleichzeitig Bank, Holdout-Regel oder Morphraum zu verändern.
+
+GO-Gate:
 
 - Retrieval-Median < Neutral-Median,
-- Local-Fit-Median <= Retrieval-Median.
+- Top-3-Median <= Single-Seed-Median,
+- Top-3-Median <= Retrieval-Median.
 
-Zusätzlich werden Fallzahl, Retrieval-bessere Fälle, lokale Verbesserungen und die tatsächlich ausgeschlossenen Body-/Family-/Near-Neighbor-Zahlen exportiert. Der Proof repariert keine fehlerhafte Brust-/Hüftmessung; der breite technische Measurement-Sanity-Gate bleibt vorgeschaltet.
+Zusätzlich werden Top-3-Zusatzgewinne pro Fall, Gewinner-Rang und alle drei lokalen Controller-Traces exportiert.
 
-### 5.6 Vollständiger Local-Fit-Trace
-
-Ab v0.8.29.3 schreibt jeder zugelassene Controller einen Trace-Eintrag, auch wenn **keine** Änderung erfolgt. Gründe sind unter anderem:
-
-- `within-deadband`,
-- `morph-missing`,
-- `local-bound`,
-- `weak-derivative`,
-- `no-improvement-rollback`,
-- `improved`.
-
-Damit ist sichtbar, ob Höhe, Taille, Hüfte und Brust tatsächlich versucht, bewusst nicht benötigt oder wegen fehlender lokaler Wirksamkeit verworfen wurden.
-
-### 5.7 ACTIVE Audit und erhaltenes Solver-Ergebnis
-
-Der aus dem erfolgreichen v0.8.29.2-Manuallauf erzeugte Kandidat `AA-S-2f9708e4` wird zusätzlich im statischen ACTIVE-Seed erhalten. Er bleibt **unauditiert**, bis er in `BANK -> ACTIVE` mit ✓ / ? / × bewertet wurde. Auf Geräten, auf denen derselbe Kandidat bereits im lokalen Pending Store liegt, wird er über die stabile Shape-ID dedupliziert.
-
-Der Human-in-the-loop-Lernpfad bleibt transparent:
-
-- `accepted` -> `trusted-user`,
-- `uncertain` -> `frontier-user`,
-- `rejected` -> `negative-user`.
-
-Anny selbst wird nicht trainiert.
-
-### 5.8 Deployment-/BANK-Regeln bleiben gültig
+### 5.9 Deployment-/BANK-Regeln bleiben gültig
 
 Splash, Hauptlabel, HTML-Titel, `SAMMY_APP_VERSION` sowie JS-/CSS-Cache-Tags müssen dieselbe Version tragen. Der statische Release-Gate prüft diese Marker gemeinsam.
 
@@ -216,38 +228,42 @@ Diese Pfade dürfen als Diagnose, Vergleich oder Datenquelle genutzt werden. Ein
 - Messfehler, Mesh-Limit, Lookup-Abdeckung und Fitterfehler müssen separat diagnostizierbar bleiben.
 - iPhone/Safari-Tauglichkeit und Resume/Persistenz sind Pflicht.
 
-## 10. Nächster Gate nach v0.8.29.3
+## 10. Nächster Gate nach v0.8.29.4
 
-Der nächste Entscheidungs-Gate ist der **16er Family-Holdout-Proof v1.2**.
+Der nächste Entscheidungs-Gate ist der **24er Top-3 Family-Holdout Proof v1.3**.
 
-### Gate A · 16er Family-Holdout
+### Gate A · Architektur unter Top-3
 
-Der Proof muss mindestens zeigen:
+Der Proof muss zeigen:
 
-1. Retrieval-Median < kanonisch höhenangepasster Neutralstart-Median.
-2. Local-Fit-Median <= Retrieval-Median.
-3. Zielkörper, komplette Familie und Near-Neighbors wurden tatsächlich aus dem Retrieval-Pool ausgeschlossen.
-4. Kein Cross-Region-Controller und keine freie globale Weight/Muscle-Suche wurde benötigt.
-5. Die Ergebnisse bleiben technisch gültig und im 140–205-cm-Produktbereich.
+1. Family-/Near-Neighbor-bereinigtes Retrieval schlägt den kanonisch höhenangepassten Neutralstart im Median.
+2. Top-3 Local Fit ist im Median nicht schlechter als der Single-Seed-Fit von Retrieval-Rang #1.
+3. Top-3 ist nicht schlechter als das unveränderte Retrieval.
+4. Die Gewinner entstehen ausschließlich aus den erlaubten anatomischen Controllern und unveränderten kleinen Local-Bounds.
+5. Technisch kaputte Messungen werden als `solver-ineligible` verworfen, ohne Human-Auditwissen zu löschen.
+6. Controller-Richtung wird aus bidirektional gemessener lokaler Wirkung bestimmt, nicht aus dem Morphnamen.
 
-Ein GO bestätigt die Architektur deutlich stärker als der bisherige Exact-Body-Holdout. Ein HOLD führt zuerst zur Analyse von Bankabdeckung, Messqualität oder lokalen DOFs; nicht automatisch zu einem komplexeren Solver.
+Ein GO bedeutet: Die Kernarchitektur `Trusted Retrieval -> Top-3 Local Fit -> Active Audit` ist für den nächsten Ausbau stabil genug. Danach soll **kein weiterer nahezu identischer Architekturproof** gebaut werden.
 
-### Gate B · ACTIVE Audit der neuen Solverzustände
+### Gate B · ACTIVE Audit der neuen Gewinner
 
-Nach dem Family-Proof werden nur tatsächlich neue Solver-/Grenzkandidaten in `BANK -> ACTIVE` bewertet. Der bereits erhaltene Kandidat `AA-S-2f9708e4` gehört ausdrücklich dazu.
+Nur tatsächlich veränderte Top-3-Gewinner werden als `local-unaudited` in `BANK -> ACTIVE` gestellt. Zu prüfen ist:
 
-Zu prüfen ist insbesondere:
+- Akzeptanzrate der neuen Solverzustände,
+- wiederkehrende Frontier-/Negativkorridore,
+- ob einzelne Retrieval-Ränge überproportional unplausible lokale Gewinner erzeugen,
+- ob neue Accepted-Körper die Bankabdeckung sinnvoll erweitern.
 
-- ob Local-Fit-Ergebnisse überwiegend akzeptiert werden,
-- ob Rejections lokal bleiben,
-- ob neue Accepted-Körper die Retrieval-Abdeckung sinnvoll erweitern,
-- ob der Solver wiederholt dieselben unsicheren Korridore anfordert.
+### Gate C · danach Maßabdeckung / reale Validierung
 
-### Gate C · danach erst Solver-Ausbau
+Nach erfolgreichem Gate A/B beginnt der nächste echte Ausbau:
 
-Erst nach A/B werden zusätzliche Freiheitsgrade oder weitere Nutzereingaben ergänzt. Bevorzugt werden nur Maße, die geometrisch stabil messbar sind und passende lokale DOFs besitzen.
+- Body-Bank-Abdeckung gezielt verbreitern,
+- nur geometrisch stabile und lokal kontrollierbare weitere Maße ergänzen,
+- externe/realistische Daten für Missing-Measure-Priors und Validierung nutzen,
+- Solver-Erfolg außerhalb des rein eigenen Anny-Holdout-Raums prüfen.
 
-Das vertagte Kopfgrößen-/Head-Fat-Thema bleibt außerhalb dieses Gates und wird später mit absolutem Größenbezug separat geprüft.
+Das vertagte Kopfgrößen-/Head-Fat-Thema bleibt außerhalb dieses Gates und wird später mit absolutem Größenbezug separat untersucht.
 
 ## 11. Abbruch-/Entscheidungsregel
 
@@ -268,3 +284,4 @@ Wenn bereits der konservative Anny-Core-Raum überwiegend unplausibel ist oder s
 | 0.9 | 29.08.2026 | v0.8.29.1: fehlenden manuellen Retrieval-Handler repariert; fail-fast UI-/Release-Handler-Gate; 32er ACTIVE-Audit kanonisch gemergt (269 trusted / 91 frontier / 37 negative / 0 unchecked); technische Mess-Sanity und Proof v1.1 wegen sichtbar falschem Brust-Snapshot. |
 | 0.10 | 29.08.2026 | v0.8.29.2: stale Splash-Version v0.8.28.4 entfernt; Runtime-/Titel-/Hauptlabel-/Splash-/JS-/CSS-Versionen synchronisiert; Deployment-Gate erweitert; Solver-/Body-Bank-Daten unverändert. |
 | 0.11 | 29.08.2026 | v0.8.29.3: kanonische Rest-Mesh-Statur im Body-Bank-Solver; Geometrie-Score von Weight-Prior getrennt; vollständiger Local-Fit-Trace; 16er Family-/Near-Neighbor-Holdout Proof v1.2; manuellen Solver-Kandidaten AA-S-2f9708e4 im ACTIVE-Seed erhalten. |
+| 0.12 | 29.08.2026 | v0.8.29.4: 16er Family-Proof als GO dokumentiert; bidirektionales Controller-Probing; unabhängiger Top-3 Local Fit; Human-Audit von solverEligible getrennt; 24er Single-vs-Top-3 Family-Proof v1.3 als nächster Gate. |

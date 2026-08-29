@@ -1,0 +1,1486 @@
+{
+  "schema": "sammy-body-bank-solver-proof-v1.2",
+  "appVersion": "0.8.29.3",
+  "createdAt": "2026-08-29T16:50:42.215Z",
+  "sourceAuditSha256": "2962b8979db1f86df026fefcc546b19eb0bc5c80aa003abae99aa32bcae38b86",
+  "policy": {
+    "holdout": "16 deterministic diverse HUMAN_ACCEPTED targets; target body + full family + core-neighbors <= 0.16 are excluded from retrieval",
+    "knownContext": "sex + age from hidden target metadata",
+    "geometricTargets": "canonical rest-mesh-bbox stature + chest + waist + hip measured from hidden target mesh",
+    "stature": "single canonical solver stature = exact Anny rest-mesh bounding-box height; legacy measurement stature is diagnostic only",
+    "measurementGate": "technical broad sanity only; catches catastrophic slice failures, not anthropometric plausibility",
+    "weight": "excluded from proof scoring and proof preselection",
+    "baseline": "neutral same-sex, same-age-context Anny body with canonical stature adjusted only",
+    "retrieval": "trusted bank only; target family and near recipe neighbors excluded; invalid candidate snapshots excluded",
+    "localFit": "height + direct chest/waist/hip only; global gate uses controllable geometry score only",
+    "decision": "GO only if family-holdout retrieval median < neutral median AND local median <= retrieval median"
+  },
+  "skippedTargets": [
+    {
+      "targetBodyId": "P2-B-011",
+      "targetFamilyId": "P2-BROAD-M-H0-W1-M2-P2",
+      "sex": 0,
+      "issues": [
+        "chest:42.41 outside 55-180"
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-001",
+      "targetFamilyId": "P2-PROP-BB-012",
+      "sex": 1,
+      "issues": [
+        "chest:42.06 outside 55-180"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "targetBodyId": "P2-E-080",
+      "targetFamilyId": "P2-EXT-BB-075",
+      "sex": 0,
+      "input": {
+        "age": 37.6,
+        "height": 162.64,
+        "chest": 107.56,
+        "waist": 124.09,
+        "hip": 123.89
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 122,
+        "body": 1,
+        "family": 3,
+        "near": 0,
+        "nearDistance": 0.16,
+        "eligibleAfter": 118
+      },
+      "neutralScore": 5.84914,
+      "retrievalSeed": "P2-P-016",
+      "retrievalFamilyId": "P2-PROP-BB-089",
+      "retrievalScore": 4.59686,
+      "localScore": 4.50581,
+      "recipeDistance": 0.53054,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 162.63763024180662,
+          "before": 165.1576192554785,
+          "probe": 161.3480718311621,
+          "after": 162.99043013423216,
+          "derivativeCmPerUnit": 108.844,
+          "rawBefore": 0.27678,
+          "rawAfter": 0.2568690602313123
+        },
+        {
+          "axis": "height",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 162.63763024180662,
+          "before": 162.99043013423216,
+          "after": 162.99043013423216
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 124.08788439673532,
+          "before": 87.65863395708486,
+          "probe": 88.16528564269308,
+          "after": 88.87544968303392,
+          "derivativeCmPerUnit": 10.133,
+          "rawBefore": 0,
+          "rawAfter": 0.12
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "local-bound",
+          "target": 124.08788439673532,
+          "before": 88.87544968303392,
+          "after": 88.87544968303392,
+          "rawBefore": 0.12
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 123.88915645489682,
+          "before": 96.75216432406003,
+          "probe": 97.57520191322033,
+          "after": 99.05400076023484,
+          "derivativeCmPerUnit": 16.461,
+          "rawBefore": 0,
+          "rawAfter": 0.14
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "local-bound",
+          "target": 123.88915645489682,
+          "before": 99.05400076023484,
+          "after": 99.05400076023484,
+          "rawBefore": 0.14
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "no-improvement-rollback",
+          "target": 107.56086955539944,
+          "before": 91.64341569688624,
+          "probe": 90.1864636559493,
+          "after": 91.64341569688624,
+          "derivativeCmPerUnit": -29.139,
+          "rawBefore": 0,
+          "rawAfter": 0
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 4.596860953455787,
+          "after": 4.505813301828852
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-015",
+      "targetFamilyId": "P2-PROP-BB-089",
+      "sex": 0,
+      "input": {
+        "age": 35.3,
+        "height": 165.16,
+        "chest": 96.56,
+        "waist": 87.73,
+        "hip": 96.97
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 122,
+        "body": 1,
+        "family": 3,
+        "near": 1,
+        "nearDistance": 0.16,
+        "eligibleAfter": 117
+      },
+      "neutralScore": 0.90028,
+      "retrievalSeed": "P2-B-017",
+      "retrievalFamilyId": "P2-BROAD-M-H1-W2-M2-P1",
+      "retrievalScore": 0.87911,
+      "localScore": 0.57304,
+      "recipeDistance": 0.3526,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 165.1576192554785,
+          "before": 167.6638276752783,
+          "probe": 163.85572268336546,
+          "after": 165.50849987834226,
+          "derivativeCmPerUnit": 108.803,
+          "rawBefore": 0.30723,
+          "rawAfter": 0.2874204428590658
+        },
+        {
+          "axis": "height",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 165.1576192554785,
+          "before": 165.50849987834226,
+          "after": 165.50849987834226
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 87.73429276884606,
+          "before": 81.27592094536075,
+          "probe": 81.78641298949299,
+          "after": 82.50186666416964,
+          "derivativeCmPerUnit": 10.21,
+          "rawBefore": 0,
+          "rawAfter": 0.12
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "local-bound",
+          "target": 87.73429276884606,
+          "before": 82.50186666416964,
+          "after": 82.50186666416964,
+          "rawBefore": 0.12
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 96.96812087860557,
+          "before": 92.56620397089608,
+          "probe": 93.38754517823259,
+          "after": 94.86413736025816,
+          "derivativeCmPerUnit": 16.427,
+          "rawBefore": 0,
+          "rawAfter": 0.14
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 96.96812087860557,
+          "before": 94.86413736025816,
+          "after": 94.86413736025816
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 96.56057815960783,
+          "before": 95.31671728108593,
+          "after": 95.31671728108593
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.8791069985500843,
+          "after": 0.5730438074365404
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-023",
+      "targetFamilyId": "P2-PROP-BB-013",
+      "sex": 0,
+      "input": {
+        "age": 29.9,
+        "height": 168.87,
+        "chest": 94.92,
+        "waist": 76.86,
+        "hip": 90.28
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 122,
+        "body": 1,
+        "family": 3,
+        "near": 2,
+        "nearDistance": 0.16,
+        "eligibleAfter": 116
+      },
+      "neutralScore": 0.48817,
+      "retrievalSeed": "P2-P-017",
+      "retrievalFamilyId": "P2-PROP-BB-005",
+      "retrievalScore": 0.25609,
+      "localScore": 0.25609,
+      "recipeDistance": 0.50866,
+      "localChanged": false,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 168.86607720225584,
+          "before": 168.1859166797949,
+          "after": 168.1859166797949
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 76.85951543680818,
+          "before": 79.00503445584876,
+          "after": 79.00503445584876
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 90.28320699196092,
+          "before": 90.2386066528712,
+          "after": 90.2386066528712
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 94.91674841338427,
+          "before": 94.53275165129622,
+          "after": 94.53275165129622
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.25608812291260225,
+          "after": 0.25608812291260225
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-E-040",
+      "targetFamilyId": "P2-EXT-BB-033",
+      "sex": 0,
+      "input": {
+        "age": 25.6,
+        "height": 175.2,
+        "chest": 115.61,
+        "waist": 127.61,
+        "hip": 128.86
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 122,
+        "body": 1,
+        "family": 2,
+        "near": 0,
+        "nearDistance": 0.16,
+        "eligibleAfter": 119
+      },
+      "neutralScore": 5.93467,
+      "retrievalSeed": "P2-E-056",
+      "retrievalFamilyId": "P2-EXT-BB-047",
+      "retrievalScore": 0.54057,
+      "localScore": 0.22457,
+      "recipeDistance": 0.29961,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 175.19928528636228,
+          "before": 177.83145024150144,
+          "probe": 174.02197434275877,
+          "after": 175.56780888407957,
+          "derivativeCmPerUnit": 108.842,
+          "rawBefore": 0.38623,
+          "rawAfter": 0.3654323450848349
+        },
+        {
+          "axis": "height",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 175.19928528636228,
+          "before": 175.56780888407957,
+          "after": 175.56780888407957
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 127.61469013042337,
+          "before": 126.32538007647416,
+          "after": 126.32538007647416
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 128.8640339502793,
+          "before": 127.39384831887482,
+          "after": 127.39384831887482
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 115.60879881906614,
+          "before": 116.59553631501316,
+          "after": 116.59553631501316
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.540573965621503,
+          "after": 0.2245696155504511
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-060",
+      "targetFamilyId": "P2-PROP-BB-021",
+      "sex": 0,
+      "input": {
+        "age": 48.4,
+        "height": 178.12,
+        "chest": 92.27,
+        "waist": 87.03,
+        "hip": 98.51
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 122,
+        "body": 1,
+        "family": 5,
+        "near": 1,
+        "nearDistance": 0.16,
+        "eligibleAfter": 115
+      },
+      "neutralScore": 0.22753,
+      "retrievalSeed": "P2-B-039",
+      "retrievalFamilyId": "P2-BROAD-M-H1-W3-M2-P0",
+      "retrievalScore": 0.3632,
+      "localScore": 0.33911,
+      "recipeDistance": 0.63115,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 178.11768366664182,
+          "before": 177.04310728877317,
+          "probe": 180.75038506358396,
+          "after": 177.9672534641577,
+          "derivativeCmPerUnit": 105.922,
+          "rawBefore": 0.37858,
+          "rawAfter": 0.38730466293020016
+        },
+        {
+          "axis": "height",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 178.11768366664182,
+          "before": 177.9672534641577,
+          "after": 177.9672534641577
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 87.03006815904888,
+          "before": 89.02374779757369,
+          "after": 89.02374779757369
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 98.51353959520289,
+          "before": 100.11117762407584,
+          "after": 100.11117762407584
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 92.26981472244725,
+          "before": 94.92122630478566,
+          "after": 94.92122630478566
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.3632025432942886,
+          "after": 0.3391114220680497
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-B-021",
+      "targetFamilyId": "P2-BROAD-M-H1-W1-M0-P2",
+      "sex": 0,
+      "input": {
+        "age": 44.7,
+        "height": 183.14,
+        "chest": 90.53,
+        "waist": 89.43,
+        "hip": 100.75
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 122,
+        "body": 0,
+        "family": 1,
+        "near": 1,
+        "nearDistance": 0.16,
+        "eligibleAfter": 120
+      },
+      "neutralScore": 0.39371,
+      "retrievalSeed": "P2-B-033",
+      "retrievalFamilyId": "P2-BROAD-M-H1-W2-M3-P2",
+      "retrievalScore": 0.53682,
+      "localScore": 0.10823,
+      "recipeDistance": 0.61431,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 183.13986374705564,
+          "before": 185.79048230021726,
+          "probe": 182.16362311213743,
+          "after": 183.51096226542722,
+          "derivativeCmPerUnit": 103.625,
+          "rawBefore": 0.44821,
+          "rawAfter": 0.42621200826313177
+        },
+        {
+          "axis": "height",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 183.13986374705564,
+          "before": 183.51096226542722,
+          "after": 183.51096226542722
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 89.4344200810141,
+          "before": 89.51249075782798,
+          "after": 89.51249075782798
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 100.74796174695157,
+          "before": 100.37296420845927,
+          "after": 100.37296420845927
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 90.53000858953443,
+          "before": 91.35603125726884,
+          "after": 91.35603125726884
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.5368199700628841,
+          "after": 0.1082313914198206
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-076",
+      "targetFamilyId": "P2-PROP-BB-069",
+      "sex": 0,
+      "input": {
+        "age": 41.3,
+        "height": 187.16,
+        "chest": 87.43,
+        "waist": 88.73,
+        "hip": 101.17
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 122,
+        "body": 1,
+        "family": 3,
+        "near": 0,
+        "nearDistance": 0.16,
+        "eligibleAfter": 118
+      },
+      "neutralScore": 0.31881,
+      "retrievalSeed": "P2-B-033",
+      "retrievalFamilyId": "P2-BROAD-M-H1-W2-M3-P2",
+      "retrievalScore": 0.39504,
+      "localScore": 0.28605,
+      "recipeDistance": 0.35325,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 187.1597321209265,
+          "before": 185.79048230021726,
+          "probe": 189.4173414882971,
+          "after": 186.96803166239988,
+          "derivativeCmPerUnit": 103.625,
+          "rawBefore": 0.44821,
+          "rawAfter": 0.45957366687154677
+        },
+        {
+          "axis": "height",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 187.1597321209265,
+          "before": 186.96803166239988,
+          "after": 186.96803166239988
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 88.7345614671179,
+          "before": 90.4733335370397,
+          "after": 90.4733335370397
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 101.16855448363904,
+          "before": 101.61253713211214,
+          "after": 101.61253713211214
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 87.42994602035901,
+          "before": 90.06315921979133,
+          "after": 90.06315921979133
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.39503794315310437,
+          "after": 0.2860523067139736
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-091",
+      "targetFamilyId": "P2-PROP-BB-023",
+      "sex": 0,
+      "input": {
+        "age": 26.7,
+        "height": 195.96,
+        "chest": 89.96,
+        "waist": 91.09,
+        "hip": 103.91
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 122,
+        "body": 1,
+        "family": 3,
+        "near": 0,
+        "nearDistance": 0.16,
+        "eligibleAfter": 118
+      },
+      "neutralScore": 0.48492,
+      "retrievalSeed": "P2-P-093",
+      "retrievalFamilyId": "P2-PROP-BB-063",
+      "retrievalScore": 0.47605,
+      "localScore": 0.28165,
+      "recipeDistance": 0.28205,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 195.95507695048582,
+          "before": 197.77806116908323,
+          "probe": 194.2128451046301,
+          "after": 196.21028019755613,
+          "derivativeCmPerUnit": 101.863,
+          "rawBefore": 0.54698,
+          "rawAfter": 0.5315891165338112
+        },
+        {
+          "axis": "height",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 195.95507695048582,
+          "before": 196.21028019755613,
+          "after": 196.21028019755613
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 91.08927571769605,
+          "before": 93.34023632073576,
+          "after": 93.34023632073576
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 103.90909658491911,
+          "before": 104.45028582463907,
+          "after": 104.45028582463907
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 89.96368357582173,
+          "before": 91.78848042134085,
+          "after": 91.78848042134085
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.4760501586951847,
+          "after": 0.28164948668776074
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-025",
+      "targetFamilyId": "P2-PROP-BB-034",
+      "sex": 1,
+      "input": {
+        "age": 29.1,
+        "height": 156.59,
+        "chest": 80.18,
+        "waist": 76.58,
+        "hip": 96.75
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 147,
+        "body": 1,
+        "family": 3,
+        "near": 3,
+        "nearDistance": 0.16,
+        "eligibleAfter": 140
+      },
+      "neutralScore": 1.18051,
+      "retrievalSeed": "P2-P-032",
+      "retrievalFamilyId": "P2-PROP-BB-076",
+      "retrievalScore": 0.97204,
+      "localScore": 0.70717,
+      "recipeDistance": 0.25534,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 156.58692433207761,
+          "before": 158.69231535762083,
+          "probe": 154.94097782939207,
+          "after": 156.88166930049192,
+          "derivativeCmPerUnit": 107.181,
+          "rawBefore": 0.33188,
+          "rawAfter": 0.31498675342008675
+        },
+        {
+          "axis": "height",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 156.58692433207761,
+          "before": 156.88166930049192,
+          "after": 156.88166930049192
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 76.57515636610468,
+          "before": 69.01927272552594,
+          "probe": 69.50066606784179,
+          "after": 70.1757917794936,
+          "derivativeCmPerUnit": 9.628,
+          "rawBefore": 0,
+          "rawAfter": 0.12
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "local-bound",
+          "target": 76.57515636610468,
+          "before": 70.1757917794936,
+          "after": 70.1757917794936,
+          "rawBefore": 0.12
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 96.7501200152417,
+          "before": 91.55205583395258,
+          "probe": 92.34653137993156,
+          "after": 93.77419197457678,
+          "derivativeCmPerUnit": 15.89,
+          "rawBefore": 0,
+          "rawAfter": 0.14
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 96.7501200152417,
+          "before": 93.77419197457678,
+          "after": 93.77419197457678
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 80.18253454416543,
+          "before": 79.27223258559756,
+          "after": 79.27223258559756
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.9720435736697395,
+          "after": 0.7071654486041465
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-034",
+      "targetFamilyId": "P2-PROP-BB-048",
+      "sex": 1,
+      "input": {
+        "age": 19.6,
+        "height": 159.47,
+        "chest": 84.25,
+        "waist": 83.76,
+        "hip": 101.89
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 147,
+        "body": 1,
+        "family": 3,
+        "near": 0,
+        "nearDistance": 0.16,
+        "eligibleAfter": 143
+      },
+      "neutralScore": 1.96279,
+      "retrievalSeed": "P2-P-028",
+      "retrievalFamilyId": "P2-PROP-BB-034",
+      "retrievalScore": 1.00653,
+      "localScore": 0.3724,
+      "recipeDistance": 0.60278,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 159.47403027385008,
+          "before": 156.01097657054197,
+          "probe": 159.8210485157324,
+          "after": 158.98920609324705,
+          "derivativeCmPerUnit": 108.859,
+          "rawBefore": 0.32133,
+          "rawAfter": 0.34868851657634886
+        },
+        {
+          "axis": "height",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 159.47403027385008,
+          "before": 158.98920609324705,
+          "after": 158.98920609324705
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 83.75900158394236,
+          "before": 80.23349735701416,
+          "probe": 80.71916114214208,
+          "after": 81.39988920207378,
+          "derivativeCmPerUnit": 9.713,
+          "rawBefore": 0,
+          "rawAfter": 0.12
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 83.75900158394236,
+          "before": 81.39988920207378,
+          "after": 81.39988920207378
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 101.88712859983183,
+          "before": 99.57988785287891,
+          "after": 99.57988785287891
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 84.24832628478691,
+          "before": 82.53472355356169,
+          "after": 82.53472355356169
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 1.0065316961562802,
+          "after": 0.3724000475214296
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-042",
+      "targetFamilyId": "P2-PROP-BB-006",
+      "sex": 1,
+      "input": {
+        "age": 43.5,
+        "height": 163.5,
+        "chest": 85.72,
+        "waist": 64.96,
+        "hip": 90.43
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 147,
+        "body": 1,
+        "family": 3,
+        "near": 0,
+        "nearDistance": 0.16,
+        "eligibleAfter": 143
+      },
+      "neutralScore": 0.5412,
+      "retrievalSeed": "P2-P-050",
+      "retrievalFamilyId": "P2-PROP-BB-014",
+      "retrievalScore": 0.32136,
+      "localScore": 0.32136,
+      "recipeDistance": 0.34682,
+      "localChanged": false,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 163.50326849787962,
+          "before": 163.70590044825803,
+          "after": 163.70590044825803
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 64.96462008431408,
+          "before": 65.37076923892215,
+          "after": 65.37076923892215
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 90.4260180344876,
+          "before": 88.34906430901826,
+          "after": 88.34906430901826
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 85.71528555331228,
+          "before": 82.85433271136459,
+          "after": 82.85433271136459
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.321356438414024,
+          "after": 0.321356438414024
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-B-048",
+      "targetFamilyId": "P2-BROAD-F-H1-W3-M3-P0-C2",
+      "sex": 1,
+      "input": {
+        "age": 28.4,
+        "height": 170.04,
+        "chest": 97.25,
+        "waist": 65.38,
+        "hip": 91.45
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 147,
+        "body": 1,
+        "family": 0,
+        "near": 0,
+        "nearDistance": 0.16,
+        "eligibleAfter": 146
+      },
+      "neutralScore": 0.99149,
+      "retrievalSeed": "P2-B-060",
+      "retrievalFamilyId": "P2-BROAD-F-H1-W0-M2-P0-C1",
+      "retrievalScore": 1.07494,
+      "localScore": 0.90422,
+      "recipeDistance": 0.70014,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 170.03786875575315,
+          "before": 172.43886305659544,
+          "probe": 168.62904145091306,
+          "after": 170.3740031894995,
+          "derivativeCmPerUnit": 108.852,
+          "rawBefore": 0.45981,
+          "rawAfter": 0.44084062664468027
+        },
+        {
+          "axis": "height",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 170.03786875575315,
+          "before": 170.3740031894995,
+          "after": 170.3740031894995
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 65.38024398684908,
+          "before": 63.22888728301513,
+          "after": 63.22888728301513
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 91.4527438842938,
+          "before": 87.61898333654925,
+          "probe": 88.48020429131638,
+          "after": 90.03087774080201,
+          "derivativeCmPerUnit": 17.224,
+          "rawBefore": 0,
+          "rawAfter": 0.14
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 91.4527438842938,
+          "before": 90.03087774080201,
+          "after": 90.03087774080201
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 97.2481175708304,
+          "before": 85.20177295482017,
+          "probe": 86.02869951916591,
+          "after": 86.85709662303513,
+          "derivativeCmPerUnit": 16.539,
+          "rawBefore": 0,
+          "rawAfter": 0.1
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "local-bound",
+          "target": 97.2481175708304,
+          "before": 86.85709662303513,
+          "after": 86.85709662303513,
+          "rawBefore": 0.1
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 1.0749429285341472,
+          "after": 0.9042226554258646
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-080",
+      "targetFamilyId": "P2-PROP-BB-078",
+      "sex": 1,
+      "input": {
+        "age": 24.7,
+        "height": 174.7,
+        "chest": 85.9,
+        "waist": 68.36,
+        "hip": 91.29
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 147,
+        "body": 1,
+        "family": 3,
+        "near": 0,
+        "nearDistance": 0.16,
+        "eligibleAfter": 143
+      },
+      "neutralScore": 0.55491,
+      "retrievalSeed": "AA-U-P2-B-006",
+      "retrievalFamilyId": "P2-BROAD-F-H1-W1-M3-P1-C1",
+      "retrievalScore": 0.28483,
+      "localScore": 0.28483,
+      "recipeDistance": 0.34249,
+      "localChanged": false,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 174.70267130702268,
+          "before": 174.43040921061765,
+          "after": 174.43040921061765
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 68.36390863391848,
+          "before": 65.76624542719148,
+          "after": 65.76624542719148
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 91.29233523472054,
+          "before": 90.40020046142419,
+          "after": 90.40020046142419
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 85.89998291735874,
+          "before": 86.52617641152465,
+          "after": 86.52617641152465
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.2848257283919746,
+          "after": 0.2848257283919746
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-103",
+      "targetFamilyId": "P2-PROP-BB-044",
+      "sex": 1,
+      "input": {
+        "age": 31.6,
+        "height": 183.21,
+        "chest": 77.51,
+        "waist": 74.2,
+        "hip": 98.17
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 147,
+        "body": 1,
+        "family": 3,
+        "near": 0,
+        "nearDistance": 0.16,
+        "eligibleAfter": 143
+      },
+      "neutralScore": 0.39508,
+      "retrievalSeed": "P2-B-036",
+      "retrievalFamilyId": "P2-BROAD-F-H2-W1-M0-P3-C2",
+      "retrievalScore": 0.37148,
+      "localScore": 0.17511,
+      "recipeDistance": 0.60896,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": true,
+          "reason": "improved",
+          "target": 183.21036412089597,
+          "before": 181.4935476955725,
+          "probe": 185.303333538468,
+          "after": 182.97000243037473,
+          "derivativeCmPerUnit": 108.851,
+          "rawBefore": 0.55265,
+          "rawAfter": 0.5662140627933464
+        },
+        {
+          "axis": "height",
+          "iteration": 2,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 183.21036412089597,
+          "before": 182.97000243037473,
+          "after": 182.97000243037473
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 74.19709701822022,
+          "before": 75.5968147168524,
+          "after": 75.5968147168524
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 98.1665811223192,
+          "before": 98.05457953386767,
+          "after": 98.05457953386767
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 77.51234869954412,
+          "before": 76.39733189229828,
+          "after": 76.39733189229828
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.3714825644876492,
+          "after": 0.17510641573880245
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-B-018",
+      "targetFamilyId": "P2-BROAD-F-H2-W2-M2-P1-C1",
+      "sex": 1,
+      "input": {
+        "age": 39,
+        "height": 190.15,
+        "chest": 74.18,
+        "waist": 76.09,
+        "hip": 101.33
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 147,
+        "body": 1,
+        "family": 0,
+        "near": 0,
+        "nearDistance": 0.16,
+        "eligibleAfter": 146
+      },
+      "neutralScore": 0.17998,
+      "retrievalSeed": "P2-P-122",
+      "retrievalFamilyId": "P2-PROP-BB-062",
+      "retrievalScore": 0.15487,
+      "localScore": 0.15487,
+      "recipeDistance": 0.34147,
+      "localChanged": false,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 190.15349461406004,
+          "before": 190.53652598231565,
+          "after": 190.53652598231565
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 76.09230821390162,
+          "before": 76.39870219552299,
+          "after": 76.39870219552299
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 101.32950240626614,
+          "before": 100.64542915345764,
+          "after": 100.64542915345764
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 74.18098976642165,
+          "before": 75.52253423887264,
+          "after": 75.52253423887264
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.15487111219530506,
+          "after": 0.15487111219530506
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-132",
+      "targetFamilyId": "P2-PROP-BB-018",
+      "sex": 1,
+      "input": {
+        "age": 28.8,
+        "height": 196.98,
+        "chest": 77.56,
+        "waist": 78.32,
+        "hip": 102.71
+      },
+      "holdoutExclusion": {
+        "eligibleBefore": 147,
+        "body": 1,
+        "family": 3,
+        "near": 0,
+        "nearDistance": 0.16,
+        "eligibleAfter": 143
+      },
+      "neutralScore": 0.10377,
+      "retrievalSeed": "P2-B-004",
+      "retrievalFamilyId": "P2-BROAD-F-H2-W3-M2-P0-C0",
+      "retrievalScore": 0.38601,
+      "localScore": 0.38601,
+      "recipeDistance": 0.72597,
+      "localChanged": false,
+      "localTrace": [
+        {
+          "axis": "height",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 196.97600914805662,
+          "before": 197.91679694026243,
+          "after": 197.91679694026243
+        },
+        {
+          "axis": "measure-waist-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 78.32398506573836,
+          "before": 77.84729132370487,
+          "after": 77.84729132370487
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 102.71085119638776,
+          "before": 106.04475212554712,
+          "after": 106.04475212554712
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "iteration": 1,
+          "accepted": false,
+          "reason": "within-deadband",
+          "target": 77.56359745031214,
+          "before": 77.4030616493769,
+          "after": 77.4030616493769
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "reason": "geometry-improved-or-equal",
+          "scoreBasis": "controllable-geometry-only",
+          "before": 0.3860097933085722,
+          "after": 0.3860097933085722
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "neutralMedian": 0.5146850000000001,
+    "retrievalMedian": 0.43554499999999996,
+    "localMedian": 0.303705,
+    "medianGainPct": 15.4,
+    "retrievalBetterCases": 11,
+    "localBetterCases": 16,
+    "localImprovedCases": 11,
+    "decision": "GO",
+    "reason": "Family-/Nahnachbar-bereinigtes Retrieval schlägt den höhenangepassten Neutralstart im Median; der kleine Local Fit verschlechtert den Median nicht."
+  }
+}

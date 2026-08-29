@@ -1,3 +1,17 @@
+# Sammy v0.8.29.4 — BODY BANK Solver 1.1 · Top-3 + Bidirectional Probing
+
+Der härtere 16er Family-Holdout aus v0.8.29.3 blieb auf GO. v0.8.29.4 erweitert deshalb nicht den Morphraum, sondern macht die Seed-/Local-Fit-Strategie robuster: die ersten drei Retrieval-Seeds werden unabhängig lokal gefittet, und jeder zugelassene Controller wird am konkreten Körper in beide Rohwertrichtungen geprobt.
+
+Der neue 24er Proof vergleicht neutralen Start, Retrieval, Single-Seed Local Fit und Top-3 Local Fit unter denselben Family-/Near-Neighbor-Ausschlüssen. Visuell akzeptierte Körper können bei kaputter technischer Umfangsmessung für den Solver `solver-ineligible` sein, ohne ihren Human-Audit-Status zu verlieren.
+
+Aktuelle Dokumente:
+- `BODY_BANK_SOLVER_TOP3_BIDIRECTIONAL_V0.8.29.4.md`
+- `RELEASE_NOTES_V0.8.29.4.md`
+- `CHANGESET_V0.8.29.4.md`
+- `SAMMY_MASTER_STATE.md` / `.docx`
+
+---
+
 # Sammy v0.8.29.3 — BODY BANK Solver Proof Hardening 1.1
 
 v0.8.29.3 härtet den neuen Body-Bank-Solver nach dem ersten erfolgreichen Proof/Manuallauf. Die Solvergröße bleibt bewusst unverändert: eine kanonische Rest-Mesh-Statur, getrennte Geometrie-/Weight-Scores, vollständige Local-Fit-Traces und ein 16er Family-/Near-Neighbor-Holdout ersetzen die methodisch zu leichte Exact-Body-Prüfung.
