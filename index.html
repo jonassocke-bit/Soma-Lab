@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.28.5</title>
-<link rel="stylesheet" href="style.css?v=0.8.28.5">
+<title>Sammy v0.8.29.0</title>
+<link rel="stylesheet" href="style.css?v=0.8.29.0">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -31,7 +31,7 @@
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.28.5</div>
+<div id="sammyVersion">Sammy · v0.8.29.0</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -55,7 +55,7 @@
   <button type="button" class="sammyLabSubBubble lab-infl" data-lab-panel="sammyInfluencePanel" aria-label="Influence Lab"><b>INFL</b><small>5-Level</small></button>
   <button type="button" class="sammyLabSubBubble lab-solv" data-lab-panel="sammySolver24Panel" aria-label="24 Maß Solver"><b>SOLV</b><small>24 → Body</small></button>
   <button type="button" class="sammyLabSubBubble lab-morf" data-lab-panel="sammyMorphObsPanel" aria-label="Morph Observatory"><b>MORF</b><small>Observatory</small></button>
-  <button type="button" class="sammyLabSubBubble lab-bank" data-lab-panel="sammyBodyBankPanel" aria-label="Audited Body Bank"><b>BANK</b><small>400er Blind-Audit</small></button>
+  <button type="button" class="sammyLabSubBubble lab-bank" data-lab-panel="sammyBodyBankPanel" aria-label="Audited Body Bank"><b>BANK</b><small>Phase 2 + Active</small></button>
   <button type="button" class="sammyLabSubBubble lab-audt" data-lab-panel="sammyBodyAuditPanel" aria-label="Legacy Blind Body Audit"><b>AUDT</b><small>Solver blind</small></button>
   <button type="button" class="sammyLabSubBubble lab-ansr" data-lab-panel="sammyAnsPanel" aria-label="ANSUR Lab"><b>ANSR</b><small>Prediction</small></button>
  </div>
@@ -233,9 +233,34 @@
 
  <section id="sammySolver24Panel" class="sammyPanel sammySolver24Panel" data-panel-key="solver24">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
-  <div class="sammyPanelHead"><div><b>BODY FIT + RESEARCH SOLVER</b><small>Produktions-Prototyp oben · bisherige ANSUR-Forschung bleibt darunter erhalten</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelHead"><div><b>BODY BANK SOLVER + RESEARCH</b><small>Aktueller Body-Bank-Pfad oben · bisherige Solver-/ANSUR-Forschung bleibt darunter erhalten</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard sammyBfIntro"><b>BODY FIT v1.2 · unverändert seit 0.8.27.2 · App 0.8.28.2</b><span>Produktions-Prototyp mit korrigierter Priorität: Nach der Körperhöhe wird zuerst die Masse über frisch gemessene Weight- und Muscle-Wirkung an das Meshvolumen gekoppelt. Danach werden Hüfte/Taille lokal wiederhergestellt. ANSUR II bleibt ausschließlich statistischer Prior; keine 24-Maß-Optimierung, kein Cross-Region-Polish.</span></div>
+   <div class="sammyLabIntroCard sammyBbsIntro"><b>BODY BANK SOLVER 1.0 · App v0.8.29.0</b><span>Neuer Hauptpfad: erst einen human-auditierten Anny-Körper suchen, dann nur kleine anatomisch passende Korrekturen. Kein freier From-Scratch-Solver und keine Cross-Region-Rettung.</span></div>
+   <details class="sammyCalibrationLab sammyBbsLab" id="sammyBbsLab" open>
+    <summary><b>BODY BANK SOLVER · ARCHITECTURE 1.0</b><span>246 auditierte Seeds · Top-K Retrieval · kleiner Local Fit · Active Audit</span></summary>
+    <div class="sammyCalibrationBody">
+     <div class="sammyBbsIndexLine" id="sammyBbsIndexLine">Body-Bank-Index wird geladen …</div>
+     <div class="sammyBfInputGrid sammyBbsInputGrid">
+      <div class="sammyBfField sammyBfSex"><span>Gender</span><div class="sammyCalibrationModes" role="group" aria-label="Body Bank Solver Gender"><button type="button" data-bbs-sex="0" class="active">♂ Mann</button><button type="button" data-bbs-sex="1">♀ Frau</button></div></div>
+      <label class="sammyBfField"><span>Alter</span><input id="sammyBbsAge" type="number" inputmode="numeric" min="18" max="80" step="1" value="35"><small>schwacher Retrieval-Kontext</small></label>
+      <label class="sammyBfField"><span>Körpergröße</span><div><input id="sammyBbsHeight" type="number" inputmode="decimal" min="140" max="205" step="0.5" value="178"><em>cm</em></div><small>starker Retrieval-Anker</small></label>
+      <label class="sammyBfField"><span>Gewicht</span><div><input id="sammyBbsWeight" type="number" inputmode="decimal" min="40" max="180" step="0.5" value="80"><em>kg</em></div><small>Ranking-/Volumen-Prior; kein direkter Morphwert</small></label>
+      <label class="sammyBfField"><span>Brustumfang</span><div><input id="sammyBbsChest" type="number" inputmode="decimal" min="65" max="160" step="0.5" value="100"><em>cm</em></div><small>exakte Shortlist-Messung</small></label>
+      <label class="sammyBfField"><span>Taillenumfang</span><div><input id="sammyBbsWaist" type="number" inputmode="decimal" min="50" max="170" step="0.5" value="85"><em>cm</em></div><small>exakte Shortlist-Messung</small></label>
+      <label class="sammyBfField"><span>Gesäß-/Hüftumfang</span><div><input id="sammyBbsHip" type="number" inputmode="decimal" min="65" max="180" step="0.5" value="100"><em>cm</em></div><small>exakte Shortlist-Messung</small></label>
+     </div>
+     <div class="sammyCalibrationActions"><button id="sammyBbsSearch" type="button">1 · Bank suchen</button><button id="sammyBbsFit" type="button" disabled>2 · Lokal fitten</button><button id="sammyBbsProof" type="button">8er Blind-Proof</button></div>
+     <div class="sammyCalibrationActions"><button id="sammyBbsRestore" type="button" disabled>Vorherigen Körper</button><button id="sammyBbsExport" type="button" disabled>Solver JSON</button><button id="sammyBbsProofExport" type="button" disabled>Proof JSON</button></div>
+     <div id="sammyBbsStatus" class="sammyCalibrationStatus">Bereit · zuerst Bank suchen oder den 8er Blind-Proof starten.</div>
+     <div class="sammyCalibrationProgress"><i id="sammyBbsProgress"></i></div>
+     <div id="sammyBbsCandidates" class="sammyBbsCandidates"><div class="sammyInfluenceEmpty">Top-5 Seeds erscheinen nach der Suche.</div></div>
+     <div id="sammyBbsFeedback" class="sammyBfFeedback"><div class="sammyInfluenceEmpty">Nach dem lokalen Fit erscheinen Seed → Ergebnis, Eingabefehler und Active-Audit-Status.</div></div>
+     <div id="sammyBbsProofResult" class="sammyBbsProofResult"><div class="sammyInfluenceEmpty">Der Blind-Proof hält jeweils einen akzeptierten Körper aus der Bank zurück, misst nur Größe/Brust/Taille/Hüfte und vergleicht neutralen Start → Retrieval → Local Fit.</div></div>
+     <details class="sammyRarCriteria"><summary><b>ARCHITEKTURREGELN</b><span>POC 1.0</span></summary><div><p><b>Seed-Pool:</b> nur eindeutige HUMAN_ACCEPTED-Körper aus dem Phase-2-Audit plus später lokal akzeptierte Active-Audit-Körper.</p><p><b>Retrieval:</b> grobe Vorauswahl über Geschlecht, Rest-Mesh-Körperhöhe, Alter und Gewichts-Prior; danach werden nur die besten Kandidaten wirklich rekonstruiert und Brust/Taille/Hüfte am aktuellen Mesh gemessen.</p><p><b>Local Fit:</b> Höhe sowie direkte Brust-/Taillen-/Hüft-Controller, jeweils nur in engem Abstand zum Seed. Weight/Muscle werden in 1.0 nicht frei nachoptimiert.</p><p><b>Sicherheit:</b> ein auditierter Seed ist bekannt plausibel; jeder daraus veränderte Local-Fit bleibt zunächst <i>unauditiert</i> und wird automatisch als Kandidat an BANK → ACTIVE übergeben.</p><p><b>Keine Schultermetrik:</b> der fehlerhafte Phase-2-Shoulder-Joint-Proxy wird weder für Retrieval noch Gate verwendet.</p></div></details>
+    </div>
+   </details>
+
+   <div class="sammyLabIntroCard sammyBfIntro"><b>LEGACY BODY FIT v1.2 · Forschungs-/Vergleichspfad</b><span>Der bisherige Produktions-Prototyp bleibt unverändert erhalten, ist ab v0.8.29.0 aber nicht mehr der bevorzugte Körperaufbaupfad. Er dient als Vergleich gegen die neue Body-Bank-Architektur.</span></div>
    <details class="sammyCalibrationLab sammyBfLab" id="sammyBfLab" open>
     <summary><b>BODY FIT MINIMAL · PROTOTYPE 1.1</b><span>5 Maße · Masse zuerst · Weight+Muscle ↔ Volumen · Hüfte recovery · ♀ Cup A–H</span></summary>
     <div class="sammyCalibrationBody">
@@ -485,8 +510,9 @@
 
  <section id="sammyBodyBankPanel" class="sammyPanel sammyBodyBankPanel" data-panel-key="body-bank">
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
-  <div class="sammyPanelHead"><div><b>BODY BANK · BLIND PHASE 2</b><small>400 gemischte Bewertungen · Testtyp verborgen</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
+  <div class="sammyPanelHead"><div><b id="sammyBodyBankHeadTitle">BODY BANK · BLIND PHASE 2</b><small id="sammyBodyBankHeadSub">400 gemischte Bewertungen · Testtyp verborgen</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
   <div class="sammyPanelScroll">
+   <div class="sammyBodyBankModeRow" role="group" aria-label="Body Bank Audit Modus"><button type="button" data-bank-mode="phase2" class="active">PHASE 2</button><button type="button" data-bank-mode="active">ACTIVE <span id="sammyBodyBankActiveCount">0</span></button></div>
    <div class="sammyBodyBankProgress"><b id="sammyBodyBankIndex">Person 001 / 400</b><span id="sammyBodyBankDone">0 bewertet</span></div>
    <div id="sammyBodyBankKind" class="sammyBodyBankKind">Blind gemischt · Testtyp und Variantenrichtung verborgen</div>
    <div class="sammyBodyBankViewportState"><b id="sammyBodyBankActiveViewport">Ansicht A aktiv</b><small>Letzte Berührung / Drehung wählt A oder B</small></div>
@@ -994,6 +1020,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.28.5"></script>
+<script type="module" src="app.js?v=0.8.29.0"></script>
 </body>
 </html>

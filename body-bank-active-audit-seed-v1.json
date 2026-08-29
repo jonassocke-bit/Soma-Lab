@@ -1,0 +1,902 @@
+{
+  "schema": "sammy-body-bank-active-audit-seed-v1",
+  "appTargetVersion": "0.8.29.0",
+  "generated": "2026-08-29",
+  "sourceAuditSha256": "2962b8979db1f86df026fefcc546b19eb0bc5c80aa003abae99aa32bcae38b86",
+  "policy": {
+    "purpose": "Initial high-information queue before solver-generated candidates arrive.",
+    "carryover": "All 15 unique unchecked Phase-2 bodies are preserved.",
+    "boundaryMidpoints": "Midpoints only on audited proportion-family adjacencies where at least one endpoint is frontier/negative.",
+    "humanPresentation": "blind; provenance hidden during voting",
+    "learning": "votes are written to local BODY BANK learning store and become available to Solver 1.0 immediately on the same device",
+    "rejectionScope": "local exact candidate only"
+  },
+  "count": 32,
+  "queue": [
+    {
+      "candidateId": "AA-B-017",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.71192,
+          "weight": 0.71518,
+          "gender": 1.0,
+          "height": 0.73546,
+          "age": 0.8246,
+          "proportions": 0.8662,
+          "muscle": 0.23574,
+          "cupsize": 0.30299,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-064",
+        "a": "P2-P-159",
+        "b": "P2-P-160",
+        "tiers": [
+          "frontier",
+          "trusted"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-U-P2-P-021",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7644,
+          "muscle": 0.42178,
+          "weight": 0.2195,
+          "height": 0.30827,
+          "proportions": 0.26939,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-P-021",
+        "familyId": "P2-PROP-BB-013"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-B-010",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.70658,
+          "weight": 0.3053,
+          "gender": 1.0,
+          "height": 0.60402,
+          "age": 0.7168,
+          "proportions": 0.18858,
+          "muscle": 0.64766,
+          "cupsize": 0.65924,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-002",
+        "a": "P2-P-105",
+        "b": "P2-P-106",
+        "tiers": [
+          "unchecked",
+          "trusted"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-U-P2-P-058",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8732,
+          "muscle": 0.64915,
+          "weight": 0.57643,
+          "height": 0.39643,
+          "proportions": 0.46452,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-P-058",
+        "familyId": "P2-PROP-BB-021"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-B-013",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.5,
+          "weight": 0.18601,
+          "gender": 0.0,
+          "height": 0.60246,
+          "age": 0.83416,
+          "proportions": 0.51344,
+          "muscle": 0.25486,
+          "cupsize": 0.5,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-031",
+        "a": "P2-P-149",
+        "b": "P2-P-150",
+        "tiers": [
+          "frontier",
+          "negative"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-B-012",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.44446,
+          "weight": 0.63477,
+          "gender": 1.0,
+          "height": 0.70658,
+          "age": 0.77556,
+          "proportions": 0.29544,
+          "muscle": 0.53995,
+          "cupsize": 0.50997,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-074",
+        "a": "P2-P-138",
+        "b": "P2-P-139",
+        "tiers": [
+          "unchecked",
+          "trusted"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-U-P2-B-020",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.72599,
+          "muscle": 0.91323,
+          "weight": 0.20326,
+          "height": 0.13316,
+          "proportions": 0.53767,
+          "cupsize": 0.41377,
+          "firmness": 0.40007,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-B-020",
+        "familyId": "P2-BROAD-F-H0-W0-M3-P2-C1"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-B-003",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.5,
+          "weight": 0.57643,
+          "gender": 0.0,
+          "height": 0.39643,
+          "age": 0.8732,
+          "proportions": 0.41452,
+          "muscle": 0.64915,
+          "cupsize": 0.5,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-021",
+        "a": "P2-P-057",
+        "b": "P2-P-058",
+        "tiers": [
+          "trusted",
+          "unchecked"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-U-P2-E-140",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.85456,
+          "muscle": 0.13267,
+          "weight": 0.92,
+          "height": 0.06,
+          "proportions": 0.07,
+          "cupsize": 0.85018,
+          "firmness": 0.63749,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-E-140",
+        "familyId": "P2-EXT-BB-046"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-B-009",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.5,
+          "weight": 0.82057,
+          "gender": 0.0,
+          "height": 0.54698,
+          "age": 0.7906,
+          "proportions": 0.7943,
+          "muscle": 0.9,
+          "cupsize": 0.5,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-063",
+        "a": "P2-P-095",
+        "b": "P2-P-096",
+        "tiers": [
+          "frontier",
+          "frontier"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-B-005",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.5,
+          "weight": 0.76862,
+          "gender": 0.0,
+          "height": 0.40903,
+          "age": 0.715,
+          "proportions": 0.33111,
+          "muscle": 0.62522,
+          "cupsize": 0.5,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-077",
+        "a": "P2-P-062",
+        "b": "P2-P-063",
+        "tiers": [
+          "trusted",
+          "unchecked"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-U-P2-P-105",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7168,
+          "muscle": 0.64766,
+          "weight": 0.3053,
+          "height": 0.60402,
+          "proportions": 0.13858,
+          "cupsize": 0.65924,
+          "firmness": 0.70658,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-P-105",
+        "familyId": "P2-PROP-BB-002"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-U-P2-B-021",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.85099,
+          "muscle": 0.1267,
+          "weight": 0.39126,
+          "height": 0.44649,
+          "proportions": 0.62131,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-B-021",
+        "familyId": "P2-BROAD-M-H1-W1-M0-P2"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-U-P2-E-098",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7304,
+          "muscle": 0.39336,
+          "weight": 0.92,
+          "height": 0.73676,
+          "proportions": 0.93,
+          "cupsize": 0.76621,
+          "firmness": 0.43913,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-E-098",
+        "familyId": "P2-EXT-BB-012"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-B-004",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.5,
+          "weight": 0.57643,
+          "gender": 0.0,
+          "height": 0.39643,
+          "age": 0.8732,
+          "proportions": 0.54452,
+          "muscle": 0.64915,
+          "cupsize": 0.5,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-021",
+        "a": "P2-P-058",
+        "b": "P2-P-059",
+        "tiers": [
+          "unchecked",
+          "trusted"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-U-P2-P-063",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.715,
+          "muscle": 0.62522,
+          "weight": 0.76862,
+          "height": 0.40903,
+          "proportions": 0.41111,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-P-063",
+        "familyId": "P2-PROP-BB-077"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-U-P2-E-019",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7372,
+          "muscle": 0.53547,
+          "weight": 0.08,
+          "height": 0.06,
+          "proportions": 0.07,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-E-019",
+        "familyId": "P2-EXT-BB-017"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-U-P2-B-003",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.96231,
+          "muscle": 0.47201,
+          "weight": 0.61686,
+          "height": 0.37686,
+          "proportions": 0.94065,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-B-003",
+        "familyId": "P2-BROAD-M-H1-W2-M1-P3"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-U-P2-P-138",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.77556,
+          "muscle": 0.53995,
+          "weight": 0.63477,
+          "height": 0.70658,
+          "proportions": 0.21544,
+          "cupsize": 0.50997,
+          "firmness": 0.44446,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-P-138",
+        "familyId": "P2-PROP-BB-074"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-B-015",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.5,
+          "weight": 0.18601,
+          "gender": 0.0,
+          "height": 0.59984,
+          "age": 0.83416,
+          "proportions": 0.77344,
+          "muscle": 0.25486,
+          "cupsize": 0.5,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-031",
+        "a": "P2-P-151",
+        "b": "P2-P-152",
+        "tiers": [
+          "frontier",
+          "frontier"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-U-P2-B-006",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.78067,
+          "muscle": 0.87486,
+          "weight": 0.27846,
+          "height": 0.4813,
+          "proportions": 0.27916,
+          "cupsize": 0.33921,
+          "firmness": 0.54539,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-B-006",
+        "familyId": "P2-BROAD-F-H1-W1-M3-P1-C1"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-B-008",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.5,
+          "weight": 0.82057,
+          "gender": 0.0,
+          "height": 0.54698,
+          "age": 0.7906,
+          "proportions": 0.6643,
+          "muscle": 0.9,
+          "cupsize": 0.5,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-063",
+        "a": "P2-P-094",
+        "b": "P2-P-095",
+        "tiers": [
+          "trusted",
+          "frontier"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-B-002",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.5,
+          "weight": 0.2195,
+          "gender": 0.0,
+          "height": 0.30827,
+          "age": 0.7644,
+          "proportions": 0.44939,
+          "muscle": 0.42178,
+          "cupsize": 0.5,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-013",
+        "a": "P2-P-022",
+        "b": "P2-P-023",
+        "tiers": [
+          "frontier",
+          "trusted"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-B-006",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.5,
+          "weight": 0.76862,
+          "gender": 0.0,
+          "height": 0.40903,
+          "age": 0.715,
+          "proportions": 0.46111,
+          "muscle": 0.62522,
+          "cupsize": 0.5,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-077",
+        "a": "P2-P-063",
+        "b": "P2-P-064",
+        "tiers": [
+          "unchecked",
+          "trusted"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-B-016",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.71192,
+          "weight": 0.71518,
+          "gender": 1.0,
+          "height": 0.73281,
+          "age": 0.8246,
+          "proportions": 0.7362,
+          "muscle": 0.23574,
+          "cupsize": 0.30299,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-064",
+        "a": "P2-P-158",
+        "b": "P2-P-159",
+        "tiers": [
+          "trusted",
+          "frontier"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-B-001",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.5,
+          "weight": 0.2195,
+          "gender": 0.0,
+          "height": 0.30827,
+          "age": 0.7644,
+          "proportions": 0.31939,
+          "muscle": 0.42178,
+          "cupsize": 0.5,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-013",
+        "a": "P2-P-021",
+        "b": "P2-P-022",
+        "tiers": [
+          "unchecked",
+          "frontier"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-B-007",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.5,
+          "weight": 0.1,
+          "gender": 0.0,
+          "height": 0.45235,
+          "age": 0.84776,
+          "proportions": 0.19268,
+          "muscle": 0.53907,
+          "cupsize": 0.5,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-041",
+        "a": "P2-P-065",
+        "b": "P2-P-066",
+        "tiers": [
+          "frontier",
+          "trusted"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-U-P2-E-076",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.80956,
+          "muscle": 0.56838,
+          "weight": 0.92,
+          "height": 0.06,
+          "proportions": 0.07,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-E-076",
+        "familyId": "P2-EXT-BB-075"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-U-P2-E-105",
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7984,
+          "muscle": 0.4502,
+          "weight": 0.08,
+          "height": 0.73676,
+          "proportions": 0.93,
+          "cupsize": 0.78761,
+          "firmness": 0.44962,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-E-105",
+        "familyId": "P2-EXT-BB-014"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-U-P2-E-072",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8314,
+          "muscle": 0.05,
+          "weight": 0.95,
+          "height": 0.48086,
+          "proportions": 0.73566,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "carryover-unchecked",
+        "bodyId": "P2-E-072",
+        "familyId": "P2-EXT-BB-069"
+      },
+      "priority": 1.0
+    },
+    {
+      "candidateId": "AA-B-014",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.5,
+          "weight": 0.18601,
+          "gender": 0.0,
+          "height": 0.60116,
+          "age": 0.83416,
+          "proportions": 0.64344,
+          "muscle": 0.25486,
+          "cupsize": 0.5,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-031",
+        "a": "P2-P-150",
+        "b": "P2-P-151",
+        "tiers": [
+          "negative",
+          "frontier"
+        ]
+      },
+      "priority": 1.25
+    },
+    {
+      "candidateId": "AA-B-011",
+      "shape": {
+        "core": {
+          "african": 0.5,
+          "firmness": 0.44446,
+          "weight": 0.63477,
+          "gender": 1.0,
+          "height": 0.70658,
+          "age": 0.77556,
+          "proportions": 0.16544,
+          "muscle": 0.53995,
+          "cupsize": 0.50997,
+          "caucasian": 0.5,
+          "asian": 0.5
+        },
+        "local": {}
+      },
+      "source": {
+        "kind": "boundary-midpoint",
+        "familyId": "P2-PROP-BB-074",
+        "a": "P2-P-137",
+        "b": "P2-P-138",
+        "tiers": [
+          "trusted",
+          "unchecked"
+        ]
+      },
+      "priority": 1.25
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # SAMMY / BODY LAB / SOMA-LAB · MASTER STATE
 
-**Kanonischer Projektstand · Version 0.7 · 28.08.2026 · App v0.8.28.5**
+**Kanonischer Projektstand · Version 0.8 · 29.08.2026 · App v0.8.29.0**
 
 ## 1. Verbindliche Projektpflege
 
@@ -56,98 +56,123 @@ Statusmodell:
 
 Zwei akzeptierte Endpunkte garantieren nicht automatisch, dass jede Interpolation dazwischen gültig ist. Zwischenstufen müssen separat technisch geprüft und bei Bedarf human auditiert werden.
 
-## 5. Aktueller Build v0.8.28.5 · BODY BANK PHASE 2 · BLIND MIX + MENU-SAFE DUAL VIEWPORT
+## 5. Aktueller Build v0.8.29.0 · BODY BANK SOLVER ARCHITECTURE 1.0 + ACTIVE AUDIT 1.0
 
-### Ergebnis Phase 1 (v0.8.28.2)
+### 5.1 Phase-2-Audit ist jetzt Solver-Datenbasis
 
-Der erste 100er-Audit wurde abgeschlossen und als `Sammy_BODY_BANK_AUDIT_2026-08-28T19-10-48-878Z.json` ausgewertet.
+Der 400er Blind-Audit aus v0.8.28.5 wurde als `Sammy_BODY_BANK_PHASE2_BLIND_AUDIT_2026-08-29T14-09-26-471Z.json` ausgewertet.
 
-Gesamtergebnis inklusive verdeckter Wiederholungen:
+Gesamtergebnis auf Review-Ebene:
 
-- 70 `Plausibel`,
-- 26 `Unsicher`,
-- 2 `Unplausibel`,
-- 2 nicht bewertet,
-- 4 von 5 verdeckten Wiederholungen exakt gleich bewertet.
+- 259 `Plausibel`,
+- 84 `Unsicher`,
+- 41 `Unplausibel`,
+- 16 `unchecked`,
+- 19 vollständig bewertete verdeckte Wiederholungspaare, davon 16 exakt gleich = 84,2 %.
 
-Auf eindeutige Körper reduziert sind 66 akzeptierte Anker, 25 unsichere, 2 abgelehnte und 2 unbewertete Körper vorhanden.
+Wichtig: Die drei nicht exakt gleichen Wiederholungspaare lagen nur in Nachbarkategorien. Es gab keinen direkten Plausibel-gegen-Unplausibel-Widerspruch.
 
-Wichtige Human-Audit-Erkenntnis: Der Nutzer erklärte nach dem Lauf, dass **alle unsicheren Bewertungen ausschließlich dadurch entstanden, dass die Beine extrem lang wirkten**. Diese Aussage wird als Phase-1-Annotation `legs-too-long` gespeichert; sie ist keine globale Regel.
+Auf **eindeutige Körper** dedupliziert erzeugt v0.8.29.0 den neuen `body-bank-index-v1.json`:
 
-Die Phase-1-Auswertung zeigt zugleich einen Zusammenhang mit Annys Core-Achsen: Unsichere Körper lagen im Mittel deutlich höher bei `proportions` und `height` als akzeptierte Körper. Dies wird nur als Auswahlhinweis für Phase 2 genutzt, nicht als harte Grenze.
+- 246 `trusted` Körper: alle vorhandenen Bewertungen für diesen exakten Körper sind `accepted`,
+- 83 `frontier`: unsicher bzw. Repeat-Uneinigkeit,
+- 36 `negative`: alle vorhandenen Bewertungen für diesen exakten Körper sind `rejected`,
+- 15 `unchecked`: noch ohne Human-Verdikt.
 
-### Mess-/Diagnosekorrektur
+Nur `trusted` wird als Solver-Seed-Pool benutzt. `negative` bleibt ausschließlich lokales Negativwissen; es erzeugt **keine globale Slidergrenze**.
 
-Die visuellen Phase-1-Verdikte sind gültige Auditdaten. Die damals mitgespeicherten einfachen Umfangs-/Proxy-Snapshots sind jedoch **nicht für Body-Bank-Statistik freigegeben**: In einzelnen Fällen traten offensichtlich unbrauchbare Umfangs- und Schulterproxywerte auf.
+### 5.2 Audit bestätigt die lokale Body-Bank-Hypothese
 
-Phase 2 speichert deshalb keine dieser einfachen Umfangssnapshots mehr. Stattdessen werden nur pose-unabhängige, geometrisch robuste Diagnosekennzahlen verwendet:
+Die gezielten Proportionsvarianten um bereits akzeptierte Körper waren deutlich stabiler als freie Extremkombinationen:
 
-- Rest-Mesh-Körperhöhe,
-- Hüftgelenkhöhe relativ zur Körperhöhe,
-- Femur- + Tibia-Kettenlänge relativ zur Körperhöhe,
-- Femur/Tibia-Verhältnis,
-- Torso-Skelettkette relativ zur Körperhöhe,
-- vertikales Becken-zu-Hals-Verhältnis,
-- Schulter- und Hüftgelenkbreite relativ zur Körperhöhe.
+- Proportionsfamilien: 152 von 162 bewerteten Reviews plausibel = 93,8 %.
+- Extremraum: 65 plausibel, 62 unsicher, 35 unplausibel bei 162 bewerteten Reviews.
+- Breite Randstichprobe: 42 plausibel, 14 unsicher, 4 unplausibel bei 60 bewerteten Reviews.
 
-Grundlage ist das **shape-abhängige exakte Anny/SOMA-Rest-Rig**, nicht die sichtbare Auditpose oder Animation. Diese Kennzahlen dienen zunächst nur zur Diagnose der langen-Beine-Grenze; daraus wird noch kein anthropometrischer Auto-Gate abgeleitet.
+Damit ist die zentrale Architekturhypothese für den nächsten Proof ausreichend unterstützt: **ein bereits plausibler naher Anny-Körper ist ein sinnvollerer Solver-Startpunkt als freie globale Exploration.**
 
-### Phase-2-Queue · blind gemischt
+Ein besonders klarer lokaler Problemkorridor ist `short-short-lean`: 23 von 23 bewerteten Fällen wurden abgelehnt. Das wird als Kombination/Korridor gespeichert, nicht als globales Verbot von `height`, `proportions` oder `weight` einzeln.
 
-Der wissenschaftliche Inhalt des 400er Audits bleibt erhalten: Proportionsfamilien, absichtliche Extremkombinationen, breite Randstichproben und 20 verdeckte Wiederholungen. **Für die menschliche Bewertung wird die Queue jedoch vollständig blind durchmischt.**
+### 5.3 Bekannter Diagnosefehler: Shoulder-Joint-Proxy ausgeschlossen
 
-Die neue Planfassung `body-bank-phase2-plan-v2.json`:
+Der Phase-2-Wert `shoulderJointBreadth` ist weiterhin offensichtlich geometrisch falsch und wird ab v0.8.29.0 **explizit aus Body-Bank-Retrieval und Auto-Gates entfernt**.
 
-- mischt alle 400 Fälle deterministisch mit gespeichertem Shuffle-Seed,
-- verhindert direkte Nachbarschaft derselben `familyId` bzw. desselben Elternankers,
-- hält verdeckte Wiederholungen mit großem Abstand zum Original,
-- zeigt dem Reviewer weder Testtyp noch Familie, Variantenrichtung, Ausgangsanker oder Wiederholungsstatus,
-- enthält weiterhin 380 eindeutige Zielkörper + 20 verdeckte Wiederholungen.
+Weiterverwendet werden die plausiblen pose-unabhängigen Rest-Mesh-/Rest-Rig-Diagnosen wie Statur, Hip-Joint-Height-Ratio, Leg-Chain-Ratio, Femur/Tibia, Torso-Chain-Ratio, Pelvis-to-Neck-Ratio und Hip-Joint-Breadth-Ratio.
 
-Damit soll verhindert werden, dass der Reviewer eine sichtbare Änderungsserie erkennt und relativ zum unmittelbar vorherigen Körper urteilt.
+### 5.4 BODY BANK SOLVER 1.0
 
-### Erwachsenengröße
+Der neue Solver ist ein additiver POC im bestehenden `SOLV`-Panel. Der alte Body Fit und die historischen ANSUR-Solver bleiben unverändert als Vergleich/Forschungsarchiv erhalten.
 
-Für diesen Audit werden **keine Erwachsenen über 205 cm angezeigt**. Der Plan wird zunächst konservativ anhand der aus Phase 1 beobachteten Beziehung zwischen Anny-`height` und Rest-Mesh-Körperhöhe vorgekappt. Vor jeder Anzeige folgt zusätzlich ein harter, pose-unabhängiger Check der tatsächlichen Rest-Mesh-Statur. Falls ein Kandidat noch über 205 cm liegt, wird ausschließlich seine `height`-Komponente so weit reduziert, bis der exakte Rest-Mesh-Wert innerhalb der Grenze liegt. Die angepasste Rezeptur wird für verdeckte Wiederholungen identisch weiterverwendet.
+Runtime-Kette:
 
-Die 205-cm-Regel ist eine **Audit-Sampling-Grenze**, keine anthropometrische Aussage, dass größere Menschen unmöglich sind. Sie vermeidet nur extrem seltene Größen, die für die aktuelle Kartierung wenig Informationsgewinn liefern.
+1. Nutzer gibt Geschlecht, Alter, Körpergröße, Gewicht, Brust, Taille und Hüfte/Gesäß ein.
+2. Grobe Vorauswahl nur aus `trusted` Body-Bank-Seeds über Geschlecht, exakte gespeicherte Rest-Mesh-Statur, Alter und einen Gewichts-/BMI-Prior.
+3. Nur die beste Shortlist wird tatsächlich in Anny rekonstruiert und am aktuellen Mesh für Statur, Brust, Taille, Hüfte/Gesäß und optional Mass-/Volumen-Prior vermessen.
+4. Top-5 werden angezeigt; der beste Seed ist sofort ein **human-auditierter Ausgangskörper**.
+5. Optionaler Local Fit verändert nur eng begrenzt:
+   - `core:height`,
+   - `measure-bust-circ-incr`,
+   - `measure-waist-circ-incr`,
+   - `measure-hips-circ-incr`.
+6. `weight` und `muscle` werden in Solver 1.0 **nicht frei nachoptimiert**. Gewicht ist Retrieval-/Volumen-Prior und Diagnose, kein direkter Anny-Weight-Zielwert.
+7. Keine Cross-Region-Rettung.
 
-### BANK-only Dual Viewport
+Ein veränderter Local-Fit ist definitionsgemäß noch **nicht human-auditiert** und wird deshalb automatisch an `BANK -> ACTIVE` übergeben. Ein Zustand gilt nur dann als `audited-seed`, wenn sein komplettes stabilisiertes Rezept exakt einem `trusted`/`trusted-user`-Node entspricht; auch eine reine `core:height`-Änderung bleibt ansonsten unauditiert. Zusätzlich besitzt Solver 1.0 einen globalen Non-Worsening-Gate: verschlechtert die gesamte lokale Korrektur den gemeinsamen Größen-/Brust-/Taillen-/Hüft- bzw. Runtime-Score, wird vollständig auf den auditierten Seed zurückgerollt.
 
-Nur im `LAB -> BANK`-Modus stehen zwei Viewports A/B zur Verfügung. Sie teilen ausschließlich die **freie Viewer-Fläche außerhalb des Menüs**: auf iPhone/Bottom-Sheet wird der bisherige obere A-Bereich mittig in A/B geteilt; auf Desktop teilen sie den Bereich links neben dem Seitenpanel. Beide zeigen dieselbe Person und denselben Bewegungsframe, besitzen aber **unabhängige Kameras**:
+### 5.5 Falsifizierbarer 8er Blind-Proof
 
-- eigener Zoom, Orbit, Pan und Blickwinkel,
-- letzter Klick / Touch / Orbit / Zoom wählt automatisch den aktiven Viewport,
-- `Vorne`, `3/4`, `Seite`, `Hinten` und `AutoFit` wirken nur auf den aktiven Viewport,
-- die aktive Ansicht wird dezent markiert,
-- Pose/Animation bleibt absichtlich synchron, damit derselbe Bewegungsframe gleichzeitig aus zwei Richtungen beurteilt werden kann.
+`SOLV -> BODY BANK SOLVER -> 8er Blind-Proof` hält acht diverse `trusted` Körper nacheinander vollständig aus dem Retrieval-Pool heraus.
 
-### Optionales AutoFit
+Für jeden versteckten Zielkörper werden Geschlecht und der aus dem Anny-Alterszustand abgeleitete Alterskontext wie bei bekannten Nutzer-Metadaten mitgeführt. Am echten Mesh werden zusätzlich genau vier geometrische Zielwerte erzeugt:
 
-`AutoFit` ist **pro Viewport separat ein-/ausschaltbar**.
+- Körpergröße,
+- Brustumfang,
+- Taillenumfang,
+- Hüft-/Gesäßumfang.
 
-- `AutoFit AN`: Beim Wechsel zur nächsten Person wird die Kamera so angepasst, dass der neue Körper ungefähr gleich groß im jeweiligen Viewport erscheint. Die aktuelle Blickrichtung bleibt erhalten.
-- `AutoFit AUS`: Kamera, Zoom und Zielpunkt bleiben beim Personenwechsel exakt stehen.
-- Ein expliziter View-Button (`Vorne`, `3/4`, `Seite`, `Hinten`) darf unabhängig davon neu einrahmen.
+Gewicht wird im Proof absichtlich **weder bewertet noch für die Retrieval-Vorauswahl benutzt**, weil der Phase-2-Audit kein objektives kg-Label für die Body-Bank-Körper enthält.
 
-Damit ragt ein großer Körper nach einem kleinen nicht versehentlich aus dem Bild, ohne den bereits gewünschten manuellen Kamera-Lock abzuschaffen.
+Verglichen werden auf exakt denselben vier Zielwerten:
 
-### Objektivitätsregel Schnellgrund
+1. neutraler gleichgeschlechtlicher Anny-Start, nur in der Statur angepasst,
+2. bester Body-Bank-Retrieval-Seed, Zielkörper explizit ausgeschlossen,
+3. derselbe Seed nach dem kleinen Local Fit.
 
-Der optionale Schnellgrund für `?` / `x` bleibt verfügbar und ist seit v0.8.28.4 **nicht mehr mit `Beine zu lang` vorausgewählt**. Standard ist `kein Grund`, damit die bekannte Phase-1-Beobachtung den neuen Blind-Audit nicht vorprägt.
+Die Proof-Vorauswahl nutzt ohne Gewicht nur Statur + Alterskontext; der versteckte Zielkörper selbst ist aus dem Retrieval explizit ausgeschlossen. Der Local Fit besitzt den oben beschriebenen Rollback-Gate. Deshalb berichtet der Proof zusätzlich getrennt, in wie vielen Fällen der Local Fit **tatsächlich verbessert** und in wie vielen er nur nicht verschlechtert/auf den Seed zurückgerollt hat.
 
-### Kopfmodell · bewusst vertagt
+`GO` wird nur ausgegeben, wenn der mediane Retrieval-Fehler kleiner als der mediane Neutralstart-Fehler ist **und** der Local-Fit-Median den Retrieval-Median nicht verschlechtert. Es gibt keinen versteckten absoluten Erfolgswert.
 
-Eine Quellcodeprüfung von Anny zeigt: `height`, `weight`, `age` usw. sind separate Phenotypachsen; zusätzlich existieren lokale Kopf-Morphs wie `head-fat` und Kopf-Skalierungsachsen. Das beobachtete Verhalten, dass Kopfgröße bzw. Kopffett nicht automatisch anthropometrisch mit Körpergröße/Gewicht gekoppelt werden, ist daher überwiegend eine Eigenschaft des zugrunde liegenden Anny/MakeHuman-Modells und **kein aktueller BANK-Browserfehler**.
+### 5.6 ACTIVE AUDIT · unmittelbares transparentes Lernen
 
-Diese Korrektur wird **nicht in den aktuellen Blind-Audit aufgenommen**, weil dort kein absoluter Größenmaßstab sichtbar ist und Kopfgröße derzeit keine kritische Zielgröße ist. Sie bleibt als spätere Aufgabe festgehalten: separate Prüfung mit bekannter Körpergröße und anthropometrischem Kopf-Körper-Verhältnis; erst danach ggf. semantische Kopplung von Head-Size/Head-Fat.
+`BANK` besitzt ab v0.8.29.0 zwei getrennte Modi:
 
-### Datenbasis Phase 2
+- `PHASE 2`: der bisherige 400er Blind-Audit bleibt vollständig erhalten.
+- `ACTIVE`: neue, informationsreiche Kandidaten.
 
-Der Build enthält:
+Der initiale Active-Seed enthält 32 Fälle:
 
-- `body-bank-phase1-audit-seed-v1.json`: konsolidiert die 95 eindeutigen Phase-1-Körper, Originalurteile und die nachträgliche `legs-too-long`-Annotation.
-- `body-bank-phase2-plan-v2.json`: blind durchmischter 380+20-Plan mit 205-cm-Samplingregel, gespeichertem Shuffle-Seed und unverändertem lokalen Familienkontext für die spätere Auswertung.
+- die 15 eindeutigen bisher ungeprüften Phase-2-Körper,
+- 17 lokale Midpoints an Proportionsfamilien-Grenzen, an denen mindestens ein Nachbar `frontier` oder `negative` ist.
+
+Zusätzlich erzeugt der Solver Active-Kandidaten, insbesondere:
+
+- jedes tatsächlich veränderte Local-Fit-Ergebnis,
+- enge Retrieval-Ambiguitäten zwischen ähnlich guten Seeds,
+- Local-Fits aus dem 8er Proof.
+
+Ein Active-Vote aktualisiert **sofort auf demselben Gerät** einen transparenten lokalen Learning-Store:
+
+- `accepted` -> `trusted-user` und damit zusätzlicher Solver-Seed,
+- `uncertain` -> `frontier-user`,
+- `rejected` -> `negative-user`.
+
+Anny selbst bzw. seine Modellgewichte werden nicht trainiert. Gelernt wird ausschließlich die nachvollziehbare SAMMY-Body-Bank-/Sicherheitsstruktur.
+
+### 5.7 BANK-UI und ältere Auditregeln bleiben gültig
+
+Der menu-safe Dual Viewport, unabhängige Kameras, Last-Interaction-Auswahl, optionales AutoFit pro Viewport, blinde Präsentation, 205-cm-Audit-Cap und das vertagte Kopf-/Head-Fat-Thema bleiben unverändert erhalten.
+
+Zusätzlich ist der Resume-Pfad korrigiert: Wenn eine gespeicherte Sitzung am Ende steht, aber frühere `unchecked`-Fälle enthält, springt BANK beim erneuten Öffnen auf den ersten noch offenen Fall statt diese still zu übergehen.
 
 ## 6. Rolle des bisherigen Wissens
 
@@ -177,8 +202,10 @@ Externe Populationsdaten können später genutzt werden, um aus wenigen Nutzerda
 
 ### Aktueller Produktions-/Produktpfad
 
-- Body Fit v1.2 aus v0.8.27.2 bleibt als bestehender Minimal-Prototyp verfügbar.
-- v0.8.28.5 setzt den Body-Bank-/Audit-Pfad als echten Blind-Audit fort: dieselben lokalen Proportions-/Extrem-/Randfälle werden objektiv durchmischt. Im BANK-Modus teilen A/B ausschließlich den freien Viewer-Bereich außerhalb des Menüs; auf iPhone/Bottom-Sheet entspricht das dem bisherigen oberen A-Bereich, der mittig in zwei unabhängige Viewports geteilt wird. Optionales AutoFit bleibt pro Viewport erhalten. Der Runtime-Lookup/Fitter bleibt weiterhin deaktiviert, bis dieser Raum ausreichend kartiert ist.
+- **Body Bank Solver 1.0** ist ab v0.8.29.0 der aktuelle Architektur-POC für den zukünftigen Produktpfad: `trusted` Retrieval -> Top-K -> kleiner anatomisch begrenzter Local Fit -> Active Audit.
+- `BANK -> ACTIVE` ist der Human-in-the-loop-Lernpfad für neue Solverzustände; Accepted-Votes können sofort lokal als neue Seeds verwendet werden.
+- Body Fit v1.2 aus v0.8.27.2 bleibt unverändert als Vergleich/Fallback-Prototyp verfügbar, ist aber nicht mehr der bevorzugte Körperaufbaupfad.
+- Der menu-safe Dual Viewport und die bisherigen Phase-2-Auditdaten bleiben erhalten.
 
 ### Forschungsarchiv
 
@@ -203,27 +230,37 @@ Diese Pfade dürfen als Diagnose, Vergleich oder Datenquelle genutzt werden. Ein
 - Messfehler, Mesh-Limit, Lookup-Abdeckung und Fitterfehler müssen separat diagnostizierbar bleiben.
 - iPhone/Safari-Tauglichkeit und Resume/Persistenz sind Pflicht.
 
-## 10. Nächster Gate nach v0.8.28.5
+## 10. Nächster Gate nach v0.8.29.0
 
-Der Nutzer auditiert die 400 Phase-2-Fälle und exportiert `Sammy_BODY_BANK_PHASE2_AUDIT_*.json`.
+Der nächste Entscheidungs-Gate ist jetzt **nicht** ein weiterer großer Zufallsaudit, sondern die neue Solverarchitektur selbst.
 
-Danach werden mindestens getrennt bewertet:
+### Gate A · 8er Blind-Proof
 
-1. **Lange-Beine-Grenze:** Zusammenhang zwischen `legs-too-long` und den neuen exakten Rest-Rig-Kennzahlen (`hipJointHeightRatio`, `legChainRatio`, `torsoChainRatio`) innerhalb einzelner Körperfamilien.
-2. **Kontextabhängigkeit:** ob ähnliche Skelettverhältnisse in verschiedenen Körperfamilien unterschiedlich bewertet werden und deshalb lokale statt globale Grenzen nötig bleiben.
-3. **Extremraum:** welche der absichtlich weit getriebenen Core-Kombinationen noch plausibel sind und wo echte lokale Ablehnungsregionen beginnen.
-4. **Breite Randabdeckung:** ob außerhalb des bisherigen komfortablen Innenraums weitere plausible Inseln existieren.
-5. **Reviewer-Konsistenz:** 20 verdeckte Wiederholungen, getrennt nach Proportions-, Extrem- und Randfällen.
-6. **Zusammenhängender akzeptierter Raum:** ob genug `HUMAN_ACCEPTED`-Anker und lokale Übergänge für einen ersten Lookup-Prototyp vorhanden sind.
+Der Proof muss mindestens zeigen:
 
-Erst wenn diese Auswertung brauchbar ist, folgt der nächste technische Proof:
+1. Retrieval-Median < höhenangepasster Neutralstart-Median.
+2. Local-Fit-Median <= Retrieval-Median.
+3. Kein Cross-Region-Controller und keine freie globale Weight/Muscle-Suche wurde dafür benötigt.
+4. Die Ergebnisse bleiben technisch gültig und innerhalb des 205-cm-Produkt-/Auditbereichs.
 
-- Top-K-Lookup auf akzeptierten Anny-Rezepten,
-- zunächst nur mit wenigen stabilen Eingaben,
-- anschließend sehr kleiner anatomisch gerouteter lokaler Fitter,
-- kein freier From-Scratch-Solver.
+Wenn Gate A `GO` ergibt, wird die Body Bank schrittweise größer und der Retrieval-Index um reale/stabile Eingabemaße erweitert.
 
-Wenn die langen-Beine-Unsicherheit durch einen klaren, aber familienabhängigen Skelettbereich erklärt werden kann, wird daraus **keine globale `proportions`-Grenze**, sondern ein lokaler Audit-/Korridorhinweis für die jeweilige Körperfamilie.
+### Gate B · Active Audit
+
+Die vom Solver erzeugten neuen Körper werden in `BANK -> ACTIVE` blind bewertet. Wichtig ist nicht die Menge, sondern der Informationsgewinn an tatsächlich benutzten Solverregionen.
+
+Zu prüfen ist insbesondere:
+
+- ob Local-Fit-Ergebnisse überwiegend akzeptiert werden,
+- ob Retrieval-Ambiguitäten durch zusätzliche Human-Votes auflösbar werden,
+- ob Accepted-Active-Körper als neue Seeds die spätere Retrieval-Qualität verbessern,
+- ob Rejections lokal bleiben und keine falschen globalen Grenzen erzeugen.
+
+### Gate C · danach erst Solver-Ausbau
+
+Erst nach A/B werden weitere Freiheitsgrade oder zusätzliche Nutzereingaben ergänzt. Bevorzugt werden nur Maße, die geometrisch stabil messbar und durch lokale anatomisch passende Controller kontrollierbar sind.
+
+Das vertagte Kopfgrößen-/Head-Fat-Thema bleibt außerhalb dieses Gates und wird später mit absolutem Größenbezug separat geprüft.
 
 ## 11. Abbruch-/Entscheidungsregel
 
@@ -234,9 +271,10 @@ Wenn bereits der konservative Anny-Core-Raum überwiegend unplausibel ist oder s
 | Version | Datum | Änderung |
 |---|---|---|
 | 0.1 | 22.08.2026 | Master State eingeführt; Landmark-/Messpipeline als damaliger Schwerpunkt dokumentiert. |
-| 0.2 | 28.08.2026 | Auf aktuellen Projektstand konsolidiert. From-Scratch-Solver nicht mehr bevorzugter Produktpfad; Audited Body Bank / lokale Körperfamilien als neue Hauptarchitektur. BODY BANK AUDIT PoC v0.8.28.0 und verpflichtende synchronisierte Master-State-/SAMMY_CURRENT-Exports festgelegt. |
-| 0.3 | 28.08.2026 | GitHub Pages Hotfix v0.8.28.1: Cache-Busting-/Versionsdrift aus v0.8.28.0 korrigiert; synchroner HTML/JS/CSS-Deployment-Gate und `.nojekyll` als Exportregel ergänzt. |
-| 0.4 | 28.08.2026 | BODY BANK v0.8.28.2: manueller Zoom/Orbit bleibt über Personenwechsel erhalten; nur expliziter Viewport-Wechsel reframed. Statische Posen, Gang-/Stress-Loops und importierte Animationen direkt im Audit. Review-Kontext wird gespeichert; numerische Audit-Snapshots sind pose-unabhängig. |
-| 0.5 | 28.08.2026 | BODY BANK v0.8.28.3: Phase-1-Audit konsolidiert; alle Unsicherheiten als nutzerbestätigtes `legs-too-long`-Signal dokumentiert. Neuer 400er Grenz-/Extremraum (160 Proportionsfamilien, 160 Extremfälle, 60 breite Randfälle, 20 verdeckte Wiederholungen). Fehleranfällige Phase-1-Umfangssnapshots aus dem Bank-Pfad entfernt; stattdessen exakte Anny-Rest-Rig-Bein/Torso-Verhältnisse. Optionaler persistenter Schnellgrund ohne Kommentarzwang. |
-| 0.6 | 28.08.2026 | BODY BANK v0.8.28.4: 400er Queue vollständig reviewer-blind durchmischt und aktuelle Testkategorie verborgen; direkte Familien-/Elternnachbarschaft vermieden und Wiederholungen weit getrennt. BANK-only Dual-Viewport mit Last-Interaction-Auswahl und unabhängigem Kamera-/AutoFit-Zustand. Erwachsenenanzeige hart auf <=205 cm Rest-Mesh-Statur begrenzt. Schnellgrund standardmäßig leer. Kopfgröße/Head-Fat nach Anny-Quellcodeprüfung als spätere separate Modellkorrektur dokumentiert und bewusst aus dem Audit herausgehalten. |
-| 0.7 | 28.08.2026 | BODY BANK v0.8.28.5: Dual-Viewport-Layout auf die tatsächlich freie Viewer-Fläche begrenzt. Auf iPhone/Bottom-Sheet wird der bisherige obere A-Bereich horizontal in A/B geteilt; das untere Bildschirmsegment bleibt dem Audit-Menü vorbehalten. Auf Desktop nutzt A/B entsprechend den Bereich links neben dem Panel. Viewport-Auswahl, unabhängige Kameras und AutoFit bleiben unverändert. |
+| 0.2 | 28.08.2026 | Projektstand konsolidiert; Audited Body Bank / lokale Körperfamilien als neue Hauptarchitektur; synchrone Master-State-/SAMMY_CURRENT-Exports festgelegt. |
+| 0.3 | 28.08.2026 | GitHub-Pages-Hotfix: Cache-/Versionsdrift korrigiert; synchroner HTML/JS/CSS-Deployment-Gate und `.nojekyll`. |
+| 0.4 | 28.08.2026 | BANK v0.8.28.2: Kamera bleibt über Personenwechsel erhalten; Posen/Animationen im Audit; Review-Kontext getrennt gespeichert. |
+| 0.5 | 28.08.2026 | BANK v0.8.28.3: 400er Grenz-/Extremraum; Phase-1 `legs-too-long` dokumentiert; exakte Rest-Rig-Bein/Torso-Diagnosen statt fehlerhafter Umfangssnapshots. |
+| 0.6 | 28.08.2026 | BANK v0.8.28.4: reviewer-blinde Mischung, BANK-only Dual Viewport, unabhängiges AutoFit, <=205-cm-Gate; Kopf/Head-Fat bewusst vertagt. |
+| 0.7 | 28.08.2026 | BANK v0.8.28.5: iPhone-menüsicheres A/B-Layout; Dual Viewport nutzt nur die freie Viewer-Fläche. |
+| 0.8 | 29.08.2026 | v0.8.29.0: Audit zu Body-Bank-Index kompiliert; Trusted-Top-K-Solver + kleiner Local Fit + 8er Blind-Proof + ACTIVE-Lernmodus. Shoulder-Proxy ausgeschlossen; Proof ohne kg-Vorauswahl; Non-Worsening-Rollback; Resume-Fix. |

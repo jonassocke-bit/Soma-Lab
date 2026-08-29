@@ -1,3 +1,31 @@
+# Sammy v0.8.29.0 — BODY BANK Solver Architecture 1.0 + Active Audit
+
+Der abgeschlossene Phase-2-Blind-Audit wird jetzt erstmals als echte Solver-Datenbasis benutzt. `body-bank-index-v1.json` enthält dedupliziert 246 trusted, 83 frontier, 36 negative und 15 unchecked Körper. Der neue Haupt-POC unter `SOLV` sucht nur unter trusted Körpern, rekonstruiert eine kleine Shortlist wirklich in Anny und fitttet anschließend ausschließlich Höhe, Brust, Taille und Hüfte/Gesäß in engem lokalen Abstand. Ein globaler Non-Worsening-Gate rollt eine insgesamt schlechtere Korrektur vollständig auf den auditierten Seed zurück.
+
+Der `8er Blind-Proof` hält acht trusted Körper vollständig aus der Bank heraus und vergleicht neutralen Start → Retrieval → Local Fit. Gewicht wird im Proof weder gescored noch für die Vorauswahl benutzt. `BANK → ACTIVE` sammelt neue solverrelevante Grenz-/Local-Fit-Körper blind ein; Accepted-Votes werden auf demselben Gerät sofort zusätzliche trusted-user Seeds.
+
+Siehe:
+- `BODY_BANK_SOLVER_ARCHITECTURE_1.0_V0.8.29.0.md`
+- `RELEASE_NOTES_V0.8.29.0.md`
+- `CHANGESET_V0.8.29.0.md`
+- `SAMMY_MASTER_STATE.docx`
+
+---
+
+# Sammy v0.8.29.0 — BODY BANK SOLVER 1.0 + ACTIVE AUDIT
+
+Der Phase-2-Human-Audit ist jetzt ein echter Solver-Index: 246 `trusted` Körper werden als Startkörper genutzt; Frontier, lokale Negativpunkte und offene Fälle bleiben strikt getrennt. Der neue bevorzugte POC-Pfad lautet **Body Bank Retrieval → kleiner Local Fit → ACTIVE Audit**.
+
+Im SOLV-Panel gibt es einen falsifizierbaren 8er Blind-Proof sowie eine manuelle Top-K-Suche. Der Local Fit darf nur Höhe, Brust, Taille und Hüfte/Gesäß in engem Seed-Abstand verändern und rollt bei schlechterem Gesamtscore vollständig zurück. Jeder neue Zustand wird erst nach `BANK → ACTIVE` zu einem zusätzlichen sicheren Seed.
+
+Siehe:
+- `BODY_BANK_SOLVER_ARCHITECTURE_1.0_V0.8.29.0.md`
+- `RELEASE_NOTES_V0.8.29.0.md`
+- `CHANGESET_V0.8.29.0.md`
+- `SAMMY_MASTER_STATE.docx`
+
+---
+
 # Sammy v0.8.28.5 — BODY BANK Menu-safe Dual Viewport
 
 Der 400er Phase-2-Audit ist jetzt reviewer-blind durchmischt: Testtyp, Familie, Richtung und Wiederholungsstatus bleiben verborgen. BANK besitzt zwei unabhängig zoombare/orbitbare Viewports; die letzte Interaktion wählt die aktive Ansicht, und Vorne / ¾ / Seite / Hinten / AutoFit gelten nur für diese Kamera. AutoFit ist pro Viewport optional.

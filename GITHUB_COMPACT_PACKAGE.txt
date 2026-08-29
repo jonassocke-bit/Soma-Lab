@@ -1,38 +1,13 @@
-SAMMY GitHub Compact Package · v0.8.28.5
+SAMMY GitHub Compact Package · v0.8.29.0
 
-Direct root files: 55 (GitHub web upload target <100)
+Direct root files: 57 (GitHub web upload target <100)
 
-Runtime/current files stay directly visible. Older development history is bundled inside SAMMY_HISTORY_THROUGH_V0.8.28.4.zip.
+Runtime/current files stay directly visible. Older development history is bundled inside SAMMY_HISTORY_THROUGH_V0.8.28.5.zip.
 
 Direct files:
 - .nojekyll
-- ANNY_PACK_WORKFLOW.yml
-- ANSUR24_PROTOCOL_V2.json
-- ANSUR_II_94_MEASURE_MAPPING_V0.8.20.1.json
-- ANSUR_SOURCE_PAGES.zip
-- ANSUR_SOURCE_PAGES_MANIFEST.json
-- BODY_BANK_MENU_SAFE_DUAL_VIEW_V0.8.28.5.md
-- BUILD_MANIFEST_V0.8.28.5.json
-- BUILD_REAL_ANSUR_STRESS_ASSETS_V0.8.26.0.py
-- BUILD_TEST_V0.8.28.5.txt
-- CHANGESET_V0.8.28.5.md
-- EXACT_ANNY_SOMA_RIG.md
-- FILES_CHANGED_V0.8.28.5.txt
-- GITHUB_COMPACT_PACKAGE.txt
-- MIXAMO_RIG_AUDIT_V0514.json
-- MIXAMO_XBOT_ANALYSIS.json
-- MOTION_IMPORT.md
-- PATCH_NOTES.md
-- POSE_ORACLE_WORKFLOW.yml
-- README.md
-- RELEASE_NOTES_V0.8.28.5.md
-- RIGPACK_WORKFLOW.yml
-- SAMMY_CURRENT_VERSION.txt
-- SAMMY_HISTORY_THROUGH_V0.8.28.4.zip
-- SAMMY_MASTER_STATE.docx
-- SAMMY_MASTER_STATE.md
-- THIRD_PARTY.md
 - anny-pack-setup.html
+- ANNY_PACK_WORKFLOW.yml
 - ansur-crops-atlas.jpg
 - ansur-crops-atlas.json
 - ansur-dimensions-bridge-v1.json
@@ -41,22 +16,49 @@ Direct files:
 - ansur-prediction-test-v1.json
 - ansur-prediction-trainval-v1.json
 - ansur-protocol-v1.json
+- ANSUR24_PROTOCOL_V2.json
+- ANSUR_II_94_MEASURE_MAPPING_V0.8.20.1.json
+- ANSUR_SOURCE_PAGES.zip
+- ANSUR_SOURCE_PAGES_MANIFEST.json
 - anthro24-conditional-prior-v1.json
 - app.js
+- body-bank-active-audit-seed-v1.json
+- body-bank-index-v1.json
 - body-bank-phase1-audit-seed-v1.json
 - body-bank-phase2-plan-v2.json
+- BODY_BANK_SOLVER_ARCHITECTURE_1.0_V0.8.29.0.md
+- BUILD_MANIFEST_V0.8.29.0.json
+- BUILD_REAL_ANSUR_STRESS_ASSETS_V0.8.26.0.py
+- BUILD_TEST_V0.8.29.0.txt
+- CHANGESET_V0.8.29.0.md
+- EXACT_ANNY_SOMA_RIG.md
 - extract_anny_soma_pack.py
 - extract_current_rig_pack.py
+- FILES_CHANGED_V0.8.29.0.txt
+- GITHUB_COMPACT_PACKAGE.txt
 - index.html
 - mass-composition-v1.json
+- MIXAMO_RIG_AUDIT_V0514.json
+- MIXAMO_XBOT_ANALYSIS.json
 - morph-sections-v2.1.js
+- MOTION_IMPORT.md
+- PATCH_NOTES.md
 - pose-oracle-setup.html
 - pose_oracle.py
+- POSE_ORACLE_WORKFLOW.yml
+- README.md
+- RELEASE_NOTES_V0.8.29.0.md
 - rigpack-setup.html
+- RIGPACK_WORKFLOW.yml
 - sammy-ansur-sitting-source.fbx
 - sammy-ansur-standing-source.fbx
+- SAMMY_CURRENT_VERSION.txt
+- SAMMY_HISTORY_THROUGH_V0.8.28.5.zip
+- SAMMY_MASTER_STATE.docx
+- SAMMY_MASTER_STATE.md
 - solver-v2-real-ansur-stress-suite-v1.json
 - solver-v2-statistical-body-bank-v1.json
 - solver24-prior-v1.json
 - standing-greeting.fbx
 - style.css
+- THIRD_PARTY.md

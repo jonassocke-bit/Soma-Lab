@@ -1,0 +1,66 @@
+SAMMY v0.8.29.0 static + BODY BANK SOLVER 1.0 / ACTIVE AUDIT gate
+
+Source Phase-2 audit sha256: 2962b8979db1f86df026fefcc546b19eb0bc5c80aa003abae99aa32bcae38b86
+
+- PASS: JS syntax (node --check)
+- PASS: SAMMY_APP_VERSION
+- PASS: HTML title
+- PASS: HTML CSS cache tag
+- PASS: HTML JS cache tag
+- PASS: HTML visible version
+- PASS: No duplicate HTML ids · []
+- PASS: Body Bank Solver UI ids · []
+- PASS: BANK ACTIVE mode control
+- PASS: Legacy Body Fit retained
+- PASS: Old research solver retained
+- PASS: .nojekyll present
+- PASS: Body-bank index schema
+- PASS: Body-bank index app target
+- PASS: Body-bank index nodes · 380
+- PASS: Body-bank index edges · 120
+- PASS: Trusted nodes · Counter({'trusted': 246, 'frontier': 83, 'negative': 36, 'unchecked': 15})
+- PASS: Frontier nodes · Counter({'trusted': 246, 'frontier': 83, 'negative': 36, 'unchecked': 15})
+- PASS: Negative nodes · Counter({'trusted': 246, 'frontier': 83, 'negative': 36, 'unchecked': 15})
+- PASS: Unchecked nodes · Counter({'trusted': 246, 'frontier': 83, 'negative': 36, 'unchecked': 15})
+- PASS: Trusted-candidate edges · Counter({'trusted-candidate': 103, 'boundary': 17})
+- PASS: Boundary edges · Counter({'trusted-candidate': 103, 'boundary': 17})
+- PASS: Source audit file exists
+- PASS: Source audit SHA-256 · 2962b8979db1f86df026fefcc546b19eb0bc5c80aa003abae99aa32bcae38b86
+- PASS: Index source audit SHA
+- PASS: Shoulder proxy excluded
+- PASS: Shoulder proxy absent from retrieval metrics · ['statureCm', 'hipJointHeightRatio', 'legChainRatio', 'femurTibiaRatio', 'torsoChainRatio', 'pelvisToNeckVerticalRatio', 'hipJointBreadthRatio']
+- PASS: Trusted nodes have finite selected metrics
+- PASS: Index measured stature <=205 cm · 204.15
+- PASS: Active seed schema
+- PASS: Active seed count · 32 / 32
+- PASS: Active seed ids unique
+- PASS: Active carryover unchecked · Counter({'boundary-midpoint': 17, 'carryover-unchecked': 15})
+- PASS: Active boundary midpoints · Counter({'boundary-midpoint': 17, 'carryover-unchecked': 15})
+- PASS: Active source hash
+- PASS: Exact trusted safety semantics
+- PASS: Unaudited local result semantics
+- PASS: Global non-worsening rollback
+- PASS: Rollback exported
+- PASS: Proof strict improvement diagnostics
+- PASS: Proof weight excluded from preselection
+- PASS: Proof age context exported
+- PASS: Active trusted-user learning
+- PASS: Active frontier-user learning
+- PASS: Active negative-user learning
+- PASS: Phase2 resume fix
+- PASS: Active audit export
+- PASS: Master State current app version
+- PASS: Master State Body Bank Solver 1.0
+- PASS: Master State Active Audit
+- PASS: Master State proof age context
+- PASS: Master State shoulder exclusion
+- PASS: Master State DOCX exists
+- PASS: Master State DOCX QA pages
+
+Browser/WebGL runtime: NOT claimed as automated PASS; container browser navigation is administratively blocked. Final runtime gate is GitHub/iPhone Safari.
+- PASS: Full ZIP integrity · 247 root entries
+- PASS: Changed-files ZIP integrity · 17 entries
+- PASS: GitHub Compact ZIP integrity · 57 direct root files (<100)
+- PASS: History ZIP integrity · 191 archived files
+- PASS: GitHub Compact has root index.html and .nojekyll
+- PASS: SAMMY_CURRENT / SAMMY_GITHUB_CURRENT aliases produced by release script

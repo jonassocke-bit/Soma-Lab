@@ -1,3 +1,17 @@
+# v0.8.29.0 · Body Bank Solver Architecture 1.0 + Active Audit
+
+- Phase-2-Audit als deduplizierter Body-Bank-Index kompiliert: 246 trusted / 83 frontier / 36 negative / 15 unchecked.
+- Neuer trusted-only Top-K-Retrieval-Pfad im SOLV-Panel.
+- Shortlist wird wirklich rekonstruiert und mit aktuellen Meshmaßen gerankt.
+- Local Fit nur Höhe + direkte Brust/Taille/Hüfte, kleine Bounds, keine Cross-Region-Rettung.
+- Globaler Non-Worsening-Rollback auf den auditierten Seed.
+- 8er held-out Blind-Proof; echtes Zielalter, kein kg-Score und keine kg-Vorauswahl.
+- BANK erhält ACTIVE-Modus; Accepted-Votes werden sofort lokale trusted-user Seeds.
+- Known-bad Shoulder-Joint-Proxy aus Retrieval/Gates entfernt.
+- Resume-Fix für frühere unchecked Phase-2-Fälle.
+
+---
+
 # v0.8.28.5
 
 - BANK Dual-Viewport nutzt nur noch die freie Viewer-Fläche außerhalb des Menüs.
@@ -161,3 +175,12 @@ Body Fit Priority Fix: Masse jetzt Weight+Muscle am realen Mesh, danach Hüfte/T
 - Sichtbarer Build-Stempel 0.8.27.2; gemeldeter vorheriger Test lief noch mit v0.8.27.0.
 - Body-Fit Defaults: 174 / 88.5 / 103 / 86 / 113.
 - Priority-Fix v0.8.27.1 bleibt aktiv: Masse über Weight+Muscle vor regionaler Recovery.
+
+## v0.8.29.0 · Body Bank Solver 1.0 + Active Audit 1.0
+- Phase-2-Audit zu `body-bank-index-v1` kompiliert: 246 trusted / 83 frontier / 36 negative / 15 unchecked.
+- Neuer SOLV-Pfad: Trusted Top-K Retrieval → echte Shortlist-Meshmessung → kleiner Height/Chest/Waist/Hip-Local-Fit.
+- Globaler Non-Worsening-Gate mit vollständigem Rollback auf den auditierten Seed.
+- 8er Blind-Holdout-Proof gegen höhenangepassten neutralen Anny-Start.
+- BANK erhält ACTIVE-Modus; Votes lernen lokal sofort als trusted-user/frontier-user/negative-user.
+- Shoulder-Joint-Proxy explizit aus Body-Bank-Retrieval/Gates ausgeschlossen; Phase-2-Resume springt auf offene Fälle.
+
