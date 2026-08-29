@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.28.4</title>
-<link rel="stylesheet" href="style.css?v=0.8.28.4">
+<title>Sammy v0.8.28.5</title>
+<link rel="stylesheet" href="style.css?v=0.8.28.5">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -31,7 +31,7 @@
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.28.4</div>
+<div id="sammyVersion">Sammy · v0.8.28.5</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -499,7 +499,7 @@
    <div class="sammyBodyBankVoteGrid" role="group" aria-label="Körper bewerten"><button id="sammyBodyBankOk" class="ok" type="button"><b>✓</b><span>Plausibel</span></button><button id="sammyBodyBankUnsure" class="unsure" type="button"><b>?</b><span>Unsicher</span></button><button id="sammyBodyBankBad" class="bad" type="button"><b>×</b><span>Unplausibel</span></button></div>
    <div class="sammyBodyBankNav"><button id="sammyBodyBankPrev" type="button">‹ zurück</button><button id="sammyBodyBankNext" type="button">weiter ›</button></div>
    <div id="sammyBodyBankStatus" class="sammyStatus"><span>Die Reihenfolge ist blind durchmischt. Testtyp, Familie, Variantenrichtung und Wiederholungsstatus bleiben während der Bewertung verborgen.</span></div>
-   <details class="sammyBodyBankInfo"><summary>Audit-Regeln</summary><div>Beide Viewports zeigen dieselbe Person und denselben Bewegungsframe. Zoom, Orbit und Ausrichtung sind jedoch unabhängig. Der zuletzt berührte oder gedrehte Viewport ist aktiv; nur für ihn gelten Vorne / ¾ / Seite / Hinten und AutoFit. AutoFit ist pro Viewport optional und hält den Körper beim Personenwechsel ungefähr gleich groß im Bild. Ohne AutoFit bleibt die Kamera exakt stehen. Erwachsene über 205 cm werden vor der Anzeige anhand der pose-unabhängigen Rest-Mesh-Körperhöhe reduziert. Die 400 Fälle sind reproduzierbar blind gemischt; der aktuelle Testtyp wird nicht angezeigt. Kopfgröße/Head-Fat ist bewusst nicht Teil dieses Audits.</div></details>
+   <details class="sammyBodyBankInfo"><summary>Audit-Regeln</summary><div>Beide Viewports teilen sich im BANK-Modus den freien Bildbereich oberhalb des Menüs und zeigen dieselbe Person und denselben Bewegungsframe. Zoom, Orbit und Ausrichtung sind jedoch unabhängig. Der zuletzt berührte oder gedrehte Viewport ist aktiv; nur für ihn gelten Vorne / ¾ / Seite / Hinten und AutoFit. AutoFit ist pro Viewport optional und hält den Körper beim Personenwechsel ungefähr gleich groß im Bild. Ohne AutoFit bleibt die Kamera exakt stehen. Erwachsene über 205 cm werden vor der Anzeige anhand der pose-unabhängigen Rest-Mesh-Körperhöhe reduziert. Die 400 Fälle sind reproduzierbar blind gemischt; der aktuelle Testtyp wird nicht angezeigt. Kopfgröße/Head-Fat ist bewusst nicht Teil dieses Audits.</div></details>
    <div class="sammyCalibrationActions"><button id="sammyBodyBankExport" type="button">Blind-Audit JSON</button><button id="sammyBodyBankRestart" type="button">Neues 400er Audit</button></div>
   </div>
  </section>
@@ -994,6 +994,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.28.4"></script>
+<script type="module" src="app.js?v=0.8.28.5"></script>
 </body>
 </html>

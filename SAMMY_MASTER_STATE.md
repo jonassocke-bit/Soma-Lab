@@ -1,6 +1,6 @@
 # SAMMY / BODY LAB / SOMA-LAB · MASTER STATE
 
-**Kanonischer Projektstand · Version 0.6 · 28.08.2026 · App v0.8.28.4**
+**Kanonischer Projektstand · Version 0.7 · 28.08.2026 · App v0.8.28.5**
 
 ## 1. Verbindliche Projektpflege
 
@@ -56,7 +56,7 @@ Statusmodell:
 
 Zwei akzeptierte Endpunkte garantieren nicht automatisch, dass jede Interpolation dazwischen gültig ist. Zwischenstufen müssen separat technisch geprüft und bei Bedarf human auditiert werden.
 
-## 5. Aktueller Build v0.8.28.4 · BODY BANK PHASE 2 · BLIND MIX + DUAL VIEWPORT
+## 5. Aktueller Build v0.8.28.5 · BODY BANK PHASE 2 · BLIND MIX + MENU-SAFE DUAL VIEWPORT
 
 ### Ergebnis Phase 1 (v0.8.28.2)
 
@@ -114,7 +114,7 @@ Die 205-cm-Regel ist eine **Audit-Sampling-Grenze**, keine anthropometrische Aus
 
 ### BANK-only Dual Viewport
 
-Nur im `LAB -> BANK`-Modus stehen zwei Viewports A/B zur Verfügung. Beide zeigen dieselbe Person und denselben Bewegungsframe, besitzen aber **unabhängige Kameras**:
+Nur im `LAB -> BANK`-Modus stehen zwei Viewports A/B zur Verfügung. Sie teilen ausschließlich die **freie Viewer-Fläche außerhalb des Menüs**: auf iPhone/Bottom-Sheet wird der bisherige obere A-Bereich mittig in A/B geteilt; auf Desktop teilen sie den Bereich links neben dem Seitenpanel. Beide zeigen dieselbe Person und denselben Bewegungsframe, besitzen aber **unabhängige Kameras**:
 
 - eigener Zoom, Orbit, Pan und Blickwinkel,
 - letzter Klick / Touch / Orbit / Zoom wählt automatisch den aktiven Viewport,
@@ -134,7 +134,7 @@ Damit ragt ein großer Körper nach einem kleinen nicht versehentlich aus dem Bi
 
 ### Objektivitätsregel Schnellgrund
 
-Der optionale Schnellgrund für `?` / `x` bleibt verfügbar, wird aber in v0.8.28.4 **nicht mehr mit `Beine zu lang` vorausgewählt**. Standard ist `kein Grund`, damit die bekannte Phase-1-Beobachtung den neuen Blind-Audit nicht vorprägt.
+Der optionale Schnellgrund für `?` / `x` bleibt verfügbar und ist seit v0.8.28.4 **nicht mehr mit `Beine zu lang` vorausgewählt**. Standard ist `kein Grund`, damit die bekannte Phase-1-Beobachtung den neuen Blind-Audit nicht vorprägt.
 
 ### Kopfmodell · bewusst vertagt
 
@@ -178,7 +178,7 @@ Externe Populationsdaten können später genutzt werden, um aus wenigen Nutzerda
 ### Aktueller Produktions-/Produktpfad
 
 - Body Fit v1.2 aus v0.8.27.2 bleibt als bestehender Minimal-Prototyp verfügbar.
-- v0.8.28.4 setzt den Body-Bank-/Audit-Pfad als echten Blind-Audit fort: dieselben lokalen Proportions-/Extrem-/Randfälle werden objektiv durchmischt, mit BANK-only Dual-Viewport und optionalem AutoFit geprüft. Der Runtime-Lookup/Fitter bleibt weiterhin deaktiviert, bis dieser Raum ausreichend kartiert ist.
+- v0.8.28.5 setzt den Body-Bank-/Audit-Pfad als echten Blind-Audit fort: dieselben lokalen Proportions-/Extrem-/Randfälle werden objektiv durchmischt. Im BANK-Modus teilen A/B ausschließlich den freien Viewer-Bereich außerhalb des Menüs; auf iPhone/Bottom-Sheet entspricht das dem bisherigen oberen A-Bereich, der mittig in zwei unabhängige Viewports geteilt wird. Optionales AutoFit bleibt pro Viewport erhalten. Der Runtime-Lookup/Fitter bleibt weiterhin deaktiviert, bis dieser Raum ausreichend kartiert ist.
 
 ### Forschungsarchiv
 
@@ -203,7 +203,7 @@ Diese Pfade dürfen als Diagnose, Vergleich oder Datenquelle genutzt werden. Ein
 - Messfehler, Mesh-Limit, Lookup-Abdeckung und Fitterfehler müssen separat diagnostizierbar bleiben.
 - iPhone/Safari-Tauglichkeit und Resume/Persistenz sind Pflicht.
 
-## 10. Nächster Gate nach v0.8.28.4
+## 10. Nächster Gate nach v0.8.28.5
 
 Der Nutzer auditiert die 400 Phase-2-Fälle und exportiert `Sammy_BODY_BANK_PHASE2_AUDIT_*.json`.
 
@@ -239,3 +239,4 @@ Wenn bereits der konservative Anny-Core-Raum überwiegend unplausibel ist oder s
 | 0.4 | 28.08.2026 | BODY BANK v0.8.28.2: manueller Zoom/Orbit bleibt über Personenwechsel erhalten; nur expliziter Viewport-Wechsel reframed. Statische Posen, Gang-/Stress-Loops und importierte Animationen direkt im Audit. Review-Kontext wird gespeichert; numerische Audit-Snapshots sind pose-unabhängig. |
 | 0.5 | 28.08.2026 | BODY BANK v0.8.28.3: Phase-1-Audit konsolidiert; alle Unsicherheiten als nutzerbestätigtes `legs-too-long`-Signal dokumentiert. Neuer 400er Grenz-/Extremraum (160 Proportionsfamilien, 160 Extremfälle, 60 breite Randfälle, 20 verdeckte Wiederholungen). Fehleranfällige Phase-1-Umfangssnapshots aus dem Bank-Pfad entfernt; stattdessen exakte Anny-Rest-Rig-Bein/Torso-Verhältnisse. Optionaler persistenter Schnellgrund ohne Kommentarzwang. |
 | 0.6 | 28.08.2026 | BODY BANK v0.8.28.4: 400er Queue vollständig reviewer-blind durchmischt und aktuelle Testkategorie verborgen; direkte Familien-/Elternnachbarschaft vermieden und Wiederholungen weit getrennt. BANK-only Dual-Viewport mit Last-Interaction-Auswahl und unabhängigem Kamera-/AutoFit-Zustand. Erwachsenenanzeige hart auf <=205 cm Rest-Mesh-Statur begrenzt. Schnellgrund standardmäßig leer. Kopfgröße/Head-Fat nach Anny-Quellcodeprüfung als spätere separate Modellkorrektur dokumentiert und bewusst aus dem Audit herausgehalten. |
+| 0.7 | 28.08.2026 | BODY BANK v0.8.28.5: Dual-Viewport-Layout auf die tatsächlich freie Viewer-Fläche begrenzt. Auf iPhone/Bottom-Sheet wird der bisherige obere A-Bereich horizontal in A/B geteilt; das untere Bildschirmsegment bleibt dem Audit-Menü vorbehalten. Auf Desktop nutzt A/B entsprechend den Bereich links neben dem Panel. Viewport-Auswahl, unabhängige Kameras und AutoFit bleiben unverändert. |

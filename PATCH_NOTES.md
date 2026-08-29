@@ -1,3 +1,11 @@
+# v0.8.28.5
+
+- BANK Dual-Viewport nutzt nur noch die freie Viewer-Fläche außerhalb des Menüs.
+- iPhone/Bottom-Sheet: bisheriger oberer A-Bereich wird mittig in A/B geteilt.
+- Desktop: freier Bereich links vom Panel wird in A/B geteilt.
+- Panel-Resize aktualisiert die Viewer-Grenze automatisch.
+- Kein Eingriff in Audit-Queue, Bewertung, Statur-Gate oder übrige App-Modi.
+
 # v0.8.28.4
 
 BODY BANK: vollständig blind gemischte 400er Queue, aktuelle Testkategorie verborgen, zwei unabhängige BANK-only Viewports mit Last-Interaction-Auswahl und optionalem per-Viewport AutoFit. Adult-Sampling zeigt keine Rest-Mesh-Statur >205 cm. Schnellgrund startet leer; Kopfgröße/Head-Fat bleibt bewusst vertagt.

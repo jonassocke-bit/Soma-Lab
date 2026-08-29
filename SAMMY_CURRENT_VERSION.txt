@@ -1,5 +1,1 @@
-0.8.28.4
-SAMMY_V0.8.28.4_BODY-BANK-BLIND-DUAL-VIEWPORT.zip
-Current canonical source: v0.8.28.4 Body Bank Blind Mix + Dual Viewport
-GitHub current: SAMMY_GITHUB_CURRENT.zip
-GitHub compact direct files: 55
+SAMMY_V0.8.28.5_BODY-BANK-MENU-SAFE-DUAL-VIEWPORT.zip

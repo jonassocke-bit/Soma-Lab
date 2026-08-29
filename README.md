@@ -1,13 +1,13 @@
-# Sammy v0.8.28.4 — BODY BANK Blind Mix + Dual Viewport
+# Sammy v0.8.28.5 — BODY BANK Menu-safe Dual Viewport
 
 Der 400er Phase-2-Audit ist jetzt reviewer-blind durchmischt: Testtyp, Familie, Richtung und Wiederholungsstatus bleiben verborgen. BANK besitzt zwei unabhängig zoombare/orbitbare Viewports; die letzte Interaktion wählt die aktive Ansicht, und Vorne / ¾ / Seite / Hinten / AutoFit gelten nur für diese Kamera. AutoFit ist pro Viewport optional.
 
 Erwachsene über 205 cm werden für diesen Audit vor der Anzeige herausgeregelt. Der optionale Schnellgrund startet leer. Das separat beobachtete Kopfgrößen-/Head-Fat-Thema ist im Master State als spätere absolute Größenprüfung dokumentiert und absichtlich nicht Teil dieses Audits.
 
 Siehe:
-- `BODY_BANK_BLIND_DUAL_VIEW_V0.8.28.4.md`
-- `RELEASE_NOTES_V0.8.28.4.md`
-- `CHANGESET_V0.8.28.4.md`
+- `BODY_BANK_MENU_SAFE_DUAL_VIEW_V0.8.28.5.md`
+- `RELEASE_NOTES_V0.8.28.5.md`
+- `CHANGESET_V0.8.28.5.md`
 - `SAMMY_MASTER_STATE.docx`
 
 ---

@@ -948,10 +948,12 @@ body.sammy-lab-hub-open #sammyLabBubble{box-shadow:0 0 0 2px rgba(255,255,255,.2
 @media(max-width:370px){.sammyBodyBankReason{grid-template-columns:minmax(0,1fr) 118px}.sammyBodyBankReason>span{font-size:7.5px}}
 
 
-/* v0.8.28.4 · BANK-only dual viewport. Transparent hit surfaces own OrbitControls;
-   the renderer itself stays one WebGL canvas and uses scissor rendering. */
-.sammyBodyBankDualViewport{position:fixed;inset:0;z-index:8;display:none;pointer-events:none}
-body.sammy-body-bank-dual .sammyBodyBankDualViewport{display:grid;grid-template-columns:1fr 1fr;pointer-events:auto}
+/* v0.8.28.5 · BANK-only dual viewport. Both views share only the unobstructed
+   viewer area; on phone/bottom-sheet layouts this is the former A area above
+   the menu. Transparent hit surfaces own OrbitControls; one WebGL canvas is
+   scissor-rendered into A/B. */
+.sammyBodyBankDualViewport{position:fixed;left:0;top:0;width:100vw;height:42vh;z-index:8;display:none;pointer-events:none}
+body.sammy-body-bank-dual .sammyBodyBankDualViewport{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:1fr;pointer-events:auto}
 .sammyBodyBankViewportHit{position:relative;min-width:0;min-height:0;touch-action:none;border:1px solid transparent;cursor:grab}
 .sammyBodyBankViewportHit:active{cursor:grabbing}
 .sammyBodyBankViewportHit:first-child{border-right-color:rgba(255,255,255,.18)}
@@ -962,4 +964,3 @@ body.sammy-body-bank-dual .sammyBodyBankDualViewport{display:grid;grid-template-
 .sammyBodyBankViewportState b{font-size:9px}.sammyBodyBankViewportState small{font-size:7.5px;color:#8e9199;text-align:right}
 .sammyBodyBankViewRow{grid-template-columns:repeat(5,minmax(0,1fr))!important}
 #sammyUi #sammyBodyBankAutoFit.active{background:#eceef2!important;color:#15161a!important}
-@media(max-aspect-ratio:4/5){body.sammy-body-bank-dual .sammyBodyBankDualViewport{grid-template-columns:1fr;grid-template-rows:1fr 1fr}.sammyBodyBankViewportHit:first-child{border-right-color:transparent;border-bottom-color:rgba(255,255,255,.18)}}

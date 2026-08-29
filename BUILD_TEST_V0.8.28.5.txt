@@ -1,0 +1,29 @@
+SAMMY v0.8.28.5 static + BODY BANK menu-safe dual-view gate
+
+Phase2 plan sha256: c80fd033bbcfeb81b8f8cd4c40aa6e97900e9254b5d5e1c9d0d7c392a3169825
+
+- PASS: SAMMY_APP_VERSION
+- PASS: HTML version <title>Sammy v0.8.28.5</title>
+- PASS: HTML version style.css?v=0.8.28.5
+- PASS: HTML version app.js?v=0.8.28.5
+- PASS: HTML version Sammy · v0.8.28.5
+- PASS: No duplicate HTML ids
+- PASS: Dual grid remains horizontal A/B
+- PASS: Old portrait vertical stacking removed
+- PASS: Dynamic menu-safe overlay function
+- PASS: Mobile viewer ends at panel top
+- PASS: Desktop viewer ends before side panel
+- PASS: Overlay syncs during every dual render
+- PASS: Viewport interaction still last-touch active
+- PASS: Per-viewport AutoFit retained
+- PASS: BANK-only activation class
+- PASS: Phase2 queue remains 400
+- PASS: 205cm runtime cap retained
+- PASS: Master State current version
+- PASS: Master State menu-safe viewport rule
+- PASS: JS syntax (node --check)
+- PASS: Full ZIP integrity · 239 root entries planned/verified
+- PASS: Changed-files ZIP integrity · 15 entries
+- PASS: GitHub Compact ZIP integrity · 55 direct root files (<100)
+- PASS: GitHub Compact has root index.html and .nojekyll
+- PASS: SAMMY_CURRENT / SAMMY_GITHUB_CURRENT aliases produced
