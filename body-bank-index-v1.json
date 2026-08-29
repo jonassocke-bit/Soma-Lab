@@ -1,7 +1,7 @@
 {
   "schema": "sammy-body-bank-index-v1",
-  "appTargetVersion": "0.8.29.1",
-  "generated": "2026-08-29T15:20:09.846137Z",
+  "appTargetVersion": "0.8.29.3",
+  "generated": "2026-08-29T16:10:22.397097Z",
   "source": {
     "auditFile": "Sammy_BODY_BANK_PHASE2_BLIND_AUDIT_2026-08-29T14-09-26-471Z.json",
     "auditSha256": "2962b8979db1f86df026fefcc546b19eb0bc5c80aa003abae99aa32bcae38b86",
@@ -62,7 +62,10 @@
     ],
     "excludedReason": "Phase-2 shoulder-joint metric is known invalid and must not enter retrieval or gating.",
     "headModel": "deferred; not used by this solver architecture",
-    "activeAuditCanonicalMerge": "v0.8.29.1 merges the returned 32-case ACTIVE export: carryover unchecked nodes are reclassified in-place; boundary midpoints are added as new local audited nodes. No global slider bounds are inferred."
+    "activeAuditCanonicalMerge": "v0.8.29.1 merges the returned 32-case ACTIVE export: carryover unchecked nodes are reclassified in-place; boundary midpoints are added as new local audited nodes. No global slider bounds are inferred.",
+    "solverCanonicalStature": "exact Anny rest-mesh bounding-box stature; legacy measurement-stack stature is diagnostic only in Body Bank Solver 1.0",
+    "solverLocalAcceptanceScore": "controllable geometry only: stature + chest + waist + hip; weight/mass remains retrieval/diagnostic prior and cannot veto/approve a local step",
+    "solverProofHoldout": "v1.2 removes target body, complete family and near core-recipe neighbors (distance <= 0.16) from retrieval"
   },
   "summary": {
     "frontier": 91,

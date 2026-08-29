@@ -1,0 +1,354 @@
+{
+  "schema": "sammy-body-bank-solver-v1",
+  "appVersion": "0.8.29.2",
+  "createdAt": "2026-08-29T15:58:49.613Z",
+  "input": {
+    "sex": 0,
+    "age": 35,
+    "height": 178,
+    "weight": 80,
+    "chest": 100,
+    "waist": 85,
+    "hip": 100
+  },
+  "retrieval": {
+    "evaluated": 24,
+    "invalidCandidates": 0,
+    "selectedSeedIndex": 0,
+    "top5": [
+      {
+        "bodyId": "AA-B-004",
+        "fitScore": 0.7883,
+        "coarseScore": 0.1816,
+        "safety": {
+          "nearestTrusted": {
+            "bodyId": "AA-B-004",
+            "distance": 0
+          },
+          "nearestFrontier": {
+            "bodyId": "P2-B-031",
+            "distance": 0.38635235644421795
+          },
+          "nearestNegative": {
+            "bodyId": "P2-P-150",
+            "distance": 0.5442678365290383
+          },
+          "exactTrustedBodyId": "AA-B-004",
+          "maxLocalAbs": 0,
+          "status": "audited-seed",
+          "requiresHumanAudit": false
+        }
+      },
+      {
+        "bodyId": "P2-P-059",
+        "fitScore": 0.7927,
+        "coarseScore": 0.1816,
+        "safety": {
+          "nearestTrusted": {
+            "bodyId": "P2-P-059",
+            "distance": 0
+          },
+          "nearestFrontier": {
+            "bodyId": "P2-B-023",
+            "distance": 0.37628930776730823
+          },
+          "nearestNegative": {
+            "bodyId": "P2-P-150",
+            "distance": 0.5479733915802847
+          },
+          "exactTrustedBodyId": "P2-P-059",
+          "maxLocalAbs": 0,
+          "status": "audited-seed",
+          "requiresHumanAudit": false
+        }
+      },
+      {
+        "bodyId": "P2-P-060",
+        "fitScore": 0.827,
+        "coarseScore": 0.1816,
+        "safety": {
+          "nearestTrusted": {
+            "bodyId": "P2-P-060",
+            "distance": 0
+          },
+          "nearestFrontier": {
+            "bodyId": "AA-U-P2-B-003",
+            "distance": 0.2849878107568813
+          },
+          "nearestNegative": {
+            "bodyId": "P2-E-058",
+            "distance": 0.5051639368314014
+          },
+          "exactTrustedBodyId": "P2-P-060",
+          "maxLocalAbs": 0,
+          "status": "audited-seed",
+          "requiresHumanAudit": false
+        }
+      },
+      {
+        "bodyId": "P2-P-057",
+        "fitScore": 0.8371,
+        "coarseScore": 0.1816,
+        "safety": {
+          "nearestTrusted": {
+            "bodyId": "P2-P-057",
+            "distance": 0
+          },
+          "nearestFrontier": {
+            "bodyId": "P2-B-041",
+            "distance": 0.3676545685422663
+          },
+          "nearestNegative": {
+            "bodyId": "P2-P-150",
+            "distance": 0.585901798836631
+          },
+          "exactTrustedBodyId": "P2-P-057",
+          "maxLocalAbs": 0,
+          "status": "audited-seed",
+          "requiresHumanAudit": false
+        }
+      },
+      {
+        "bodyId": "AA-B-003",
+        "fitScore": 0.841,
+        "coarseScore": 0.1816,
+        "safety": {
+          "nearestTrusted": {
+            "bodyId": "AA-B-003",
+            "distance": 0
+          },
+          "nearestFrontier": {
+            "bodyId": "P2-B-041",
+            "distance": 0.36817968679708557
+          },
+          "nearestNegative": {
+            "bodyId": "P2-P-150",
+            "distance": 0.5678120445006429
+          },
+          "exactTrustedBodyId": "AA-B-003",
+          "maxLocalAbs": 0,
+          "status": "audited-seed",
+          "requiresHumanAudit": false
+        }
+      }
+    ]
+  },
+  "seedBodyId": "AA-B-004",
+  "seedShape": {
+    "core": {
+      "gender": 0,
+      "age": 0.8732,
+      "muscle": 0.64915,
+      "weight": 0.57643,
+      "height": 0.39643,
+      "proportions": 0.54452,
+      "cupsize": 0.5,
+      "firmness": 0.5,
+      "african": 0.5,
+      "asian": 0.5,
+      "caucasian": 0.5
+    },
+    "local": {}
+  },
+  "initialSnapshot": {
+    "stature": 180.56237529963255,
+    "chest": 92.94972106983617,
+    "waist": 86.1336142598015,
+    "hip": 97.69427979340206,
+    "massKg": 74.32519500000001,
+    "meshVolumeL": 70.875,
+    "massReliable": true,
+    "shapeMetric": {
+      "schema": "sammy-body-bank-shape-metrics-v1",
+      "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+      "statureCm": 178.12,
+      "hipJointHeightCm": 94.72,
+      "hipJointHeightRatio": 0.53177,
+      "legChainCm": 88.09,
+      "legChainRatio": 0.49455,
+      "femurCm": 44.13,
+      "tibiaCm": 43.95,
+      "femurTibiaRatio": 1.00414,
+      "torsoChainCm": 45.71,
+      "torsoChainRatio": 0.25663,
+      "pelvisToNeckVerticalRatio": 0.25472,
+      "shoulderJointBreadthCm": 3.67,
+      "shoulderJointBreadthRatio": 0.0206,
+      "hipJointBreadthCm": 22.42,
+      "hipJointBreadthRatio": 0.12585,
+      "coreProportions": 0.54452
+    }
+  },
+  "initialFit": {
+    "score": 0.7883106039428571,
+    "parts": {
+      "height": {
+        "target": 178,
+        "actual": 180.56237529963255,
+        "residual": 2.5623752996325493,
+        "z": 1.0249501198530198
+      },
+      "chest": {
+        "target": 100,
+        "actual": 92.94972106983617,
+        "residual": -7.050278930163827,
+        "z": -1.175046488360638
+      },
+      "waist": {
+        "target": 85,
+        "actual": 86.1336142598015,
+        "residual": 1.1336142598015044,
+        "z": 0.2267228519603009
+      },
+      "hip": {
+        "target": 100,
+        "actual": 97.69427979340206,
+        "residual": -2.3057202065979396,
+        "z": -0.4611440413195879
+      },
+      "weight": {
+        "target": 80,
+        "actual": 74.32519500000001,
+        "residual": -5.674804999999992,
+        "z": -0.5674804999999992
+      }
+    }
+  },
+  "finalShape": {
+    "core": {
+      "gender": 0,
+      "age": 0.8732,
+      "muscle": 0.64915,
+      "weight": 0.57643,
+      "height": 0.37594,
+      "proportions": 0.54452,
+      "cupsize": 0.5,
+      "firmness": 0.5,
+      "african": 0.5,
+      "asian": 0.5,
+      "caucasian": 0.5
+    },
+    "local": {
+      "measure-bust-circ-incr": 0.1
+    }
+  },
+  "finalSnapshot": {
+    "stature": 178.38015034794807,
+    "chest": 95.80045431480922,
+    "waist": 85.55274829793788,
+    "hip": 96.90763802305892,
+    "massKg": 72.9042336,
+    "meshVolumeL": 69.52,
+    "massReliable": true,
+    "shapeMetric": {
+      "schema": "sammy-body-bank-shape-metrics-v1",
+      "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+      "statureCm": 175.91,
+      "hipJointHeightCm": 93.31,
+      "hipJointHeightRatio": 0.53046,
+      "legChainCm": 86.76,
+      "legChainRatio": 0.49318,
+      "femurCm": 43.41,
+      "tibiaCm": 43.34,
+      "femurTibiaRatio": 1.00167,
+      "torsoChainCm": 45.26,
+      "torsoChainRatio": 0.25732,
+      "pelvisToNeckVerticalRatio": 0.25522,
+      "shoulderJointBreadthCm": 3.65,
+      "shoulderJointBreadthRatio": 0.02073,
+      "hipJointBreadthCm": 22.24,
+      "hipJointBreadthRatio": 0.12643,
+      "coreProportions": 0.54452
+    }
+  },
+  "finalFit": {
+    "score": 0.5178094041837941,
+    "parts": {
+      "height": {
+        "target": 178,
+        "actual": 178.38015034794807,
+        "residual": 0.38015034794807434,
+        "z": 0.15206013917922973
+      },
+      "chest": {
+        "target": 100,
+        "actual": 95.80045431480922,
+        "residual": -4.199545685190785,
+        "z": -0.6999242808651308
+      },
+      "waist": {
+        "target": 85,
+        "actual": 85.55274829793788,
+        "residual": 0.5527482979378817,
+        "z": 0.11054965958757634
+      },
+      "hip": {
+        "target": 100,
+        "actual": 96.90763802305892,
+        "residual": -3.0923619769410777,
+        "z": -0.6184723953882155
+      },
+      "weight": {
+        "target": 80,
+        "actual": 72.9042336,
+        "residual": -7.095766400000002,
+        "z": -0.7095766400000002
+      }
+    }
+  },
+  "trace": [
+    {
+      "axis": "height",
+      "accepted": true,
+      "before": 180.56237529963255,
+      "after": 178.3586747944355,
+      "raw": 0.3759355875274422
+    },
+    {
+      "axis": "measure-bust-circ-incr",
+      "accepted": true,
+      "before": 95.0681234908788,
+      "after": 95.80045431480922,
+      "raw": 0.1
+    },
+    {
+      "axis": "global-score-gate",
+      "accepted": true,
+      "before": 0.7883106039428571,
+      "after": 0.5178094041837941
+    }
+  ],
+  "safety": {
+    "nearestTrusted": {
+      "bodyId": "AA-B-004",
+      "distance": 0.023812355458956564
+    },
+    "nearestFrontier": {
+      "bodyId": "P2-B-041",
+      "distance": 0.3907189676936977
+    },
+    "nearestNegative": {
+      "bodyId": "P2-P-150",
+      "distance": 0.5551283553920775
+    },
+    "exactTrustedBodyId": null,
+    "maxLocalAbs": 0.1,
+    "status": "local-unaudited",
+    "requiresHumanAudit": true
+  },
+  "changed": true,
+  "rolledBack": false,
+  "activeAuditCandidateId": "AA-S-2f9708e4",
+  "policy": {
+    "seedPool": "human-audited trusted only",
+    "localControllers": [
+      "core:height",
+      "measure-bust-circ-incr",
+      "measure-waist-circ-incr",
+      "measure-hips-circ-incr"
+    ],
+    "weightRole": "retrieval/mass diagnostic only; no free runtime weight/muscle optimization in Solver 1.0",
+    "crossRegionRescue": false,
+    "localResult": "always unaudited until BANK → ACTIVE vote"
+  }
+}

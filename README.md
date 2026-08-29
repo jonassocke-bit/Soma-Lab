@@ -1,3 +1,17 @@
+# Sammy v0.8.29.3 — BODY BANK Solver Proof Hardening 1.1
+
+v0.8.29.3 härtet den neuen Body-Bank-Solver nach dem ersten erfolgreichen Proof/Manuallauf. Die Solvergröße bleibt bewusst unverändert: eine kanonische Rest-Mesh-Statur, getrennte Geometrie-/Weight-Scores, vollständige Local-Fit-Traces und ein 16er Family-/Near-Neighbor-Holdout ersetzen die methodisch zu leichte Exact-Body-Prüfung.
+
+Der kanonische Body-Bank-Index bleibt bei 397 Nodes (269 trusted / 91 frontier / 37 negative). Der erste manuell erzeugte Solver-Kandidat `AA-S-2f9708e4` ist als unauditierter ACTIVE-Fall erhalten.
+
+Aktuelle Dokumente:
+- `BODY_BANK_SOLVER_PROOF_HARDENING_V0.8.29.3.md`
+- `RELEASE_NOTES_V0.8.29.3.md`
+- `CHANGESET_V0.8.29.3.md`
+- `SAMMY_MASTER_STATE.md` / `.docx`
+
+---
+
 # Sammy v0.8.29.2 — GitHub Visible-Version / Cache Hotfix
 
 v0.8.29.2 korrigiert einen Deployment-/Anzeige-Fehler aus v0.8.29.1: Der Splash-Screen enthielt noch fest `v0.8.28.4`, obwohl Runtime, Titel und Cache-Tags bereits v0.8.29.1 waren. Dadurch sah ein korrekt hochgeladener neuer Build auf GitHub Pages beim Start wie ein alter Stand aus.

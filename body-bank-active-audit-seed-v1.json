@@ -1,7 +1,7 @@
 {
   "schema": "sammy-body-bank-active-audit-seed-v1",
-  "appTargetVersion": "0.8.29.1",
-  "generated": "2026-08-29",
+  "appTargetVersion": "0.8.29.3",
+  "generated": "2026-08-29T16:10:22.397097Z",
   "sourceAuditSha256": "2962b8979db1f86df026fefcc546b19eb0bc5c80aa003abae99aa32bcae38b86",
   "policy": {
     "purpose": "Initial high-information queue before solver-generated candidates arrive.",
@@ -10,9 +10,10 @@
     "humanPresentation": "blind; provenance hidden during voting",
     "learning": "votes are written to local BODY BANK learning store and become available to Solver 1.0 immediately on the same device",
     "rejectionScope": "local exact candidate only",
-    "canonicalMerge": "The returned 32-case ACTIVE export is canonical in v0.8.29.1; fresh sessions filter already-audited seed shapes and show only new solver-generated candidates."
+    "canonicalMerge": "The returned 32-case ACTIVE export is canonical in v0.8.29.1; fresh sessions filter already-audited seed shapes and show only new solver-generated candidates.",
+    "preservedSolverCandidate": "AA-S-2f9708e4 from the first successful v0.8.29.2 manual Body Bank Solver run; remains unaudited until BANK → ACTIVE vote"
   },
-  "count": 32,
+  "count": 33,
   "queue": [
     {
       "candidateId": "AA-B-017",
@@ -898,6 +899,45 @@
         ]
       },
       "priority": 1.25
+    },
+    {
+      "candidateId": "AA-S-2f9708e4",
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8732,
+          "muscle": 0.64915,
+          "weight": 0.57643,
+          "height": 0.37594,
+          "proportions": 0.54452,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {
+          "measure-bust-circ-incr": 0.1
+        }
+      },
+      "source": {
+        "kind": "solver-local-fit-preserved",
+        "familyId": "AA-B-004",
+        "seedBodyId": "AA-B-004",
+        "input": {
+          "sex": 0,
+          "age": 35,
+          "height": 178,
+          "weight": 80,
+          "chest": 100,
+          "waist": 85,
+          "hip": 100
+        },
+        "initialGeometryScore": 0.7883,
+        "finalGeometryScore": 0.5178,
+        "sourceSolverExport": "Sammy_BODY_BANK_SOLVER_2026-08-29T15-58-56-136Z.json"
+      },
+      "priority": 2.2
     }
   ]
 }

@@ -1,3 +1,14 @@
+# v0.8.29.3 · Body Bank Solver Proof Hardening 1.1
+
+- kanonische Rest-Mesh-Statur für Body-Bank-Retrieval, Proof und Height-Fit.
+- Weight/Mass aus Local-Fit-Akzeptanzscore entfernt; bleibt Retrieval-/Diagnose-Prior.
+- 16er Family-Holdout: Zielkörper + komplette Familie + Core-Nachbarn <=0.16 ausgeschlossen.
+- vollständiger Trace für Height/Chest/Waist/Hip inklusive Deadband/Bounds/weak-derivative/rollback.
+- Solver-Kandidat `AA-S-2f9708e4` als unauditierter ACTIVE-Seed erhalten.
+- keine neuen DOFs, keine Cross-Region-Rettung, keine Änderung am Kopfmodell.
+
+---
+
 # v0.8.29.2 · GitHub Visible-Version / Cache Hotfix
 
 - Stale Splash-Marker `v0.8.28.4` auf aktuellen Build korrigiert.

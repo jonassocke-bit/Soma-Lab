@@ -1,0 +1,41 @@
+SAMMY v0.8.29.3 · BUILD TEST
+Generated: 2026-08-29T16:17:51.761546+00:00
+Scope: static/source/data/package-preflight only; no Safari/WebGL runtime claim.
+
+PASS · app.js JavaScript syntax · node --check PASS
+PASS · SAMMY_APP_VERSION · 0.8.29.3
+PASS · HTML title version · 0.8.29.3
+PASS · Visible version marker · 0.8.29.3
+PASS · Splash version · 0.8.29.3
+PASS · app.js cache tag · 0.8.29.3
+PASS · style.css cache tag · 0.8.29.3
+PASS · No duplicate HTML ids · none
+PASS · Required BODY BANK SOLVER handlers exist · all present
+PASS · Runtime handler self-gate present · present
+PASS · Family proof case count · 16
+PASS · Near-neighbor exclusion threshold · 0.16 core-distance
+PASS · Proof schema v1.2 · present
+PASS · Full family excluded · present
+PASS · Near recipe neighbors excluded · present
+PASS · Canonical rest-mesh stature function · present
+PASS · Legacy stature retained as diagnostic only · present
+PASS · Local-fit global gate excludes weight prior · controllable geometry only
+PASS · Retrieval supports weak weight prior · coefficient 0.35
+PASS · Local trace reason: within-deadband · present
+PASS · Local trace reason: local-bound · present
+PASS · Local trace reason: weak-derivative · present
+PASS · Local trace reason: no-improvement-rollback · present
+PASS · Local trace reason: morph-missing · present
+PASS · Global trace score basis · present
+PASS · Body bank app target version · 0.8.29.3
+PASS · Body bank node count · 397
+PASS · Body bank trusted/frontier/negative/unchecked · {"frontier": 91, "negative": 37, "trusted": 269, "unchecked": 0}
+PASS · Active seed app target version · 0.8.29.3
+PASS · Active seed count · count=33 queue=33
+PASS · Preserved manual solver candidate · AA-S-2f9708e4
+PASS · Master State app version synchronized · 0.8.29.3
+PASS · Master State release decision synchronized · family holdout / canonical stature / weight split documented
+PASS · Current version marker synchronized · SAMMY_V0.8.29.3_BODY-BANK-SOLVER-PROOF-HARDENING.zip
+PASS · Family/near holdout eligible pool does not collapse · min same-sex eligible=60; max=130
+
+RESULT: PASS · 35/35 checks passed.
