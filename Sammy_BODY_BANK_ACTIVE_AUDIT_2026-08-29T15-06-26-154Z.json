@@ -1,0 +1,3895 @@
+{
+  "schema": "sammy-audited-body-bank-export-v3",
+  "app": "Sammy",
+  "appVersion": "0.8.29.0",
+  "generated": "2026-08-29T15:06:26.153Z",
+  "session": {
+    "schema": "sammy-active-body-bank-audit-v1",
+    "createdAt": "2026-08-29T15:04:33.908Z",
+    "updatedAt": "2026-08-29T15:06:18.048Z",
+    "phase": "solver-driven-active-audit",
+    "source": {
+      "seedSchema": "sammy-body-bank-active-audit-seed-v1",
+      "sourceAuditSha256": "2962b8979db1f86df026fefcc546b19eb0bc5c80aa003abae99aa32bcae38b86"
+    },
+    "policy": {
+      "humanVisibleInputs": "body only + anonymous progress; candidate provenance hidden",
+      "learning": "accepted/uncertain/rejected votes update the local transparent solver learning store immediately",
+      "rejectionScope": "exact local candidate only; never a global slider prohibition",
+      "headModel": "deferred",
+      "adultStature": "hard cap <=205 cm exact rest-mesh stature"
+    }
+  },
+  "summary": {
+    "total": 32,
+    "uniqueBodies": 380,
+    "hiddenRepeats": 20,
+    "accepted": 23,
+    "uncertain": 8,
+    "rejected": 1,
+    "unchecked": 0,
+    "repeatPairsRated": 0,
+    "repeatExactMatches": 0,
+    "repeatExactMatchRate": null,
+    "quickReasonCounts": {
+      "legs-too-long": 0,
+      "legs-too-short": 0,
+      "torso-proportion": 0,
+      "mass-width": 0,
+      "other": 0
+    },
+    "byGenerationKind": {
+      "active-audit": {
+        "total": 32,
+        "accepted": 23,
+        "uncertain": 8,
+        "rejected": 1,
+        "unchecked": 0
+      }
+    }
+  },
+  "ratings": [
+    {
+      "caseId": "AA-B-017",
+      "bodyId": "AA-B-017",
+      "familyId": "P2-PROP-BB-064",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:15.965Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 200.98,
+        "hipJointHeightCm": 108,
+        "hipJointHeightRatio": 0.53735,
+        "legChainCm": 99.67,
+        "legChainRatio": 0.49592,
+        "femurCm": 52.71,
+        "tibiaCm": 46.96,
+        "femurTibiaRatio": 1.12249,
+        "torsoChainCm": 51.83,
+        "torsoChainRatio": 0.25789,
+        "pelvisToNeckVerticalRatio": 0.25762,
+        "shoulderJointBreadthCm": 3.58,
+        "shoulderJointBreadthRatio": 0.01784,
+        "hipJointBreadthCm": 27.16,
+        "hipJointBreadthRatio": 0.13516,
+        "coreProportions": 0.8662
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.1072,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.188,
+                1.8634,
+                4.1029
+              ],
+              "target": [
+                -0.0007,
+                0.9826,
+                0.0957
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.1072,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.8893,
+                1.7407,
+                -0.9826
+              ],
+              "target": [
+                -0.0007,
+                0.9826,
+                0.0957
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8246,
+          "muscle": 0.23574,
+          "weight": 0.71518,
+          "height": 0.73546,
+          "proportions": 0.8662,
+          "cupsize": 0.30299,
+          "firmness": 0.71192,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-064",
+          "a": "P2-P-159",
+          "b": "P2-P-160",
+          "tiers": [
+            "frontier",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-P-021",
+      "bodyId": "AA-U-P2-P-021",
+      "familyId": "P2-PROP-BB-013",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:17.575Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 168.87,
+        "hipJointHeightCm": 88.97,
+        "hipJointHeightRatio": 0.52689,
+        "legChainCm": 82.76,
+        "legChainRatio": 0.4901,
+        "femurCm": 40.59,
+        "tibiaCm": 42.17,
+        "femurTibiaRatio": 0.96255,
+        "torsoChainCm": 43.04,
+        "torsoChainRatio": 0.25487,
+        "pelvisToNeckVerticalRatio": 0.25391,
+        "shoulderJointBreadthCm": 3.6,
+        "shoulderJointBreadthRatio": 0.02132,
+        "hipJointBreadthCm": 20.6,
+        "hipJointBreadthRatio": 0.12202,
+        "coreProportions": 0.26939
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.4724,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.159,
+                1.5651,
+                3.4687
+              ],
+              "target": [
+                -0.0006,
+                0.8205,
+                0.0808
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.4724,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.2882,
+                1.4614,
+                -0.8308
+              ],
+              "target": [
+                -0.0006,
+                0.8205,
+                0.0808
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7644,
+          "muscle": 0.42178,
+          "weight": 0.2195,
+          "height": 0.30827,
+          "proportions": 0.26939,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-P-021",
+          "familyId": "P2-PROP-BB-013"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-010",
+      "bodyId": "AA-B-010",
+      "familyId": "P2-PROP-BB-002",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:22.368Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 188.19,
+        "hipJointHeightCm": 102.12,
+        "hipJointHeightRatio": 0.54262,
+        "legChainCm": 94.69,
+        "legChainRatio": 0.50318,
+        "femurCm": 48.24,
+        "tibiaCm": 46.46,
+        "femurTibiaRatio": 1.03822,
+        "torsoChainCm": 47.76,
+        "torsoChainRatio": 0.2538,
+        "pelvisToNeckVerticalRatio": 0.25314,
+        "shoulderJointBreadthCm": 3.26,
+        "shoulderJointBreadthRatio": 0.01732,
+        "hipJointBreadthCm": 23,
+        "hipJointBreadthRatio": 0.1222,
+        "coreProportions": 0.18858
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.8552,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1767,
+                1.7441,
+                3.8455
+              ],
+              "target": [
+                -0.0005,
+                0.9173,
+                0.0842
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.8552,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.6508,
+                1.6289,
+                -0.9279
+              ],
+              "target": [
+                -0.0005,
+                0.9173,
+                0.0842
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7168,
+          "muscle": 0.64766,
+          "weight": 0.3053,
+          "height": 0.60402,
+          "proportions": 0.18858,
+          "cupsize": 0.65924,
+          "firmness": 0.70658,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-002",
+          "a": "P2-P-105",
+          "b": "P2-P-106",
+          "tiers": [
+            "unchecked",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-P-058",
+      "bodyId": "AA-U-P2-P-058",
+      "familyId": "P2-PROP-BB-021",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:23.316Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 178.12,
+        "hipJointHeightCm": 94.98,
+        "hipJointHeightRatio": 0.53326,
+        "legChainCm": 88.36,
+        "legChainRatio": 0.49607,
+        "femurCm": 44.17,
+        "tibiaCm": 44.19,
+        "femurTibiaRatio": 0.99955,
+        "torsoChainCm": 45.52,
+        "torsoChainRatio": 0.25554,
+        "pelvisToNeckVerticalRatio": 0.25361,
+        "shoulderJointBreadthCm": 3.67,
+        "shoulderJointBreadthRatio": 0.02062,
+        "hipJointBreadthCm": 22.26,
+        "hipJointBreadthRatio": 0.12498,
+        "coreProportions": 0.46452
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.6647,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1677,
+                1.6518,
+                3.6636
+              ],
+              "target": [
+                -0.0007,
+                0.8659,
+                0.0882
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.6647,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.4701,
+                1.5423,
+                -0.8739
+              ],
+              "target": [
+                -0.0007,
+                0.8659,
+                0.0882
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8732,
+          "muscle": 0.64915,
+          "weight": 0.57643,
+          "height": 0.39643,
+          "proportions": 0.46452,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-P-058",
+          "familyId": "P2-PROP-BB-021"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-013",
+      "bodyId": "AA-B-013",
+      "familyId": "P2-PROP-BB-031",
+      "repeatOf": null,
+      "status": "uncertain",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:24.814Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 200.27,
+        "hipJointHeightCm": 108.74,
+        "hipJointHeightRatio": 0.54298,
+        "legChainCm": 101.43,
+        "legChainRatio": 0.50646,
+        "femurCm": 50.83,
+        "tibiaCm": 50.6,
+        "femurTibiaRatio": 1.00449,
+        "torsoChainCm": 50.46,
+        "torsoChainRatio": 0.25195,
+        "pelvisToNeckVerticalRatio": 0.25118,
+        "shoulderJointBreadthCm": 3.89,
+        "shoulderJointBreadthRatio": 0.01945,
+        "hipJointBreadthCm": 24.18,
+        "hipJointBreadthRatio": 0.12074,
+        "coreProportions": 0.51344
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.1142,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1883,
+                1.8549,
+                4.1086
+              ],
+              "target": [
+                -0.0007,
+                0.9726,
+                0.0946
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.1142,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.8959,
+                1.732,
+                -0.9856
+              ],
+              "target": [
+                -0.0007,
+                0.9726,
+                0.0946
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.83416,
+          "muscle": 0.25486,
+          "weight": 0.18601,
+          "height": 0.60246,
+          "proportions": 0.51344,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-031",
+          "a": "P2-P-149",
+          "b": "P2-P-150",
+          "tiers": [
+            "frontier",
+            "negative"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-012",
+      "bodyId": "AA-B-012",
+      "familyId": "P2-PROP-BB-074",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:26.395Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 199.03,
+        "hipJointHeightCm": 108.96,
+        "hipJointHeightRatio": 0.54747,
+        "legChainCm": 101.11,
+        "legChainRatio": 0.50798,
+        "femurCm": 51.75,
+        "tibiaCm": 49.35,
+        "femurTibiaRatio": 1.04869,
+        "torsoChainCm": 50.07,
+        "torsoChainRatio": 0.25156,
+        "pelvisToNeckVerticalRatio": 0.25121,
+        "shoulderJointBreadthCm": 3.45,
+        "shoulderJointBreadthRatio": 0.01733,
+        "hipJointBreadthCm": 24.52,
+        "hipJointBreadthRatio": 0.1232,
+        "coreProportions": 0.29544
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.0696,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1864,
+                1.8437,
+                4.0634
+              ],
+              "target": [
+                -0.0006,
+                0.971,
+                0.0929
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.0696,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.8538,
+                1.7222,
+                -0.9755
+              ],
+              "target": [
+                -0.0006,
+                0.971,
+                0.0929
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.77556,
+          "muscle": 0.53995,
+          "weight": 0.63477,
+          "height": 0.70658,
+          "proportions": 0.29544,
+          "cupsize": 0.50997,
+          "firmness": 0.44446,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-074",
+          "a": "P2-P-138",
+          "b": "P2-P-139",
+          "tiers": [
+            "unchecked",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-B-020",
+      "bodyId": "AA-U-P2-B-020",
+      "familyId": "P2-BROAD-F-H0-W0-M3-P2-C1",
+      "repeatOf": null,
+      "status": "uncertain",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:30.540Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 136.34,
+        "hipJointHeightCm": 67.83,
+        "hipJointHeightRatio": 0.49753,
+        "legChainCm": 61.83,
+        "legChainRatio": 0.45349,
+        "femurCm": 31.61,
+        "tibiaCm": 30.22,
+        "femurTibiaRatio": 1.04605,
+        "torsoChainCm": 37.29,
+        "torsoChainRatio": 0.27353,
+        "pelvisToNeckVerticalRatio": 0.27264,
+        "shoulderJointBreadthCm": 2.62,
+        "shoulderJointBreadthRatio": 0.01923,
+        "hipJointBreadthCm": 19.32,
+        "hipJointBreadthRatio": 0.14167,
+        "coreProportions": 0.53767
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 2.8014,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1284,
+                1.2644,
+                2.8001
+              ],
+              "target": [
+                -0.0003,
+                0.6637,
+                0.0669
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 2.8014,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                2.6529,
+                1.1808,
+                -0.6686
+              ],
+              "target": [
+                -0.0003,
+                0.6637,
+                0.0669
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.72599,
+          "muscle": 0.91323,
+          "weight": 0.20326,
+          "height": 0.13316,
+          "proportions": 0.53767,
+          "cupsize": 0.41377,
+          "firmness": 0.40007,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-B-020",
+          "familyId": "P2-BROAD-F-H0-W0-M3-P2-C1"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-003",
+      "bodyId": "AA-B-003",
+      "familyId": "P2-PROP-BB-021",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:31.520Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 178.12,
+        "hipJointHeightCm": 95.15,
+        "hipJointHeightRatio": 0.53419,
+        "legChainCm": 88.53,
+        "legChainRatio": 0.49702,
+        "femurCm": 44.19,
+        "tibiaCm": 44.34,
+        "femurTibiaRatio": 0.99671,
+        "torsoChainCm": 45.39,
+        "torsoChainRatio": 0.25485,
+        "pelvisToNeckVerticalRatio": 0.25292,
+        "shoulderJointBreadthCm": 3.67,
+        "shoulderJointBreadthRatio": 0.02063,
+        "hipJointBreadthCm": 22.16,
+        "hipJointBreadthRatio": 0.12443,
+        "coreProportions": 0.41452
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.6648,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1677,
+                1.6518,
+                3.6637
+              ],
+              "target": [
+                -0.0007,
+                0.8659,
+                0.0881
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.6648,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.4703,
+                1.5423,
+                -0.874
+              ],
+              "target": [
+                -0.0007,
+                0.8659,
+                0.0881
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8732,
+          "muscle": 0.64915,
+          "weight": 0.57643,
+          "height": 0.39643,
+          "proportions": 0.41452,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-021",
+          "a": "P2-P-057",
+          "b": "P2-P-058",
+          "tiers": [
+            "trusted",
+            "unchecked"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-E-140",
+      "bodyId": "AA-U-P2-E-140",
+      "familyId": "P2-EXT-BB-046",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:36.698Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 128.63,
+        "hipJointHeightCm": 64.94,
+        "hipJointHeightRatio": 0.5049,
+        "legChainCm": 59.72,
+        "legChainRatio": 0.46428,
+        "femurCm": 29.11,
+        "tibiaCm": 30.61,
+        "femurTibiaRatio": 0.95117,
+        "torsoChainCm": 34.78,
+        "torsoChainRatio": 0.27043,
+        "pelvisToNeckVerticalRatio": 0.26841,
+        "shoulderJointBreadthCm": 3.07,
+        "shoulderJointBreadthRatio": 0.02385,
+        "hipJointBreadthCm": 21.32,
+        "hipJointBreadthRatio": 0.16573,
+        "coreProportions": 0.07
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 2.6796,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1222,
+                1.1972,
+                2.6526
+              ],
+              "target": [
+                -0.0009,
+                0.6226,
+                0.0382
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 2.6796,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                2.5369,
+                1.1172,
+                -0.6652
+              ],
+              "target": [
+                -0.0009,
+                0.6226,
+                0.0382
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.85456,
+          "muscle": 0.13267,
+          "weight": 0.92,
+          "height": 0.06,
+          "proportions": 0.07,
+          "cupsize": 0.85018,
+          "firmness": 0.63749,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-E-140",
+          "familyId": "P2-EXT-BB-046"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-009",
+      "bodyId": "AA-B-009",
+      "familyId": "P2-PROP-BB-063",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:37.611Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 197.78,
+        "hipJointHeightCm": 106.04,
+        "hipJointHeightRatio": 0.53617,
+        "legChainCm": 98.79,
+        "legChainRatio": 0.49951,
+        "femurCm": 50.18,
+        "tibiaCm": 48.61,
+        "femurTibiaRatio": 1.0324,
+        "torsoChainCm": 51.58,
+        "torsoChainRatio": 0.26079,
+        "pelvisToNeckVerticalRatio": 0.25972,
+        "shoulderJointBreadthCm": 4.14,
+        "shoulderJointBreadthRatio": 0.02093,
+        "hipJointBreadthCm": 24.24,
+        "hipJointBreadthRatio": 0.12257,
+        "coreProportions": 0.7943
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.069,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1866,
+                1.8352,
+                4.0692
+              ],
+              "target": [
+                -0.0004,
+                0.9626,
+                0.0993
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.069,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.8533,
+                1.7136,
+                -0.969
+              ],
+              "target": [
+                -0.0004,
+                0.9626,
+                0.0993
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7906,
+          "muscle": 0.9,
+          "weight": 0.82057,
+          "height": 0.54698,
+          "proportions": 0.7943,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-063",
+          "a": "P2-P-095",
+          "b": "P2-P-096",
+          "tiers": [
+            "frontier",
+            "frontier"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-005",
+      "bodyId": "AA-B-005",
+      "familyId": "P2-PROP-BB-077",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:38.525Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 180.7,
+        "hipJointHeightCm": 96.03,
+        "hipJointHeightRatio": 0.53146,
+        "legChainCm": 89.41,
+        "legChainRatio": 0.49483,
+        "femurCm": 44.29,
+        "tibiaCm": 45.13,
+        "femurTibiaRatio": 0.98135,
+        "torsoChainCm": 46.07,
+        "torsoChainRatio": 0.25495,
+        "pelvisToNeckVerticalRatio": 0.25412,
+        "shoulderJointBreadthCm": 3.83,
+        "shoulderJointBreadthRatio": 0.0212,
+        "hipJointBreadthCm": 21.96,
+        "hipJointBreadthRatio": 0.12152,
+        "coreProportions": 0.33111
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.7153,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1702,
+                1.6755,
+                3.7125
+              ],
+              "target": [
+                -0.0005,
+                0.8788,
+                0.0877
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.7153,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.5182,
+                1.5645,
+                -0.8877
+              ],
+              "target": [
+                -0.0005,
+                0.8788,
+                0.0877
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.715,
+          "muscle": 0.62522,
+          "weight": 0.76862,
+          "height": 0.40903,
+          "proportions": 0.33111,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-077",
+          "a": "P2-P-062",
+          "b": "P2-P-063",
+          "tiers": [
+            "trusted",
+            "unchecked"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-P-105",
+      "bodyId": "AA-U-P2-P-105",
+      "familyId": "P2-PROP-BB-002",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:39.807Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 188.27,
+        "hipJointHeightCm": 102.36,
+        "hipJointHeightRatio": 0.54369,
+        "legChainCm": 94.98,
+        "legChainRatio": 0.50447,
+        "femurCm": 48.25,
+        "tibiaCm": 46.73,
+        "femurTibiaRatio": 1.03242,
+        "torsoChainCm": 47.67,
+        "torsoChainRatio": 0.25317,
+        "pelvisToNeckVerticalRatio": 0.25252,
+        "shoulderJointBreadthCm": 3.26,
+        "shoulderJointBreadthRatio": 0.01733,
+        "hipJointBreadthCm": 22.93,
+        "hipJointBreadthRatio": 0.1218,
+        "coreProportions": 0.13858
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.8579,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1768,
+                1.7447,
+                3.8472
+              ],
+              "target": [
+                -0.0005,
+                0.9174,
+                0.0832
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.8579,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.6534,
+                1.6295,
+                -0.9297
+              ],
+              "target": [
+                -0.0005,
+                0.9174,
+                0.0832
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7168,
+          "muscle": 0.64766,
+          "weight": 0.3053,
+          "height": 0.60402,
+          "proportions": 0.13858,
+          "cupsize": 0.65924,
+          "firmness": 0.70658,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-P-105",
+          "familyId": "P2-PROP-BB-002"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-B-021",
+      "bodyId": "AA-U-P2-B-021",
+      "familyId": "P2-BROAD-M-H1-W1-M0-P2",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:40.823Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 183.14,
+        "hipJointHeightCm": 97.51,
+        "hipJointHeightRatio": 0.53245,
+        "legChainCm": 90.71,
+        "legChainRatio": 0.4953,
+        "femurCm": 45.36,
+        "tibiaCm": 45.35,
+        "femurTibiaRatio": 1.00015,
+        "torsoChainCm": 47.02,
+        "torsoChainRatio": 0.25676,
+        "pelvisToNeckVerticalRatio": 0.25557,
+        "shoulderJointBreadthCm": 3.86,
+        "shoulderJointBreadthRatio": 0.02108,
+        "hipJointBreadthCm": 23.48,
+        "hipJointBreadthRatio": 0.12823,
+        "coreProportions": 0.62131
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.7685,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1724,
+                1.6971,
+                3.7623
+              ],
+              "target": [
+                -0.0007,
+                0.8889,
+                0.0855
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.7685,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.5685,
+                1.5845,
+                -0.9039
+              ],
+              "target": [
+                -0.0007,
+                0.8889,
+                0.0855
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.85099,
+          "muscle": 0.1267,
+          "weight": 0.39126,
+          "height": 0.44649,
+          "proportions": 0.62131,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-B-021",
+          "familyId": "P2-BROAD-M-H1-W1-M0-P2"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-E-098",
+      "bodyId": "AA-U-P2-E-098",
+      "familyId": "P2-EXT-BB-012",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:42.304Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 201.4,
+        "hipJointHeightCm": 107.49,
+        "hipJointHeightRatio": 0.5337,
+        "legChainCm": 99.07,
+        "legChainRatio": 0.4919,
+        "femurCm": 52.54,
+        "tibiaCm": 46.53,
+        "femurTibiaRatio": 1.12936,
+        "torsoChainCm": 52.48,
+        "torsoChainRatio": 0.26059,
+        "pelvisToNeckVerticalRatio": 0.25998,
+        "shoulderJointBreadthCm": 3.54,
+        "shoulderJointBreadthRatio": 0.01759,
+        "hipJointBreadthCm": 26.83,
+        "hipJointBreadthRatio": 0.13321,
+        "coreProportions": 0.93
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.114,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1883,
+                1.8674,
+                4.112
+              ],
+              "target": [
+                -0.0007,
+                0.9852,
+                0.0981
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.114,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.8957,
+                1.7445,
+                -0.982
+              ],
+              "target": [
+                -0.0007,
+                0.9852,
+                0.0981
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7304,
+          "muscle": 0.39336,
+          "weight": 0.92,
+          "height": 0.73676,
+          "proportions": 0.93,
+          "cupsize": 0.76621,
+          "firmness": 0.43913,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-E-098",
+          "familyId": "P2-EXT-BB-012"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-004",
+      "bodyId": "AA-B-004",
+      "familyId": "P2-PROP-BB-021",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:43.502Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 178.12,
+        "hipJointHeightCm": 94.72,
+        "hipJointHeightRatio": 0.53177,
+        "legChainCm": 88.09,
+        "legChainRatio": 0.49455,
+        "femurCm": 44.13,
+        "tibiaCm": 43.95,
+        "femurTibiaRatio": 1.00414,
+        "torsoChainCm": 45.71,
+        "torsoChainRatio": 0.25663,
+        "pelvisToNeckVerticalRatio": 0.25472,
+        "shoulderJointBreadthCm": 3.67,
+        "shoulderJointBreadthRatio": 0.0206,
+        "hipJointBreadthCm": 22.42,
+        "hipJointBreadthRatio": 0.12585,
+        "coreProportions": 0.54452
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.6644,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1677,
+                1.6517,
+                3.6635
+              ],
+              "target": [
+                -0.0007,
+                0.8659,
+                0.0883
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.6644,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.4699,
+                1.5423,
+                -0.8738
+              ],
+              "target": [
+                -0.0007,
+                0.8659,
+                0.0883
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8732,
+          "muscle": 0.64915,
+          "weight": 0.57643,
+          "height": 0.39643,
+          "proportions": 0.54452,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-021",
+          "a": "P2-P-058",
+          "b": "P2-P-059",
+          "tiers": [
+            "unchecked",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-P-063",
+      "bodyId": "AA-U-P2-P-063",
+      "familyId": "P2-PROP-BB-077",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:44.350Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 180.7,
+        "hipJointHeightCm": 95.77,
+        "hipJointHeightRatio": 0.52998,
+        "legChainCm": 89.14,
+        "legChainRatio": 0.49331,
+        "femurCm": 44.25,
+        "tibiaCm": 44.89,
+        "femurTibiaRatio": 0.98575,
+        "torsoChainCm": 46.26,
+        "torsoChainRatio": 0.25603,
+        "pelvisToNeckVerticalRatio": 0.25521,
+        "shoulderJointBreadthCm": 3.83,
+        "shoulderJointBreadthRatio": 0.02117,
+        "hipJointBreadthCm": 22.12,
+        "hipJointBreadthRatio": 0.1224,
+        "coreProportions": 0.41111
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.715,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1702,
+                1.6755,
+                3.7123
+              ],
+              "target": [
+                -0.0005,
+                0.8788,
+                0.0878
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.715,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.518,
+                1.5645,
+                -0.8876
+              ],
+              "target": [
+                -0.0005,
+                0.8788,
+                0.0878
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.715,
+          "muscle": 0.62522,
+          "weight": 0.76862,
+          "height": 0.40903,
+          "proportions": 0.41111,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-P-063",
+          "familyId": "P2-PROP-BB-077"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-E-019",
+      "bodyId": "AA-U-P2-E-019",
+      "familyId": "P2-EXT-BB-017",
+      "repeatOf": null,
+      "status": "rejected",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:46.552Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 142.09,
+        "hipJointHeightCm": 72.35,
+        "hipJointHeightRatio": 0.50923,
+        "legChainCm": 67.11,
+        "legChainRatio": 0.47235,
+        "femurCm": 31.99,
+        "tibiaCm": 35.12,
+        "femurTibiaRatio": 0.91099,
+        "torsoChainCm": 36.85,
+        "torsoChainRatio": 0.25932,
+        "pelvisToNeckVerticalRatio": 0.25804,
+        "shoulderJointBreadthCm": 3.31,
+        "shoulderJointBreadthRatio": 0.02333,
+        "hipJointBreadthCm": 17.8,
+        "hipJointBreadthRatio": 0.1253,
+        "coreProportions": 0.07
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 2.9299,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1341,
+                1.3176,
+                2.927
+              ],
+              "target": [
+                -0.0006,
+                0.6893,
+                0.0684
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 2.9299,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                2.7744,
+                1.2301,
+                -0.7008
+              ],
+              "target": [
+                -0.0006,
+                0.6893,
+                0.0684
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7372,
+          "muscle": 0.53547,
+          "weight": 0.08,
+          "height": 0.06,
+          "proportions": 0.07,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-E-019",
+          "familyId": "P2-EXT-BB-017"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-B-003",
+      "bodyId": "AA-U-P2-B-003",
+      "familyId": "P2-BROAD-M-H1-W2-M1-P3",
+      "repeatOf": null,
+      "status": "uncertain",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:48.245Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 174.57,
+        "hipJointHeightCm": 91.67,
+        "hipJointHeightRatio": 0.52514,
+        "legChainCm": 85.1,
+        "legChainRatio": 0.48746,
+        "femurCm": 43.14,
+        "tibiaCm": 41.96,
+        "femurTibiaRatio": 1.02809,
+        "torsoChainCm": 45.78,
+        "torsoChainRatio": 0.26226,
+        "pelvisToNeckVerticalRatio": 0.25942,
+        "shoulderJointBreadthCm": 3.58,
+        "shoulderJointBreadthRatio": 0.02052,
+        "hipJointBreadthCm": 23.66,
+        "hipJointBreadthRatio": 0.13556,
+        "coreProportions": 0.94065
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.5969,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1646,
+                1.6196,
+                3.5962
+              ],
+              "target": [
+                -0.0006,
+                0.8482,
+                0.0868
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.5969,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.406,
+                1.5121,
+                -0.8575
+              ],
+              "target": [
+                -0.0006,
+                0.8482,
+                0.0868
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.96231,
+          "muscle": 0.47201,
+          "weight": 0.61686,
+          "height": 0.37686,
+          "proportions": 0.94065,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-B-003",
+          "familyId": "P2-BROAD-M-H1-W2-M1-P3"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-P-138",
+      "bodyId": "AA-U-P2-P-138",
+      "familyId": "P2-PROP-BB-074",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:49.193Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 199.16,
+        "hipJointHeightCm": 109.35,
+        "hipJointHeightRatio": 0.54906,
+        "legChainCm": 101.55,
+        "legChainRatio": 0.50991,
+        "femurCm": 51.77,
+        "tibiaCm": 49.79,
+        "femurTibiaRatio": 1.03982,
+        "torsoChainCm": 49.91,
+        "torsoChainRatio": 0.25061,
+        "pelvisToNeckVerticalRatio": 0.25027,
+        "shoulderJointBreadthCm": 3.46,
+        "shoulderJointBreadthRatio": 0.01736,
+        "hipJointBreadthCm": 24.43,
+        "hipJointBreadthRatio": 0.12265,
+        "coreProportions": 0.21544
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.0741,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1866,
+                1.8448,
+                4.0663
+              ],
+              "target": [
+                -0.0006,
+                0.9711,
+                0.0914
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.0741,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.858,
+                1.7231,
+                -0.9782
+              ],
+              "target": [
+                -0.0006,
+                0.9711,
+                0.0914
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.77556,
+          "muscle": 0.53995,
+          "weight": 0.63477,
+          "height": 0.70658,
+          "proportions": 0.21544,
+          "cupsize": 0.50997,
+          "firmness": 0.44446,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-P-138",
+          "familyId": "P2-PROP-BB-074"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-015",
+      "bodyId": "AA-B-015",
+      "familyId": "P2-PROP-BB-031",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:50.042Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 199.98,
+        "hipJointHeightCm": 107.7,
+        "hipJointHeightRatio": 0.53853,
+        "legChainCm": 100.37,
+        "legChainRatio": 0.50192,
+        "femurCm": 50.62,
+        "tibiaCm": 49.75,
+        "femurTibiaRatio": 1.01739,
+        "torsoChainCm": 51.04,
+        "torsoChainRatio": 0.2552,
+        "pelvisToNeckVerticalRatio": 0.25444,
+        "shoulderJointBreadthCm": 3.88,
+        "shoulderJointBreadthRatio": 0.01941,
+        "hipJointBreadthCm": 24.66,
+        "hipJointBreadthRatio": 0.12331,
+        "coreProportions": 0.77344
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.1078,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.188,
+                1.8523,
+                4.1025
+              ],
+              "target": [
+                -0.0007,
+                0.9714,
+                0.0947
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.1078,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.8898,
+                1.7296,
+                -0.9837
+              ],
+              "target": [
+                -0.0007,
+                0.9714,
+                0.0947
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.83416,
+          "muscle": 0.25486,
+          "weight": 0.18601,
+          "height": 0.59984,
+          "proportions": 0.77344,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-031",
+          "a": "P2-P-151",
+          "b": "P2-P-152",
+          "tiers": [
+            "frontier",
+            "frontier"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-B-006",
+      "bodyId": "AA-U-P2-B-006",
+      "familyId": "P2-BROAD-F-H1-W1-M3-P1-C1",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:50.924Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 174.43,
+        "hipJointHeightCm": 93.31,
+        "hipJointHeightRatio": 0.53494,
+        "legChainCm": 86.24,
+        "legChainRatio": 0.49439,
+        "femurCm": 44.03,
+        "tibiaCm": 42.21,
+        "femurTibiaRatio": 1.04323,
+        "torsoChainCm": 44.66,
+        "torsoChainRatio": 0.25605,
+        "pelvisToNeckVerticalRatio": 0.25562,
+        "shoulderJointBreadthCm": 3.13,
+        "shoulderJointBreadthRatio": 0.01792,
+        "hipJointBreadthCm": 22.17,
+        "hipJointBreadthRatio": 0.12711,
+        "coreProportions": 0.27916
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.5739,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1637,
+                1.6165,
+                3.5674
+              ],
+              "target": [
+                -0.0005,
+                0.8501,
+                0.0805
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.5739,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.3844,
+                1.5097,
+                -0.8578
+              ],
+              "target": [
+                -0.0005,
+                0.8501,
+                0.0805
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.78067,
+          "muscle": 0.87486,
+          "weight": 0.27846,
+          "height": 0.4813,
+          "proportions": 0.27916,
+          "cupsize": 0.33921,
+          "firmness": 0.54539,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-B-006",
+          "familyId": "P2-BROAD-F-H1-W1-M3-P1-C1"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-008",
+      "bodyId": "AA-B-008",
+      "familyId": "P2-PROP-BB-063",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:53.121Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 197.78,
+        "hipJointHeightCm": 106.47,
+        "hipJointHeightRatio": 0.53835,
+        "legChainCm": 99.23,
+        "legChainRatio": 0.50174,
+        "femurCm": 50.24,
+        "tibiaCm": 48.99,
+        "femurTibiaRatio": 1.02541,
+        "torsoChainCm": 51.26,
+        "torsoChainRatio": 0.25917,
+        "pelvisToNeckVerticalRatio": 0.25809,
+        "shoulderJointBreadthCm": 4.14,
+        "shoulderJointBreadthRatio": 0.02095,
+        "hipJointBreadthCm": 23.99,
+        "hipJointBreadthRatio": 0.1213,
+        "coreProportions": 0.6643
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.0693,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1866,
+                1.8352,
+                4.0693
+              ],
+              "target": [
+                -0.0004,
+                0.9625,
+                0.099
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.0693,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.8536,
+                1.7136,
+                -0.9693
+              ],
+              "target": [
+                -0.0004,
+                0.9625,
+                0.099
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7906,
+          "muscle": 0.9,
+          "weight": 0.82057,
+          "height": 0.54698,
+          "proportions": 0.6643,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-063",
+          "a": "P2-P-094",
+          "b": "P2-P-095",
+          "tiers": [
+            "trusted",
+            "frontier"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-002",
+      "bodyId": "AA-B-002",
+      "familyId": "P2-PROP-BB-013",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:54.019Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 168.87,
+        "hipJointHeightCm": 88.37,
+        "hipJointHeightRatio": 0.52334,
+        "legChainCm": 82.15,
+        "legChainRatio": 0.48646,
+        "femurCm": 40.51,
+        "tibiaCm": 41.64,
+        "femurTibiaRatio": 0.97271,
+        "torsoChainCm": 43.48,
+        "torsoChainRatio": 0.25748,
+        "pelvisToNeckVerticalRatio": 0.25653,
+        "shoulderJointBreadthCm": 3.59,
+        "shoulderJointBreadthRatio": 0.02126,
+        "hipJointBreadthCm": 20.96,
+        "hipJointBreadthRatio": 0.12411,
+        "coreProportions": 0.44939
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.4719,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1589,
+                1.5651,
+                3.4683
+              ],
+              "target": [
+                -0.0006,
+                0.8206,
+                0.081
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.4719,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.2876,
+                1.4614,
+                -0.8305
+              ],
+              "target": [
+                -0.0006,
+                0.8206,
+                0.081
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7644,
+          "muscle": 0.42178,
+          "weight": 0.2195,
+          "height": 0.30827,
+          "proportions": 0.44939,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-013",
+          "a": "P2-P-022",
+          "b": "P2-P-023",
+          "tiers": [
+            "frontier",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-006",
+      "bodyId": "AA-B-006",
+      "familyId": "P2-PROP-BB-077",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:55.017Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 180.7,
+        "hipJointHeightCm": 95.6,
+        "hipJointHeightRatio": 0.52906,
+        "legChainCm": 88.97,
+        "legChainRatio": 0.49237,
+        "femurCm": 44.23,
+        "tibiaCm": 44.74,
+        "femurTibiaRatio": 0.98852,
+        "torsoChainCm": 46.39,
+        "torsoChainRatio": 0.25671,
+        "pelvisToNeckVerticalRatio": 0.25588,
+        "shoulderJointBreadthCm": 3.82,
+        "shoulderJointBreadthRatio": 0.02115,
+        "hipJointBreadthCm": 22.22,
+        "hipJointBreadthRatio": 0.12296,
+        "coreProportions": 0.46111
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.7149,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1702,
+                1.6755,
+                3.7122
+              ],
+              "target": [
+                -0.0005,
+                0.8789,
+                0.0878
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.7149,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.5179,
+                1.5645,
+                -0.8875
+              ],
+              "target": [
+                -0.0005,
+                0.8789,
+                0.0878
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.715,
+          "muscle": 0.62522,
+          "weight": 0.76862,
+          "height": 0.40903,
+          "proportions": 0.46111,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-077",
+          "a": "P2-P-063",
+          "b": "P2-P-064",
+          "tiers": [
+            "unchecked",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-016",
+      "bodyId": "AA-B-016",
+      "familyId": "P2-PROP-BB-064",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:56.066Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 200.9,
+        "hipJointHeightCm": 108.45,
+        "hipJointHeightRatio": 0.53979,
+        "legChainCm": 100.22,
+        "legChainRatio": 0.49884,
+        "femurCm": 52.64,
+        "tibiaCm": 47.58,
+        "femurTibiaRatio": 1.10625,
+        "torsoChainCm": 51.51,
+        "torsoChainRatio": 0.25641,
+        "pelvisToNeckVerticalRatio": 0.25616,
+        "shoulderJointBreadthCm": 3.59,
+        "shoulderJointBreadthRatio": 0.01788,
+        "hipJointBreadthCm": 26.99,
+        "hipJointBreadthRatio": 0.13434,
+        "coreProportions": 0.7362
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.1084,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1881,
+                1.8625,
+                4.1015
+              ],
+              "target": [
+                -0.0007,
+                0.9815,
+                0.0932
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.1084,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.8904,
+                1.7398,
+                -0.9854
+              ],
+              "target": [
+                -0.0007,
+                0.9815,
+                0.0932
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8246,
+          "muscle": 0.23574,
+          "weight": 0.71518,
+          "height": 0.73281,
+          "proportions": 0.7362,
+          "cupsize": 0.30299,
+          "firmness": 0.71192,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-064",
+          "a": "P2-P-158",
+          "b": "P2-P-159",
+          "tiers": [
+            "trusted",
+            "frontier"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-001",
+      "bodyId": "AA-B-001",
+      "familyId": "P2-PROP-BB-013",
+      "repeatOf": null,
+      "status": "uncertain",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:57.563Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 168.87,
+        "hipJointHeightCm": 88.81,
+        "hipJointHeightRatio": 0.5259,
+        "legChainCm": 82.59,
+        "legChainRatio": 0.48909,
+        "femurCm": 40.57,
+        "tibiaCm": 42.02,
+        "femurTibiaRatio": 0.96534,
+        "torsoChainCm": 43.16,
+        "torsoChainRatio": 0.2556,
+        "pelvisToNeckVerticalRatio": 0.25464,
+        "shoulderJointBreadthCm": 3.6,
+        "shoulderJointBreadthRatio": 0.0213,
+        "hipJointBreadthCm": 20.7,
+        "hipJointBreadthRatio": 0.1226,
+        "coreProportions": 0.31939
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.4723,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.159,
+                1.5651,
+                3.4686
+              ],
+              "target": [
+                -0.0006,
+                0.8205,
+                0.0809
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.4723,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.288,
+                1.4614,
+                -0.8307
+              ],
+              "target": [
+                -0.0006,
+                0.8205,
+                0.0809
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7644,
+          "muscle": 0.42178,
+          "weight": 0.2195,
+          "height": 0.30827,
+          "proportions": 0.31939,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-013",
+          "a": "P2-P-021",
+          "b": "P2-P-022",
+          "tiers": [
+            "unchecked",
+            "frontier"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-007",
+      "bodyId": "AA-B-007",
+      "familyId": "P2-PROP-BB-041",
+      "repeatOf": null,
+      "status": "uncertain",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:05:59.345Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 183.81,
+        "hipJointHeightCm": 99.25,
+        "hipJointHeightRatio": 0.53996,
+        "legChainCm": 92.49,
+        "legChainRatio": 0.5032,
+        "femurCm": 46.06,
+        "tibiaCm": 46.44,
+        "femurTibiaRatio": 0.99185,
+        "torsoChainCm": 45.99,
+        "torsoChainRatio": 0.2502,
+        "pelvisToNeckVerticalRatio": 0.24879,
+        "shoulderJointBreadthCm": 3.74,
+        "shoulderJointBreadthRatio": 0.02033,
+        "hipJointBreadthCm": 21.86,
+        "hipJointBreadthRatio": 0.11895,
+        "coreProportions": 0.19268
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.7771,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1729,
+                1.7038,
+                3.7737
+              ],
+              "target": [
+                -0.0007,
+                0.8938,
+                0.0886
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.7771,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.5766,
+                1.591,
+                -0.9031
+              ],
+              "target": [
+                -0.0007,
+                0.8938,
+                0.0886
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.84776,
+          "muscle": 0.53907,
+          "weight": 0.1,
+          "height": 0.45235,
+          "proportions": 0.19268,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-041",
+          "a": "P2-P-065",
+          "b": "P2-P-066",
+          "tiers": [
+            "frontier",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-E-076",
+      "bodyId": "AA-U-P2-E-076",
+      "familyId": "P2-EXT-BB-075",
+      "repeatOf": null,
+      "status": "uncertain",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:06:01.342Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 143.14,
+        "hipJointHeightCm": 73.68,
+        "hipJointHeightRatio": 0.51473,
+        "legChainCm": 68.24,
+        "legChainRatio": 0.47674,
+        "femurCm": 32.5,
+        "tibiaCm": 35.74,
+        "femurTibiaRatio": 0.90944,
+        "torsoChainCm": 37.24,
+        "torsoChainRatio": 0.26018,
+        "pelvisToNeckVerticalRatio": 0.25776,
+        "shoulderJointBreadthCm": 3.37,
+        "shoulderJointBreadthRatio": 0.02353,
+        "hipJointBreadthCm": 19.57,
+        "hipJointBreadthRatio": 0.13674,
+        "coreProportions": 0.07
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 2.9626,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1356,
+                1.3286,
+                2.9604
+              ],
+              "target": [
+                -0.0006,
+                0.6933,
+                0.0699
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 2.9626,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                2.8053,
+                1.2401,
+                -0.7079
+              ],
+              "target": [
+                -0.0006,
+                0.6933,
+                0.0699
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.80956,
+          "muscle": 0.56838,
+          "weight": 0.92,
+          "height": 0.06,
+          "proportions": 0.07,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-E-076",
+          "familyId": "P2-EXT-BB-075"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-E-105",
+      "bodyId": "AA-U-P2-E-105",
+      "familyId": "P2-EXT-BB-014",
+      "repeatOf": null,
+      "status": "uncertain",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:06:03.238Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 201.02,
+        "hipJointHeightCm": 107.94,
+        "hipJointHeightRatio": 0.53693,
+        "legChainCm": 99.45,
+        "legChainRatio": 0.4947,
+        "femurCm": 53.05,
+        "tibiaCm": 46.39,
+        "femurTibiaRatio": 1.14358,
+        "torsoChainCm": 51.73,
+        "torsoChainRatio": 0.25735,
+        "pelvisToNeckVerticalRatio": 0.257,
+        "shoulderJointBreadthCm": 3.22,
+        "shoulderJointBreadthRatio": 0.01601,
+        "hipJointBreadthCm": 25.33,
+        "hipJointBreadthRatio": 0.12603,
+        "coreProportions": 0.93
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "A",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.1001,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1879,
+                1.8639,
+                4.1046
+              ],
+              "target": [
+                -0.0005,
+                0.9847,
+                0.1043
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.1001,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                3.8827,
+                1.7415,
+                -0.9721
+              ],
+              "target": [
+                -0.0005,
+                0.9847,
+                0.1043
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7984,
+          "muscle": 0.4502,
+          "weight": 0.08,
+          "height": 0.73676,
+          "proportions": 0.93,
+          "cupsize": 0.78761,
+          "firmness": 0.44962,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-E-105",
+          "familyId": "P2-EXT-BB-014"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-U-P2-E-072",
+      "bodyId": "AA-U-P2-E-072",
+      "familyId": "P2-EXT-BB-069",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:06:13.672Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 187.06,
+        "hipJointHeightCm": 97.66,
+        "hipJointHeightRatio": 0.52209,
+        "legChainCm": 90.78,
+        "legChainRatio": 0.48531,
+        "femurCm": 44.01,
+        "tibiaCm": 46.77,
+        "femurTibiaRatio": 0.94095,
+        "torsoChainCm": 52.15,
+        "torsoChainRatio": 0.27879,
+        "pelvisToNeckVerticalRatio": 0.27797,
+        "shoulderJointBreadthCm": 4.11,
+        "shoulderJointBreadthRatio": 0.02197,
+        "hipJointBreadthCm": 28.13,
+        "hipJointBreadthRatio": 0.15037,
+        "coreProportions": 0.73566
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "B",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.8934,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1784,
+                1.7327,
+                3.8583
+              ],
+              "target": [
+                -0.0005,
+                0.8978,
+                0.0597
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 3.8934,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                2.0176,
+                1.8157,
+                -3.1408
+              ],
+              "target": [
+                -0.0005,
+                0.8978,
+                0.0597
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8314,
+          "muscle": 0.05,
+          "weight": 0.95,
+          "height": 0.48086,
+          "proportions": 0.73566,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "carryover-unchecked",
+          "bodyId": "P2-E-072",
+          "familyId": "P2-EXT-BB-069"
+        },
+        "priority": 1
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-014",
+      "bodyId": "AA-B-014",
+      "familyId": "P2-PROP-BB-031",
+      "repeatOf": null,
+      "status": "uncertain",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:06:15.418Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 200.12,
+        "hipJointHeightCm": 108.22,
+        "hipJointHeightRatio": 0.54076,
+        "legChainCm": 100.9,
+        "legChainRatio": 0.50419,
+        "femurCm": 50.72,
+        "tibiaCm": 50.18,
+        "femurTibiaRatio": 1.01088,
+        "torsoChainCm": 50.75,
+        "torsoChainRatio": 0.25357,
+        "pelvisToNeckVerticalRatio": 0.25281,
+        "shoulderJointBreadthCm": 3.89,
+        "shoulderJointBreadthRatio": 0.01943,
+        "hipJointBreadthCm": 24.42,
+        "hipJointBreadthRatio": 0.12203,
+        "coreProportions": 0.64344
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "B",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.111,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1882,
+                1.8536,
+                4.1056
+              ],
+              "target": [
+                -0.0007,
+                0.972,
+                0.0946
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.111,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                2.1302,
+                1.9412,
+                -3.2848
+              ],
+              "target": [
+                -0.0007,
+                0.972,
+                0.0946
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.83416,
+          "muscle": 0.25486,
+          "weight": 0.18601,
+          "height": 0.60116,
+          "proportions": 0.64344,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-031",
+          "a": "P2-P-150",
+          "b": "P2-P-151",
+          "tiers": [
+            "negative",
+            "frontier"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    },
+    {
+      "caseId": "AA-B-011",
+      "bodyId": "AA-B-011",
+      "familyId": "P2-PROP-BB-074",
+      "repeatOf": null,
+      "status": "accepted",
+      "quickReason": null,
+      "reviewedAt": "2026-08-29T15:06:18.048Z",
+      "shapeMetricSnapshot": {
+        "schema": "sammy-body-bank-shape-metrics-v1",
+        "basis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "statureCm": 199.24,
+        "hipJointHeightCm": 109.6,
+        "hipJointHeightRatio": 0.55006,
+        "legChainCm": 101.84,
+        "legChainRatio": 0.51111,
+        "femurCm": 51.78,
+        "tibiaCm": 50.06,
+        "femurTibiaRatio": 1.03436,
+        "torsoChainCm": 49.81,
+        "torsoChainRatio": 0.25002,
+        "pelvisToNeckVerticalRatio": 0.24968,
+        "shoulderJointBreadthCm": 3.46,
+        "shoulderJointBreadthRatio": 0.01737,
+        "hipJointBreadthCm": 24.37,
+        "hipJointBreadthRatio": 0.12231,
+        "coreProportions": 0.16544
+      },
+      "autoCheck": {
+        "status": "pass",
+        "finiteMetrics": true,
+        "geometrySanity": true,
+        "adultStatureCapPass": true,
+        "metricSchema": "sammy-body-bank-shape-metrics-v1",
+        "metricBasis": "exact-anny-rest-rig+rest-mesh-bbox",
+        "anthropometricGateApplied": false,
+        "excludedKnownBadMetric": "shoulderJointBreadth",
+        "note": "Broad geometry sanity + <=205 cm only. Known-invalid shoulder-joint proxy is explicitly excluded. Human plausibility is not inferred automatically."
+      },
+      "reviewContext": {
+        "activeViewport": "B",
+        "viewports": [
+          {
+            "id": "A",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.0769,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                0.1867,
+                1.8455,
+                4.0681
+              ],
+              "target": [
+                -0.0006,
+                0.9712,
+                0.0904
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "view": "custom",
+            "autoFit": true,
+            "camera": {
+              "distance": 4.0769,
+              "zoom": 1,
+              "fov": 32,
+              "position": [
+                2.1126,
+                1.9324,
+                -3.2609
+              ],
+              "target": [
+                -0.0006,
+                0.9712,
+                0.0904
+              ]
+            }
+          }
+        ],
+        "motion": "pose:standing",
+        "motionLabel": "Stehen",
+        "animationRunning": false,
+        "animationSpeed": 1,
+        "quickReasonMode": null,
+        "importedAnimation": null
+      },
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.77556,
+          "muscle": 0.53995,
+          "weight": 0.63477,
+          "height": 0.70658,
+          "proportions": 0.16544,
+          "cupsize": 0.50997,
+          "firmness": 0.44446,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-074",
+          "a": "P2-P-137",
+          "b": "P2-P-138",
+          "tiers": [
+            "trusted",
+            "unchecked"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit"
+    }
+  ],
+  "interpretation": {
+    "accepted": "human-accepted anchor for this exact body and local family context",
+    "uncertain": "not certified; optional quickReason describes uncertainty but creates no global rule",
+    "rejected": "local negative example only; never a global morph/slider bound",
+    "hiddenRepeats": "used only to estimate reviewer consistency; repeat status was hidden in the UI",
+    "blindQueue": "generation kind, family, direction and source anchor were hidden and constrained-shuffled before review",
+    "phase1Seed": "body-bank-phase1-audit-seed-v1.json preserves the completed phase-1 audit and the user follow-up that all uncertain bodies looked too long-legged",
+    "shapeMetrics": "exact shape-dependent Anny rest-rig + rest-mesh bbox only; designed to quantify leg/torso proportions without phase-1 circumference proxies",
+    "adultStature": "every displayed adult is hard-checked at <=205 cm exact rest-mesh stature",
+    "motionContext": "pose/animation is shared by both viewports; two independent camera contexts are stored per rating",
+    "cameraRule": "BANK-only dual viewport; A/B share the viewer area outside the menu, each camera persists independently; optional AutoFit per viewport normalizes apparent body size on body changes",
+    "headModel": "head-size/head-fat coupling is not part of this audit and remains deferred"
+  }
+}

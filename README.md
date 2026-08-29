@@ -1,3 +1,17 @@
+# Sammy v0.8.29.1 — BODY BANK Solver Search Hotfix + Active Merge
+
+v0.8.29.1 repariert den fehlenden manuellen Retrieval-Handler aus v0.8.29.0 und übernimmt den abgeschlossenen 32er ACTIVE-Audit in die kanonische Body Bank. Der Index enthält jetzt 397 eindeutige Nodes: 269 trusted, 91 frontier, 37 negative und keine ungeprüften Phase-2-Nodes mehr.
+
+Der erste 8er Proof unterstützt die neue Body-Bank-Architektur deutlich, hat aber zugleich einen klar falschen Brust-Snapshot sichtbar gemacht. Deshalb trennt dieser Stand Architektur-GO und Mess-Gate ausdrücklich. Proof v1.1 und Retrieval besitzen einen breiten technischen Measurement-Sanity-Gate, der nur katastrophale Messausreißer abfängt.
+
+Siehe:
+- `BODY_BANK_SOLVER_HOTFIX_ACTIVE_MERGE_V0.8.29.1.md`
+- `RELEASE_NOTES_V0.8.29.1.md`
+- `CHANGESET_V0.8.29.1.md`
+- `SAMMY_MASTER_STATE.docx`
+
+---
+
 # Sammy v0.8.29.0 — BODY BANK Solver Architecture 1.0 + Active Audit
 
 Der abgeschlossene Phase-2-Blind-Audit wird jetzt erstmals als echte Solver-Datenbasis benutzt. `body-bank-index-v1.json` enthält dedupliziert 246 trusted, 83 frontier, 36 negative und 15 unchecked Körper. Der neue Haupt-POC unter `SOLV` sucht nur unter trusted Körpern, rekonstruiert eine kleine Shortlist wirklich in Anny und fitttet anschließend ausschließlich Höhe, Brust, Taille und Hüfte/Gesäß in engem lokalen Abstand. Ein globaler Non-Worsening-Gate rollt eine insgesamt schlechtere Korrektur vollständig auf den auditierten Seed zurück.

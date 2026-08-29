@@ -1,0 +1,263 @@
+{
+  "schema": "sammy-body-bank-solver-proof-v1",
+  "appVersion": "0.8.29.0",
+  "createdAt": "2026-08-29T15:08:32.991Z",
+  "sourceAuditSha256": "2962b8979db1f86df026fefcc546b19eb0bc5c80aa003abae99aa32bcae38b86",
+  "policy": {
+    "holdout": "8 deterministic diverse HUMAN_ACCEPTED nodes, each excluded from retrieval",
+    "knownContext": "sex + age from the hidden target metadata",
+    "geometricTargets": "stature + chest + waist + hip measured from the hidden target mesh",
+    "weight": "deliberately excluded from proof scoring AND proof preselection because Phase-2 audit has no objective kg label",
+    "baseline": "neutral same-sex, same-age-context Anny body with stature adjusted only",
+    "retrieval": "trusted bank only; hidden target excluded",
+    "localFit": "height + direct chest/waist/hip only; bounded around retrieved seed",
+    "decision": "GO only if retrieval median < neutral median AND local median <= retrieval median"
+  },
+  "cases": [
+    {
+      "targetBodyId": "P2-E-080",
+      "sex": 0,
+      "input": {
+        "age": 37.6,
+        "height": 167.53,
+        "chest": 107.56,
+        "waist": 124.09,
+        "hip": 123.89
+      },
+      "neutralScore": 5.47822,
+      "retrievalSeed": "P2-P-016",
+      "retrievalScore": 4.56921,
+      "localScore": 4.31395,
+      "recipeDistance": 0.53115,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "measure-waist-circ-incr",
+          "accepted": true,
+          "before": 88.25347221343466,
+          "after": 89.47024903392742,
+          "raw": 0.12
+        },
+        {
+          "axis": "measure-hips-circ-incr",
+          "accepted": true,
+          "before": 97.51506180568038,
+          "after": 99.81579972949169,
+          "raw": 0.14
+        },
+        {
+          "axis": "measure-bust-circ-incr",
+          "accepted": true,
+          "before": 95.2015694523455,
+          "after": 96.42418092816368,
+          "raw": 0.1
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "before": 4.569211956611423,
+          "after": 4.313950935276465
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-E-056",
+      "sex": 0,
+      "input": {
+        "age": 21.6,
+        "height": 182.42,
+        "chest": 116.48,
+        "waist": 126.92,
+        "hip": 128.16
+      },
+      "neutralScore": 5.79082,
+      "retrievalSeed": "P2-E-048",
+      "retrievalScore": 1.38331,
+      "localScore": 0.37401,
+      "recipeDistance": 0.11239,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "accepted": true,
+          "before": 188.7116216123104,
+          "after": 183.29862877726555,
+          "raw": 0.40244079983179926
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "before": 1.3833135235976197,
+          "after": 0.3740112428872668
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-100",
+      "sex": 0,
+      "input": {
+        "age": 33,
+        "height": 198.64,
+        "chest": 85.53,
+        "waist": 86.45,
+        "hip": 100.44
+      },
+      "neutralScore": 0.38426,
+      "retrievalSeed": "P2-B-045",
+      "retrievalScore": 0.47952,
+      "localScore": 0.20101,
+      "recipeDistance": 0.28577,
+      "localChanged": true,
+      "localTrace": [
+        {
+          "axis": "height",
+          "accepted": true,
+          "before": 200.62451120465994,
+          "after": 198.92002623528242,
+          "raw": 0.5717922321124247
+        },
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "before": 0.4795235555449071,
+          "after": 0.20100866207399695
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-E-074",
+      "sex": 0,
+      "input": {
+        "age": 37.6,
+        "height": 203.29,
+        "chest": 95.43,
+        "waist": 98.94,
+        "hip": 111.07
+      },
+      "neutralScore": 1.20248,
+      "retrievalSeed": "P2-E-018",
+      "retrievalScore": 0.05399,
+      "localScore": 0.05399,
+      "recipeDistance": 0.05036,
+      "localChanged": false,
+      "localTrace": [
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "before": 0.05399399533707928,
+          "after": 0.05399399533707928
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-004",
+      "sex": 1,
+      "input": {
+        "age": 21.5,
+        "height": 148.58,
+        "chest": 39.61,
+        "waist": 73.48,
+        "hip": 92.83
+      },
+      "neutralScore": 1.10644,
+      "retrievalSeed": "P2-P-003",
+      "retrievalScore": 0.20157,
+      "localScore": 0.20157,
+      "recipeDistance": 0.10954,
+      "localChanged": false,
+      "localTrace": [
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "before": 0.20157016666540864,
+          "after": 0.20157016666540864
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-053",
+      "sex": 1,
+      "input": {
+        "age": 21.8,
+        "height": 165.88,
+        "chest": 85.15,
+        "waist": 71.08,
+        "hip": 93.94
+      },
+      "neutralScore": 0.2765,
+      "retrievalSeed": "P2-P-054",
+      "retrievalScore": 0.12529,
+      "localScore": 0.12529,
+      "recipeDistance": 0.10954,
+      "localChanged": false,
+      "localTrace": [
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "before": 0.12529167813184175,
+          "after": 0.12529167813184175
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-P-121",
+      "sex": 1,
+      "input": {
+        "age": 26.2,
+        "height": 192.04,
+        "chest": 74.96,
+        "waist": 75.63,
+        "hip": 100.14
+      },
+      "neutralScore": 0.1124,
+      "retrievalSeed": "P2-P-122",
+      "retrievalScore": 0.11488,
+      "localScore": 0.11488,
+      "recipeDistance": 0.10954,
+      "localChanged": false,
+      "localTrace": [
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "before": 0.11487580071421533,
+          "after": 0.11487580071421533
+        }
+      ]
+    },
+    {
+      "targetBodyId": "P2-B-028",
+      "sex": 1,
+      "input": {
+        "age": 23.5,
+        "height": 203.25,
+        "chest": 90.24,
+        "waist": 87.82,
+        "hip": 113.31
+      },
+      "neutralScore": 1.36105,
+      "retrievalSeed": "P2-E-154",
+      "retrievalScore": 0.20363,
+      "localScore": 0.20363,
+      "recipeDistance": 0.92867,
+      "localChanged": false,
+      "localTrace": [
+        {
+          "axis": "global-score-gate",
+          "accepted": true,
+          "before": 0.20362632496147406,
+          "after": 0.20362632496147406
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "neutralMedian": 1.15446,
+    "retrievalMedian": 0.2026,
+    "localMedian": 0.20129,
+    "retrievalBetterCases": 6,
+    "localBetterCases": 8,
+    "localImprovedCases": 3,
+    "decision": "GO",
+    "reason": "Medianer Retrieval-Fehler schlägt den höhenangepassten Neutralstart und der kleine Local Fit verbessert/erhält den Retrieval-Median."
+  }
+}

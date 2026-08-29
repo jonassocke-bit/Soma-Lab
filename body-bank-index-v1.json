@@ -1,14 +1,44 @@
 {
   "schema": "sammy-body-bank-index-v1",
-  "appTargetVersion": "0.8.29.0",
-  "generated": "2026-08-29",
+  "appTargetVersion": "0.8.29.1",
+  "generated": "2026-08-29T15:20:09.846137Z",
   "source": {
     "auditFile": "Sammy_BODY_BANK_PHASE2_BLIND_AUDIT_2026-08-29T14-09-26-471Z.json",
     "auditSha256": "2962b8979db1f86df026fefcc546b19eb0bc5c80aa003abae99aa32bcae38b86",
     "auditSchema": "sammy-audited-body-bank-export-v3",
     "auditAppVersion": "0.8.28.5",
     "ratedReviews": 384,
-    "uniqueBodies": 380
+    "uniqueBodies": 380,
+    "activeAuditSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+    "activeAuditFile": "Sammy_BODY_BANK_ACTIVE_AUDIT_2026-08-29T15-06-26-154Z.json",
+    "activeAuditSummary": {
+      "total": 32,
+      "uniqueBodies": 380,
+      "hiddenRepeats": 20,
+      "accepted": 23,
+      "uncertain": 8,
+      "rejected": 1,
+      "unchecked": 0,
+      "repeatPairsRated": 0,
+      "repeatExactMatches": 0,
+      "repeatExactMatchRate": null,
+      "quickReasonCounts": {
+        "legs-too-long": 0,
+        "legs-too-short": 0,
+        "torso-proportion": 0,
+        "mass-width": 0,
+        "other": 0
+      },
+      "byGenerationKind": {
+        "active-audit": {
+          "total": 32,
+          "accepted": 23,
+          "uncertain": 8,
+          "rejected": 1,
+          "unchecked": 0
+        }
+      }
+    }
   },
   "policy": {
     "trusted": "all available votes for the exact body are accepted",
@@ -31,13 +61,14 @@
       "shoulderJointBreadthRatio"
     ],
     "excludedReason": "Phase-2 shoulder-joint metric is known invalid and must not enter retrieval or gating.",
-    "headModel": "deferred; not used by this solver architecture"
+    "headModel": "deferred; not used by this solver architecture",
+    "activeAuditCanonicalMerge": "v0.8.29.1 merges the returned 32-case ACTIVE export: carryover unchecked nodes are reclassified in-place; boundary midpoints are added as new local audited nodes. No global slider bounds are inferred."
   },
   "summary": {
-    "frontier": 83,
-    "trusted": 246,
-    "unchecked": 15,
-    "negative": 36
+    "frontier": 91,
+    "trusted": 269,
+    "unchecked": 0,
+    "negative": 37
   },
   "nodes": [
     {
@@ -93,8 +124,8 @@
       "sourceArchetype": "phase2_broad_edge",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-B-045",
-          "distance": 0.21478
+          "bodyId": "AA-B-015",
+          "distance": 0.07704
         },
         "frontier": {
           "bodyId": "P2-P-151",
@@ -165,10 +196,12 @@
     {
       "bodyId": "P2-B-003",
       "familyId": "P2-BROAD-M-H1-W2-M1-P3",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "frontier",
+      "status": "uncertain",
+      "votes": {
+        "uncertain": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -187,13 +220,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 174.57,
+        "hipJointHeightRatio": 0.52514,
+        "legChainRatio": 0.48746,
+        "femurTibiaRatio": 1.02809,
+        "torsoChainRatio": 0.26226,
+        "pelvisToNeckVerticalRatio": 0.25942,
+        "hipJointBreadthRatio": 0.13556
       },
       "generation": {
         "kind": "broad-edge-sample",
@@ -214,6 +247,12 @@
           "bodyId": "P2-E-058",
           "distance": 0.52764
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:48.245Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-B-003"
       }
     },
     {
@@ -315,8 +354,8 @@
       "sourceArchetype": "phase2_broad_edge",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-017",
-          "distance": 0.36893
+          "bodyId": "P2-P-021",
+          "distance": 0.34109
         },
         "frontier": {
           "bodyId": "P2-E-079",
@@ -331,10 +370,12 @@
     {
       "bodyId": "P2-B-006",
       "familyId": "P2-BROAD-F-H1-W1-M3-P1-C1",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -353,13 +394,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 174.43,
+        "hipJointHeightRatio": 0.53494,
+        "legChainRatio": 0.49439,
+        "femurTibiaRatio": 1.04323,
+        "torsoChainRatio": 0.25605,
+        "pelvisToNeckVerticalRatio": 0.25562,
+        "hipJointBreadthRatio": 0.12711
       },
       "generation": {
         "kind": "broad-edge-sample",
@@ -380,6 +421,12 @@
           "bodyId": "P2-B-026",
           "distance": 0.40048
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:50.924Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-B-006"
       }
     },
     {
@@ -785,8 +832,8 @@
       "sourceArchetype": "phase2_broad_edge",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-092",
-          "distance": 0.21792
+          "bodyId": "AA-B-009",
+          "distance": 0.16152
         },
         "frontier": {
           "bodyId": "P2-P-096",
@@ -1023,8 +1070,8 @@
           "distance": 0.137
         },
         "frontier": {
-          "bodyId": "P2-P-022",
-          "distance": 0.33501
+          "bodyId": "AA-B-001",
+          "distance": 0.32452
         },
         "negative": {
           "bodyId": "P2-B-015",
@@ -1163,10 +1210,12 @@
     {
       "bodyId": "P2-B-020",
       "familyId": "P2-BROAD-F-H0-W0-M3-P2-C1",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "frontier",
+      "status": "uncertain",
+      "votes": {
+        "uncertain": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -1185,13 +1234,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 136.34,
+        "hipJointHeightRatio": 0.49753,
+        "legChainRatio": 0.45349,
+        "femurTibiaRatio": 1.04605,
+        "torsoChainRatio": 0.27353,
+        "pelvisToNeckVerticalRatio": 0.27264,
+        "hipJointBreadthRatio": 0.14167
       },
       "generation": {
         "kind": "broad-edge-sample",
@@ -1212,15 +1261,23 @@
           "bodyId": "P2-E-115",
           "distance": 0.56613
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:30.540Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-B-020"
       }
     },
     {
       "bodyId": "P2-B-021",
       "familyId": "P2-BROAD-M-H1-W1-M0-P2",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -1239,13 +1296,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 183.14,
+        "hipJointHeightRatio": 0.53245,
+        "legChainRatio": 0.4953,
+        "femurTibiaRatio": 1.00015,
+        "torsoChainRatio": 0.25676,
+        "pelvisToNeckVerticalRatio": 0.25557,
+        "hipJointBreadthRatio": 0.12823
       },
       "generation": {
         "kind": "broad-edge-sample",
@@ -1266,6 +1323,12 @@
           "bodyId": "P2-P-150",
           "distance": 0.29213
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:40.823Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-B-021"
       }
     },
     {
@@ -1380,8 +1443,8 @@
           "distance": 0.17555
         },
         "frontier": {
-          "bodyId": "P2-B-057",
-          "distance": 0.36283
+          "bodyId": "P2-B-003",
+          "distance": 0.28098
         },
         "negative": {
           "bodyId": "P2-E-062",
@@ -1798,8 +1861,8 @@
           "distance": 0.36709
         },
         "frontier": {
-          "bodyId": "P2-E-111",
-          "distance": 0.55295
+          "bodyId": "P2-B-020",
+          "distance": 0.55096
         },
         "negative": {
           "bodyId": "P2-B-050",
@@ -1918,8 +1981,8 @@
           "distance": 0.35839
         },
         "frontier": {
-          "bodyId": "P2-E-118",
-          "distance": 0.50352
+          "bodyId": "P2-B-020",
+          "distance": 0.33081
         },
         "negative": {
           "bodyId": "P2-E-102",
@@ -2670,8 +2733,8 @@
       "sourceArchetype": "phase2_broad_edge",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-112",
-          "distance": 0.20917
+          "bodyId": "AA-B-015",
+          "distance": 0.17478
         },
         "frontier": {
           "bodyId": "P2-P-151",
@@ -3144,8 +3207,8 @@
       "sourceArchetype": "phase2_broad_edge",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-012",
-          "distance": 0.11029
+          "bodyId": "P2-P-058",
+          "distance": 0.10971
         },
         "frontier": {
           "bodyId": "P2-B-041",
@@ -3324,8 +3387,8 @@
           "distance": 0.31278
         },
         "frontier": {
-          "bodyId": "P2-E-118",
-          "distance": 0.80115
+          "bodyId": "P2-B-020",
+          "distance": 0.71262
         },
         "negative": {
           "bodyId": "P2-B-050",
@@ -3380,8 +3443,8 @@
           "distance": 0.20018
         },
         "frontier": {
-          "bodyId": "P2-B-001",
-          "distance": 0.34716
+          "bodyId": "P2-B-003",
+          "distance": 0.29748
         },
         "negative": {
           "bodyId": "P2-B-035",
@@ -3492,8 +3555,8 @@
           "distance": 0.15409
         },
         "frontier": {
-          "bodyId": "P2-E-012",
-          "distance": 0.18013
+          "bodyId": "P2-E-076",
+          "distance": 0.17097
         },
         "negative": {
           "bodyId": "P2-E-036",
@@ -4270,8 +4333,8 @@
       "sourceArchetype": "male_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-045",
-          "distance": 0.50357
+          "bodyId": "P2-P-021",
+          "distance": 0.39205
         },
         "frontier": {
           "bodyId": "P2-B-005",
@@ -4334,8 +4397,8 @@
           "distance": 0.09002
         },
         "frontier": {
-          "bodyId": "P2-E-068",
-          "distance": 0.30111
+          "bodyId": "P2-E-076",
+          "distance": 0.16667
         },
         "negative": {
           "bodyId": "P2-E-036",
@@ -4746,10 +4809,12 @@
     {
       "bodyId": "P2-E-019",
       "familyId": "P2-EXT-BB-017",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "negative",
+      "status": "rejected",
+      "votes": {
+        "rejected": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -4768,13 +4833,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 142.09,
+        "hipJointHeightRatio": 0.50923,
+        "legChainRatio": 0.47235,
+        "femurTibiaRatio": 0.91099,
+        "torsoChainRatio": 0.25932,
+        "pelvisToNeckVerticalRatio": 0.25804,
+        "hipJointBreadthRatio": 0.1253
       },
       "generation": {
         "kind": "extreme-space",
@@ -4788,8 +4853,8 @@
       "sourceArchetype": "male_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-017",
-          "distance": 0.48868
+          "bodyId": "P2-P-021",
+          "distance": 0.39635
         },
         "frontier": {
           "bodyId": "P2-B-005",
@@ -4799,6 +4864,12 @@
           "bodyId": "P2-E-075",
           "distance": 0.05036
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:46.552Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-E-019"
       }
     },
     {
@@ -4852,8 +4923,8 @@
           "distance": 0.06547
         },
         "frontier": {
-          "bodyId": "P2-E-012",
-          "distance": 0.15539
+          "bodyId": "P2-E-076",
+          "distance": 0.05036
         },
         "negative": {
           "bodyId": "P2-E-036",
@@ -5180,8 +5251,8 @@
       "sourceArchetype": "male_lean",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-E-073",
-          "distance": 0.25319
+          "bodyId": "AA-B-015",
+          "distance": 0.19882
         },
         "frontier": {
           "bodyId": "P2-E-033",
@@ -5310,8 +5381,8 @@
       "sourceArchetype": "male_lean",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-045",
-          "distance": 0.48101
+          "bodyId": "P2-P-021",
+          "distance": 0.41018
         },
         "frontier": {
           "bodyId": "P2-B-005",
@@ -5824,8 +5895,8 @@
       "sourceArchetype": "male_lean",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-045",
-          "distance": 0.48466
+          "bodyId": "P2-P-021",
+          "distance": 0.39565
         },
         "frontier": {
           "bodyId": "P2-B-005",
@@ -6132,8 +6203,8 @@
       "sourceArchetype": "male_lean",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-E-032",
-          "distance": 0.28223
+          "bodyId": "P2-E-072",
+          "distance": 0.16427
         },
         "frontier": {
           "bodyId": "P2-E-064",
@@ -6328,8 +6399,8 @@
       "sourceArchetype": "male_lean",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-017",
-          "distance": 0.48565
+          "bodyId": "P2-P-021",
+          "distance": 0.39976
         },
         "frontier": {
           "bodyId": "P2-B-005",
@@ -6392,8 +6463,8 @@
           "distance": 0.06547
         },
         "frontier": {
-          "bodyId": "P2-E-012",
-          "distance": 0.14056
+          "bodyId": "P2-E-076",
+          "distance": 0.0327
         },
         "negative": {
           "bodyId": "P2-E-036",
@@ -6704,8 +6775,8 @@
       "sourceArchetype": "male_lean",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-E-073",
-          "distance": 0.32515
+          "bodyId": "AA-B-015",
+          "distance": 0.2215
         },
         "frontier": {
           "bodyId": "P2-E-025",
@@ -6832,12 +6903,12 @@
       "sourceArchetype": "male_lean",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-045",
-          "distance": 0.471
+          "bodyId": "P2-P-021",
+          "distance": 0.43605
         },
         "frontier": {
-          "bodyId": "P2-P-022",
-          "distance": 0.49999
+          "bodyId": "AA-B-001",
+          "distance": 0.4659
         },
         "negative": {
           "bodyId": "P2-E-027",
@@ -8107,10 +8178,12 @@
     {
       "bodyId": "P2-E-072",
       "familyId": "P2-EXT-BB-069",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -8129,13 +8202,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 187.06,
+        "hipJointHeightRatio": 0.52209,
+        "legChainRatio": 0.48531,
+        "femurTibiaRatio": 0.94095,
+        "torsoChainRatio": 0.27879,
+        "pelvisToNeckVerticalRatio": 0.27797,
+        "hipJointBreadthRatio": 0.15037
       },
       "generation": {
         "kind": "extreme-space",
@@ -8160,6 +8233,12 @@
           "bodyId": "P2-E-058",
           "distance": 0.7314
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:06:13.672Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-E-072"
       }
     },
     {
@@ -8345,8 +8424,8 @@
       "sourceArchetype": "male_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-017",
-          "distance": 0.4783
+          "bodyId": "P2-P-021",
+          "distance": 0.40388
         },
         "frontier": {
           "bodyId": "P2-B-005",
@@ -8361,10 +8440,12 @@
     {
       "bodyId": "P2-E-076",
       "familyId": "P2-EXT-BB-075",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "frontier",
+      "status": "uncertain",
+      "votes": {
+        "uncertain": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -8383,13 +8464,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 143.14,
+        "hipJointHeightRatio": 0.51473,
+        "legChainRatio": 0.47674,
+        "femurTibiaRatio": 0.90944,
+        "torsoChainRatio": 0.26018,
+        "pelvisToNeckVerticalRatio": 0.25776,
+        "hipJointBreadthRatio": 0.13674
       },
       "generation": {
         "kind": "extreme-space",
@@ -8414,6 +8495,12 @@
           "bodyId": "P2-E-036",
           "distance": 0.21111
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:06:01.342Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-E-076"
       }
     },
     {
@@ -8977,8 +9064,8 @@
       "sourceArchetype": "female_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-106",
-          "distance": 0.32204
+          "bodyId": "P2-P-105",
+          "distance": 0.27866
         },
         "frontier": {
           "bodyId": "P2-E-109",
@@ -9733,8 +9820,8 @@
           "distance": 0.28988
         },
         "frontier": {
-          "bodyId": "P2-E-129",
-          "distance": 0.06836
+          "bodyId": "P2-E-105",
+          "distance": 0.06202
         },
         "negative": {
           "bodyId": "P2-E-137",
@@ -9745,10 +9832,12 @@
     {
       "bodyId": "P2-E-098",
       "familyId": "P2-EXT-BB-012",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -9767,13 +9856,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 201.4,
+        "hipJointHeightRatio": 0.5337,
+        "legChainRatio": 0.4919,
+        "femurTibiaRatio": 1.12936,
+        "torsoChainRatio": 0.26059,
+        "pelvisToNeckVerticalRatio": 0.25998,
+        "hipJointBreadthRatio": 0.13321
       },
       "generation": {
         "kind": "extreme-space",
@@ -9806,6 +9895,12 @@
           "bodyId": "P2-E-137",
           "distance": 0.83132
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:42.304Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-E-098"
       }
     },
     {
@@ -10179,10 +10274,12 @@
     {
       "bodyId": "P2-E-105",
       "familyId": "P2-EXT-BB-014",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "frontier",
+      "status": "uncertain",
+      "votes": {
+        "uncertain": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -10201,13 +10298,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 201.02,
+        "hipJointHeightRatio": 0.53693,
+        "legChainRatio": 0.4947,
+        "femurTibiaRatio": 1.14358,
+        "torsoChainRatio": 0.25735,
+        "pelvisToNeckVerticalRatio": 0.257,
+        "hipJointBreadthRatio": 0.12603
       },
       "generation": {
         "kind": "extreme-space",
@@ -10240,6 +10337,12 @@
           "bodyId": "P2-E-137",
           "distance": 0.26806
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:06:03.238Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-E-105"
       }
     },
     {
@@ -10485,8 +10588,8 @@
       "sourceArchetype": "female_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-106",
-          "distance": 0.34585
+          "bodyId": "P2-P-105",
+          "distance": 0.30586
         },
         "frontier": {
           "bodyId": "P2-E-085",
@@ -11307,8 +11410,8 @@
       "sourceArchetype": "female_curvy",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-E-130",
-          "distance": 0.09577
+          "bodyId": "P2-E-098",
+          "distance": 0.07698
         },
         "frontier": {
           "bodyId": "P2-P-159",
@@ -11747,8 +11850,8 @@
           "distance": 0.26072
         },
         "frontier": {
-          "bodyId": "P2-E-097",
-          "distance": 0.06836
+          "bodyId": "P2-E-105",
+          "distance": 0.06069
         },
         "negative": {
           "bodyId": "P2-E-137",
@@ -12393,10 +12496,12 @@
     {
       "bodyId": "P2-E-140",
       "familyId": "P2-EXT-BB-046",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -12415,13 +12520,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 128.63,
+        "hipJointHeightRatio": 0.5049,
+        "legChainRatio": 0.46428,
+        "femurTibiaRatio": 0.95117,
+        "torsoChainRatio": 0.27043,
+        "pelvisToNeckVerticalRatio": 0.26841,
+        "hipJointBreadthRatio": 0.16573
       },
       "generation": {
         "kind": "extreme-space",
@@ -12446,6 +12551,12 @@
           "bodyId": "P2-E-139",
           "distance": 0.79689
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:36.698Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-E-140"
       }
     },
     {
@@ -13651,8 +13762,8 @@
       "sourceArchetype": "female_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-106",
-          "distance": 0.38882
+          "bodyId": "P2-B-006",
+          "distance": 0.35777
         },
         "frontier": {
           "bodyId": "P2-E-087",
@@ -14264,8 +14375,8 @@
           "distance": 0.10954
         },
         "frontier": {
-          "bodyId": "P2-E-068",
-          "distance": 0.35508
+          "bodyId": "P2-E-076",
+          "distance": 0.32748
         },
         "negative": {
           "bodyId": "P2-E-036",
@@ -14325,8 +14436,8 @@
           "distance": 0.10954
         },
         "frontier": {
-          "bodyId": "P2-E-068",
-          "distance": 0.38967
+          "bodyId": "P2-E-076",
+          "distance": 0.3647
         },
         "negative": {
           "bodyId": "P2-E-036",
@@ -14947,10 +15058,12 @@
     {
       "bodyId": "P2-P-021",
       "familyId": "P2-PROP-BB-013",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -14969,13 +15082,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 168.87,
+        "hipJointHeightRatio": 0.52689,
+        "legChainRatio": 0.4901,
+        "femurTibiaRatio": 0.96255,
+        "torsoChainRatio": 0.25487,
+        "pelvisToNeckVerticalRatio": 0.25391,
+        "hipJointBreadthRatio": 0.12202
       },
       "generation": {
         "kind": "proportion-family",
@@ -14990,17 +15103,23 @@
       "sourceArchetype": "male_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-066",
-          "distance": 0.23045
+          "bodyId": "AA-B-002",
+          "distance": 0.19718
         },
         "frontier": {
-          "bodyId": "P2-P-022",
-          "distance": 0.10954
+          "bodyId": "AA-B-001",
+          "distance": 0.05477
         },
         "negative": {
           "bodyId": "P2-B-015",
           "distance": 0.34288
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:17.575Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-P-021"
       }
     },
     {
@@ -15051,12 +15170,12 @@
       "sourceArchetype": "male_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-023",
-          "distance": 0.17527
+          "bodyId": "AA-B-002",
+          "distance": 0.08764
         },
         "frontier": {
-          "bodyId": "P2-P-065",
-          "distance": 0.33753
+          "bodyId": "AA-B-001",
+          "distance": 0.05477
         },
         "negative": {
           "bodyId": "P2-B-015",
@@ -15112,8 +15231,8 @@
       "sourceArchetype": "male_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-024",
-          "distance": 0.10954
+          "bodyId": "AA-B-002",
+          "distance": 0.08764
         },
         "frontier": {
           "bodyId": "P2-P-022",
@@ -16397,8 +16516,8 @@
           "distance": 0.10954
         },
         "frontier": {
-          "bodyId": "P2-E-111",
-          "distance": 0.45188
+          "bodyId": "P2-B-020",
+          "distance": 0.44383
         },
         "negative": {
           "bodyId": "P2-B-026",
@@ -16458,8 +16577,8 @@
           "distance": 0.10954
         },
         "frontier": {
-          "bodyId": "P2-P-022",
-          "distance": 0.2976
+          "bodyId": "AA-B-001",
+          "distance": 0.27005
         },
         "negative": {
           "bodyId": "P2-B-015",
@@ -16519,8 +16638,8 @@
           "distance": 0.10954
         },
         "frontier": {
-          "bodyId": "P2-P-022",
-          "distance": 0.25156
+          "bodyId": "AA-B-001",
+          "distance": 0.24421
         },
         "negative": {
           "bodyId": "P2-B-015",
@@ -16641,8 +16760,8 @@
           "distance": 0.10954
         },
         "frontier": {
-          "bodyId": "P2-B-057",
-          "distance": 0.30801
+          "bodyId": "AA-B-013",
+          "distance": 0.30662
         },
         "negative": {
           "bodyId": "P2-P-150",
@@ -17186,8 +17305,8 @@
       "sourceArchetype": "male_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-B-053",
-          "distance": 0.16481
+          "bodyId": "AA-B-003",
+          "distance": 0.05477
         },
         "frontier": {
           "bodyId": "P2-B-041",
@@ -17202,10 +17321,12 @@
     {
       "bodyId": "P2-P-058",
       "familyId": "P2-PROP-BB-021",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -17224,13 +17345,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 178.12,
+        "hipJointHeightRatio": 0.53326,
+        "legChainRatio": 0.49607,
+        "femurTibiaRatio": 0.99955,
+        "torsoChainRatio": 0.25554,
+        "pelvisToNeckVerticalRatio": 0.25361,
+        "hipJointBreadthRatio": 0.12498
       },
       "generation": {
         "kind": "proportion-family",
@@ -17245,8 +17366,8 @@
       "sourceArchetype": "male_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-057",
-          "distance": 0.10954
+          "bodyId": "AA-B-003",
+          "distance": 0.05477
         },
         "frontier": {
           "bodyId": "P2-B-031",
@@ -17256,6 +17377,12 @@
           "bodyId": "P2-P-150",
           "distance": 0.55456
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:23.316Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-P-058"
       }
     },
     {
@@ -17306,8 +17433,8 @@
       "sourceArchetype": "male_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-060",
-          "distance": 0.10954
+          "bodyId": "AA-B-004",
+          "distance": 0.08764
         },
         "frontier": {
           "bodyId": "P2-B-023",
@@ -17371,8 +17498,8 @@
           "distance": 0.10954
         },
         "frontier": {
-          "bodyId": "P2-B-023",
-          "distance": 0.33796
+          "bodyId": "P2-B-003",
+          "distance": 0.28499
         },
         "negative": {
           "bodyId": "P2-E-058",
@@ -17489,8 +17616,8 @@
       "sourceArchetype": "male_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-061",
-          "distance": 0.10954
+          "bodyId": "AA-B-005",
+          "distance": 0.08764
         },
         "frontier": {
           "bodyId": "P2-B-019",
@@ -17505,10 +17632,12 @@
     {
       "bodyId": "P2-P-063",
       "familyId": "P2-PROP-BB-077",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -17527,13 +17656,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 180.7,
+        "hipJointHeightRatio": 0.52998,
+        "legChainRatio": 0.49331,
+        "femurTibiaRatio": 0.98575,
+        "torsoChainRatio": 0.25603,
+        "pelvisToNeckVerticalRatio": 0.25521,
+        "hipJointBreadthRatio": 0.1224
       },
       "generation": {
         "kind": "proportion-family",
@@ -17548,8 +17677,8 @@
       "sourceArchetype": "male_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-064",
-          "distance": 0.10954
+          "bodyId": "AA-B-006",
+          "distance": 0.05477
         },
         "frontier": {
           "bodyId": "P2-B-019",
@@ -17559,6 +17688,12 @@
           "bodyId": "P2-E-004",
           "distance": 0.61876
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:44.350Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-P-063"
       }
     },
     {
@@ -17609,8 +17744,8 @@
       "sourceArchetype": "male_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-090",
-          "distance": 0.20452
+          "bodyId": "AA-B-006",
+          "distance": 0.05477
         },
         "frontier": {
           "bodyId": "P2-B-019",
@@ -17674,8 +17809,8 @@
           "distance": 0.10954
         },
         "frontier": {
-          "bodyId": "P2-P-022",
-          "distance": 0.33753
+          "bodyId": "AA-B-007",
+          "distance": 0.05477
         },
         "negative": {
           "bodyId": "P2-B-015",
@@ -17735,8 +17870,8 @@
           "distance": 0.17527
         },
         "frontier": {
-          "bodyId": "P2-P-065",
-          "distance": 0.10954
+          "bodyId": "AA-B-007",
+          "distance": 0.05477
         },
         "negative": {
           "bodyId": "P2-B-015",
@@ -17796,8 +17931,8 @@
           "distance": 0.10954
         },
         "frontier": {
-          "bodyId": "P2-P-022",
-          "distance": 0.23148
+          "bodyId": "AA-B-007",
+          "distance": 0.23004
         },
         "negative": {
           "bodyId": "P2-P-150",
@@ -18650,8 +18785,8 @@
           "distance": 0.10954
         },
         "frontier": {
-          "bodyId": "P2-P-022",
-          "distance": 0.41572
+          "bodyId": "AA-B-001",
+          "distance": 0.4013
         },
         "negative": {
           "bodyId": "P2-B-015",
@@ -19439,8 +19574,8 @@
       "sourceArchetype": "male_muscular",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-093",
-          "distance": 0.10954
+          "bodyId": "AA-B-008",
+          "distance": 0.08764
         },
         "frontier": {
           "bodyId": "P2-P-095",
@@ -19500,8 +19635,8 @@
       "sourceArchetype": "male_muscular",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-094",
-          "distance": 0.17527
+          "bodyId": "AA-B-009",
+          "distance": 0.05477
         },
         "frontier": {
           "bodyId": "P2-P-096",
@@ -19561,8 +19696,8 @@
       "sourceArchetype": "male_muscular",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-E-066",
-          "distance": 0.19732
+          "bodyId": "AA-B-009",
+          "distance": 0.05477
         },
         "frontier": {
           "bodyId": "P2-P-095",
@@ -20065,10 +20200,12 @@
     {
       "bodyId": "P2-P-105",
       "familyId": "P2-PROP-BB-002",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -20087,13 +20224,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 188.27,
+        "hipJointHeightRatio": 0.54369,
+        "legChainRatio": 0.50447,
+        "femurTibiaRatio": 1.03242,
+        "torsoChainRatio": 0.25317,
+        "pelvisToNeckVerticalRatio": 0.25252,
+        "hipJointBreadthRatio": 0.1218
       },
       "generation": {
         "kind": "proportion-family",
@@ -20108,8 +20245,8 @@
       "sourceArchetype": "female_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-106",
-          "distance": 0.10954
+          "bodyId": "AA-B-010",
+          "distance": 0.05477
         },
         "frontier": {
           "bodyId": "P2-E-085",
@@ -20119,6 +20256,12 @@
           "bodyId": "P2-B-026",
           "distance": 0.36322
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:39.807Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-P-105"
       }
     },
     {
@@ -20169,8 +20312,8 @@
       "sourceArchetype": "female_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-107",
-          "distance": 0.17527
+          "bodyId": "AA-B-010",
+          "distance": 0.05477
         },
         "frontier": {
           "bodyId": "P2-B-040",
@@ -22156,8 +22299,8 @@
       "sourceArchetype": "female_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-B-004",
-          "distance": 0.2331
+          "bodyId": "AA-B-011",
+          "distance": 0.05477
         },
         "frontier": {
           "bodyId": "P2-E-157",
@@ -22172,10 +22315,12 @@
     {
       "bodyId": "P2-P-138",
       "familyId": "P2-PROP-BB-074",
-      "tier": "unchecked",
-      "status": "unchecked",
-      "votes": {},
-      "reviewCount": 0,
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
       "quickReasons": {},
       "shape": {
         "core": {
@@ -22194,13 +22339,13 @@
         "local": {}
       },
       "metrics": {
-        "statureCm": null,
-        "hipJointHeightRatio": null,
-        "legChainRatio": null,
-        "femurTibiaRatio": null,
-        "torsoChainRatio": null,
-        "pelvisToNeckVerticalRatio": null,
-        "hipJointBreadthRatio": null
+        "statureCm": 199.16,
+        "hipJointHeightRatio": 0.54906,
+        "legChainRatio": 0.50991,
+        "femurTibiaRatio": 1.03982,
+        "torsoChainRatio": 0.25061,
+        "pelvisToNeckVerticalRatio": 0.25027,
+        "hipJointBreadthRatio": 0.12265
       },
       "generation": {
         "kind": "proportion-family",
@@ -22215,8 +22360,8 @@
       "sourceArchetype": "female_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-137",
-          "distance": 0.10954
+          "bodyId": "AA-B-011",
+          "distance": 0.05477
         },
         "frontier": {
           "bodyId": "P2-B-052",
@@ -22226,6 +22371,12 @@
           "bodyId": "P2-B-026",
           "distance": 0.65275
         }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:49.193Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-U-P2-P-138"
       }
     },
     {
@@ -22276,8 +22427,8 @@
       "sourceArchetype": "female_avg",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-140",
-          "distance": 0.10954
+          "bodyId": "AA-B-012",
+          "distance": 0.08764
         },
         "frontier": {
           "bodyId": "P2-B-052",
@@ -22914,8 +23065,8 @@
           "distance": 0.22128
         },
         "frontier": {
-          "bodyId": "P2-B-031",
-          "distance": 0.26132
+          "bodyId": "AA-B-013",
+          "distance": 0.05478
         },
         "negative": {
           "bodyId": "P2-P-150",
@@ -22979,12 +23130,12 @@
       "sourceArchetype": "male_lean",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-B-045",
-          "distance": 0.23882
+          "bodyId": "AA-B-015",
+          "distance": 0.23006
         },
         "frontier": {
-          "bodyId": "P2-P-149",
-          "distance": 0.10955
+          "bodyId": "AA-B-013",
+          "distance": 0.05478
         },
         "negative": {
           "bodyId": "P2-E-049",
@@ -23041,12 +23192,12 @@
       "sourceArchetype": "male_lean",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-B-045",
-          "distance": 0.16508
+          "bodyId": "AA-B-015",
+          "distance": 0.05478
         },
         "frontier": {
-          "bodyId": "P2-B-001",
-          "distance": 0.09448
+          "bodyId": "AA-B-014",
+          "distance": 0.08764
         },
         "negative": {
           "bodyId": "P2-P-150",
@@ -23110,8 +23261,8 @@
       "sourceArchetype": "male_lean",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-B-045",
-          "distance": 0.1996
+          "bodyId": "AA-B-015",
+          "distance": 0.05478
         },
         "frontier": {
           "bodyId": "P2-B-001",
@@ -23524,8 +23675,8 @@
       "sourceArchetype": "female_tall",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-157",
-          "distance": 0.10957
+          "bodyId": "AA-B-016",
+          "distance": 0.08766
         },
         "frontier": {
           "bodyId": "P2-P-159",
@@ -23593,8 +23744,8 @@
       "sourceArchetype": "female_tall",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-P-160",
-          "distance": 0.10957
+          "bodyId": "AA-B-017",
+          "distance": 0.05479
         },
         "frontier": {
           "bodyId": "P2-B-052",
@@ -23662,8 +23813,8 @@
       "sourceArchetype": "female_tall",
       "nearest": {
         "trusted": {
-          "bodyId": "P2-B-058",
-          "distance": 0.15793
+          "bodyId": "AA-B-017",
+          "distance": 0.05479
         },
         "frontier": {
           "bodyId": "P2-P-159",
@@ -23673,6 +23824,1213 @@
           "bodyId": "P2-E-145",
           "distance": 0.60277
         }
+      }
+    },
+    {
+      "bodyId": "AA-B-017",
+      "familyId": "P2-PROP-BB-064",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8246,
+          "muscle": 0.23574,
+          "weight": 0.71518,
+          "height": 0.73546,
+          "proportions": 0.8662,
+          "cupsize": 0.30299,
+          "firmness": 0.71192,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 200.98,
+        "hipJointHeightRatio": 0.53735,
+        "legChainRatio": 0.49592,
+        "femurTibiaRatio": 1.12249,
+        "torsoChainRatio": 0.25789,
+        "pelvisToNeckVerticalRatio": 0.25762,
+        "hipJointBreadthRatio": 0.13516
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-064",
+          "a": "P2-P-159",
+          "b": "P2-P-160",
+          "tiers": [
+            "frontier",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-160",
+          "distance": 0.05479
+        },
+        "frontier": {
+          "bodyId": "P2-P-159",
+          "distance": 0.05479
+        },
+        "negative": {
+          "bodyId": "P2-E-145",
+          "distance": 0.60663
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:15.965Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-017"
+      }
+    },
+    {
+      "bodyId": "AA-B-010",
+      "familyId": "P2-PROP-BB-002",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.7168,
+          "muscle": 0.64766,
+          "weight": 0.3053,
+          "height": 0.60402,
+          "proportions": 0.18858,
+          "cupsize": 0.65924,
+          "firmness": 0.70658,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 188.19,
+        "hipJointHeightRatio": 0.54262,
+        "legChainRatio": 0.50318,
+        "femurTibiaRatio": 1.03822,
+        "torsoChainRatio": 0.2538,
+        "pelvisToNeckVerticalRatio": 0.25314,
+        "hipJointBreadthRatio": 0.1222
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-002",
+          "a": "P2-P-105",
+          "b": "P2-P-106",
+          "tiers": [
+            "unchecked",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-105",
+          "distance": 0.05477
+        },
+        "frontier": {
+          "bodyId": "P2-B-040",
+          "distance": 0.24939
+        },
+        "negative": {
+          "bodyId": "P2-B-026",
+          "distance": 0.38244
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:22.368Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-010"
+      }
+    },
+    {
+      "bodyId": "AA-B-013",
+      "familyId": "P2-PROP-BB-031",
+      "tier": "frontier",
+      "status": "uncertain",
+      "votes": {
+        "uncertain": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.83416,
+          "muscle": 0.25486,
+          "weight": 0.18601,
+          "height": 0.60246,
+          "proportions": 0.51344,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 200.27,
+        "hipJointHeightRatio": 0.54298,
+        "legChainRatio": 0.50646,
+        "femurTibiaRatio": 1.00449,
+        "torsoChainRatio": 0.25195,
+        "pelvisToNeckVerticalRatio": 0.25118,
+        "hipJointBreadthRatio": 0.12074
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-031",
+          "a": "P2-P-149",
+          "b": "P2-P-150",
+          "tiers": [
+            "frontier",
+            "negative"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-B-051",
+          "distance": 0.26501
+        },
+        "frontier": {
+          "bodyId": "P2-P-149",
+          "distance": 0.05478
+        },
+        "negative": {
+          "bodyId": "P2-P-150",
+          "distance": 0.05478
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:24.814Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-013"
+      }
+    },
+    {
+      "bodyId": "AA-B-012",
+      "familyId": "P2-PROP-BB-074",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.77556,
+          "muscle": 0.53995,
+          "weight": 0.63477,
+          "height": 0.70658,
+          "proportions": 0.29544,
+          "cupsize": 0.50997,
+          "firmness": 0.44446,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 199.03,
+        "hipJointHeightRatio": 0.54747,
+        "legChainRatio": 0.50798,
+        "femurTibiaRatio": 1.04869,
+        "torsoChainRatio": 0.25156,
+        "pelvisToNeckVerticalRatio": 0.25121,
+        "hipJointBreadthRatio": 0.1232
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-074",
+          "a": "P2-P-138",
+          "b": "P2-P-139",
+          "tiers": [
+            "unchecked",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-138",
+          "distance": 0.08764
+        },
+        "frontier": {
+          "bodyId": "P2-B-052",
+          "distance": 0.30241
+        },
+        "negative": {
+          "bodyId": "P2-B-026",
+          "distance": 0.68312
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:26.395Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-012"
+      }
+    },
+    {
+      "bodyId": "AA-B-003",
+      "familyId": "P2-PROP-BB-021",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8732,
+          "muscle": 0.64915,
+          "weight": 0.57643,
+          "height": 0.39643,
+          "proportions": 0.41452,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 178.12,
+        "hipJointHeightRatio": 0.53419,
+        "legChainRatio": 0.49702,
+        "femurTibiaRatio": 0.99671,
+        "torsoChainRatio": 0.25485,
+        "pelvisToNeckVerticalRatio": 0.25292,
+        "hipJointBreadthRatio": 0.12443
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-021",
+          "a": "P2-P-057",
+          "b": "P2-P-058",
+          "tiers": [
+            "trusted",
+            "unchecked"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-057",
+          "distance": 0.05477
+        },
+        "frontier": {
+          "bodyId": "P2-B-041",
+          "distance": 0.36818
+        },
+        "negative": {
+          "bodyId": "P2-P-150",
+          "distance": 0.56781
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:31.520Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-003"
+      }
+    },
+    {
+      "bodyId": "AA-B-009",
+      "familyId": "P2-PROP-BB-063",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7906,
+          "muscle": 0.9,
+          "weight": 0.82057,
+          "height": 0.54698,
+          "proportions": 0.7943,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 197.78,
+        "hipJointHeightRatio": 0.53617,
+        "legChainRatio": 0.49951,
+        "femurTibiaRatio": 1.0324,
+        "torsoChainRatio": 0.26079,
+        "pelvisToNeckVerticalRatio": 0.25972,
+        "hipJointBreadthRatio": 0.12257
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-063",
+          "a": "P2-P-095",
+          "b": "P2-P-096",
+          "tiers": [
+            "frontier",
+            "frontier"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "AA-B-008",
+          "distance": 0.14241
+        },
+        "frontier": {
+          "bodyId": "P2-P-095",
+          "distance": 0.05477
+        },
+        "negative": {
+          "bodyId": "P2-E-058",
+          "distance": 0.18587
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:37.611Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-009"
+      }
+    },
+    {
+      "bodyId": "AA-B-005",
+      "familyId": "P2-PROP-BB-077",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.715,
+          "muscle": 0.62522,
+          "weight": 0.76862,
+          "height": 0.40903,
+          "proportions": 0.33111,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 180.7,
+        "hipJointHeightRatio": 0.53146,
+        "legChainRatio": 0.49483,
+        "femurTibiaRatio": 0.98135,
+        "torsoChainRatio": 0.25495,
+        "pelvisToNeckVerticalRatio": 0.25412,
+        "hipJointBreadthRatio": 0.12152
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-077",
+          "a": "P2-P-062",
+          "b": "P2-P-063",
+          "tiers": [
+            "trusted",
+            "unchecked"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-063",
+          "distance": 0.08764
+        },
+        "frontier": {
+          "bodyId": "P2-B-019",
+          "distance": 0.34155
+        },
+        "negative": {
+          "bodyId": "P2-E-004",
+          "distance": 0.57013
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:38.525Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-005"
+      }
+    },
+    {
+      "bodyId": "AA-B-004",
+      "familyId": "P2-PROP-BB-021",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.8732,
+          "muscle": 0.64915,
+          "weight": 0.57643,
+          "height": 0.39643,
+          "proportions": 0.54452,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 178.12,
+        "hipJointHeightRatio": 0.53177,
+        "legChainRatio": 0.49455,
+        "femurTibiaRatio": 1.00414,
+        "torsoChainRatio": 0.25663,
+        "pelvisToNeckVerticalRatio": 0.25472,
+        "hipJointBreadthRatio": 0.12585
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-021",
+          "a": "P2-P-058",
+          "b": "P2-P-059",
+          "tiers": [
+            "unchecked",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-059",
+          "distance": 0.08764
+        },
+        "frontier": {
+          "bodyId": "P2-B-031",
+          "distance": 0.38635
+        },
+        "negative": {
+          "bodyId": "P2-P-150",
+          "distance": 0.54427
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:43.502Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-004"
+      }
+    },
+    {
+      "bodyId": "AA-B-015",
+      "familyId": "P2-PROP-BB-031",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.83416,
+          "muscle": 0.25486,
+          "weight": 0.18601,
+          "height": 0.59984,
+          "proportions": 0.77344,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 199.98,
+        "hipJointHeightRatio": 0.53853,
+        "legChainRatio": 0.50192,
+        "femurTibiaRatio": 1.01739,
+        "torsoChainRatio": 0.2552,
+        "pelvisToNeckVerticalRatio": 0.25444,
+        "hipJointBreadthRatio": 0.12331
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-031",
+          "a": "P2-P-151",
+          "b": "P2-P-152",
+          "tiers": [
+            "frontier",
+            "frontier"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-B-045",
+          "distance": 0.17478
+        },
+        "frontier": {
+          "bodyId": "P2-P-152",
+          "distance": 0.05478
+        },
+        "negative": {
+          "bodyId": "P2-E-049",
+          "distance": 0.2215
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:50.042Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-015"
+      }
+    },
+    {
+      "bodyId": "AA-B-008",
+      "familyId": "P2-PROP-BB-063",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7906,
+          "muscle": 0.9,
+          "weight": 0.82057,
+          "height": 0.54698,
+          "proportions": 0.6643,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 197.78,
+        "hipJointHeightRatio": 0.53835,
+        "legChainRatio": 0.50174,
+        "femurTibiaRatio": 1.02541,
+        "torsoChainRatio": 0.25917,
+        "pelvisToNeckVerticalRatio": 0.25809,
+        "hipJointBreadthRatio": 0.1213
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-063",
+          "a": "P2-P-094",
+          "b": "P2-P-095",
+          "tiers": [
+            "trusted",
+            "frontier"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-094",
+          "distance": 0.08764
+        },
+        "frontier": {
+          "bodyId": "P2-P-095",
+          "distance": 0.08764
+        },
+        "negative": {
+          "bodyId": "P2-E-058",
+          "distance": 0.31171
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:53.121Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-008"
+      }
+    },
+    {
+      "bodyId": "AA-B-002",
+      "familyId": "P2-PROP-BB-013",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7644,
+          "muscle": 0.42178,
+          "weight": 0.2195,
+          "height": 0.30827,
+          "proportions": 0.44939,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 168.87,
+        "hipJointHeightRatio": 0.52334,
+        "legChainRatio": 0.48646,
+        "femurTibiaRatio": 0.97271,
+        "torsoChainRatio": 0.25748,
+        "pelvisToNeckVerticalRatio": 0.25653,
+        "hipJointBreadthRatio": 0.12411
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-013",
+          "a": "P2-P-022",
+          "b": "P2-P-023",
+          "tiers": [
+            "frontier",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-023",
+          "distance": 0.08764
+        },
+        "frontier": {
+          "bodyId": "P2-P-022",
+          "distance": 0.08764
+        },
+        "negative": {
+          "bodyId": "P2-P-150",
+          "distance": 0.39099
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:54.019Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-002"
+      }
+    },
+    {
+      "bodyId": "AA-B-006",
+      "familyId": "P2-PROP-BB-077",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.715,
+          "muscle": 0.62522,
+          "weight": 0.76862,
+          "height": 0.40903,
+          "proportions": 0.46111,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 180.7,
+        "hipJointHeightRatio": 0.52906,
+        "legChainRatio": 0.49237,
+        "femurTibiaRatio": 0.98852,
+        "torsoChainRatio": 0.25671,
+        "pelvisToNeckVerticalRatio": 0.25588,
+        "hipJointBreadthRatio": 0.12296
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-077",
+          "a": "P2-P-063",
+          "b": "P2-P-064",
+          "tiers": [
+            "unchecked",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-064",
+          "distance": 0.05477
+        },
+        "frontier": {
+          "bodyId": "P2-B-019",
+          "distance": 0.31399
+        },
+        "negative": {
+          "bodyId": "P2-E-058",
+          "distance": 0.61958
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:55.017Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-006"
+      }
+    },
+    {
+      "bodyId": "AA-B-016",
+      "familyId": "P2-PROP-BB-064",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.8246,
+          "muscle": 0.23574,
+          "weight": 0.71518,
+          "height": 0.73281,
+          "proportions": 0.7362,
+          "cupsize": 0.30299,
+          "firmness": 0.71192,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 200.9,
+        "hipJointHeightRatio": 0.53979,
+        "legChainRatio": 0.49884,
+        "femurTibiaRatio": 1.10625,
+        "torsoChainRatio": 0.25641,
+        "pelvisToNeckVerticalRatio": 0.25616,
+        "hipJointBreadthRatio": 0.13434
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-064",
+          "a": "P2-P-158",
+          "b": "P2-P-159",
+          "tiers": [
+            "trusted",
+            "frontier"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-158",
+          "distance": 0.08766
+        },
+        "frontier": {
+          "bodyId": "P2-P-159",
+          "distance": 0.08766
+        },
+        "negative": {
+          "bodyId": "P2-E-145",
+          "distance": 0.6389
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:56.066Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-016"
+      }
+    },
+    {
+      "bodyId": "AA-B-001",
+      "familyId": "P2-PROP-BB-013",
+      "tier": "frontier",
+      "status": "uncertain",
+      "votes": {
+        "uncertain": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.7644,
+          "muscle": 0.42178,
+          "weight": 0.2195,
+          "height": 0.30827,
+          "proportions": 0.31939,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 168.87,
+        "hipJointHeightRatio": 0.5259,
+        "legChainRatio": 0.48909,
+        "femurTibiaRatio": 0.96534,
+        "torsoChainRatio": 0.2556,
+        "pelvisToNeckVerticalRatio": 0.25464,
+        "hipJointBreadthRatio": 0.1226
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-013",
+          "a": "P2-P-021",
+          "b": "P2-P-022",
+          "tiers": [
+            "unchecked",
+            "frontier"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-021",
+          "distance": 0.05477
+        },
+        "frontier": {
+          "bodyId": "P2-P-022",
+          "distance": 0.05477
+        },
+        "negative": {
+          "bodyId": "P2-B-015",
+          "distance": 0.37223
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:57.563Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-001"
+      }
+    },
+    {
+      "bodyId": "AA-B-007",
+      "familyId": "P2-PROP-BB-041",
+      "tier": "frontier",
+      "status": "uncertain",
+      "votes": {
+        "uncertain": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.84776,
+          "muscle": 0.53907,
+          "weight": 0.1,
+          "height": 0.45235,
+          "proportions": 0.19268,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 183.81,
+        "hipJointHeightRatio": 0.53996,
+        "legChainRatio": 0.5032,
+        "femurTibiaRatio": 0.99185,
+        "torsoChainRatio": 0.2502,
+        "pelvisToNeckVerticalRatio": 0.24879,
+        "hipJointBreadthRatio": 0.11895
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-041",
+          "a": "P2-P-065",
+          "b": "P2-P-066",
+          "tiers": [
+            "frontier",
+            "trusted"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-066",
+          "distance": 0.05477
+        },
+        "frontier": {
+          "bodyId": "P2-P-065",
+          "distance": 0.05477
+        },
+        "negative": {
+          "bodyId": "P2-B-015",
+          "distance": 0.2741
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:05:59.345Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-007"
+      }
+    },
+    {
+      "bodyId": "AA-B-014",
+      "familyId": "P2-PROP-BB-031",
+      "tier": "frontier",
+      "status": "uncertain",
+      "votes": {
+        "uncertain": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 0,
+          "age": 0.83416,
+          "muscle": 0.25486,
+          "weight": 0.18601,
+          "height": 0.60116,
+          "proportions": 0.64344,
+          "cupsize": 0.5,
+          "firmness": 0.5,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 200.12,
+        "hipJointHeightRatio": 0.54076,
+        "legChainRatio": 0.50419,
+        "femurTibiaRatio": 1.01088,
+        "torsoChainRatio": 0.25357,
+        "pelvisToNeckVerticalRatio": 0.25281,
+        "hipJointBreadthRatio": 0.12203
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-031",
+          "a": "P2-P-150",
+          "b": "P2-P-151",
+          "tiers": [
+            "negative",
+            "frontier"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "AA-B-015",
+          "distance": 0.14242
+        },
+        "frontier": {
+          "bodyId": "P2-P-151",
+          "distance": 0.08764
+        },
+        "negative": {
+          "bodyId": "P2-P-150",
+          "distance": 0.08764
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:06:15.418Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-014"
+      }
+    },
+    {
+      "bodyId": "AA-B-011",
+      "familyId": "P2-PROP-BB-074",
+      "tier": "trusted",
+      "status": "accepted",
+      "votes": {
+        "accepted": 1
+      },
+      "reviewCount": 1,
+      "quickReasons": {},
+      "shape": {
+        "core": {
+          "gender": 1,
+          "age": 0.77556,
+          "muscle": 0.53995,
+          "weight": 0.63477,
+          "height": 0.70658,
+          "proportions": 0.16544,
+          "cupsize": 0.50997,
+          "firmness": 0.44446,
+          "african": 0.5,
+          "asian": 0.5,
+          "caucasian": 0.5
+        },
+        "local": {}
+      },
+      "metrics": {
+        "statureCm": 199.24,
+        "hipJointHeightRatio": 0.55006,
+        "legChainRatio": 0.51111,
+        "femurTibiaRatio": 1.03436,
+        "torsoChainRatio": 0.25002,
+        "pelvisToNeckVerticalRatio": 0.24968,
+        "hipJointBreadthRatio": 0.12231
+      },
+      "generation": {
+        "kind": "active-audit",
+        "activeSource": {
+          "kind": "boundary-midpoint",
+          "familyId": "P2-PROP-BB-074",
+          "a": "P2-P-137",
+          "b": "P2-P-138",
+          "tiers": [
+            "trusted",
+            "unchecked"
+          ]
+        },
+        "priority": 1.25
+      },
+      "sourceArchetype": "active-audit",
+      "nearest": {
+        "trusted": {
+          "bodyId": "P2-P-138",
+          "distance": 0.05477
+        },
+        "frontier": {
+          "bodyId": "P2-E-157",
+          "distance": 0.33617
+        },
+        "negative": {
+          "bodyId": "P2-B-026",
+          "distance": 0.63916
+        }
+      },
+      "activeAudit": {
+        "appVersion": "0.8.29.0",
+        "reviewedAt": "2026-08-29T15:06:18.048Z",
+        "sourceExportSha256": "25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82",
+        "sourceCaseId": "AA-B-011"
       }
     }
   ],

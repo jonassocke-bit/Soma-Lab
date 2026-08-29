@@ -1,6 +1,6 @@
 {
   "schema": "sammy-body-bank-active-audit-seed-v1",
-  "appTargetVersion": "0.8.29.0",
+  "appTargetVersion": "0.8.29.1",
   "generated": "2026-08-29",
   "sourceAuditSha256": "2962b8979db1f86df026fefcc546b19eb0bc5c80aa003abae99aa32bcae38b86",
   "policy": {
@@ -9,7 +9,8 @@
     "boundaryMidpoints": "Midpoints only on audited proportion-family adjacencies where at least one endpoint is frontier/negative.",
     "humanPresentation": "blind; provenance hidden during voting",
     "learning": "votes are written to local BODY BANK learning store and become available to Solver 1.0 immediately on the same device",
-    "rejectionScope": "local exact candidate only"
+    "rejectionScope": "local exact candidate only",
+    "canonicalMerge": "The returned 32-case ACTIVE export is canonical in v0.8.29.1; fresh sessions filter already-audited seed shapes and show only new solver-generated candidates."
   },
   "count": 32,
   "queue": [

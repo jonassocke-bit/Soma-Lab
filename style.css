@@ -966,7 +966,7 @@ body.sammy-body-bank-dual .sammyBodyBankDualViewport{display:grid;grid-template-
 #sammyUi #sammyBodyBankAutoFit.active{background:#eceef2!important;color:#15161a!important}
 
 
-/* v0.8.29.0 · Body Bank Solver 1.0 + Active Audit */
+/* v0.8.29.1 · Body Bank Solver search hotfix + active audit merge */
 .sammyBbsIntro{border-color:rgba(126,232,167,.34)!important}
 .sammyBbsLab>summary span{color:#a7d9b9}
 .sammyBbsIndexLine{margin:0 0 10px;padding:9px 11px;border:1px solid rgba(255,255,255,.12);border-radius:12px;font-size:12px;color:#cbd2d8;background:rgba(255,255,255,.035)}

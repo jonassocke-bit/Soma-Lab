@@ -1,6 +1,6 @@
 # SAMMY / BODY LAB / SOMA-LAB · MASTER STATE
 
-**Kanonischer Projektstand · Version 0.8 · 29.08.2026 · App v0.8.29.0**
+**Kanonischer Projektstand · Version 0.9 · 29.08.2026 · App v0.8.29.1**
 
 ## 1. Verbindliche Projektpflege
 
@@ -56,123 +56,98 @@ Statusmodell:
 
 Zwei akzeptierte Endpunkte garantieren nicht automatisch, dass jede Interpolation dazwischen gültig ist. Zwischenstufen müssen separat technisch geprüft und bei Bedarf human auditiert werden.
 
-## 5. Aktueller Build v0.8.29.0 · BODY BANK SOLVER ARCHITECTURE 1.0 + ACTIVE AUDIT 1.0
+## 5. Aktueller Build v0.8.29.1 · BODY BANK SOLVER SEARCH HOTFIX + ACTIVE MERGE
 
-### 5.1 Phase-2-Audit ist jetzt Solver-Datenbasis
+### 5.1 Kanonische Body Bank nach dem ersten ACTIVE Audit
 
-Der 400er Blind-Audit aus v0.8.28.5 wurde als `Sammy_BODY_BANK_PHASE2_BLIND_AUDIT_2026-08-29T14-09-26-471Z.json` ausgewertet.
+Der Phase-2-Blind-Audit bleibt die Ausgangsbasis. Zusätzlich wurde der zurückgegebene 32er ACTIVE-Audit aus v0.8.29.0 kanonisch eingearbeitet:
 
-Gesamtergebnis auf Review-Ebene:
+- 23 `accepted`,
+- 8 `uncertain`,
+- 1 `rejected`,
+- 0 `unchecked`.
 
-- 259 `Plausibel`,
-- 84 `Unsicher`,
-- 41 `Unplausibel`,
-- 16 `unchecked`,
-- 19 vollständig bewertete verdeckte Wiederholungspaare, davon 16 exakt gleich = 84,2 %.
+Davon waren 15 die zuvor offenen Phase-2-Körper und 17 neue lokale Boundary-Midpoints. Die 15 offenen Körper werden im bestehenden Index **in-place** klassifiziert; die 17 Midpoints werden als neue lokale Nodes ergänzt. Der kanonische `body-bank-index-v1.json` enthält damit jetzt 397 eindeutige Nodes:
 
-Wichtig: Die drei nicht exakt gleichen Wiederholungspaare lagen nur in Nachbarkategorien. Es gab keinen direkten Plausibel-gegen-Unplausibel-Widerspruch.
+- 269 `trusted`,
+- 91 `frontier`,
+- 37 `negative`,
+- 0 `unchecked`.
 
-Auf **eindeutige Körper** dedupliziert erzeugt v0.8.29.0 den neuen `body-bank-index-v1.json`:
+Kein Vote wird in eine globale Slidergrenze übersetzt. `negative` bleibt lokales Negativwissen. Bereits lokal im Browser gespeicherte Votes werden gegen den kanonischen Index nach stabilisiertem Shape dedupliziert, damit nach einem Release-Update keine doppelten Solver-Seeds entstehen.
 
-- 246 `trusted` Körper: alle vorhandenen Bewertungen für diesen exakten Körper sind `accepted`,
-- 83 `frontier`: unsicher bzw. Repeat-Uneinigkeit,
-- 36 `negative`: alle vorhandenen Bewertungen für diesen exakten Körper sind `rejected`,
-- 15 `unchecked`: noch ohne Human-Verdikt.
+### 5.2 Ergebnis des ersten Solver-Blind-Proofs
 
-Nur `trusted` wird als Solver-Seed-Pool benutzt. `negative` bleibt ausschließlich lokales Negativwissen; es erzeugt **keine globale Slidergrenze**.
+Der erste reale 8er Proof unter v0.8.29.0 lief technisch durch und ergab auf seinem damaligen Score:
 
-### 5.2 Audit bestätigt die lokale Body-Bank-Hypothese
+- Neutral-Median: `1.15446`,
+- Body-Bank-Retrieval-Median: `0.20260`,
+- Local-Fit-Median: `0.20129`,
+- Retrieval besser als neutral: 6/8,
+- Local Fit nicht schlechter als Retrieval: 8/8,
+- Local Fit tatsächlich verbessert: 3/8.
 
-Die gezielten Proportionsvarianten um bereits akzeptierte Körper waren deutlich stabiler als freie Extremkombinationen:
+Das entspricht auf dem damaligen gemeinsamen Score einer Reduktion des Medianfehlers um rund 82 % vom Neutralstart zum Retrieval. **Damit ist die Architekturhypothese `naher auditierter Seed > neutraler From-Scratch-Start` klar unterstützt.**
 
-- Proportionsfamilien: 152 von 162 bewerteten Reviews plausibel = 93,8 %.
-- Extremraum: 65 plausibel, 62 unsicher, 35 unplausibel bei 162 bewerteten Reviews.
-- Breite Randstichprobe: 42 plausibel, 14 unsicher, 4 unplausibel bei 60 bewerteten Reviews.
+Der Proof hat gleichzeitig einen separaten Messfehler sichtbar gemacht: Ein versteckter erwachsener Holdout lieferte einen Brustumfang von nur `39.61 cm`. `chest_circumference` war im Messschema ohnehin noch nicht als bestätigt markiert. Deshalb gilt der v0.8.29.0-Proof nicht als Freigabe der Brustmessung oder aller vier Zielmaße. Die korrekte Interpretation ist:
 
-Damit ist die zentrale Architekturhypothese für den nächsten Proof ausreichend unterstützt: **ein bereits plausibler naher Anny-Körper ist ein sinnvollerer Solver-Startpunkt als freie globale Exploration.**
+- **Architektur-Gate: vorläufig GO.**
+- **Mess-Gate für Brust/Hüfte: weiterhin offen.**
 
-Ein besonders klarer lokaler Problemkorridor ist `short-short-lean`: 23 von 23 bewerteten Fällen wurden abgelehnt. Das wird als Kombination/Korridor gespeichert, nicht als globales Verbot von `height`, `proportions` oder `weight` einzeln.
+Diese Trennung ist verbindlich: Ein guter Retrieval-Score darf keine fehlerhafte geometrische Messung legitimieren.
 
-### 5.3 Bekannter Diagnosefehler: Shoulder-Joint-Proxy ausgeschlossen
+### 5.3 v0.8.29.1 Measurement-Sanity-Gate
 
-Der Phase-2-Wert `shoulderJointBreadth` ist weiterhin offensichtlich geometrisch falsch und wird ab v0.8.29.0 **explizit aus Body-Bank-Retrieval und Auto-Gates entfernt**.
+Der Solver bekommt einen rein technischen, sehr breiten Sanity-Gate für die vier aktuell benutzten Meshwerte. Er soll nur katastrophale Slice-/Messfehler abfangen und ist **kein anthropometrischer Plausibilitätsfilter**. Aktuell gelten nur folgende breite technische Bereiche:
 
-Weiterverwendet werden die plausiblen pose-unabhängigen Rest-Mesh-/Rest-Rig-Diagnosen wie Statur, Hip-Joint-Height-Ratio, Leg-Chain-Ratio, Femur/Tibia, Torso-Chain-Ratio, Pelvis-to-Neck-Ratio und Hip-Joint-Breadth-Ratio.
+- Statur 120–210 cm,
+- Brust 55–180 cm,
+- Taille 40–190 cm,
+- Hüfte/Gesäß 55–200 cm.
 
-### 5.4 BODY BANK SOLVER 1.0
+Ein Retrieval-Kandidat mit einem offensichtlich ungültigen Snapshot wird nicht gerankt. Proof v1.1 ersetzt einen ungültigen Holdout deterministisch durch einen gleichgeschlechtlichen alternativen Trusted-Holdout und exportiert die übersprungenen Fälle als `skippedTargets`. Dadurch kann ein katastrophaler Messfehler den Architektur-Proof nicht mehr künstlich dominieren.
 
-Der neue Solver ist ein additiver POC im bestehenden `SOLV`-Panel. Der alte Body Fit und die historischen ANSUR-Solver bleiben unverändert als Vergleich/Forschungsarchiv erhalten.
+Dieser Gate **repariert die Messung nicht**. Die eigentliche Brust-/Hüft-Messdefinition und Mesh-Messung bleiben ein eigener Arbeitsstrang.
 
-Runtime-Kette:
+### 5.4 BODY BANK SOLVER 1.0 · Runtime-Kette
+
+Der bevorzugte POC-Pfad bleibt:
 
 1. Nutzer gibt Geschlecht, Alter, Körpergröße, Gewicht, Brust, Taille und Hüfte/Gesäß ein.
-2. Grobe Vorauswahl nur aus `trusted` Body-Bank-Seeds über Geschlecht, exakte gespeicherte Rest-Mesh-Statur, Alter und einen Gewichts-/BMI-Prior.
-3. Nur die beste Shortlist wird tatsächlich in Anny rekonstruiert und am aktuellen Mesh für Statur, Brust, Taille, Hüfte/Gesäß und optional Mass-/Volumen-Prior vermessen.
-4. Top-5 werden angezeigt; der beste Seed ist sofort ein **human-auditierter Ausgangskörper**.
-5. Optionaler Local Fit verändert nur eng begrenzt:
-   - `core:height`,
-   - `measure-bust-circ-incr`,
-   - `measure-waist-circ-incr`,
-   - `measure-hips-circ-incr`.
-6. `weight` und `muscle` werden in Solver 1.0 **nicht frei nachoptimiert**. Gewicht ist Retrieval-/Volumen-Prior und Diagnose, kein direkter Anny-Weight-Zielwert.
-7. Keine Cross-Region-Rettung.
+2. Grobe Vorauswahl nur aus `trusted` Body-Bank-Seeds.
+3. Shortlist wird wirklich in Anny rekonstruiert und mit aktuellen Meshmaßen geprüft.
+4. Top-5 werden angezeigt; der beste Start ist ein human-auditierter Seed.
+5. Optionaler Local Fit verändert nur eng begrenzt `core:height`, `measure-bust-circ-incr`, `measure-waist-circ-incr`, `measure-hips-circ-incr`.
+6. Keine freie Weight-/Muscle-Optimierung und keine Cross-Region-Rettung.
+7. Ein schlechterer Gesamtscore wird vollständig auf den auditierten Seed zurückgerollt.
+8. Ein veränderter Local Fit ist noch nicht sicher und wird an `BANK -> ACTIVE` übergeben.
 
-Ein veränderter Local-Fit ist definitionsgemäß noch **nicht human-auditiert** und wird deshalb automatisch an `BANK -> ACTIVE` übergeben. Ein Zustand gilt nur dann als `audited-seed`, wenn sein komplettes stabilisiertes Rezept exakt einem `trusted`/`trusted-user`-Node entspricht; auch eine reine `core:height`-Änderung bleibt ansonsten unauditiert. Zusätzlich besitzt Solver 1.0 einen globalen Non-Worsening-Gate: verschlechtert die gesamte lokale Korrektur den gemeinsamen Größen-/Brust-/Taillen-/Hüft- bzw. Runtime-Score, wird vollständig auf den auditierten Seed zurückgerollt.
+### 5.5 Behobener Runtime-Fehler in v0.8.29.1
 
-### 5.5 Falsifizierbarer 8er Blind-Proof
+Der manuelle Button `1 · Bank suchen` in v0.8.29.0 war aufgrund einer ausgelassenen Funktionsdefinition nicht benutzbar. Die UI referenzierte `sammyBbsSearchRun`, die Funktion selbst fehlte im gebauten `app.js`. Safari meldete deshalb `ReferenceError: Can't find variable: sammyBbsSearchRun`.
 
-`SOLV -> BODY BANK SOLVER -> 8er Blind-Proof` hält acht diverse `trusted` Körper nacheinander vollständig aus dem Retrieval-Pool heraus.
+v0.8.29.1 implementiert den Handler vollständig und ergänzt zwei Schutzebenen:
 
-Für jeden versteckten Zielkörper werden Geschlecht und der aus dem Anny-Alterszustand abgeleitete Alterskontext wie bei bekannten Nutzer-Metadaten mitgeführt. Am echten Mesh werden zusätzlich genau vier geometrische Zielwerte erzeugt:
+- Search-Handler speichert den Ausgangskörper, führt Trusted-Retrieval aus, rendert Top-5 und aktiviert Export/Local Fit.
+- Beim UI-Init wird jetzt fail-fast geprüft, ob **alle** Body-Bank-Solver-Handler tatsächlich Funktionen sind. Der statische Release-Gate prüft dieselben Symbole zusätzlich vor dem Packen.
 
-- Körpergröße,
-- Brustumfang,
-- Taillenumfang,
-- Hüft-/Gesäßumfang.
+Damit soll genau diese Klasse von „Button existiert, Handler fehlt“-Fehlern künftig vor dem iPhone-Test auffallen.
 
-Gewicht wird im Proof absichtlich **weder bewertet noch für die Retrieval-Vorauswahl benutzt**, weil der Phase-2-Audit kein objektives kg-Label für die Body-Bank-Körper enthält.
+### 5.6 ACTIVE AUDIT · Lernen bleibt transparent
 
-Verglichen werden auf exakt denselben vier Zielwerten:
+Ein Active-Vote aktualisiert weiterhin sofort auf demselben Gerät:
 
-1. neutraler gleichgeschlechtlicher Anny-Start, nur in der Statur angepasst,
-2. bester Body-Bank-Retrieval-Seed, Zielkörper explizit ausgeschlossen,
-3. derselbe Seed nach dem kleinen Local Fit.
-
-Die Proof-Vorauswahl nutzt ohne Gewicht nur Statur + Alterskontext; der versteckte Zielkörper selbst ist aus dem Retrieval explizit ausgeschlossen. Der Local Fit besitzt den oben beschriebenen Rollback-Gate. Deshalb berichtet der Proof zusätzlich getrennt, in wie vielen Fällen der Local Fit **tatsächlich verbessert** und in wie vielen er nur nicht verschlechtert/auf den Seed zurückgerollt hat.
-
-`GO` wird nur ausgegeben, wenn der mediane Retrieval-Fehler kleiner als der mediane Neutralstart-Fehler ist **und** der Local-Fit-Median den Retrieval-Median nicht verschlechtert. Es gibt keinen versteckten absoluten Erfolgswert.
-
-### 5.6 ACTIVE AUDIT · unmittelbares transparentes Lernen
-
-`BANK` besitzt ab v0.8.29.0 zwei getrennte Modi:
-
-- `PHASE 2`: der bisherige 400er Blind-Audit bleibt vollständig erhalten.
-- `ACTIVE`: neue, informationsreiche Kandidaten.
-
-Der initiale Active-Seed enthält 32 Fälle:
-
-- die 15 eindeutigen bisher ungeprüften Phase-2-Körper,
-- 17 lokale Midpoints an Proportionsfamilien-Grenzen, an denen mindestens ein Nachbar `frontier` oder `negative` ist.
-
-Zusätzlich erzeugt der Solver Active-Kandidaten, insbesondere:
-
-- jedes tatsächlich veränderte Local-Fit-Ergebnis,
-- enge Retrieval-Ambiguitäten zwischen ähnlich guten Seeds,
-- Local-Fits aus dem 8er Proof.
-
-Ein Active-Vote aktualisiert **sofort auf demselben Gerät** einen transparenten lokalen Learning-Store:
-
-- `accepted` -> `trusted-user` und damit zusätzlicher Solver-Seed,
+- `accepted` -> `trusted-user`,
 - `uncertain` -> `frontier-user`,
 - `rejected` -> `negative-user`.
 
-Anny selbst bzw. seine Modellgewichte werden nicht trainiert. Gelernt wird ausschließlich die nachvollziehbare SAMMY-Body-Bank-/Sicherheitsstruktur.
+Anny selbst wird nicht trainiert. Mit einem zurückgegebenen Export wird der neue Wissensstand anschließend in den **kanonischen** Body-Bank-Index übernommen. Genau das ist in v0.8.29.1 erstmals erfolgt. Auf frischen Geräten filtert der ACTIVE-Modus bereits kanonisch bekannte Seed-Shapes aus und zeigt nur neue Solver-/Grenzkandidaten.
 
 ### 5.7 BANK-UI und ältere Auditregeln bleiben gültig
 
 Der menu-safe Dual Viewport, unabhängige Kameras, Last-Interaction-Auswahl, optionales AutoFit pro Viewport, blinde Präsentation, 205-cm-Audit-Cap und das vertagte Kopf-/Head-Fat-Thema bleiben unverändert erhalten.
 
-Zusätzlich ist der Resume-Pfad korrigiert: Wenn eine gespeicherte Sitzung am Ende steht, aber frühere `unchecked`-Fälle enthält, springt BANK beim erneuten Öffnen auf den ersten noch offenen Fall statt diese still zu übergehen.
+Der bekannte `shoulderJointBreadth`-Proxy bleibt aus Retrieval und Auto-Gates ausgeschlossen.
 
 ## 6. Rolle des bisherigen Wissens
 
@@ -230,35 +205,33 @@ Diese Pfade dürfen als Diagnose, Vergleich oder Datenquelle genutzt werden. Ein
 - Messfehler, Mesh-Limit, Lookup-Abdeckung und Fitterfehler müssen separat diagnostizierbar bleiben.
 - iPhone/Safari-Tauglichkeit und Resume/Persistenz sind Pflicht.
 
-## 10. Nächster Gate nach v0.8.29.0
+## 10. Nächster Gate nach v0.8.29.1
 
-Der nächste Entscheidungs-Gate ist jetzt **nicht** ein weiterer großer Zufallsaudit, sondern die neue Solverarchitektur selbst.
+Der Architektur-Pfad bleibt aktiv, aber die nächste Freigabe trennt **Solverarchitektur** und **Messqualität** ausdrücklich.
 
-### Gate A · 8er Blind-Proof
+### Gate A · 8er Blind-Proof v1.1
 
-Der Proof muss mindestens zeigen:
+Der Proof wird nach dem Hotfix erneut ausgeführt. Er muss mindestens zeigen:
 
-1. Retrieval-Median < höhenangepasster Neutralstart-Median.
-2. Local-Fit-Median <= Retrieval-Median.
-3. Kein Cross-Region-Controller und keine freie globale Weight/Muscle-Suche wurde dafür benötigt.
-4. Die Ergebnisse bleiben technisch gültig und innerhalb des 205-cm-Produkt-/Auditbereichs.
+1. Acht technisch gültige Holdouts nach Measurement-Sanity-Gate.
+2. Retrieval-Median < höhenangepasster Neutralstart-Median.
+3. Local-Fit-Median <= Retrieval-Median.
+4. Kein Cross-Region-Controller und keine freie globale Weight/Muscle-Suche wurde dafür benötigt.
+5. `skippedTargets` dokumentiert jeden wegen katastrophaler Messung verworfenen Holdout.
 
-Wenn Gate A `GO` ergibt, wird die Body Bank schrittweise größer und der Retrieval-Index um reale/stabile Eingabemaße erweitert.
+Ein erneutes `GO` bestätigt die **Body-Bank-Solverarchitektur**, nicht automatisch die anthropometrische Gültigkeit jedes verwendeten Umfangsmaßes.
 
-### Gate B · Active Audit
+### Gate B · manueller Runtime-Solver
 
-Die vom Solver erzeugten neuen Körper werden in `BANK -> ACTIVE` blind bewertet. Wichtig ist nicht die Menge, sondern der Informationsgewinn an tatsächlich benutzten Solverregionen.
+Der reparierte Button `1 · Bank suchen` muss auf iPhone/Safari einen Top-5-Retrieval-Lauf ohne JavaScript-Fehler durchführen. Danach muss `2 · Lokal fitten` entweder den gemeinsamen Score verbessern/erhalten oder vollständig auf den auditierten Seed zurückrollen. Der Solver-JSON-Export muss Retrieval, eventuelle Measurement-Sanity-Rejects, Local Trace und Safety-Status enthalten.
 
-Zu prüfen ist insbesondere:
+### Gate C · neue Solverzustände im ACTIVE Audit
 
-- ob Local-Fit-Ergebnisse überwiegend akzeptiert werden,
-- ob Retrieval-Ambiguitäten durch zusätzliche Human-Votes auflösbar werden,
-- ob Accepted-Active-Körper als neue Seeds die spätere Retrieval-Qualität verbessern,
-- ob Rejections lokal bleiben und keine falschen globalen Grenzen erzeugen.
+Die 32 bereits bewerteten Active-Fälle sind in v0.8.29.1 kanonisch eingearbeitet. Künftig werden primär **neu vom Proof oder manuellen Solver erzeugte** Kandidaten blind auditiert. Accepted-Votes dürfen erst dann neue kanonische Seeds werden, wenn der Export zurückgegeben und in den Projektindex übernommen wurde; lokal auf demselben Gerät können sie sofort als `trusted-user` wirken.
 
-### Gate C · danach erst Solver-Ausbau
+### Gate D · Messqualität vor weiterem Solver-Ausbau
 
-Erst nach A/B werden weitere Freiheitsgrade oder zusätzliche Nutzereingaben ergänzt. Bevorzugt werden nur Maße, die geometrisch stabil messbar und durch lokale anatomisch passende Controller kontrollierbar sind.
+Bevor Brust/Hüfte als verlässliche Produkt-Eingaben oder harte Erfolgsmetriken gelten, müssen deren Messdefinition und Mesh-Messung separat qualifiziert werden. Der technische Sanity-Gate ist nur ein Crash-/Ausreißerschutz und ersetzt diese Prüfung nicht. Weitere Freiheitsgrade oder neue Zielmaße werden erst ergänzt, wenn sie geometrisch stabil messbar und durch anatomisch passende Controller kontrollierbar sind.
 
 Das vertagte Kopfgrößen-/Head-Fat-Thema bleibt außerhalb dieses Gates und wird später mit absolutem Größenbezug separat geprüft.
 
@@ -278,3 +251,4 @@ Wenn bereits der konservative Anny-Core-Raum überwiegend unplausibel ist oder s
 | 0.6 | 28.08.2026 | BANK v0.8.28.4: reviewer-blinde Mischung, BANK-only Dual Viewport, unabhängiges AutoFit, <=205-cm-Gate; Kopf/Head-Fat bewusst vertagt. |
 | 0.7 | 28.08.2026 | BANK v0.8.28.5: iPhone-menüsicheres A/B-Layout; Dual Viewport nutzt nur die freie Viewer-Fläche. |
 | 0.8 | 29.08.2026 | v0.8.29.0: Audit zu Body-Bank-Index kompiliert; Trusted-Top-K-Solver + kleiner Local Fit + 8er Blind-Proof + ACTIVE-Lernmodus. Shoulder-Proxy ausgeschlossen; Proof ohne kg-Vorauswahl; Non-Worsening-Rollback; Resume-Fix. |
+| 0.9 | 29.08.2026 | v0.8.29.1: fehlenden manuellen Retrieval-Handler repariert; fail-fast UI-/Release-Handler-Gate; 32er ACTIVE-Audit kanonisch gemergt (269 trusted / 91 frontier / 37 negative / 0 unchecked); technische Mess-Sanity und Proof v1.1 wegen sichtbar falschem Brust-Snapshot. |

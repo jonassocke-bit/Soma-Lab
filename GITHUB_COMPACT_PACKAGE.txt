@@ -1,10 +1,9 @@
-SAMMY GitHub Compact Package · v0.8.29.0
+SAMMY GitHub Compact Package · v0.8.29.1
 
-Direct root files: 57 (GitHub web upload target <100)
+Direct root files: 60 (<100)
+Purpose: upload the extracted files directly into the GitHub repository root. Older release history is bundled in SAMMY_HISTORY_THROUGH_V0.8.29.0.zip.
 
-Runtime/current files stay directly visible. Older development history is bundled inside SAMMY_HISTORY_THROUGH_V0.8.28.5.zip.
-
-Direct files:
+Files:
 - .nojekyll
 - anny-pack-setup.html
 - ANNY_PACK_WORKFLOW.yml
@@ -27,14 +26,15 @@ Direct files:
 - body-bank-phase1-audit-seed-v1.json
 - body-bank-phase2-plan-v2.json
 - BODY_BANK_SOLVER_ARCHITECTURE_1.0_V0.8.29.0.md
-- BUILD_MANIFEST_V0.8.29.0.json
+- BODY_BANK_SOLVER_HOTFIX_ACTIVE_MERGE_V0.8.29.1.md
+- BUILD_MANIFEST_V0.8.29.1.json
 - BUILD_REAL_ANSUR_STRESS_ASSETS_V0.8.26.0.py
-- BUILD_TEST_V0.8.29.0.txt
-- CHANGESET_V0.8.29.0.md
+- BUILD_TEST_V0.8.29.1.txt
+- CHANGESET_V0.8.29.1.md
 - EXACT_ANNY_SOMA_RIG.md
 - extract_anny_soma_pack.py
 - extract_current_rig_pack.py
-- FILES_CHANGED_V0.8.29.0.txt
+- FILES_CHANGED_V0.8.29.1.txt
 - GITHUB_COMPACT_PACKAGE.txt
 - index.html
 - mass-composition-v1.json
@@ -47,13 +47,15 @@ Direct files:
 - pose_oracle.py
 - POSE_ORACLE_WORKFLOW.yml
 - README.md
-- RELEASE_NOTES_V0.8.29.0.md
+- RELEASE_NOTES_V0.8.29.1.md
 - rigpack-setup.html
 - RIGPACK_WORKFLOW.yml
 - sammy-ansur-sitting-source.fbx
 - sammy-ansur-standing-source.fbx
+- Sammy_BODY_BANK_ACTIVE_AUDIT_2026-08-29T15-06-26-154Z.json
+- Sammy_BODY_BANK_SOLVER_PROOF_2026-08-29T15-09-05-580Z.json
 - SAMMY_CURRENT_VERSION.txt
-- SAMMY_HISTORY_THROUGH_V0.8.28.5.zip
+- SAMMY_HISTORY_THROUGH_V0.8.29.0.zip
 - SAMMY_MASTER_STATE.docx
 - SAMMY_MASTER_STATE.md
 - solver-v2-real-ansur-stress-suite-v1.json

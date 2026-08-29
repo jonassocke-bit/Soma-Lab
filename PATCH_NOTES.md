@@ -1,3 +1,13 @@
+# v0.8.29.1 · Body Bank Solver Search Hotfix + Active Merge
+
+- Fehlender `sammyBbsSearchRun()`-Handler repariert; manueller Trusted-Retrieval-Button funktioniert wieder.
+- Fail-fast + statischer Handler-Gate verhindert künftig fehlende UI-Handler vor dem iPhone-Test.
+- 32er ACTIVE-Audit kanonisch gemergt: 269 trusted / 91 frontier / 37 negative / 0 unchecked.
+- Proof v0.8.29.0: Architektur stark positiv, aber ein klar falscher Chest-Snapshot (39.61 cm) entdeckt.
+- Technischer Measurement-Sanity-Gate und Proof v1.1 ergänzen Ausreißerschutz; keine anthropometrische Freigabe der Brust-/Hüftmessung.
+
+---
+
 # v0.8.29.0 · Body Bank Solver Architecture 1.0 + Active Audit
 
 - Phase-2-Audit als deduplizierter Body-Bank-Index kompiliert: 246 trusted / 83 frontier / 36 negative / 15 unchecked.

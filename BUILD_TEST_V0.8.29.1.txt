@@ -1,0 +1,60 @@
+SAMMY v0.8.29.1 static + BODY BANK SOLVER search hotfix / ACTIVE canonical merge gate
+
+- PASS: JS syntax (node --check)
+- PASS: SAMMY_APP_VERSION
+- PASS: HTML title
+- PASS: HTML CSS cache tag
+- PASS: HTML JS cache tag
+- PASS: HTML visible version
+- PASS: No duplicate HTML ids · []
+- PASS: BODY BANK Solver UI id #sammyBbsSearch
+- PASS: BODY BANK Solver UI id #sammyBbsFit
+- PASS: BODY BANK Solver UI id #sammyBbsProof
+- PASS: BODY BANK Solver UI id #sammyBbsRestore
+- PASS: BODY BANK Solver UI id #sammyBbsExport
+- PASS: BODY BANK Solver UI id #sammyBbsProofExport
+- PASS: BODY BANK handler defined · sammyBbsSearchRun
+- PASS: BODY BANK handler defined · sammyBbsFitRun
+- PASS: BODY BANK handler defined · sammyBbsProofRun
+- PASS: BODY BANK handler defined · sammyBbsRestore
+- PASS: BODY BANK handler defined · sammyBbsExport
+- PASS: BODY BANK handler defined · sammyBbsProofExport
+- PASS: Search handler defined before UI init
+- PASS: UI fail-fast handler gate
+- PASS: Measurement technical sanity gate
+- PASS: Retrieval excludes invalid measurement snapshots
+- PASS: Proof v1.1 schema
+- PASS: Proof exports skippedTargets
+- PASS: Proof replaces invalid holdouts
+- PASS: Global non-worsening rollback
+- PASS: Canonical/local shape dedupe
+- PASS: Fresh ACTIVE filters canonical shapes
+- PASS: Body-bank index schema
+- PASS: Body-bank index app target
+- PASS: Body-bank index nodes · 397
+- PASS: Trusted nodes · Counter({'trusted': 269, 'frontier': 91, 'negative': 37})
+- PASS: Frontier nodes · Counter({'trusted': 269, 'frontier': 91, 'negative': 37})
+- PASS: Negative nodes · Counter({'trusted': 269, 'frontier': 91, 'negative': 37})
+- PASS: Unchecked nodes · Counter({'trusted': 269, 'frontier': 91, 'negative': 37})
+- PASS: Shoulder proxy absent from retrieval metrics
+- PASS: Index measured stature <=205 cm
+- PASS: ACTIVE evidence hash in index · 25991123fa73e74fb8554f8f4defa3e89e95e8bfb0698968ab83788780153f82
+- PASS: ACTIVE evidence 32 complete · {'total': 32, 'uniqueBodies': 380, 'hiddenRepeats': 20, 'accepted': 23, 'uncertain': 8, 'rejected': 1, 'unchecked': 0, 'repeatPairsRated': 0, 'repeatExactMatches': 0, 'repeatExactMatchRate': None, 'quickReasonCounts': {'legs-too-long': 0, 'legs-too-short': 0, 'torso-proportion': 0, 'mass-width': 0, 'other': 0}, 'byGenerationKind': {'active-audit': {'total': 32, 'accepted': 23, 'uncertain': 8, 'rejected': 1, 'unchecked': 0}}}
+- PASS: ACTIVE evidence counts · {'total': 32, 'uniqueBodies': 380, 'hiddenRepeats': 20, 'accepted': 23, 'uncertain': 8, 'rejected': 1, 'unchecked': 0, 'repeatPairsRated': 0, 'repeatExactMatches': 0, 'repeatExactMatchRate': None, 'quickReasonCounts': {'legs-too-long': 0, 'legs-too-short': 0, 'torso-proportion': 0, 'mass-width': 0, 'other': 0}, 'byGenerationKind': {'active-audit': {'total': 32, 'accepted': 23, 'uncertain': 8, 'rejected': 1, 'unchecked': 0}}}
+- PASS: Proof evidence GO · {'neutralMedian': 1.15446, 'retrievalMedian': 0.2026, 'localMedian': 0.20129, 'retrievalBetterCases': 6, 'localBetterCases': 8, 'localImprovedCases': 3, 'decision': 'GO', 'reason': 'Medianer Retrieval-Fehler schlägt den höhenangepassten Neutralstart und der kleine Local Fit verbessert/erhält den Retrieval-Median.'}
+- PASS: Proof evidence medians
+- PASS: Proof evidence includes catastrophic chest snapshot
+- PASS: Active seed schema
+- PASS: Active seed app target
+- PASS: Master State current app version
+- PASS: Master State canonical counts
+- PASS: Master State proof measurement caveat
+- PASS: Master State DOCX exists
+- PASS: Master State DOCX QA pages · 5
+- PASS: SAMMY_CURRENT_VERSION marker
+
+Browser/WebGL runtime: NOT claimed as automated PASS; final runtime gate remains GitHub/iPhone Safari.
+- PASS: Provisional Full ZIP integrity · 255 root entries
+- PASS: Provisional Changed-files ZIP integrity · 18 entries
+- PASS: Provisional GitHub Compact ZIP integrity · 60 direct root files (<100)
+- PASS: GitHub Compact has root index.html and .nojekyll
