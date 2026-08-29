@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {unzipSync,zipSync,strToU8} from "https://esm.sh/fflate@0.8.2";
 
-const SAMMY_APP_VERSION="0.8.29.1";
+const SAMMY_APP_VERSION="0.8.29.2";
 
 const HF="https://huggingface.co/nvidia/SOMA-X/resolve/main/";
 const SHAPE=HF+"SOMA_neutral.npz?download=true";

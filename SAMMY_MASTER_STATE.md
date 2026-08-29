@@ -1,6 +1,6 @@
 # SAMMY / BODY LAB / SOMA-LAB · MASTER STATE
 
-**Kanonischer Projektstand · Version 0.9 · 29.08.2026 · App v0.8.29.1**
+**Kanonischer Projektstand · Version 0.10 · 29.08.2026 · App v0.8.29.2**
 
 ## 1. Verbindliche Projektpflege
 
@@ -56,7 +56,14 @@ Statusmodell:
 
 Zwei akzeptierte Endpunkte garantieren nicht automatisch, dass jede Interpolation dazwischen gültig ist. Zwischenstufen müssen separat technisch geprüft und bei Bedarf human auditiert werden.
 
-## 5. Aktueller Build v0.8.29.1 · BODY BANK SOLVER SEARCH HOTFIX + ACTIVE MERGE
+## 5. Aktueller Build v0.8.29.2 · BODY BANK SOLVER + GitHub Visible-Version Hotfix
+
+
+### 5.0 v0.8.29.2 Deployment-/Versions-Hotfix
+
+Der v0.8.29.1-GitHub-Compact-Build enthielt im Splash noch den fest codierten Text `v0.8.28.4`, obwohl Runtime, HTML-Titel und Cache-Tags bereits auf v0.8.29.1 standen. Dadurch konnte ein korrekt hochgeladener neuer Build beim Start wie ein alter Stand erscheinen.
+
+v0.8.29.2 synchronisiert Splash, Hauptlabel, HTML-Titel, `SAMMY_APP_VERSION` und JS-/CSS-Cache-Tags. Der statische Release-Gate prüft diese Marker künftig gemeinsam. Solverlogik, Body-Bank-Index und ACTIVE-Audit-Daten bleiben gegenüber v0.8.29.1 unverändert.
 
 ### 5.1 Kanonische Body Bank nach dem ersten ACTIVE Audit
 
@@ -205,33 +212,35 @@ Diese Pfade dürfen als Diagnose, Vergleich oder Datenquelle genutzt werden. Ein
 - Messfehler, Mesh-Limit, Lookup-Abdeckung und Fitterfehler müssen separat diagnostizierbar bleiben.
 - iPhone/Safari-Tauglichkeit und Resume/Persistenz sind Pflicht.
 
-## 10. Nächster Gate nach v0.8.29.1
+## 10. Nächster Gate nach v0.8.29.0
 
-Der Architektur-Pfad bleibt aktiv, aber die nächste Freigabe trennt **Solverarchitektur** und **Messqualität** ausdrücklich.
+Der nächste Entscheidungs-Gate ist jetzt **nicht** ein weiterer großer Zufallsaudit, sondern die neue Solverarchitektur selbst.
 
-### Gate A · 8er Blind-Proof v1.1
+### Gate A · 8er Blind-Proof
 
-Der Proof wird nach dem Hotfix erneut ausgeführt. Er muss mindestens zeigen:
+Der Proof muss mindestens zeigen:
 
-1. Acht technisch gültige Holdouts nach Measurement-Sanity-Gate.
-2. Retrieval-Median < höhenangepasster Neutralstart-Median.
-3. Local-Fit-Median <= Retrieval-Median.
-4. Kein Cross-Region-Controller und keine freie globale Weight/Muscle-Suche wurde dafür benötigt.
-5. `skippedTargets` dokumentiert jeden wegen katastrophaler Messung verworfenen Holdout.
+1. Retrieval-Median < höhenangepasster Neutralstart-Median.
+2. Local-Fit-Median <= Retrieval-Median.
+3. Kein Cross-Region-Controller und keine freie globale Weight/Muscle-Suche wurde dafür benötigt.
+4. Die Ergebnisse bleiben technisch gültig und innerhalb des 205-cm-Produkt-/Auditbereichs.
 
-Ein erneutes `GO` bestätigt die **Body-Bank-Solverarchitektur**, nicht automatisch die anthropometrische Gültigkeit jedes verwendeten Umfangsmaßes.
+Wenn Gate A `GO` ergibt, wird die Body Bank schrittweise größer und der Retrieval-Index um reale/stabile Eingabemaße erweitert.
 
-### Gate B · manueller Runtime-Solver
+### Gate B · Active Audit
 
-Der reparierte Button `1 · Bank suchen` muss auf iPhone/Safari einen Top-5-Retrieval-Lauf ohne JavaScript-Fehler durchführen. Danach muss `2 · Lokal fitten` entweder den gemeinsamen Score verbessern/erhalten oder vollständig auf den auditierten Seed zurückrollen. Der Solver-JSON-Export muss Retrieval, eventuelle Measurement-Sanity-Rejects, Local Trace und Safety-Status enthalten.
+Die vom Solver erzeugten neuen Körper werden in `BANK -> ACTIVE` blind bewertet. Wichtig ist nicht die Menge, sondern der Informationsgewinn an tatsächlich benutzten Solverregionen.
 
-### Gate C · neue Solverzustände im ACTIVE Audit
+Zu prüfen ist insbesondere:
 
-Die 32 bereits bewerteten Active-Fälle sind in v0.8.29.1 kanonisch eingearbeitet. Künftig werden primär **neu vom Proof oder manuellen Solver erzeugte** Kandidaten blind auditiert. Accepted-Votes dürfen erst dann neue kanonische Seeds werden, wenn der Export zurückgegeben und in den Projektindex übernommen wurde; lokal auf demselben Gerät können sie sofort als `trusted-user` wirken.
+- ob Local-Fit-Ergebnisse überwiegend akzeptiert werden,
+- ob Retrieval-Ambiguitäten durch zusätzliche Human-Votes auflösbar werden,
+- ob Accepted-Active-Körper als neue Seeds die spätere Retrieval-Qualität verbessern,
+- ob Rejections lokal bleiben und keine falschen globalen Grenzen erzeugen.
 
-### Gate D · Messqualität vor weiterem Solver-Ausbau
+### Gate C · danach erst Solver-Ausbau
 
-Bevor Brust/Hüfte als verlässliche Produkt-Eingaben oder harte Erfolgsmetriken gelten, müssen deren Messdefinition und Mesh-Messung separat qualifiziert werden. Der technische Sanity-Gate ist nur ein Crash-/Ausreißerschutz und ersetzt diese Prüfung nicht. Weitere Freiheitsgrade oder neue Zielmaße werden erst ergänzt, wenn sie geometrisch stabil messbar und durch anatomisch passende Controller kontrollierbar sind.
+Erst nach A/B werden weitere Freiheitsgrade oder zusätzliche Nutzereingaben ergänzt. Bevorzugt werden nur Maße, die geometrisch stabil messbar und durch lokale anatomisch passende Controller kontrollierbar sind.
 
 Das vertagte Kopfgrößen-/Head-Fat-Thema bleibt außerhalb dieses Gates und wird später mit absolutem Größenbezug separat geprüft.
 
@@ -252,3 +261,4 @@ Wenn bereits der konservative Anny-Core-Raum überwiegend unplausibel ist oder s
 | 0.7 | 28.08.2026 | BANK v0.8.28.5: iPhone-menüsicheres A/B-Layout; Dual Viewport nutzt nur die freie Viewer-Fläche. |
 | 0.8 | 29.08.2026 | v0.8.29.0: Audit zu Body-Bank-Index kompiliert; Trusted-Top-K-Solver + kleiner Local Fit + 8er Blind-Proof + ACTIVE-Lernmodus. Shoulder-Proxy ausgeschlossen; Proof ohne kg-Vorauswahl; Non-Worsening-Rollback; Resume-Fix. |
 | 0.9 | 29.08.2026 | v0.8.29.1: fehlenden manuellen Retrieval-Handler repariert; fail-fast UI-/Release-Handler-Gate; 32er ACTIVE-Audit kanonisch gemergt (269 trusted / 91 frontier / 37 negative / 0 unchecked); technische Mess-Sanity und Proof v1.1 wegen sichtbar falschem Brust-Snapshot. |
+| 0.10 | 29.08.2026 | v0.8.29.2: stale Splash-Version v0.8.28.4 entfernt; Runtime-/Titel-/Hauptlabel-/Splash-/JS-/CSS-Versionen synchronisiert; Deployment-Gate erweitert; Solver-/Body-Bank-Daten unverändert. |

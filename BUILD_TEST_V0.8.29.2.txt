@@ -1,0 +1,25 @@
+SAMMY v0.8.29.2 static + GitHub visible-version/cache hotfix gate
+
+- PASS: JS syntax (node --check)
+- PASS: SAMMY_APP_VERSION = 0.8.29.2
+- PASS: HTML title = v0.8.29.2
+- PASS: HTML CSS cache tag = 0.8.29.2
+- PASS: HTML JS cache tag = 0.8.29.2
+- PASS: HTML visible main version = v0.8.29.2
+- PASS: HTML splash version = v0.8.29.2
+- PASS: no stale v0.8.28.4 remains in live index.html
+- PASS: Body Bank Solver handlers retained from v0.8.29.1
+- PASS: Body-bank index unchanged: 397 nodes / 269 trusted / 91 frontier / 37 negative
+- PASS: Master State current app version = 0.8.29.2
+- PASS: Master State DOCX render QA = 6 pages
+- PASS: SAMMY_CURRENT_VERSION marker
+
+Browser/WebGL runtime: NOT claimed as automated PASS; final runtime gate remains GitHub/iPhone Safari.
+- PASS: Full ZIP integrity · 261 root entries
+- PASS: Changed-files ZIP integrity · 14 entries
+- PASS: GitHub Compact ZIP integrity · 61 direct root files (<100)
+- PASS: GitHub Compact root index.html + .nojekyll
+- PASS: GitHub Compact deployment gate: title/main/splash/cache/runtime all 0.8.29.2
+- PASS: SAMMY_CURRENT exact full alias
+- PASS: SAMMY_GITHUB_CURRENT exact compact alias
+

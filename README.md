@@ -1,3 +1,17 @@
+# Sammy v0.8.29.2 — GitHub Visible-Version / Cache Hotfix
+
+v0.8.29.2 korrigiert einen Deployment-/Anzeige-Fehler aus v0.8.29.1: Der Splash-Screen enthielt noch fest `v0.8.28.4`, obwohl Runtime, Titel und Cache-Tags bereits v0.8.29.1 waren. Dadurch sah ein korrekt hochgeladener neuer Build auf GitHub Pages beim Start wie ein alter Stand aus.
+
+Ab diesem Stand prüft der Release-Gate **alle sichtbaren Versionsmarker inklusive Splash** sowie JS-/CSS-Cache-Tags gegen `SAMMY_APP_VERSION`. Solver, Body Bank und ACTIVE-Daten bleiben gegenüber v0.8.29.1 unverändert.
+
+Siehe:
+- `GITHUB_VISIBLE_VERSION_HOTFIX_V0.8.29.2.md`
+- `RELEASE_NOTES_V0.8.29.2.md`
+- `CHANGESET_V0.8.29.2.md`
+- `SAMMY_MASTER_STATE.docx`
+
+---
+
 # Sammy v0.8.29.1 — BODY BANK Solver Search Hotfix + Active Merge
 
 v0.8.29.1 repariert den fehlenden manuellen Retrieval-Handler aus v0.8.29.0 und übernimmt den abgeschlossenen 32er ACTIVE-Audit in die kanonische Body Bank. Der Index enthält jetzt 397 eindeutige Nodes: 269 trusted, 91 frontier, 37 negative und keine ungeprüften Phase-2-Nodes mehr.

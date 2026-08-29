@@ -1,7 +1,11 @@
-SAMMY GitHub Compact Package · v0.8.29.1
+SAMMY GitHub Compact Package · v0.8.29.2
 
-Direct root files: 60 (<100)
-Purpose: upload the extracted files directly into the GitHub repository root. Older release history is bundled in SAMMY_HISTORY_THROUGH_V0.8.29.0.zip.
+Direct root files: 61 (<100)
+Purpose: upload the extracted files directly into the GitHub repository root. Older release history is bundled in SAMMY_HISTORY_THROUGH_V0.8.29.1.zip.
+
+Important deployment gate:
+- index.html splash, visible version, title and JS/CSS cache tags must all show 0.8.29.2.
+- If Safari still shows an older version after upload, verify the GitHub commit actually replaced root index.html/app.js/style.css.
 
 Files:
 - .nojekyll
@@ -27,15 +31,16 @@ Files:
 - body-bank-phase2-plan-v2.json
 - BODY_BANK_SOLVER_ARCHITECTURE_1.0_V0.8.29.0.md
 - BODY_BANK_SOLVER_HOTFIX_ACTIVE_MERGE_V0.8.29.1.md
-- BUILD_MANIFEST_V0.8.29.1.json
+- BUILD_MANIFEST_V0.8.29.2.json
 - BUILD_REAL_ANSUR_STRESS_ASSETS_V0.8.26.0.py
-- BUILD_TEST_V0.8.29.1.txt
-- CHANGESET_V0.8.29.1.md
+- BUILD_TEST_V0.8.29.2.txt
+- CHANGESET_V0.8.29.2.md
 - EXACT_ANNY_SOMA_RIG.md
 - extract_anny_soma_pack.py
 - extract_current_rig_pack.py
-- FILES_CHANGED_V0.8.29.1.txt
+- FILES_CHANGED_V0.8.29.2.txt
 - GITHUB_COMPACT_PACKAGE.txt
+- GITHUB_VISIBLE_VERSION_HOTFIX_V0.8.29.2.md
 - index.html
 - mass-composition-v1.json
 - MIXAMO_RIG_AUDIT_V0514.json
@@ -47,7 +52,7 @@ Files:
 - pose_oracle.py
 - POSE_ORACLE_WORKFLOW.yml
 - README.md
-- RELEASE_NOTES_V0.8.29.1.md
+- RELEASE_NOTES_V0.8.29.2.md
 - rigpack-setup.html
 - RIGPACK_WORKFLOW.yml
 - sammy-ansur-sitting-source.fbx
@@ -55,7 +60,7 @@ Files:
 - Sammy_BODY_BANK_ACTIVE_AUDIT_2026-08-29T15-06-26-154Z.json
 - Sammy_BODY_BANK_SOLVER_PROOF_2026-08-29T15-09-05-580Z.json
 - SAMMY_CURRENT_VERSION.txt
-- SAMMY_HISTORY_THROUGH_V0.8.29.0.zip
+- SAMMY_HISTORY_THROUGH_V0.8.29.1.zip
 - SAMMY_MASTER_STATE.docx
 - SAMMY_MASTER_STATE.md
 - solver-v2-real-ansur-stress-suite-v1.json

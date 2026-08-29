@@ -1,3 +1,12 @@
+# v0.8.29.2 · GitHub Visible-Version / Cache Hotfix
+
+- Stale Splash-Marker `v0.8.28.4` auf aktuellen Build korrigiert.
+- HTML-Titel, sichtbare App-Version, Splash-Version, JS-/CSS-Cache-Tags und `SAMMY_APP_VERSION` werden jetzt als ein gemeinsames Deployment-Gate geprüft.
+- Cache-Bust auf `0.8.29.2`, damit GitHub Pages/Safari den korrigierten HTML/JS/CSS-Satz neu lädt.
+- Keine Änderung an Body-Bank-Index, Solverlogik, ACTIVE Audit oder Messdaten gegenüber v0.8.29.1.
+
+---
+
 # v0.8.29.1 · Body Bank Solver Search Hotfix + Active Merge
 
 - Fehlender `sammyBbsSearchRun()`-Handler repariert; manueller Trusted-Retrieval-Button funktioniert wieder.
