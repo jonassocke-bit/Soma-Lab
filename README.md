@@ -1,3 +1,17 @@
+# Sammy v0.8.29.5 — BODY BANK Solver 1.2 · Trust Region + Active Merge + Coverage Prep
+
+Der bestätigte Top-3-Solverpfad wird stabilisiert statt verbreitert: der 61er ACTIVE-Audit ist jetzt kanonisch gemergt (295 trusted / 94 frontier / 37 negative), und Brust/Taille/Hüfte verwenden nur noch tatsächlich gemessene Trust-Region-Schritte. Eine lokale Ableitung wird nicht mehr zu einem ungemessenen Morphwert extrapoliert.
+
+Der neue 36er Coverage-Stress dient als Regression + Lückenkarte, nicht als weiterer Architekturbeweis. `body-bank-coverage-prep-v1.json` bereitet den exakten Runtime-Scan der 295 Trusted-Nodes für Statur/Brust/Taille/Hüfte vor.
+
+Aktuelle Dokumente:
+- `BODY_BANK_SOLVER_TRUST_REGION_COVERAGE_V0.8.29.5.md`
+- `RELEASE_NOTES_V0.8.29.5.md`
+- `CHANGESET_V0.8.29.5.md`
+- `SAMMY_MASTER_STATE.md` / `.docx`
+
+---
+
 # Sammy v0.8.29.4 — BODY BANK Solver 1.1 · Top-3 + Bidirectional Probing
 
 Der härtere 16er Family-Holdout aus v0.8.29.3 blieb auf GO. v0.8.29.4 erweitert deshalb nicht den Morphraum, sondern macht die Seed-/Local-Fit-Strategie robuster: die ersten drei Retrieval-Seeds werden unabhängig lokal gefittet, und jeder zugelassene Controller wird am konkreten Körper in beide Rohwertrichtungen geprobt.

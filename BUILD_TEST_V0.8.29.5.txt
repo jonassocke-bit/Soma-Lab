@@ -1,0 +1,70 @@
+SAMMY v0.8.29.5 · BUILD TEST
+Generated: 2026-08-29T17:56:00.601396+00:00
+Scope: static/source/data/package-preflight only; no Safari/WebGL runtime claim.
+
+PASS · app.js JavaScript syntax · node --check PASS
+PASS · SAMMY_APP_VERSION · 0.8.29.5
+PASS · HTML title version · 0.8.29.5
+PASS · Visible version marker · 0.8.29.5
+PASS · Splash version · 0.8.29.5
+PASS · app.js cache tag · 0.8.29.5
+PASS · style.css cache tag · 0.8.29.5
+PASS · No duplicate HTML ids · none
+PASS · Required handler sammyBbsSearchRun · present
+PASS · Required handler sammyBbsFitRun · present
+PASS · Required handler sammyBbsProofRun · present
+PASS · Required handler sammyBbsRestore · present
+PASS · Required handler sammyBbsExport · present
+PASS · Required handler sammyBbsProofExport · present
+PASS · Runtime handler self-gate · present
+PASS · Solver schema v1.2 · present
+PASS · Coverage proof schema v1.4 · present
+PASS · Coverage test kind · present
+PASS · Coverage stress case count · 36
+PASS · Near-neighbor holdout exclusion · 0.16
+PASS · Family holdout exclusion · target + family + near core
+PASS · Trust-region probe mode · present
+PASS · Trust-region ±epsilon probes · present
+PASS · Trust-region conditional ±2epsilon · present
+PASS · Trust-region accepts measured raw only · best measured probe raw
+PASS · No circumference derivative extrapolation · derivatives diagnostic only
+PASS · Top-3 local-fit helper · present
+PASS · Manual Top-3 Trust-Region UI · present
+PASS · 36er Coverage-Stress UI · present
+PASS · Final measurement gate rollback · present
+PASS · Weight excluded from local gate · present
+PASS · Canonical rest-mesh stature · present
+PASS · Canonical learning prune · present
+PASS · ACTIVE session canonical prune · present
+PASS · Body bank app target version · 0.8.29.5
+PASS · Body bank node count · 426
+PASS · Body bank trusted/frontier/negative/unchecked · {"frontier": 94, "negative": 37, "trusted": 295, "unchecked": 0}
+PASS · Canonical ACTIVE source SHA · e0d0140b75f98bba4c73463476ba6e0cb13b1075154789fa9448ba8a6cb4eccd
+PASS · Canonical ACTIVE merge counts · 29 new / 32 updated
+PASS · Canonical graph edge hints · 149
+PASS · Active seed app target version · 0.8.29.5
+PASS · Active shipped queue empty · count=0 queue=0
+PASS · Coverage prep schema · sammy-body-bank-coverage-prep-v1
+PASS · Coverage prep app target · 0.8.29.5
+PASS · Coverage prep trusted scan queue · 295 trusted
+PASS · Coverage prep known gaps · [{'targetBodyId': 'P2-P-132', 'reason': 'v0.8.29.4 Top-3 result remained worse than neutral in family holdout', 'auditedSolverSuccessors': [{'bodyId': 'AA-S-389cf6db', 'status': 'accepted', 'sourceKind': 'proof-top3-family-local-fit'}]}, {'
+PASS · Latest ACTIVE audit SHA · e0d0140b75f98bba4c73463476ba6e0cb13b1075154789fa9448ba8a6cb4eccd
+PASS · Latest ACTIVE audit summary · 61 / 49/11/1/0
+PASS · Source Top-3 proof schema · sammy-body-bank-solver-proof-v1.3
+PASS · Source Top-3 proof GO evidence · {"decision": "GO", "neutralMedian": 0.87234, "retrievalMedian": 0.390525, "singleSeedMedian": 0.31155, "top3Median": 0.26887}
+PASS · Source proof 24 cases · 24
+PASS · Source proof Top-3 ranks useful · 9/24 extra; 24/24 not worse; 22/24 vs neutral
+PASS · Source manual solver schema · sammy-body-bank-solver-v1.1
+PASS · Source manual Top-3 result · 0.6416788993564702 -> 0.4320738683112836
+PASS · Master State synchronized · 0.13 / 0.8.29.5
+PASS · Master State Trust-Region documented · present
+PASS · Master State coverage gate documented · present
+PASS · Current version marker synchronized · SAMMY_V0.8.29.5_BODY-BANK-SOLVER-TRUST-REGION-COVERAGE.zip
+PASS · 36 coverage targets statically available · selected=36 sex={0: 18, 1: 18}
+PASS · Family/near holdout pool remains large · min=127 max=157
+PASS · GitHub compact root manifest count · count=61
+PASS · GitHub compact under 100 files · count=61
+PASS · GitHub compact current artifacts · present
+PASS · Compact root sources exist · none
+
+RESULT: PASS · 64/64 checks passed.

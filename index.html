@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1012">
-<title>Sammy v0.8.29.4</title>
-<link rel="stylesheet" href="style.css?v=0.8.29.4">
+<title>Sammy v0.8.29.5</title>
+<link rel="stylesheet" href="style.css?v=0.8.29.5">
 <script type="importmap">
 {"imports":{
  "three":"https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
@@ -25,13 +25,13 @@
  <div class="sammySplashInner">
   <div class="sammySplashMark">S</div>
   <h1>Sammy</h1>
-  <div class="sammySplashVersion">v0.8.29.4</div>
+  <div class="sammySplashVersion">v0.8.29.5</div>
   <p id="sammySplashStage">Körpermodell wird vorbereitet …</p>
   <div class="sammySplashLine"><i></i></div>
  </div>
 </div>
 
-<div id="sammyVersion">Sammy · v0.8.29.4</div>
+<div id="sammyVersion">Sammy · v0.8.29.5</div>
 
 <div id="sammyBootToast" class="sammyBootToast" aria-live="polite">
  <b id="sammyBootTitle">SAMMY STARTET</b>
@@ -235,9 +235,9 @@
   <div class="sammyResizeGrip" title="Menügröße ändern"><span></span></div>
   <div class="sammyPanelHead"><div><b>BODY BANK SOLVER + RESEARCH</b><small>Aktueller Body-Bank-Pfad oben · bisherige Solver-/ANSUR-Forschung bleibt darunter erhalten</small></div><button class="sammyPanelClose" type="button" aria-label="Schließen">×</button></div>
   <div class="sammyPanelScroll">
-   <div class="sammyLabIntroCard sammyBbsIntro"><b>BODY BANK SOLVER 1.1 · App v0.8.29.4</b><span>Neuer Hauptpfad: erst einen human-auditierten Anny-Körper suchen, dann nur kleine anatomisch passende Korrekturen. Gewicht bleibt Retrieval-/Diagnose-Prior; der Local-Fit-Gate bewertet nur steuerbare Geometrie.</span></div>
+   <div class="sammyLabIntroCard sammyBbsIntro"><b>BODY BANK SOLVER 1.2 · App v0.8.29.5</b><span>Neuer Hauptpfad: erst einen human-auditierten Anny-Körper suchen, dann nur kleine anatomisch passende Korrekturen. Gewicht bleibt Retrieval-/Diagnose-Prior; der Local-Fit-Gate bewertet nur steuerbare Geometrie.</span></div>
    <details class="sammyCalibrationLab sammyBbsLab" id="sammyBbsLab" open>
-    <summary><b>BODY BANK SOLVER · ARCHITECTURE 1.0</b><span>269 auditierte Seeds · Top-3 Local Fit · bidirektionale Probes · Active Audit</span></summary>
+    <summary><b>BODY BANK SOLVER · ARCHITECTURE 1.0</b><span>295 auditierte Seeds · Top-3 Trust-Region · ACTIVE kanonisch gemergt · Coverage Prep</span></summary>
     <div class="sammyCalibrationBody">
      <div class="sammyBbsIndexLine" id="sammyBbsIndexLine">Body-Bank-Index wird geladen …</div>
      <div class="sammyBfInputGrid sammyBbsInputGrid">
@@ -249,14 +249,14 @@
       <label class="sammyBfField"><span>Taillenumfang</span><div><input id="sammyBbsWaist" type="number" inputmode="decimal" min="50" max="170" step="0.5" value="85"><em>cm</em></div><small>exakte Shortlist-Messung</small></label>
       <label class="sammyBfField"><span>Gesäß-/Hüftumfang</span><div><input id="sammyBbsHip" type="number" inputmode="decimal" min="65" max="180" step="0.5" value="100"><em>cm</em></div><small>exakte Shortlist-Messung</small></label>
      </div>
-     <div class="sammyCalibrationActions"><button id="sammyBbsSearch" type="button">1 · Bank suchen</button><button id="sammyBbsFit" type="button" disabled>2 · Top-3 lokal fitten</button><button id="sammyBbsProof" type="button">24er Top-3 Family-Proof</button></div>
+     <div class="sammyCalibrationActions"><button id="sammyBbsSearch" type="button">1 · Bank suchen</button><button id="sammyBbsFit" type="button" disabled>2 · Top-3 Trust-Region</button><button id="sammyBbsProof" type="button">36er Coverage-Stress</button></div>
      <div class="sammyCalibrationActions"><button id="sammyBbsRestore" type="button" disabled>Vorherigen Körper</button><button id="sammyBbsExport" type="button" disabled>Solver JSON</button><button id="sammyBbsProofExport" type="button" disabled>Proof JSON</button></div>
-     <div id="sammyBbsStatus" class="sammyCalibrationStatus">Bereit · zuerst Bank suchen oder den 24er Top-3 Family-Proof starten.</div>
+     <div id="sammyBbsStatus" class="sammyCalibrationStatus">Bereit · zuerst Bank suchen oder den 36er Coverage-Stress starten.</div>
      <div class="sammyCalibrationProgress"><i id="sammyBbsProgress"></i></div>
      <div id="sammyBbsCandidates" class="sammyBbsCandidates"><div class="sammyInfluenceEmpty">Top-5 Seeds erscheinen nach der Suche; die ersten drei werden beim Local Fit unabhängig getestet.</div></div>
      <div id="sammyBbsFeedback" class="sammyBfFeedback"><div class="sammyInfluenceEmpty">Nach dem Top-3 Local Fit erscheinen Gewinner-Seed → Ergebnis, Eingabefehler und Active-Audit-Status.</div></div>
-     <div id="sammyBbsProofResult" class="sammyBbsProofResult"><div class="sammyInfluenceEmpty">Der 24er Family-Proof hält Zielkörper, komplette lokale Familie und sehr nahe Rezeptnachbarn zurück. Er vergleicht neutralen Start → Retrieval → Single-Seed Local Fit → Top-3 Local Fit. Jeder Controller wird am konkreten Seed in +/− Richtung geprobt.</div></div>
-     <details class="sammyRarCriteria"><summary><b>ARCHITEKTURREGELN</b><span>POC 1.1</span></summary><div><p><b>Seed-Pool:</b> nur eindeutige HUMAN_ACCEPTED-Körper aus dem Phase-2-Audit plus später lokal akzeptierte Active-Audit-Körper.</p><p><b>Retrieval:</b> grobe Vorauswahl über Geschlecht, kanonische Rest-Mesh-Körperhöhe, Alter und Gewichts-Prior; danach werden nur die besten Kandidaten wirklich rekonstruiert und Brust/Taille/Hüfte am aktuellen Mesh gemessen.</p><p><b>Local Fit:</b> Die Retrieval-Ränge #1–#3 werden unabhängig lokal gefittet; der beste sichere Endscore gewinnt. Höhe sowie direkte Brust-/Taillen-/Hüft-Controller bleiben eng um den jeweiligen Seed begrenzt. Jeder Controller wird bidirektional (+ε/−ε) gemessen; der Morphname legt keine Wirkrichtung fest. Der Akzeptanz-Score enthält ausschließlich diese steuerbare Geometrie.</p><p><b>Sicherheit:</b> ein auditierter Seed ist visuell plausibel. Ein technisch kaputter Umfang kann ihn trotzdem für den Solver <i>solver-ineligible</i> machen, ohne den Human-Audit-Status zu löschen. Jeder veränderte Top-3-Gewinner bleibt zunächst <i>unauditiert</i> und wird automatisch an BANK → ACTIVE übergeben.</p><p><b>Keine Schultermetrik:</b> der fehlerhafte Phase-2-Shoulder-Joint-Proxy wird weder für Retrieval noch Gate verwendet.</p></div></details>
+     <div id="sammyBbsProofResult" class="sammyBbsProofResult"><div class="sammyInfluenceEmpty">Der 36er Coverage-Stress hält Zielkörper, komplette lokale Familie und sehr nahe Rezeptnachbarn zurück. Er ist kein neuer Architekturbeweis, sondern kartiert verbleibende relative Lücken nach dem bestätigten Top-3-GO. Umfangscontroller nutzen nur tatsächlich gemessene Trust-Region-Schritte ±ε und bei widersprüchlichem Verhalten zusätzlich ±2ε.</div></div>
+     <details class="sammyRarCriteria"><summary><b>ARCHITEKTURREGELN</b><span>POC 1.2</span></summary><div><p><b>Seed-Pool:</b> nur eindeutige HUMAN_ACCEPTED-Körper aus dem Phase-2-Audit plus später lokal akzeptierte Active-Audit-Körper.</p><p><b>Retrieval:</b> grobe Vorauswahl über Geschlecht, kanonische Rest-Mesh-Körperhöhe, Alter und Gewichts-Prior; danach werden nur die besten Kandidaten wirklich rekonstruiert und Brust/Taille/Hüfte am aktuellen Mesh gemessen.</p><p><b>Local Fit:</b> Die Retrieval-Ränge #1–#3 werden unabhängig lokal gefittet; der beste sichere Endscore gewinnt. Höhe sowie direkte Brust-/Taillen-/Hüft-Controller bleiben eng um den jeweiligen Seed begrenzt. Für Brust/Taille/Hüfte werden zunächst ±ε tatsächlich gemessen; bei Vorzeichenwechsel oder wenn beide kleinen Schritte nicht helfen, wird die Trust Region auf ±2ε erweitert. Nur ein tatsächlich gemessener besserer Zustand wird akzeptiert; keine Ableitungsextrapolation. Höhe bleibt separat eng und bidirektional vermessen. Der Akzeptanz-Score enthält ausschließlich diese steuerbare Geometrie.</p><p><b>Sicherheit:</b> ein auditierter Seed ist visuell plausibel. Ein technisch kaputter Umfang kann ihn trotzdem für den Solver <i>solver-ineligible</i> machen, ohne den Human-Audit-Status zu löschen. Jeder veränderte Top-3-Gewinner bleibt zunächst <i>unauditiert</i> und wird automatisch an BANK → ACTIVE übergeben.</p><p><b>Keine Schultermetrik:</b> der fehlerhafte Phase-2-Shoulder-Joint-Proxy wird weder für Retrieval noch Gate verwendet.</p></div></details>
     </div>
    </details>
 
@@ -1020,6 +1020,6 @@ window.addEventListener("error",function(e){
  stage.textContent="JS-Startfehler: "+(e.message||"unbekannt")+loc;
 });
 </script>
-<script type="module" src="app.js?v=0.8.29.4"></script>
+<script type="module" src="app.js?v=0.8.29.5"></script>
 </body>
 </html>

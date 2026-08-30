@@ -1,3 +1,16 @@
+# v0.8.29.5 · Body Bank Solver 1.2 · Trust Region + Active Merge + Coverage Prep
+
+- 61er ACTIVE-Audit kanonisch gemergt: 295 trusted / 94 frontier / 37 negative / 0 unchecked.
+- 29 neue exakte ACTIVE-/Solver-Körperformen: 26 accepted, 3 uncertain, 0 rejected.
+- Brust/Taille/Hüfte: gemessene Trust Region ±ε, bei widersprüchlichem/erfolglosem Verhalten zusätzlich ±2ε.
+- Keine Ableitungsextrapolation zu ungemessenen Morphwerten.
+- Top-3, kleine Bounds, Weight-Prior und globaler Geometry-/Measurement-Gate bleiben bestehen.
+- Stale bereits kanonische LocalStorage-Learning-/Pending-Fälle werden bereinigt.
+- `body-bank-coverage-prep-v1.json` für den nächsten exakten Coverage-Scan.
+- 36er Coverage-Stress ersetzt den nächsten redundanten Architekturproof.
+
+---
+
 # v0.8.29.4 · Body Bank Solver 1.1 · Top-3 + Bidirectional Probing
 
 - 16er Family-Holdout v0.8.29.3 blieb GO: 0.515 neutral -> 0.436 retrieval -> 0.304 local.
